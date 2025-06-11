@@ -4,7 +4,6 @@ from .redis.redis_client import redis_client
 from django.db import transaction
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from apps.ws_channel.models import Chat, Message
 
 class ChatConsumer(AsyncWebsocketConsumer):
      async def connect(self):
@@ -111,6 +110,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
      
      @database_sync_to_async     
      def get_recipient_ids(self, chat_id, sender_id):
+          from apps.ws_channel.models import Chat
           chat =  Chat.objects.get(uuid=chat_id)
           recipients = [str(user.id) for user in chat.participants.exclude(id=sender_id)]
           
@@ -118,6 +118,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
      @database_sync_to_async
      def save_message(self, chat_id, sender_id, message):
+          from apps.ws_channel.models import Chat, Message
           with transaction.atomic():
                chat = Chat.objects.get(uuid=chat_id)
                return Message.objects.create(chat=chat, sender_id=sender_id, message=message)
