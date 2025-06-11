@@ -1,7 +1,11 @@
-# Talent Cloud Backend
+# TalentCloud
 
-For Development
+TalentCloud is a Django-based application that uses PostgreSQL, Celery, Daphne, and Pytest to support development, testing, and production environments with ease.
 
-1. You need to run Backend Server through "python manage.py runserver"
-2. Run celery through "celery -A main worker --loglevel=info"
-3. Run celery beat through "celery -A main beat -l info"
+## 🚀 Quick Start
+
+Clone the project:
+
+```bash
+git clone https://github.com/your-username/talentcloud.git
+cd talentcloud
