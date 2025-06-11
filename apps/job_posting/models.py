@@ -1,0 +1,204 @@
+from django.db import models
+from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
+from apps.users.models import TalentCloudUser
+from services.models import TimeStampModel
+
+class JobType(models.TextChoices):
+     FULL_TIME = 'full_time', 'Full-Time'
+     PART_TIME = 'part_time', 'Part-Time'
+
+class WorkType(models.TextChoices):
+     ONSITE = 'onsite', 'Onsite'
+     WFH = 'work_from_home', 'Work From Home'
+     HYBRID = 'hybrid', 'Hybrid'
+
+class SalaryModeType(models.TextChoices):
+     Fixed = 'fixed', 'Fixed'
+     Range = 'range', 'Range'
+
+class PerSalaryType(models.TextChoices):
+     HOURLY = 'hourly', 'Hourly'
+     MONTHLY = 'monthly', 'Monthly'
+
+class ProjectDurationType(models.TextChoices):
+    LessThanOneMonth = "less_than_1_month", "Less than 1 month"
+    OneToThreeMonth = "1_to_3_months", "1 to 3 months"
+    ThreeToSixMonth = "3_to_6_months", "3 to 6 months"
+    MoreThanSixMonth = "more_than_6_months", "More than 6 months"
+    Ongoing = "ongoing", "Ongoing / Indefinite"
+
+# Job Post
+class JobPost(TimeStampModel):
+     title = models.CharField(max_length=255)
+     description = models.TextField()
+     location = models.CharField(max_length=255)
+     
+     specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.SET_NULL, related_name="job_post", null=True, blank=True)
+     role = models.ForeignKey(JobSeekerRole, on_delete=models.SET_NULL, related_name='job_posts', null=True, blank=True)
+     skills = models.ManyToManyField(JobSeekerSkill, related_name='job_posts', blank=True)
+     experience_level = models.ForeignKey(
+          JobSeekerExperienceLevel,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='job_posts'
+     )
+     experience_years = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+     
+     job_type = models.CharField(max_length=50, choices=JobType.choices)
+     work_type = models.CharField(max_length=50, choices=WorkType.choices)
+     
+     number_of_positions = models.PositiveIntegerField(default=1)
+     
+     salary_mode = models.CharField(max_length=10, choices=SalaryModeType.choices, default=SalaryModeType.Fixed, blank=True)
+     salary_type = models.CharField(max_length=10, choices=PerSalaryType.choices, default=PerSalaryType.MONTHLY, blank=True)
+     
+     salary_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+     salary_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+     salary_fixed = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+     is_salary_negotiable = models.BooleanField(default=False)
+     
+     project_duration = models.CharField(max_length=50, choices=ProjectDurationType.choices, null=True, blank=True)
+     posted_by = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE, related_name='job_posts')  # NI Admin only
+     last_application_date = models.DateField(null=True, blank=True)
+     is_accepting_applications = models.BooleanField(default=True)
+
+     view_count = models.PositiveIntegerField(default=0)
+     applicant_count = models.PositiveIntegerField(default=0)
+     bookmark_count = models.PositiveIntegerField(default=0)
+
+# End Job Post
+
+# Job Application
+class ApplicationStatus(models.TextChoices):
+    """
+    Defines the possible states for a job application.
+    """
+    APPLIED = 'applied', 'Applied'
+    UNDER_REVIEW = 'under_review', 'Under Review'
+    SHORTLISTED = 'shortlisted', 'Shortlisted'
+    INTERVIEW_SCHEDULED = 'interview_scheduled', 'Interview Scheduled'
+    OFFER_EXTENDED = 'offer_extended', 'Offer Extended'
+    ACCEPTED = 'accepted', 'Accepted'
+    REJECTED = 'rejected', 'Rejected'
+    WITHDRAWN = 'withdrawn', 'Withdrawn'
+
+class JobApplication(TimeStampModel):
+     """
+     Represents a job seeker's application to a specific job post.
+     """
+     job_post = models.ForeignKey(
+          JobPost,
+          on_delete=models.CASCADE,
+          related_name='applications',
+          help_text="The job post the seeker is applying for."
+     )
+     job_seeker = models.ForeignKey(
+          JobSeeker,
+          on_delete=models.CASCADE,
+          related_name='applications',
+          help_text="The job seeker who submitted the application."
+     )
+     status = models.CharField(
+          max_length=50,
+          choices=ApplicationStatus.choices,
+          default=ApplicationStatus.APPLIED,
+          help_text="The current status of the application."
+     )
+     cover_letter = models.TextField(
+          null=True,
+          blank=True,
+          help_text="Optional cover letter submitted with the application."
+     )
+     application_resume_url = models.URLField(
+          max_length=2048,
+          null=True,
+          blank=True,
+          help_text="URL of the resume submitted for this specific application (optional). If not provided, the seeker's current resume_url is typically used."
+     )
+
+     class Meta:
+          verbose_name = "Job Application"
+          verbose_name_plural = "Job Applications"
+          unique_together = ('job_post', 'job_seeker')
+          ordering = ['-created_at']
+
+     def __str__(self):
+          return f"Application for '{self.job_post.title}' by {self.job_seeker.user.email}"
+
+     def save(self, *args, **kwargs):
+          is_new = self._state.adding
+          super().save(*args, **kwargs)
+          
+          if is_new:
+               self.job_post.applicant_count = self.job_post.applications.count()
+               self.job_post.save(update_fields=['applicant_count'])
+
+     def delete(self, *args, **kwargs):
+          job_post = self.job_post
+          super().delete(*args, **kwargs)
+          job_post.applicant_count = job_post.applications.count()
+          job_post.save(update_fields=['applicant_count'])
+          
+# End Job Application
+
+# Job Post Bookmark
+
+class BookmarkedJob(TimeStampModel):
+     """
+     Represents a job seeker bookmarking a specific job post.
+     Many-to-Many relationship 'through' model between JobSeeker and JobPost.
+     """
+     job_post = models.ForeignKey(
+          JobPost,
+          on_delete=models.CASCADE,
+          related_name='bookmarks',
+          help_text="The job post that is bookmarked."
+     )
+     job_seeker = models.ForeignKey(
+          JobSeeker,
+          on_delete=models.CASCADE,
+          related_name='bookmarked_jobs',
+          help_text="The job seeker who bookmarked the job."
+     )
+
+     class Meta:
+          verbose_name = "Bookmarked Job"
+          verbose_name_plural = "Bookmarked Jobs"
+          unique_together = ('job_post', 'job_seeker')
+          ordering = ['-created_at']
+
+     def __str__(self):
+          return f"'{self.job_post.title}' bookmarked by {self.job_seeker.user.email}"
+
+     def save(self, *args, **kwargs):
+          is_new = self._state.adding
+          super().save(*args, **kwargs)
+          
+          if is_new:
+               self.job_post.bookmark_count = self.job_post.bookmarks.count()
+               self.job_post.save(update_fields=['bookmark_count'])
+
+     def delete(self, *args, **kwargs):
+          job_post = self.job_post
+          super().delete(*args, **kwargs)
+          
+          job_post.bookmark_count = job_post.bookmarks.count()
+          job_post.save(update_fields=['bookmark_count'])
+
+# End Job Post Bookmark
+
+class JobPostMetric(models.Model):
+     class EventType(models.TextChoices):
+          VIEW = 'view', 'View'
+          APPLY = 'apply', 'Apply'
+          BOOKMARK = 'bookmark', 'Bookmark'
+
+     job_post = models.ForeignKey(JobPost, on_delete=models.CASCADE, related_name='metrics')
+     user = models.ForeignKey(TalentCloudUser, on_delete=models.SET_NULL, null=True, blank=True)
+     event_type = models.CharField(max_length=20, choices=EventType.choices)
+     created_at = models.DateTimeField(auto_now_add=True)
+     metadata = models.JSONField(null=True, blank=True)
+
+     def __str__(self):
+          return f"{self.event_type} on {self.job_post.title} at {self.created_at}"

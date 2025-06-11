@@ -1,0 +1,3 @@
+.blur-sm {
+    filter: blur(4px); /* Adjust the blur amount as needed */
+}

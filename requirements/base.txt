@@ -1,0 +1,32 @@
+# Core Framework
+Django==5.1.1
+djangorestframework==3.15.2
+
+# Database
+psycopg==3.2.3
+
+# API
+drf-spectacular==0.28.0
+django-cors-headers==4.4.0
+
+# Utilities
+python-decouple==3.8
+whitenoise==6.7.0
+boto3>=1.37.9
+
+# Async/Celery
+redis==5.2.1
+django-celery-beat==2.7.0
+
+# Push Notifications
+fcm-django==2.2.1
+
+# Test
+pytest-django==4.10.0
+
+# Websocket - Chat, Notifications
+channels==4.2.2
+channels_redis==4.2.1
+
+# asgi server
+daphne==4.2.0
