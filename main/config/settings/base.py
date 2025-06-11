@@ -1,6 +1,5 @@
 from pathlib import Path
-import firebase_admin, os
-from firebase_admin import credentials
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -27,7 +26,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_celery_beat',
-    'fcm_django',
     'channels',
     
     #Local Apps
@@ -148,22 +146,6 @@ FACEBOOK_CLIENT_SECRET = '495a6ed1c1986293eb357350b2ea4f02'
 OAUTH_REDIRECT_URL = "http://localhost:5173/oauth/callback"
 
 # endregion OAuth Configuration
-
-
-# region Firebase Setup
-
-firebase_app_credential = credentials.Certificate(os.path.join(BASE_DIR,'firebase_credentials.json'))
-DEFAULT_FIREBASE_APP = firebase_admin.initialize_app(firebase_app_credential, name="talent-cloud-push-notifications")
-
-FCM_DJANGO_SETTINGS = {
-    "DEFAULT_FIREBASE_APP": DEFAULT_FIREBASE_APP,
-    # "APP_VERBOSE_NAME": "Talent Cloud Platform",
-    # "ONE_DEVICE_PER_USER": False,
-    # "DELETE_INACTIVE_DEVICES": False,
-}
-
-# endregion Firebase Setup
-
 
 # region Static Config
 

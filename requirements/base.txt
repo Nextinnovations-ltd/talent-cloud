@@ -18,9 +18,6 @@ boto3>=1.37.9
 redis==5.2.1
 django-celery-beat==2.7.0
 
-# Push Notifications
-fcm-django==2.2.1
-
 # Test
 pytest-django==4.10.0
 
