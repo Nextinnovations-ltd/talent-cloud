@@ -3,7 +3,7 @@ Django==5.1.1
 djangorestframework==3.15.2
 
 # Database
-psycopg==3.2.3
+psycopg2-binary==2.9.10
 
 # API
 drf-spectacular==0.28.0
@@ -13,6 +13,7 @@ django-cors-headers==4.4.0
 python-decouple==3.8
 whitenoise==6.7.0
 boto3>=1.37.9
+django-filter
 
 # Async/Celery
 redis==5.2.1
