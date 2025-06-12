@@ -1,0 +1,76 @@
+.star-border-container {
+  display: inline-block;
+  padding: 1px 0;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 275px;
+}
+
+/* Adjusted gradient styles */
+.border-gradient-bottom,
+.border-gradient-top {
+  position: absolute;
+  width: 400%;
+  height: 100%;
+  opacity: 0.8; /* Increased opacity */
+  border-radius: 50%;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(255, 0, 150, 0.6), rgba(0, 204, 255, 0.6), rgba(255, 0, 150, 0.6));
+  filter: blur(30px); /* Increased blur effect for better visibility */
+}
+
+/* Bottom gradient positioning */
+.border-gradient-bottom {
+  bottom: -60px;
+  right: -300%;
+  animation: star-movement-bottom 3s ease-in-out infinite alternate; /* Slower and smoother */
+}
+
+/* Top gradient positioning */
+.border-gradient-top {
+  top: -60px;
+  left: -300%;
+  animation: star-movement-top 3s ease-in-out infinite alternate; /* Slower and smoother */
+}
+
+/* Inner content styling */
+.inner-content {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(203, 213, 225, 0.5);
+  color: #1A1A1A;
+  font-size: 16px;
+  text-align: center;
+  padding: 24px 40px;
+  border-radius: 20px;
+  z-index: 1;
+  height: 142px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Smoothened animation for gradient movement */
+@keyframes star-movement-bottom {
+  0% {
+      transform: translate(0%, 0%);
+      opacity: 1;
+  }
+  100% {
+      transform: translate(-120%, 0%);
+      opacity: 0.5;
+  }
+}
+
+@keyframes star-movement-top {
+  0% {
+      transform: translate(0%, 0%);
+      opacity: 1;
+  }
+  100% {
+      transform: translate(120%, 0%);
+      opacity: 0.5;
+  }
+}
