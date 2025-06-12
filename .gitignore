@@ -1,0 +1,32 @@
+# Node modules (frontend)
+frontend/node_modules/
+
+# Frontend build output
+frontend/dist/
+
+# Environment files
+.env
+.env.*
+
+# Docker artifacts
+**/.dockerignore
+
+# Python bytecode just in case
+__pycache__/
+*.py[cod]
+
+# OS/Editor junk files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# GitHub workflows output (if any temporary files are generated)
+.github/workflows/*.log
+.github/workflows/__pycache__/
+
+# General logs
+*.log
+logs/
