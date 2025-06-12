@@ -15,6 +15,12 @@ frontend/dist/
 __pycache__/
 *.py[cod]
 
+# Virtual environments
+backend/env/
+backend/venv/
+backend/ENV/
+backend/.venv/
+
 # Virtual Environments
 backend/venv/
 

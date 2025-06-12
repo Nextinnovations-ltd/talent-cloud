@@ -1,20 +1,50 @@
-version: "3.9"
-  
-services:
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
+version: '3.9'
 
-  web:
-    build: .
-    container_name: django-react-app
+services:
+  postgres:
+    image: postgres:15
+    env_file:
+      - backend/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    command: daphne -b 0.0.0.0 -p 8000 main.config.asgi:application
+    volumes:
+      - ./backend:/app
+    env_file:
+      - backend/.env
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
     ports:
       - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
     depends_on:
-      - redis
-    volumes:
-      - .:/app
-    env_file:
-      - .env
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
