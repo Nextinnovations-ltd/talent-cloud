@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue } from "framer-motion"
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from "framer-motion"
 import {
   Globe,
   ArrowRight,
@@ -36,8 +36,10 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll()
   const [searchQuery, setSearchQuery] = useState("")
   const heroRef = useRef(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [cursorVariant, setCursorVariant] = useState("default")
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_cursorVariant, setCursorVariant] = useState("default")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedLocation, setSelectedLocation] = useState("all")
 
@@ -45,9 +47,6 @@ export default function LandingPage() {
   const cursorX = useMotionValue(-100)
   const cursorY = useMotionValue(-100)
 
-  const springConfig = { damping: 25, stiffness: 700 }
-  const cursorXSpring = useSpring(cursorX, springConfig)
-  const cursorYSpring = useSpring(cursorY, springConfig)
 
   // Parallax effect for hero section
   const y = useTransform(scrollYProgress, [0, 0.5], [0, 300])
@@ -80,7 +79,7 @@ export default function LandingPage() {
 
   // Handle mouse movement for custom cursor
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e
       cursorX.set(clientX - 16)
       cursorY.set(clientY - 16)
@@ -91,33 +90,7 @@ export default function LandingPage() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [cursorX, cursorY])
 
-  // Cursor variants
-  const variants = {
-    default: {
-      width: 32,
-      height: 32,
-      backgroundColor: "rgba(72, 72, 255, 0.1)",
-      border: "1px solid rgba(72, 72, 255, 0.2)",
-      x: cursorXSpring,
-      y: cursorYSpring,
-    },
-    button: {
-      width: 80,
-      height: 80,
-      backgroundColor: "rgba(72, 72, 255, 0.2)",
-      border: "1px solid rgba(72, 72, 255, 0.3)",
-      x: cursorXSpring,
-      y: cursorYSpring,
-    },
-    text: {
-      width: 64,
-      height: 64,
-      backgroundColor: "rgba(72, 72, 255, 0.05)",
-      border: "1px solid rgba(72, 72, 255, 0.1)",
-      x: cursorXSpring,
-      y: cursorYSpring,
-    },
-  }
+
 
   const enterButton = () => setCursorVariant("button")
   const enterText = () => setCursorVariant("text")
@@ -217,6 +190,8 @@ export default function LandingPage() {
 
     return matchesSearch && matchesCategory && matchesLocation
   })
+
+ 
 
   return (
     <div className="relative overflow-hidden bg-white">
@@ -1277,8 +1252,8 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center"
-            onMouseEnter={enterButton}
-            onMouseLeave={leaveButton}
+            onMouseEnter={enterText}
+            onMouseLeave={leaveText}
           >
             <div className="inline-block px-8 py-6 bg-[oklch(48.8%_0.243_264.376)/0.1] rounded-2xl">
               <h3 className="text-2xl font-bold text-[oklch(48.8%_0.243_264.376)]">
@@ -1387,7 +1362,6 @@ export default function LandingPage() {
                   {column.links.map((link, j) => (
                     <li key={j}>
                       <a
-                        to="#"
                         className="text-gray-400 hover:text-white transition-colors"
                         onMouseEnter={enterText}
                         onMouseLeave={leaveText}

@@ -10,7 +10,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import React from "react";
@@ -36,22 +35,6 @@ interface SelectFieldTreeProps {
   labelName?: string;
 }
 
-const accordionData = [
-  {
-    name: "Design & Creative",
-    options: [
-      { value: "01", label: "Graphic Design" },
-      { value: "02", label: "UI/UX Design" },
-    ],
-  },
-  {
-    name: "IT & Development",
-    options: [
-      { value: "03", label: "Frontend" },
-      { value: "04", label: "Backend" },
-    ],
-  },
-];
 
 export const SelectFieldTree: React.FC<SelectFieldTreeProps> = ({
   name,

@@ -16,7 +16,6 @@ type DatePickerFieldProps = {
   requiredLabel?: boolean;
   fieldWidth: string;
   disabled?: boolean;
-  placeholder: string;
 };
 
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
@@ -25,7 +24,6 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   fieldHeight,
   requiredLabel = true,
   disabled = false,
-  placeholder,
 }) => {
   const form = useFormContext();
   const [open, setOpen] = useState(false);

@@ -3,11 +3,9 @@ import { AuthFormFrame } from "@/components/common/form/AuthFormFrame";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { setKeepLoggedIn, useLoginMutation } from "@/services/slices/authSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { executeApiCall, isLoading } = useApiCaller(useLoginMutation);
 
   const onSubmitHandler = async (data: any) => {

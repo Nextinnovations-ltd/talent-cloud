@@ -24,7 +24,6 @@ interface DatePickerProps {
 const Datepicker: FC<DatePickerProps> = ({
   onSelect,
   placeholder,
-  same,
   field,
   disabled,
   height,

@@ -10,13 +10,11 @@ export const Card = React.memo(
         index,
         hovered,
         setHovered,
-        cardColor,
     }: {
         card: any;
         index: number;
         hovered: number | null;
         setHovered: React.Dispatch<React.SetStateAction<number | null>>;
-        cardColor: string
     }) => (
         <div
             onMouseEnter={() => setHovered(index)}
@@ -84,7 +82,6 @@ export function FocusCards({ cards }: { cards: Card[] }) {
                     key={card.title}
                     card={card}
                     index={index}
-                    cardColor={card.cardColor}
                     hovered={hovered}
                     setHovered={setHovered}
                 />

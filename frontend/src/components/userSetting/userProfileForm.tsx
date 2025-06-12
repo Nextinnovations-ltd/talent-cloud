@@ -144,7 +144,6 @@ export const UserProfileForm = ({
               fieldName={field.fieldName}
               required={field.required}
               languageName={field.languageName}
-              placeholder={field.placeholder}
               fieldHeight={cn(" w-full", fieldHeight)}
               fieldWidth={""}
             />

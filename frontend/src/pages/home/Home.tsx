@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ApplyJobCard, { Job } from "@/components/jobApply/ApplyJobCard";
 import { ApplyJobSideBar } from "@/components/jobApply/ApplyJobSideBar";
 import ApplyJobCardSkeleton from "@/components/jobApply/ApplyJobSkeleton";
+import { PostUploadedCombo } from "@/components/jobApply/PostUploadedCombo";
 
 const mockJobs: Job[] = [
   { 
@@ -161,32 +162,40 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex pt-[300px] pb-[200px] container  gap-4 mx-auto flex-col lg:flex-row  p-4">
-   <div
-  className={`grid justify-center items-center transition-all mx-auto gap-[50px] duration-300 ${
-    selectedJob
-      ? "grid-cols-1 " // center in 1-column view
-      : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-  }`}
->
-{loading
-        ? Array.from({ length: 6 }).map((_, index) => (
-            <ApplyJobCardSkeleton key={index} />
-          ))
-        : jobs.map((job) => (
-          <ApplyJobCard 
-          key={job.id} 
-          job={job} 
-          onClick={handleJobClick} 
-          isSelected={selectedJob?.id === job.id}
-        />
-          ))}
-  
-</div>
-  {selectedJob && (
-  <ApplyJobSideBar selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
-)} 
-
+   <div>
+    <div className="container mx-auto mb-[50px] items-center  p-4 flex justify-between">
+      <h3>128 job opportunities waiting.</h3>
+      <PostUploadedCombo/>
     </div>
+     <div className="flex  gap-[40px] pb-[200px] container  mx-auto flex-col lg:flex-row  p-4">
+      
+      <div
+     className={`grid  mx-auto justify-center items-center transition-all  gap-[36px] duration-300 ${
+       selectedJob
+         ? "grid-cols-1 " // center in 1-column view
+         : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+     }`}
+   >
+   
+   {loading
+           ? Array.from({ length: 6 }).map((_, index) => (
+               <ApplyJobCardSkeleton key={index} />
+             ))
+           : jobs.map((job) => (
+             <ApplyJobCard 
+             key={job.id} 
+             job={job} 
+             onClick={handleJobClick} 
+             isSelected={selectedJob?.id === job.id}
+           />
+             ))}
+     
+   </div>
+     {selectedJob && (
+     <ApplyJobSideBar selectedJob={selectedJob} setSelectedJob={setSelectedJob} />
+   )} 
+   
+       </div>
+   </div>
   );
 };

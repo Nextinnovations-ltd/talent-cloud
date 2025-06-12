@@ -1,17 +1,15 @@
-import { Footer } from "@/components/nav/Footer";
 import { NavBar } from "@/components/nav/NavBar";
 import ProtectRoute from "@/middleware/ProtectRoute";
 import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
-import SVG from "@/assets/Login/talent_svg.svg"
-import SVGLogo from "@/assets/Login/talent_logo.svg"
 
 
 export const MainLayout = () => {
   const socketRef = useRef<WebSocket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_messages, setMessages] = useState<string[]>([]);
   const token = useSelector((state: any) => state.auth.token); // Get token from Redux state
   const { showNotification } = useToast();
 

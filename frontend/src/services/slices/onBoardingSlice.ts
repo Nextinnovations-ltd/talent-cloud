@@ -44,6 +44,15 @@ interface UserTalentsFullResponse {
   data: UserTalentsResponse[];
 }
 
+interface SpecializationByIndustryResponse {
+  status: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+  }[];
+}
+
 export const extendedOnBoardingSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserSpecialization: builder.query<UserSpecializationResponse, void>({
@@ -58,7 +67,7 @@ export const extendedOnBoardingSlice = apiSlice.injectEndpoints({
     getProfessionals: builder.query<UserProfessionalsResponse, void>({
       query: () => "/experience-levels/",
     }),
-    getSpecializationsByIndustryId: builder.query<unknown, unknown>({
+    getSpecializationsByIndustryId: builder.query<SpecializationByIndustryResponse, number>({
       query: (id) => `/roles/by-industry/${id}`,
     }),
   }),

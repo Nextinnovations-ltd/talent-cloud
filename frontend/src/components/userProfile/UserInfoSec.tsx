@@ -32,7 +32,6 @@ import { SelectedProjects } from './components/SelectedProjects';
 import { EducationCard } from './components/EducationCard';
 import { WorkExperienceCard } from './components/WorkExperienceCard';
 import { CertificationCard } from './components/CertificationCard';
-import { ExperienceCard } from '../common/userProfile/ExperienceCard';
 import { FocusCards } from '../common/Focus-Card';
 
 // Animation variants
@@ -129,7 +128,6 @@ export const UserInfoSec = () => {
     const y = useMotionValue(0);
     const { scrollY } = useScroll();
     const [showDock, setShowDock] = useState(false);
-    const [hoveredCard, setHoveredCard] = useState<boolean | null>(false);
 
     // Track scroll position and update dock visibility
     useEffect(() => {

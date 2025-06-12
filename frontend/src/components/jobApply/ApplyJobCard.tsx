@@ -43,13 +43,13 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
   return (
     <div
       ref={cardRef}
-      className={`p-[30px]  relative border cursor-pointer min-h-[400px] w-[396px] mx-auto  rounded-lg transition-colors duration-200 ${
+      className={`p-[30px] border-[#CBD5E1B2]  relative border-[2px] cursor-pointer min-h-[429px] w-[376px] mx-auto rounded-[17px] transition-colors duration-200 flex flex-col ${
         isSelected ? "bg-blue-100 border-blue-500" : "hover:bg-gray-100"
       }`}
       onClick={() => onClick(job)}
     >
 
-      <img width={64} className="absolute top-[-15px] left-0 " height={48} src={NEWIMAGE}/>
+      <img width={64} className="absolute top-[-15px] left-[-2px] " height={48} src={NEWIMAGE}/>
      <div className="flex justify-between items-start">
      <img width={64} height={64} className="mb-[14px]" src={job.img}/>
      <img width={18} height={18} className="mb-[14px]" src={BOOKMARK}/>
@@ -77,13 +77,13 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
   {job.skills.slice(0, 2).map((item, index) => (
     <Badge
       key={index}
-      className={`border px-[10px] bg-[#F2F2F2]  rounded-[8px] py-[4px] text-[14px] font-normal text-black ${isSelected && 'bg-blue-200'}`}
+      className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black  max-w-[110px] ${isSelected && 'bg-blue-200'}`}
     >
-      {item}
+    <p className="truncate">  {item}</p>
     </Badge>
   ))}
   {job.skills.length > 2 && (
-    <Badge   className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black ${isSelected && 'bg-blue-200'}`}>
+    <Badge   className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] ${isSelected && 'bg-blue-200'}`}>
       ...
     </Badge>
   )}
@@ -91,12 +91,12 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
 
 </div>
 
-<h3 className="mt-[23px] mb-[14px] text-[14px] line-clamp-2 ">{job.description}</h3>
+<h3 className="mt-[23px] mb-[23px] text-[14px] line-clamp-3 ">{job.description}</h3>
 
 
 <div className="border-t-[1px] border-slate-300"></div>
 
-<div className="flex mt-[10px] text-[14px] items-center gap-2">
+<div className="flex mt-[20px] text-[14px] items-center gap-2">
 <h3 className="text-[#6B6B6B]">an hour ago</h3>
 <img width={4} height={4}  src={DOT}/>
 <h3 className="text-[#6B6B6B]">20 Applicants</h3>

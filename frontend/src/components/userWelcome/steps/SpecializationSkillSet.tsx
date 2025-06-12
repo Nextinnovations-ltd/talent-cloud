@@ -8,7 +8,10 @@ import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import { useGetSpecializationsByIndustryIdQuery } from "@/services/slices/onBoardingSlice";
 import { useState, useEffect } from "react";
 
-
+interface Specialization {
+  id: number;
+  name: string;
+}
 
 type SpecializationSkillSetProps = {
   goToNextStep: () => void;
@@ -20,9 +23,9 @@ export const SpecializationSkillSet = ({
   id,
 }: SpecializationSkillSetProps) => {
   const [search, setSearch] = useState("");
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState<number | null>(null);
   const { executeApiCall, isLoading } = useApiCaller(useOnBoardingMutation);
-  const [isButtonDisabled,setIsButtonDisabled] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { showNotification } = useToast();
 
   const {
@@ -30,7 +33,7 @@ export const SpecializationSkillSet = ({
     isLoading: IndustriesLoading,
     error,
     refetch,
-  } = useGetSpecializationsByIndustryIdQuery(id, { skip: id === null });
+  } = useGetSpecializationsByIndustryIdQuery(id as number, { skip: id === null });
 
   useEffect(() => {
     if (id !== null) {
@@ -47,14 +50,14 @@ export const SpecializationSkillSet = ({
   const handleClick = async () => {
     if (value !== null) {
       const formData = new FormData();
-      formData.append("specialization_id", value);
+      formData.append("specialization_id", value.toString());
       formData.append("step", "3");
       const res = await executeApiCall(formData);
 
       if (res.success) {
         goToNextStep();
       }
-    }else {
+    } else {
       showNotification({
         message: "Please select one skill set!",
         type: "danger",
@@ -79,9 +82,9 @@ export const SpecializationSkillSet = ({
   }
 
   // Filter specializations based on search input
-  const filteredSpecializations = data?.data.filter(({ name }: { name: any }) =>
+  const filteredSpecializations = data?.data?.filter(({ name }: Specialization) =>
     name.toLowerCase().includes(search.toLowerCase())
-  );
+  ) ?? [];
 
   // Render the list of specializations
   const renderSpecializations = () => {
@@ -94,8 +97,8 @@ export const SpecializationSkillSet = ({
     return (
       <div className="relative mt-[10px]">
         <div className="grid grid-cols-1 md:grid-cols-4 py-[30px] h-[380px] overflow-scroll scroll gap-[25px] no-scrollbar">
-          {filteredSpecializations?.length > 0 ? (
-            filteredSpecializations.map(({ id, name }) => (
+          {filteredSpecializations.length > 0 ? (
+            filteredSpecializations.map(({ id, name }: Specialization) => (
               <SubSepcializationCard
                 active={id === value}
                 handleClick={() => setValue(id)}

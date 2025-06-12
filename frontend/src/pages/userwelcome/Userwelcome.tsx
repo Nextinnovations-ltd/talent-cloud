@@ -9,17 +9,18 @@ import { StepFour } from "@/components/userWelcome/steps/StepFour";
 import { StepFive } from "@/components/userWelcome/steps/StepFive";
 import { SpecializationSkillSet } from "@/components/userWelcome/steps/SpecializationSkillSet";
 
+interface StepWizardRef {
+  nextStep: () => void;
+}
+
 export const Userwelcome = () => {
-  const stepWizardRef = useRef<any>(null);
-  const [specializationId, setSpecializationId] = useState(null);
+  const stepWizardRef = useRef<StepWizardRef>(null);
+  const [specializationId, setSpecializationId] = useState<number | null>(null);
   const [isFinished, setFinished] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stepQuery = parseInt(searchParams.get("step") || "1", 10);
-    const validStep = stepQuery > 0 && stepQuery <= 6 ? stepQuery : 1;
-
     setTimeout(() => setIsLoading(false), 100);
   }, [searchParams]);
 
@@ -43,16 +44,16 @@ export const Userwelcome = () => {
 
   return (
     <div className="min-h-[100svh] pb-[50px] overflow-hidden">
-      {/* @ts-ignore */}
       <StepWizard
         initialStep={parseInt(searchParams.get("step") || "1", 10)}
+        // @ts-expect-error - react-step-wizard ref type issue
         ref={stepWizardRef}
-        nav={!isFinished && <CoolNav specializationId={specializationId} />}
+        nav={!isFinished ? <CoolNav specializationId={specializationId} /> : undefined}
       >
         <StepOne goToNextStep={goToNextStep} />
         <StepTwo goToNextStep={goToNextStep} />
         <StepThree
-          setSpecializationId={setSpecializationId}
+          setSpecializationId={(id: number) => setSpecializationId(id)}
           specializationId={specializationId}
           goToNextStep={goToNextStep}
         />

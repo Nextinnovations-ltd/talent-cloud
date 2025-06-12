@@ -15,7 +15,7 @@ export const StepFive = ({
   isFinished: any;
   setFinished: any;
 }) => {
-  const { data, isLoading, isError } = useGetProfessionalsQuery();
+  const { data, isLoading } = useGetProfessionalsQuery();
   const { executeApiCall, isLoading: MutationLoading } = useApiCaller(
     useOnBoardingMutation
   );

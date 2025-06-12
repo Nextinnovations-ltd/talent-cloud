@@ -10,7 +10,6 @@ type NotificationProps = {
   option?: ToasterProps;
 };
 
-type CircleCheck = any;
 
 const useToast = () => {
   const showNotification = (props: NotificationProps) => {
@@ -59,12 +58,13 @@ const useToast = () => {
         toast.warning(message, {
           ...option,
         });
+      break;
       default:
         toast.info(message, {
           style: { background: "#227A2C" },
           ...option,
         });
-        break;
+        
     }
   };
 
