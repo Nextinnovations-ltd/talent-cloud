@@ -15,6 +15,9 @@ frontend/dist/
 __pycache__/
 *.py[cod]
 
+# Virtual Environments
+backend/venv/
+
 # OS/Editor junk files
 .DS_Store
 Thumbs.db
