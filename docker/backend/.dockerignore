@@ -1,0 +1,40 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Django local files
+*.sqlite3
+*.log
+*.pot
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Env files
+.env
+
+# Node modules if React was ever embedded
+node_modules/
+
+# Build/output
+*.egg-info/
+build/
+dist/
