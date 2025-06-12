@@ -43,14 +43,14 @@ install-dev:
 	$(VENV_DIR)/bin/pip install --upgrade pip
 
 	@echo "Installing dependencies..."
-	@$(VENV_DIR)/bin/pip install -r requirements/development.txt
+	@$(VENV_DIR)/bin/pip install -r requirements.txt
 
 	@echo "Development Dependencies installed."
 
 install-prod: create-venv
 	@echo "Installing production dependencies..."
 	@$(VENV_DIR)/bin/pip install --upgrade pip
-	@$(VENV_DIR)/bin/pip install -r requirements/production.txt
+	@$(VENV_DIR)/bin/pip install -r requirements.txt
 	@echo "Production dependencies installed."
 
 clean-venv:
