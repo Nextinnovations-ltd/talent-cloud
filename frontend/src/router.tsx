@@ -29,6 +29,10 @@ import { MainLayout } from "./layouts/MainLayout";
 
 export const router = createBrowserRouter([
   {
+   path:"/lg",
+   element:<LandingPage/>
+  },
+  {
     path: "/",
    element: <MainLayout />,
 

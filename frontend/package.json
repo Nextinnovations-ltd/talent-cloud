@@ -1,6 +1,5 @@
 {
   "name": "talent-cloud-frontend",
-  "homepage": "/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -33,7 +32,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.0.6",
     "i18next": "^24.2.0",
     "input-otp": "^1.4.2",
