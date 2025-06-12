@@ -1,39 +1,15 @@
-# Dockerfile
-FROM python:3.12-slim AS backend
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
-# Install Python deps
-COPY requirements/ ./requirements/
-RUN pip install --upgrade pip \
- && pip install -r requirements/development.txt
-
-# Copy backend code
-COPY . .
-
-# Build static files
-RUN python manage.py collectstatic --noinput
-
-# --- React Build ---
-FROM node:18-slim AS frontend
-WORKDIR /frontend
-COPY client/ .
-RUN npm install && npm run build
-
-# --- Final stage ---
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Copy from backend
-COPY --from=backend /app /app
+# Copy everything into container
+COPY backend/ .
 
-# Copy React build output into Django staticfiles dir
-COPY --from=frontend /frontend/build /app/staticfiles
+# Install dependencies (after copying the full app)
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port and run Daphne
+# Expose port
 EXPOSE 8000
+
+# Run ASGI server
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "main.config.asgi:application"]

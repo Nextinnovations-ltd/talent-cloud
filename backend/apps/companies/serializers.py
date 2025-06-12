@@ -15,3 +15,18 @@ class CompanySerializer(serializers.ModelSerializer):
                'created_at', 'updated_at'
           ]
           read_only_fields = ['id', 'slug', 'created_at', 'updated_at']
+          
+class CompanyDetailSerializer(serializers.ModelSerializer):
+     """
+     Serializer for the Company Detailmodel.
+     """
+     class Meta:
+          model = Company
+          fields = [
+               'id', 'name', 'description', 'image_url', 'industry', 'size',
+               'founded_date', 'is_verified',
+          ]
+          read_only_fields = [
+               'id', 'name', 'description', 'image_url', 'industry', 'size', 
+               'founded_date', 'is_verified'
+          ]

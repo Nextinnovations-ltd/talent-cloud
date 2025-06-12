@@ -4,8 +4,8 @@ from apps.users.models import TalentCloudUser
 from services.models import TimeStampModel
 
 class JobType(models.TextChoices):
-     FULL_TIME = 'full_time', 'Full-Time'
-     PART_TIME = 'part_time', 'Part-Time'
+     FULL_TIME = 'full_time', 'Full Time'
+     PART_TIME = 'part_time', 'Part Time'
 
 class WorkType(models.TextChoices):
      ONSITE = 'onsite', 'Onsite'
@@ -17,8 +17,8 @@ class SalaryModeType(models.TextChoices):
      Range = 'range', 'Range'
 
 class PerSalaryType(models.TextChoices):
-     HOURLY = 'hourly', 'Hourly'
-     MONTHLY = 'monthly', 'Monthly'
+     HOURLY = 'hourly', 'hour'
+     MONTHLY = 'monthly', 'month'
 
 class ProjectDurationType(models.TextChoices):
     LessThanOneMonth = "less_than_1_month", "Less than 1 month"

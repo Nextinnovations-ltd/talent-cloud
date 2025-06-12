@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, SalaryModeType
+from apps.companies.serializers import CompanyDetailSerializer
+from utils.job_posting.job_posting_utils import format_salary
 
 class JobPostSerializer(ModelSerializer):
      class Meta:
@@ -20,7 +22,6 @@ class JobPostSerializer(ModelSerializer):
           return super().update(instance, validated_data)
 
 class JobPostListSerializer(serializers.ModelSerializer):
-     role = serializers.StringRelatedField()
      experience_level = serializers.StringRelatedField()
      job_type = serializers.CharField(source='get_job_type_display')
      work_type = serializers.CharField(source='get_work_type_display')
@@ -34,13 +35,14 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'title',
                'description',
                'location',
-               'role',
                'experience_level',
                'experience_years',
                'job_type',
                'work_type',
                'company_name',
                'display_salary',
+               'created_at',
+               'applicant_count'
           ]
 
      def get_company_name(self, obj):
@@ -49,9 +51,12 @@ class JobPostListSerializer(serializers.ModelSerializer):
      
      def get_display_salary(self, obj):
           if obj.salary_fixed:
-               return f"{obj.salary_fixed} ({obj.get_salary_type_display()})"
+               fixed=format_salary(obj.salary_fixed)
+               return f"{fixed} ({obj.get_salary_type_display()})"
           elif obj.salary_min and obj.salary_max:
-               return f"{obj.salary_min} - {obj.salary_max} ({obj.get_salary_type_display()})"
+               salary_min = format_salary(obj.salary_min)
+               salary_max = format_salary(obj.salary_max)
+               return f"{salary_min}-{salary_max}MMK/{obj.get_salary_type_display()}"
           
           return "Not specified"
 
@@ -66,8 +71,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      salary_mode = serializers.CharField(source='get_salary_mode_display', allow_null=True)
      salary_type = serializers.CharField(source='get_salary_type_display', allow_null=True)
      
-     company_name = serializers.SerializerMethodField()
-     company_logo = serializers.SerializerMethodField()
+     company = serializers.SerializerMethodField()
      job_poster_name = serializers.SerializerMethodField()
 
      class Meta:
@@ -80,14 +84,16 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
                'salary_min', 'salary_max', 'salary_fixed', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
                'view_count', 'applicant_count', 'bookmark_count',
-               'company_name', 'company_logo', 'job_poster_name'
+               'company', 'job_poster_name'
           ]
 
-     def get_company_name(self, obj):
-          return getattr(getattr(obj.posted_by, 'company', None), 'name', None)
-
-     def get_company_logo(self, obj):
-          return getattr(getattr(obj.posted_by, 'company', None), 'logo_url', None)
+     def get_company(self, obj):
+          posted_by = getattr(obj, 'posted_by', None)
+          
+          if posted_by and hasattr(posted_by, 'company'):
+               # Serialize the company object with CompanyDetailSerializer
+               return CompanyDetailSerializer(posted_by.company).data
+          return None
 
      def get_job_poster_name(self, obj):
           return getattr(obj.posted_by, 'name', None)
