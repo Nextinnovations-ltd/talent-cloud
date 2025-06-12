@@ -30,9 +30,13 @@ class ProjectDurationType(models.TextChoices):
 # Job Post
 class JobPost(TimeStampModel):
      title = models.CharField(max_length=255)
-     description = models.TextField()
-     location = models.CharField(max_length=255)
      
+     description = models.TextField(blank=True, null=True)
+     responsibility = models.TextField(blank=True, null=True)
+     requirement = models.TextField(blank=True, null=True)
+     what_we_offer = models.TextField(blank=True, null=True)
+     
+     location = models.CharField(max_length=255)
      specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.SET_NULL, related_name="job_post", null=True, blank=True)
      role = models.ForeignKey(JobSeekerRole, on_delete=models.SET_NULL, related_name='job_posts', null=True, blank=True)
      skills = models.ManyToManyField(JobSeekerSkill, related_name='job_posts', blank=True)

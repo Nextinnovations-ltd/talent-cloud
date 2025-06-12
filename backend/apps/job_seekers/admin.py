@@ -36,8 +36,10 @@ class CsvUploadMixin(admin.ModelAdmin):
             reader = csv.DictReader(decoded_file)       
             
             for row in reader:
-                self.model.objects.create(**{field.strip(): row[field] for field in reader.fieldnames if field in row})
-            
+                data = {field.strip(): row[field] for field in reader.fieldnames if field in row}
+                
+                self.model.objects.get_or_create(**data)
+
             return HttpResponseRedirect(f"/admin/{self.model_route}/")
         
         form = CsvImportForm()
