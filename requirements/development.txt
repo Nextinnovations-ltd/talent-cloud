@@ -1,5 +1,0 @@
--r base.txt
-
-# Debugging Tools
-pipdeptree==2.24.0
-django-debug-toolbar==4.4.6
