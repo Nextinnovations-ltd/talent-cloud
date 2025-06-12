@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company
+from .models import Company, Industry
 
 class CompanySerializer(serializers.ModelSerializer):
      """
@@ -29,4 +29,11 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
           read_only_fields = [
                'id', 'name', 'description', 'image_url', 'industry', 'size', 
                'founded_date', 'is_verified'
+          ]
+
+class IndustrySerializer(serializers.ModelSerializer):
+     class Meta:
+          model=Industry
+          fields = [
+               'id', 'name'
           ]

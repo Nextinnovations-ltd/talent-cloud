@@ -13,6 +13,22 @@ COMPANY_SIZE_CHOICES = [
         ('10000+', '10000+ employees'),
     ]
 
+class Industry(TimeStampModel):
+     """
+     Represents Types of Industry for the company
+     """
+     name = models.CharField(
+          max_length=255,
+          null=False,
+          blank=False,
+          unique=True,
+          help_text="The name of the industry."
+     )
+     
+     class Meta:
+          verbose_name = "Industry"
+          verbose_name_plural = "Industries"
+
 class Company(TimeStampModel):
      """
      Represents a company that posts jobs on the platform.
@@ -54,11 +70,12 @@ class Company(TimeStampModel):
           blank=True,
           help_text="A detailed description of the company, its mission, and culture."
      )
-     industry = models.CharField(
-          max_length=100,
+     industry = models.ForeignKey(
+          Industry,
+          on_delete=models.SET_NULL,
           null=True,
           blank=True,
-          help_text="The industry the company operates in (e.g., Technology, Healthcare)."
+          help_text="The industry the company operates in."
      )
      size = models.CharField(
           max_length=50,

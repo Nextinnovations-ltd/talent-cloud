@@ -2,10 +2,24 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
-from apps.companies.serializers import CompanySerializer
+from apps.companies.serializers import CompanySerializer, IndustrySerializer
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
-from .models import Company
+from .models import Company, Industry
+
+class IndustryListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+
+     def get(self, request):
+          """
+          List all industries.
+          """
+          industries = Industry.objects.all()
+          serializer = IndustrySerializer(industries, many=True)
+          
+          return Response(serializer.data)
+
 
 class CompanyListCreateAPIView(APIView):
      """
