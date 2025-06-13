@@ -36,7 +36,7 @@ class JobPost(TimeStampModel):
      requirements = models.TextField(blank=True, null=True)
      offered_benefits = models.TextField(blank=True, null=True)
      
-     location = models.CharField(max_length=255)
+     location = models.CharField(max_length=255, null=True, blank=True)
      specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.SET_NULL, related_name="job_post", null=True, blank=True)
      role = models.ForeignKey(JobSeekerRole, on_delete=models.SET_NULL, related_name='job_posts', null=True, blank=True)
      skills = models.ManyToManyField(JobSeekerSkill, related_name='job_posts', blank=True)

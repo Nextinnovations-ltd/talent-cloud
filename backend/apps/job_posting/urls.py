@@ -7,7 +7,7 @@ from .views import (
     JobPostActionAPIView,
     JobPostMetricViewAPIView,
     IncrementJobPostViewCountAPIView,
-    JobSearchAPIView,
+    JobSearchListAPIView,
     MatchedJobPostAPIView,
     NewestJobPostAPIView,
     
@@ -26,7 +26,7 @@ urlpatterns = [
     path('job-posts/', JobPostListCreateAPIView.as_view(), name='jobpost-list-create'),
     path('job-posts/newest/', NewestJobPostAPIView.as_view(), name='recent-jobpost-list'),
     path('job-posts/matched/', MatchedJobPostAPIView.as_view(), name='matched-jobpost-list'),
-    path('job-posts/search/', JobSearchAPIView.as_view(), name='matched-jobpost-list'),
+    path('job-posts/search/', JobSearchListAPIView.as_view(), name='matched-jobpost-list'),
     path('job-posts/<int:pk>/', JobPostActionAPIView.as_view(), name='jobpost-detail'),
     path('job-posts/edit/<int:pk>/', JobPostEditDetailAPIView.as_view(), name='jobpost-edit-detail'),
     
