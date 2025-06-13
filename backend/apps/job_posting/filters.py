@@ -1,61 +1,61 @@
 import django_filters
-
-from .models import JobType, ProjectDurationType, SalaryModeType, PerSalaryType, WorkType
-from .models import JobPost, JobSeekerSkill
+from django.db.models import Q
+from datetime import datetime, timedelta
+from .models import JobPost, JobType, ProjectDurationType, WorkType
 
 class JobPostFilter(django_filters.FilterSet):
      title = django_filters.CharFilter(lookup_expr='icontains')
      description = django_filters.CharFilter(lookup_expr='icontains')
      location = django_filters.CharFilter(lookup_expr='icontains')
-
      specialization = django_filters.NumberFilter(field_name='specialization_id')
      role = django_filters.NumberFilter(field_name='role_id')
      experience_level = django_filters.NumberFilter(field_name='experience_level_id')
-
-     # To filter by multiple skills, use ?skills=1&skills=2
-     skills = django_filters.ModelMultipleChoiceFilter(
-          queryset=JobSeekerSkill.objects.all(),
-          field_name='skills__id',
-          to_field_name='id',
-          lookup_expr='exact'
-     )
-
-     experience_years__gte = django_filters.NumberFilter(field_name='experience_years', lookup_expr='gte')
-     experience_years__lte = django_filters.NumberFilter(field_name='experience_years', lookup_expr='lte')
-
-     salary_min__gte = django_filters.NumberFilter(field_name='salary_min', lookup_expr='gte')
-     salary_min__lte = django_filters.NumberFilter(field_name='salary_min', lookup_expr='lte')
-     
-     salary_max__gte = django_filters.NumberFilter(field_name='salary_max', lookup_expr='gte')
-     salary_max__lte = django_filters.NumberFilter(field_name='salary_max', lookup_expr='lte')
-     
-     salary_fixed__gte = django_filters.NumberFilter(field_name='salary_fixed', lookup_expr='gte')
-     salary_fixed__lte = django_filters.NumberFilter(field_name='salary_fixed', lookup_expr='lte')
-
      job_type = django_filters.ChoiceFilter(choices=JobType.choices)
      work_type = django_filters.ChoiceFilter(choices=WorkType.choices)
-     salary_mode = django_filters.ChoiceFilter(choices=SalaryModeType.choices)
-     per_salary_type = django_filters.ChoiceFilter(choices=PerSalaryType.choices)
      project_duration = django_filters.ChoiceFilter(choices=ProjectDurationType.choices)
-
-     is_salary_negotiable = django_filters.BooleanFilter()
-
-     last_application_date__gte = django_filters.DateFilter(field_name='last_application_date', lookup_expr='gte')
-     last_application_date__lte = django_filters.DateFilter(field_name='last_application_date', lookup_expr='lte')
-     last_application_date = django_filters.DateFilter(field_name='last_application_date', lookup_expr='exact')
+     salary_rate = django_filters.CharFilter(method='filter_salary_range')
+     list_by_any_time = django_filters.CharFilter(method='filter_posted_time')
 
      class Meta:
           model = JobPost
           fields = [
                'title', 'description', 'location',
-               'specialization', 'role', 'skills', 'experience_level',
-               'experience_years__gte', 'experience_years__lte',
-               'job_type', 'work_type',
-               'salary_mode', 'per_salary_type',
-               'salary_min__gte', 'salary_min__lte',
-               'salary_max__gte', 'salary_max__lte',
-               'salary_fixed__gte', 'salary_fixed__lte',
-               'is_salary_negotiable',
-               'project_duration',
-               'last_application_date', 'last_application_date__gte', 'last_application_date__lte'
+               'specialization', 'role', 'experience_level', 
+               'job_type', 'work_type', 'is_salary_negotiable',
+               'project_duration'
           ]
+     
+     def filter_salary_range(self, queryset, name, value):
+          print(f"Filtering salary_range with value: {value}")
+          try:
+               min_salary, max_salary = map(float, value.split('-'))
+          except Exception as e:
+               print(f"Salary range parsing error: {e}")
+               return queryset.none()
+
+          return queryset.filter(
+               Q(
+                    salary_mode='fixed',
+                    salary_fixed__gte=min_salary,
+                    salary_fixed__lte=max_salary
+               ) |
+               Q(
+                    salary_mode='range',
+                    salary_max__gte=min_salary,
+                    salary_min__lte=max_salary
+               )
+          )
+
+     def filter_posted_time(self, queryset, name, value):
+          print(f"Filtering filter_posted_time with value: {value}")
+          now = datetime.now()
+          mapping = {
+               '24h': now - timedelta(hours=24),
+               '7d': now - timedelta(days=7),
+               '30d': now - timedelta(days=30)
+          }
+          filter_date = mapping.get(value)
+          if not filter_date:
+               return queryset.none()
+
+          return queryset.filter(created_at__gte=filter_date)
