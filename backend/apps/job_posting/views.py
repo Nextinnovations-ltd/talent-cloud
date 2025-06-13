@@ -125,6 +125,10 @@ class JobPostActionAPIView(APIView):
           
           return Response(status=status.HTTP_204_NO_CONTENT)
 
+# endregion Job Post Views
+
+# region Job Post List Views
+
 class NewestJobPostAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
@@ -184,8 +188,8 @@ class MatchedJobPostAPIView(ListAPIView):
           )
 
           return queryset
-
-class JobSearchAPIView(ListAPIView):
+     
+class JobSearchListAPIView(ListAPIView):
      """
      General endpoint for searching and filtering JobPost objects.
      """
@@ -194,28 +198,9 @@ class JobSearchAPIView(ListAPIView):
      permission_classes = [TalentCloudUserDynamicPermission]
      filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
      filterset_class = JobPostFilter
-
-     # Fields for searching (eg. ?search=keyword)
-     search_fields = [
-          'title',
-          'description',
-          'location',
-          # 'specialization__name',
-          # 'role__name',
-          # 'skills__name',
-     ]
-
-     # Fields for ordering
-     ordering_fields = [
-          'created_at',
-          'salary_min',
-          'salary_max',
-          'experience_years',
-          'last_application_date',
-     ]
-
-     # Set default ordering
-     ordering = ['-created_at']
+     ordering_fields = [ 'created_at', 'salary_min', 'experience_years' ]
+     ordering = ['-created_at']    # Set default ordering
+     search_fields = [ 'title', 'description', 'location', 'specialization__name', 'role__name' ] # Fields for searching (eg. ?search=keyword)
 
      def get_queryset(self):
           """
@@ -225,19 +210,22 @@ class JobSearchAPIView(ListAPIView):
           queryset = JobPost.objects.filter(is_accepting_applications=True)
 
           # Apply the default date filter
-          today = date.today()
-          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-          queryset = queryset.filter(date_filter_q)
+          # today = date.today()
+          # date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+          # queryset = queryset.filter(date_filter_q)
 
           queryset = queryset.distinct()
 
           # select_related and prefetch_related for optimization
           queryset = queryset.select_related(
-               'role', 'experience_level', 'posted_by'
+               'role', 'experience_level', 'specialization', 'posted_by'
           )
 
           return queryset
 
+# endregion Job Post List Views
+
+# region Job Post Metric Views
 class JobPostMetricViewAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -260,7 +248,7 @@ class IncrementJobPostViewCountAPIView(APIView):
           
           return Response({'view_count': metric.view_count}, status=status.HTTP_200_OK)
 
-# endregion Job Post Views
+# endregion Job Post Metric Views
 
 
 # region Job Application Views

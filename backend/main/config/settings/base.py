@@ -56,6 +56,9 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.middleware.exception_handler.custom_exception_handler',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 9,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 SPECTACULAR_SETTINGS = {
