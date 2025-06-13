@@ -317,7 +317,7 @@ class CompanyJobListView(ListAPIView):
      API endpoint for Admin/Superadmin to list all job posts for their company.
      URL: /api/v1/company-job-posts/ (GET)
      """
-     serializer_class = JobPostSerializer
+     serializer_class = JobPostListSerializer
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
 

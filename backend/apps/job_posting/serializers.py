@@ -23,9 +23,11 @@ class JobPostSerializer(ModelSerializer):
 
 class JobPostListSerializer(serializers.ModelSerializer):
      experience_level = serializers.StringRelatedField()
+     skills = serializers.StringRelatedField(many=True)
      job_type = serializers.CharField(source='get_job_type_display')
      work_type = serializers.CharField(source='get_work_type_display')
      company_name = serializers.SerializerMethodField()
+     company_image_url = serializers.SerializerMethodField()
      display_salary = serializers.SerializerMethodField()
 
      class Meta:
@@ -37,9 +39,11 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'location',
                'experience_level',
                'experience_years',
+               'skills',
                'job_type',
                'work_type',
                'company_name',
+               'company_image_url',
                'display_salary',
                'created_at',
                'applicant_count'
@@ -48,6 +52,10 @@ class JobPostListSerializer(serializers.ModelSerializer):
      def get_company_name(self, obj):
           # Handle company Null
           return getattr(getattr(obj.posted_by, 'company', None), 'name', None)
+     
+     def get_company_image_url(self, obj):
+          # Handle company Null
+          return getattr(getattr(obj.posted_by, 'company', None), 'image_url', None)
      
      def get_display_salary(self, obj):
           if obj.salary_fixed:
@@ -77,14 +85,12 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      class Meta:
           model = JobPost
           fields = [
-               'id', 'title', 'description', 'location',
-               'specialization', 'role', 'skills', 'experience_level',
-               'experience_years', 'job_type', 'work_type',
-               'number_of_positions', 'salary_mode', 'salary_type',
+               'id', 'title', 'description', 'responsibilities', 'requirements', 'offered_benefits', 
+               'location', 'specialization', 'role', 'skills', 'experience_level', 'experience_years', 
+               'job_type', 'work_type', 'number_of_positions', 'salary_mode', 'salary_type',
                'salary_min', 'salary_max', 'salary_fixed', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
-               'view_count', 'applicant_count', 'bookmark_count',
-               'company', 'job_poster_name'
+               'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name'
           ]
 
      def get_company(self, obj):
