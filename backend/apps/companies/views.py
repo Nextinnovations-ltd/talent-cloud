@@ -20,7 +20,6 @@ class IndustryListAPIView(APIView):
           
           return Response(serializer.data)
 
-
 class CompanyListCreateAPIView(APIView):
      """
      API view to list all companies or create a new company.

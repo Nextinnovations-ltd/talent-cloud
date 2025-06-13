@@ -32,9 +32,9 @@ class JobPost(TimeStampModel):
      title = models.CharField(max_length=255)
      
      description = models.TextField(blank=True, null=True)
-     responsibility = models.TextField(blank=True, null=True)
-     requirement = models.TextField(blank=True, null=True)
-     what_we_offer = models.TextField(blank=True, null=True)
+     responsibilities = models.TextField(blank=True, null=True)
+     requirements = models.TextField(blank=True, null=True)
+     offered_benefits = models.TextField(blank=True, null=True)
      
      location = models.CharField(max_length=255)
      specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.SET_NULL, related_name="job_post", null=True, blank=True)
