@@ -1,10 +1,9 @@
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from utils.view.base_api_view import CustomBaseAPIView
 from utils.response import CustomResponse
 
-class CustomListAPIView(CustomBaseAPIView, ListAPIView):
+class CustomListAPIView(ListAPIView):
      success_message = "Fetched successfully"
      use_pagination = True
      
@@ -36,7 +35,7 @@ class CustomListAPIView(CustomBaseAPIView, ListAPIView):
                status=status.HTTP_200_OK
           )
 
-class CustomCreateAPIView(CustomBaseAPIView, CreateAPIView):
+class CustomCreateAPIView(CreateAPIView):
      success_message = "Created successfully"
 
      def create(self, request, *args, **kwargs):
@@ -61,7 +60,7 @@ class CustomCreateAPIView(CustomBaseAPIView, CreateAPIView):
                status=status.HTTP_201_CREATED
           )
 
-class CustomRetrieveDestroyAPIView(CustomBaseAPIView, RetrieveDestroyAPIView):
+class CustomRetrieveDestroyAPIView(RetrieveDestroyAPIView):
      retrieve_message = "Fetched successfully"
      destroy_message = "Deleted successfully"
 
@@ -84,7 +83,7 @@ class CustomRetrieveDestroyAPIView(CustomBaseAPIView, RetrieveDestroyAPIView):
                status=status.HTTP_200_OK
           )
 
-class CustomRetrieveUpdateDestroyAPIView(CustomBaseAPIView, RetrieveUpdateDestroyAPIView):
+class CustomRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
      retrieve_message = "Fetched successfully"
      update_message = "Updated successfully"
      destroy_message = "Deleted successfully"
