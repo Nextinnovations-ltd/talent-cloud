@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, SalaryModeType
+from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType
 from apps.companies.serializers import CompanyDetailSerializer
 from utils.job_posting.job_posting_utils import format_salary
 
@@ -29,6 +29,7 @@ class JobPostListSerializer(serializers.ModelSerializer):
      company_name = serializers.SerializerMethodField()
      company_image_url = serializers.SerializerMethodField()
      display_salary = serializers.SerializerMethodField()
+     is_new = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -46,7 +47,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'company_image_url',
                'display_salary',
                'created_at',
-               'applicant_count'
+               'applicant_count',
+               'is_new',
           ]
 
      def get_company_name(self, obj):
@@ -67,6 +69,18 @@ class JobPostListSerializer(serializers.ModelSerializer):
                return f"{salary_min}-{salary_max}MMK/{obj.get_salary_type_display()}"
           
           return "Not specified"
+     
+     def get_is_new(self, obj):
+          user = self.context['request'].user
+
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except:
+               return False
+
+          return not JobPostView.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()

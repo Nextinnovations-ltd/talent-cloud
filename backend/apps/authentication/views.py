@@ -264,12 +264,12 @@ class OAuthVerifyTokenAPIView(views.APIView):
         response = Response(status=status.HTTP_200_OK)
         response.set_cookie(key='refresh_token', value=refresh_token, httponly=True)
         
-        response.data = {
+        response.data = CustomResponse.success("User is authenticated.", {
             'token': token,
             'role': user_role,
             'onboarding_step': onboarding_step,
             'is_generated_username': is_generated_username
-        }
+        })
         
         return response
     
