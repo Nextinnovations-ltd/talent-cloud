@@ -192,6 +192,38 @@ class BookmarkedJob(TimeStampModel):
 
 # End Job Post Bookmark
 
+# region Job Post View
+
+class JobPostView(TimeStampModel):
+     job_seeker = models.ForeignKey(JobSeeker, on_delete=models.CASCADE)
+     job_post = models.ForeignKey(JobPost, related_name='views', on_delete=models.CASCADE)
+
+     class Meta:
+        unique_together = ('job_post', 'job_seeker')
+        ordering = ['-created_at']
+
+     def __str__(self):
+          return f"{self.job_seeker.user.email} viewed '{self.job_post.title}'"
+
+     def save(self, *args, **kwargs):
+          is_new = self._state.adding
+          
+          super().save(*args, **kwargs)
+
+          if is_new:
+               self.job_post.view_count = self.job_post.views.count()
+               self.job_post.save(update_fields=['view_count'])
+
+     def delete(self, *args, **kwargs):
+          job_post = self.job_post
+          
+          super().delete(*args, **kwargs)
+          
+          job_post.view_count = job_post.views.count()
+          job_post.save(update_fields=['view_count'])
+
+# endregion Job Post View
+
 class JobPostMetric(models.Model):
      class EventType(models.TextChoices):
           VIEW = 'view', 'View'

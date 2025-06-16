@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from apps.companies.serializers import CompanySerializer, IndustrySerializer
+from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
 from .models import Company, Industry
@@ -98,7 +99,7 @@ class CompanyDetailAPIView(APIView):
           company.delete()
           
           # Return a 204 No Content status for successful deletion
-          return Response(status=status.HTTP_204_NO_CONTENT)
+          return Response(CustomResponse.success("User is authenticated."), status=status.HTTP_204_NO_CONTENT)
 
 class UnauthenticatedCompanyCreateAPIView(APIView):
      """
