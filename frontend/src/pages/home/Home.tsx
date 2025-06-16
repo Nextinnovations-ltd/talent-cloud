@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ApplyJobCard, { Job } from "@/components/jobApply/ApplyJobCard";
 import { ApplyJobSideBar } from "@/components/jobApply/ApplyJobSideBar";
 import ApplyJobCardSkeleton from "@/components/jobApply/ApplyJobSkeleton";
@@ -6,16 +6,15 @@ import { PostUploadedCombo } from "@/components/jobApply/PostUploadedCombo";
 import ApplyJobFilters from "@/components/jobApply/ApplyJobFilters";
 import ApplyJobHero from "@/components/jobApply/ApplyJobHero";
 import { useGetJobApplyCardQuery } from "@/services/slices/jobApplySlice";
-import { data } from "react-router-dom";
+
 
 export const Home: React.FC = () => {
-  const { data: jobs, isLoading } = useGetJobApplyCardQuery();
+  const { data, isLoading } = useGetJobApplyCardQuery();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
-  useEffect(()=>{
-    console.log(data)
-  },[isLoading])
+  const jobs = data?.data;
 
+ 
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);
   };

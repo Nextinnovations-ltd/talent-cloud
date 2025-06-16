@@ -1,6 +1,6 @@
 import apiSlice from "../api/apiSlice";
 
-interface JobApplyCardResponse {
+interface job  {
     id: number;
     title: string;
     description: string;
@@ -14,6 +14,13 @@ interface JobApplyCardResponse {
     display_salary: string;
     created_at: string;
     applicant_count: string;
+}
+
+interface JobApplyCardResponse {
+    status: boolean;
+    message: string;
+    data: job[]
+    
 }
 
  interface JobDetailJobApplyCardResponse {
@@ -59,7 +66,7 @@ interface JobApplyCardResponse {
   
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getJobApplyCard: builder.query<JobApplyCardResponse[], void>({
+        getJobApplyCard: builder.query<JobApplyCardResponse, void>({
             query: () => '/job-posts/newest/',
         }),
         getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
