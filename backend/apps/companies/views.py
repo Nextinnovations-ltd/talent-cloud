@@ -7,6 +7,7 @@ from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
 from .models import Company, Industry
+from rest_framework.permissions import AllowAny
 
 class IndustryListAPIView(APIView):
      authentication_classes = [TokenAuthentication]

@@ -226,6 +226,7 @@ class JobSearchListAPIView(CustomListAPIView):
 # endregion Job Post List Views
 
 # region Job Post Metric Views
+
 class JobPostMetricViewAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
