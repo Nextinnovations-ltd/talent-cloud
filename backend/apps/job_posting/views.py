@@ -22,6 +22,8 @@ from apps.job_posting.serializers import (
     JobPostMetricSerializer
 )
 from apps.job_seekers.models import JobSeeker
+from utils.view.custom_list_view import CustomListAPIView
+from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import IsCompanyAdminOrSuperadminForJobPost, TalentCloudAllPermission, TalentCloudUserDynamicPermission, TalentCloudSuperAdminPermission
 from core.middleware.permission import (
@@ -33,34 +35,18 @@ from core.middleware.permission import (
 
 # region Job Post Views
 
-class JobPostListCreateAPIView(APIView):
+class JobPostCreateAPIView(APIView):
      authentication_classes = [TokenAuthentication]
-     
-     def get_permissions(self):
-          if self.request.method == 'GET':
-               return [TalentCloudAllPermission()]
-          elif self.request.method == 'POST':
-               return [TalentCloudSuperAdminPermission()]
-          
-          return super().get_permissions()
-
-     def get(self, request):
-          job_posts = JobPost.objects.all().select_related(
-               'role', 'experience_level', 'posted_by'
-          )
-          
-          serializer = JobPostListSerializer(job_posts, many=True)
-          
-          return Response(serializer.data, status=status.HTTP_200_OK)
+     permission_classes = [TalentCloudSuperAdminPermission]
 
      def post(self, request):
           serializer = JobPostSerializer(data=request.data)
           
           if serializer.is_valid():
                serializer.save(posted_by=request.user)
-               return Response(serializer.data, status=status.HTTP_201_CREATED)
+               return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
           
-          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+          return Response(CustomResponse.error("Error creating the job post."), status=status.HTTP_400_BAD_REQUEST)
 
 class JobPostEditDetailAPIView(APIView):
      authentication_classes = [TokenAuthentication]
@@ -129,20 +115,24 @@ class JobPostActionAPIView(APIView):
 
 # region Job Post List Views
 
-class NewestJobPostAPIView(APIView):
+class JobPostListAPIView(CustomListAPIView):
+     queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostSerializer
 
-     def get(self, request):
-          job_posts = JobPost.objects.filter(is_accepting_applications=True)\
-               .order_by('-created_at')[:20]\
-               .select_related('role', 'experience_level', 'posted_by')
-          
-          serializer = JobPostListSerializer(job_posts, many=True)
-          
-          return Response(serializer.data, status=status.HTTP_200_OK)
+     success_message = "Successfully fetched all job posts."
+class NewestJobPostAPIView(CustomListAPIView):
+     queryset = JobPost.objects.filter(is_accepting_applications=True)\
+        .order_by('-created_at')\
+        .select_related('role', 'experience_level', 'posted_by')
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostSerializer
 
-class MatchedJobPostAPIView(ListAPIView):
+     success_message = "Successfully fetched latest job posts."
+
+class MatchedJobPostAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
      serializer_class = JobPostListSerializer
@@ -189,7 +179,7 @@ class MatchedJobPostAPIView(ListAPIView):
 
           return queryset
      
-class JobSearchListAPIView(ListAPIView):
+class JobSearchListAPIView(CustomListAPIView):
      """
      General endpoint for searching and filtering JobPost objects.
      """
