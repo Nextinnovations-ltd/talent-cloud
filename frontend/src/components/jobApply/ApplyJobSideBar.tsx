@@ -8,6 +8,7 @@ import { ActionButtons } from '../common/ApplyJob/ActionButtons';
 import { CompanyAbout } from '../common/ApplyJob/CompanyAbout';
 import AboutJob from '../common/ApplyJob/AboutJob';
 
+
 type ApplyJobSideBarProps = {
   selectedJob: Job;
   setSelectedJob: (job: Job | null) => void;
@@ -18,13 +19,13 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
   setSelectedJob,
 }) => {
   return (
-    <div className="mt-10 lg:mt-0 lg:w-[60%] border-[1px]  rounded sticky top-[100px] h-[100svh] self-start">
-      <ScrollArea className="h-[calc(100vh-120px)] p-[30px]">
+    <div className="mt-10 lg:mt-0 lg:w-[60%]   rounded sticky top-[190px] h-[100svh] self-start">
+      <ScrollArea className="h-[calc(100vh-220px)] p-[30px]">
         <h3 className="text-[24px] font-semibold">{selectedJob.title}</h3>
         
-        <CompanyHeader companyName={selectedJob.companyName} />
+        <CompanyHeader companyName={selectedJob.company_name} />
         <JobInfoGrid job={selectedJob} />
-        <SkillsSection skills={selectedJob.skills} />
+        <SkillsSection skills={[]} />
         <ActionButtons />
         
         <p className="mt-2">{selectedJob.description}</p>

@@ -19,18 +19,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "2 Days ago",
-  },
-  {
-    value: "sveltekit",
-    label: "1 Week ago",
-  },
-]
+type JobTypeOption = {
+  value: string;
+  label: string;
+};
 
-export function PostUploadedCombo() {
+interface FilterComboProps {
+  title: string;
+  data:JobTypeOption[]
+}
+
+export function FilterCombo({ title ,data}: FilterComboProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
@@ -41,21 +40,21 @@ export function PostUploadedCombo() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[157px] px-[24px]  rounded-[8px] py-[10px] justify-between"
+          className="min-w-[257px] hover:bg-white w-auto px-[24px] border-none font-medium shadow-none h-[44px] rounded-[8px] gap-2 py-[10px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Date Posted"}
-          <ChevronDown className="opacity-50" />
+            ? data.find((framework) => framework.value === value)?.label
+            : title}
+          <ChevronDown size={18} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[157px] p-0">
+      <PopoverContent className="w-[257px] p-0">
         <Command>
-          <CommandInput  placeholder="Date..." className="h-9" />
+          <CommandInput  placeholder="Search..." className="h-9" />
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {data.map((framework) => (
                 <CommandItem
                   key={framework.value}
                   value={framework.value}

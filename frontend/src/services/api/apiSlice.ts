@@ -1,16 +1,21 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, FetchBaseQueryError, FetchArgs, BaseQueryApi } from "@reduxjs/toolkit/query/react";
 import { LocalUrl } from "./apiurls";
 import {
   removeTokenFromSessionStorage,
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
-import { revertAll, setReauthToken } from "../slices/authSlice";
 import { toast } from "sonner";
+
+interface RootState {
+  auth: {
+    token: string | null;
+  };
+}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: LocalUrl,
   credentials: "include",
-  prepareHeaders: (headers, { getState }: { getState: any }) => {
+  prepareHeaders: (headers, api) => {
     if (headers.has("Content-Type")) {
       const contentType = headers.get("Content-Type");
 
@@ -23,9 +28,8 @@ const baseQuery = fetchBaseQuery({
       headers.set("Content-Type", "application/json");
     }
 
-    const token = getState().auth.token;
-
-    console.log(token);
+    const state = api.getState() as RootState;
+    const token = state.auth.token;
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -34,44 +38,14 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
-  const result: any = await baseQuery(args, api, extraOptions);
+const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: unknown) => {
+  const result = await baseQuery(args, api, extraOptions);
 
-  if (
-    result?.error?.data?.message === "Unauthenticated" &&
-    result?.error?.status === 403
-  ) {
-    const refreshResult: any = await baseQuery(
-      {
-        url: "/auth/refresh-token/",
-        method: "POST",
-      },
-      api,
-      extraOptions
-    );
-
-    if (refreshResult.data?.status) {
-      // If token refresh is successful, update the token and retry the original request
-      api.dispatch(setReauthToken(refreshResult.data.data.token));
-      return await baseQuery(args, api, extraOptions);
-    } else if (!refreshResult.data?.status) {
-      // If token refresh fails, handle the error and redirect to the login page
-      console.log("Token expired:", refreshResult);
-    
-      // Display an error message to the user
-      toast.error(refreshResult.error?.data?.message || "Session expired. Please log in again.", {
-        style: { background: "#ff7979", color: "#ffffff" },
-        className: "text-[12px]",
-      });
-    
-      // Redirect to the login page
-      window.location.href = '/auth/login'; // or window.location.replace('/auth/login')
-    
-      // Clear state and storage
-      api.dispatch(revertAll());
-      removeTokensFromLocalStorage();
-      removeTokenFromSessionStorage();
-    }
+  if ((result.error as FetchBaseQueryError)?.status === 401) {
+    // Handle unauthorized error
+    removeTokenFromSessionStorage();
+    removeTokensFromLocalStorage();
+    toast.error("Session expired. Please login again.");
   }
 
   return result;
