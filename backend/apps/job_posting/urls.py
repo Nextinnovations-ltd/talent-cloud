@@ -3,8 +3,9 @@ from .views import (
     BookmarkJobDeleteAPIView,
     CompanyJobListView,
     JobPostEditDetailAPIView,
-    JobPostListCreateAPIView,
+    JobPostCreateAPIView,
     JobPostActionAPIView,
+    JobPostListAPIView,
     JobPostMetricViewAPIView,
     IncrementJobPostViewCountAPIView,
     JobSearchListAPIView,
@@ -23,7 +24,8 @@ from .views import (
 
 urlpatterns = [
     # Endpoints related to Job Post
-    path('job-posts/', JobPostListCreateAPIView.as_view(), name='jobpost-list-create'),
+    path('job-posts/', JobPostCreateAPIView.as_view(), name='jobpost-list-create'),
+    path('job-posts/all/', JobPostListAPIView.as_view(), name='jobpost-list'),
     path('job-posts/newest/', NewestJobPostAPIView.as_view(), name='recent-jobpost-list'),
     path('job-posts/matched/', MatchedJobPostAPIView.as_view(), name='matched-jobpost-list'),
     path('job-posts/search/', JobSearchListAPIView.as_view(), name='matched-jobpost-list'),
