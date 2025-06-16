@@ -15,6 +15,7 @@ export type Job = {
   location: string;
   experience_level: string;
   experience_years: string;
+  skills:string[];
   job_type: string;
   work_type: string;
   company_name: string;
@@ -73,7 +74,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
       <div className="flex items-center gap-2">
         <img width={18} height={18} src={SKILLS} />
         <div className="text-[#6B6B6B] flex flex-wrap gap-2 items-center">
-          {['Figma', 'Photoshop', 'Illustrator', 'Docker'].slice(0, 2).map((item, index) => (
+          {job.skills.slice(0, 2).map((item, index) => (
             <Badge
               key={index}
               className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] ${isSelected && 'bg-blue-200'}`}
@@ -81,7 +82,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
               <p className="truncate">{item}</p>
             </Badge>
           ))}
-          {['Figma', 'Photoshop', 'Illustrator', 'Docker'].length > 2 && (
+          {job.skills.length > 2 && (
             <Badge className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] ${isSelected && 'bg-blue-200'}`}>
               ...
             </Badge>

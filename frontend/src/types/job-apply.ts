@@ -1,22 +1,4 @@
-import apiSlice from "../api/apiSlice";
-
-interface JobApplyCardResponse {
-    id: number;
-    title: string;
-    description: string;
-    location: string;
-    experience_level: string;
-    experience_years: string;
-    job_type: string;
-    work_type: string;
-    company_name: string;
-    skills:string[],
-    display_salary: string;
-    created_at: string;
-    applicant_count: string;
-}
-
- interface JobDetailJobApplyCardResponse {
+export  interface JOBDETAILTYPES {
     id: number;
     title: string;
     description: string;
@@ -56,16 +38,3 @@ interface JobApplyCardResponse {
     };
     job_poster_name: string | null;
   }
-  
-export const extendedJobApplySlice = apiSlice.injectEndpoints({
-    endpoints: (builder) => ({
-        getJobApplyCard: builder.query<JobApplyCardResponse[], void>({
-            query: () => '/job-posts/newest/',
-        }),
-        getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
-            query:(id)=>`/job-posts/${id}/`
-        })
-    })
-});
-
-export const { useGetJobApplyCardQuery,useGetDetailJobApplyCardQuery } = extendedJobApplySlice;
