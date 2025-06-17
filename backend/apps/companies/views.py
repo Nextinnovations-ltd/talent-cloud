@@ -1,4 +1,4 @@
-from rest_framework.views import APIView
+from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
@@ -9,7 +9,7 @@ from core.middleware.permission import TalentCloudSuperAdminPermission
 from .models import Company, Industry
 from rest_framework.permissions import AllowAny
 
-class IndustryListAPIView(APIView):
+class IndustryListAPIView(views.APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
 
@@ -22,22 +22,13 @@ class IndustryListAPIView(APIView):
           
           return Response(serializer.data)
 
-class CompanyListCreateAPIView(APIView):
+class CompanyCreateAPIView(views.APIView):
      """
-     API view to list all companies or create a new company.
-     Handles GET (list) and POST (create) requests.
+     API view to create a new company.
+     Handles POST (create) request.
      """
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
-
-     def get(self, request):
-          """
-          List all companies.
-          """
-          companies = Company.objects.all()
-          serializer = CompanySerializer(companies, many=True)
-          
-          return Response(serializer.data)
 
      def post(self, request):
           """
@@ -53,7 +44,24 @@ class CompanyListCreateAPIView(APIView):
           
           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CompanyDetailAPIView(APIView):
+class CompanyListAPIView(views.APIView):
+     """
+     API view to list all companies.
+     Handles GET request.
+     """
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+
+     def get(self, request):
+          """
+          List all companies.
+          """
+          companies = Company.objects.all()
+          serializer = CompanySerializer(companies, many=True)
+          
+          return Response(serializer.data)
+
+class CompanyDetailAPIView(views.APIView):
      """
      API view to retrieve, update, or delete a specific company.
      """
@@ -100,13 +108,14 @@ class CompanyDetailAPIView(APIView):
           company.delete()
           
           # Return a 204 No Content status for successful deletion
-          return Response(CustomResponse.success("User is authenticated."), status=status.HTTP_204_NO_CONTENT)
+          return Response(CustomResponse.success("Deleted successfully."), status=status.HTTP_200_OK)
 
-class UnauthenticatedCompanyCreateAPIView(APIView):
-     """
-     API view to create a new company without user authentication.
-     Companies created via this endpoint will NOT be automatically verified.
-     """
+class UnauthenticatedCompanyCreateAPIView(views.APIView):
+     authentication_classes = []  # Disable all authentication
+     permission_classes = [AllowAny]
+     
+     def get(self, request):
+          return Response("Hello")
 
      def post(self, request):
           """
