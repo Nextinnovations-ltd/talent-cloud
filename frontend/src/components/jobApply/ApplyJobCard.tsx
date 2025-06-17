@@ -7,6 +7,7 @@ import USER from '@/assets/User.svg'
 import SKILLS from '@/assets/Skills.svg'
 import DOT from '@/assets/Ellipse.svg'
 import { Badge } from "../ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 export type Job = {
   id: number;
@@ -58,7 +59,18 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
     }
       <div className="flex justify-between items-start">
         <img width={64} height={64} className="mb-[14px] rounded-full" src={job?.company_image_url} />
-        <img width={18} height={18} className="mb-[14px]" src={BOOKMARK} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+             <div className="w-[50px] h-[50px] rounded-full hover:bg-slate-50 flex items-center justify-center">
+             <img width={18} height={18}  src={BOOKMARK} />
+             </div>
+            </TooltipTrigger>
+            <TooltipContent className="w-[68px] mb-[5px] text-[14px] h-[38px] rounded-[16px] flex items-center justify-center bg-black text-white">
+              <p>Save</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <h4 className="font-semibold text-[18px]">{job.title}</h4>
       <h4 className="text-[#6B6B6B] text-[16px]">{job.company_name}</h4>
