@@ -1,7 +1,5 @@
 from django.conf import settings
-from django.core.mail import send_mail as django_send_mail
-
-from core.middleware.exception_handler import CustomAPIException
+from services.notification.mail.mail_service import MailService
 
 def send_verification_email(email, token, verification_code):
      verification_url = f"{settings.FRONTEND_BASE_URL}/auth/verifyemail?token={token}"
@@ -22,7 +20,7 @@ def send_verification_email(email, token, verification_code):
      Best regards,
      Talent Cloud Team
      """
-     _send_mail(
+     MailService._send_mail(
           subject,
           message,
           [email]
@@ -63,7 +61,7 @@ def send_logged_in_verification_email(email, token, verification_code):
      """
 
      # Send the email using your helper function or Django's send_mail
-     _send_mail(
+     MailService._send_mail(
           subject,
           message,
           [email]
@@ -82,7 +80,7 @@ def send_password_reset_email(email, reset_url):
      Talent Cloud Team
      """
      
-     _send_mail(
+     MailService._send_mail(
           subject,
           message,
           [email]
@@ -101,27 +99,8 @@ def send_password_reset_success_email(email):
      Talent Cloud Team
      """
      
-     _send_mail(
+     MailService._send_mail(
           subject,
           message,
           [email],
      )
-
-def _send_mail(subject, message, recipient_list):
-     """ Sending email with no template design using django 
-     email backend.
-     Args:
-     subject 
-     message
-     recipient_list
-     """
-     try:
-          django_send_mail(
-               subject,
-               message,
-               from_email=settings.EMAIL_FROM,
-               recipient_list=recipient_list
-          )
-     except Exception as e:
-          print(f"Error sending mail {str(e)}")
-          raise CustomAPIException(detail="Error Sending Email")

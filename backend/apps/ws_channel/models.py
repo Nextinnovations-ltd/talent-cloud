@@ -1,13 +1,19 @@
 from django.db import models
-from django.conf import settings
 from apps.users.models import TalentCloudUser
+from utils.notification.types import NotificationType
 from services.models import TimeStampModel
 import uuid
 
 class Notification(TimeStampModel):
     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE, related_name="notifications")
+    title = models.CharField(max_length=255, default="Notification")
     message = models.TextField()
     destination_url = models.URLField(null=True, blank=True)
+    notification_type = models.CharField(
+        max_length=50,
+        choices=[(tag.value, tag.name) for tag in NotificationType],
+        default=NotificationType.GENERIC.value
+    )
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

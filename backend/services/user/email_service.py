@@ -16,7 +16,7 @@ class AuthEmailService:
           VerifyRegisteredUser.objects.create(email=email, token=token, verification_code=verification_code, expired_at=expired_at)
           
           # Send Mail to user
-          from utils.user.mail import send_verification_email
+          from utils.user.custom_mail_types import send_verification_email
           send_verification_email(email, token, verification_code)
           
           return token
@@ -33,7 +33,7 @@ class AuthEmailService:
           VerifyLoggedInUser.objects.create(email=email, token=token, verification_code=verification_code, expired_at=expired_at)
           
           # Send Mail to user
-          from utils.user.mail import send_logged_in_verification_email
+          from utils.user.custom_mail_types import send_logged_in_verification_email
           send_logged_in_verification_email(email, token, verification_code)
           
           return token
@@ -42,12 +42,12 @@ class AuthEmailService:
      def send_password_reset_email(email, token):
           reset_url = f"{settings.FRONTEND_BASE_URL}/auth/reset-password?token={token}"
 
-          from utils.user.mail import send_password_reset_email
+          from utils.user.custom_mail_types import send_password_reset_email
           send_password_reset_email(email, reset_url)
 
      @staticmethod
      def send_password_reset_success_email(email):
-          from utils.user.mail import send_password_reset_success_email
+          from utils.user.custom_mail_types import send_password_reset_success_email
           send_password_reset_success_email(email)
      
      @staticmethod
