@@ -1,7 +1,6 @@
 import React from 'react';
 import { Job } from './ApplyJobCard';
 import { ScrollArea } from '../ui/scroll-area';
-import { CompanyHeader } from '../common/ApplyJob/CompanyHeader';
 import { JobInfoGrid } from '../common/ApplyJob/JobInfoGrid';
 import { SkillsSection } from '../common/ApplyJob/SkillsSection';
 import { ActionButtons } from '../common/ApplyJob/ActionButtons';
@@ -23,16 +22,20 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
 
   const {
-    data: jobDetails,
+    data,
     isLoading,
     error,
   } = useGetDetailJobApplyCardQuery(selectedJob?.id);
 
 
 
+  const jobDetails = data?.data;
+
+
+
   if (isLoading) {
     return (
-      <div className="mt-10 lg:mt-0 lg:w-[60%] rounded sticky top-[190px] h-[100svh] self-start animate-pulse bg-white p-[30px] space-y-6">
+      <div className="mt-10 lg:mt-0 lg:w-[60%] rounded sticky top-[190px] h-[100svh]  self-start animate-pulse bg-white p-[30px] space-y-6">
         <div className="h-6 bg-gray-200 rounded w-1/2" />
         <div className="flex items-center space-x-4">
           <div className="w-10 h-10 bg-gray-200 rounded-full" />
@@ -58,11 +61,11 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
   }
 
   return (
-    <div className="mt-10 lg:mt-0 lg:w-[60%]  rounded sticky top-[190px] h-[100svh] self-start">
-      <ScrollArea className="h-[calc(100vh-220px)] p-[30px]">
-        <h3 className="text-[24px] font-semibold">{jobDetails?.title || selectedJob.title}</h3>
+    <div className="mt-10 lg:mt-0 lg:w-[60%]  rounded sticky top-[190px] h-[100svh]  self-start">
+      <ScrollArea className="h-[calc(100vh-200px)] p-[30px]">
+        <h3 className="text-[24px] mb-[24px] font-semibold">{jobDetails?.title || selectedJob.title}</h3>
         
-        <CompanyHeader companyLogo={jobDetails?.company?.image_url || ''} companyName={jobDetails?.company?.name || ''} />
+        {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
         <JobInfoGrid job={selectedJob} />
         <SkillsSection skills={jobDetails?.skills || []} />
         <ActionButtons />
@@ -71,7 +74,6 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
       {
         jobDetails?.company?.id &&   <CompanyAbout job={jobDetails} />
       }
-
         <AboutJob/>
 
         <button

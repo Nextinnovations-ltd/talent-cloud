@@ -62,7 +62,16 @@ const JOBTYPEDATA = [
       },
   ]
 
-export const ApplyJobFilters = () => {
+interface ApplyJobFiltersProps {
+  onFiltersChange: (filters: {
+    job_type?: string;
+    work_type?: string;
+    salary_mode?: string;
+    project_duration?: string;
+  }) => void;
+}
+
+export const ApplyJobFilters: React.FC<ApplyJobFiltersProps> = ({ onFiltersChange }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollY } = useScroll();
     
@@ -73,6 +82,10 @@ export const ApplyJobFilters = () => {
         [0, 100],
         ["0px 0px 0px rgba(0,0,0,0)", "0px 2px 6px rgba(0,0,0,0.08)"]
     );
+
+    const handleFilterChange = (key: string, value: string) => {
+        onFiltersChange({ [key]: value });
+    };
 
     return (
         <motion.div
@@ -90,10 +103,30 @@ export const ApplyJobFilters = () => {
                 ease: "easeOut"
             }}
         >
-           <FilterCombo data={JOBTYPEDATA} title="Work type"/>
-           <FilterCombo data={WORKYPEDATA} title="Remote"/>
-           <FilterCombo data={SALARYMODETYPE} title="Salary"/>
-           <FilterCombo data={PROJECTDURATIONTYPE} title="Project Duration"/>
+           <FilterCombo 
+                data={JOBTYPEDATA} 
+                title="Work type" 
+                onFilterChange={(value) => handleFilterChange('job_type', value)}
+                filterKey="job_type"
+           />
+           <FilterCombo 
+                data={WORKYPEDATA} 
+                title="Remote" 
+                onFilterChange={(value) => handleFilterChange('work_type', value)}
+                filterKey="work_type"
+           />
+           <FilterCombo 
+                data={SALARYMODETYPE} 
+                title="Salary" 
+                onFilterChange={(value) => handleFilterChange('salary_mode', value)}
+                filterKey="salary_mode"
+           />
+           <FilterCombo 
+                data={PROJECTDURATIONTYPE} 
+                title="Project Duration" 
+                onFilterChange={(value) => handleFilterChange('project_duration', value)}
+                filterKey="project_duration"
+           />
         </motion.div>
     )
 }

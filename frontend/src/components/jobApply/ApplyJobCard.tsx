@@ -14,14 +14,16 @@ export type Job = {
   description: string;
   location: string;
   experience_level: string;
-  experience_years: string;
-  skills:string[];
+  experience_years: string | null;
+  skills: string[];
   job_type: string;
   work_type: string;
   company_name: string;
+  company_image_url: string;
   display_salary: string;
   created_at: string;
-  applicant_count: string;
+  applicant_count: number;
+  is_new: boolean;
 };
 
 export type JobList = Job[];
@@ -46,14 +48,16 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
   return (
     <div
       ref={cardRef}
-      className={`p-[30px] border-[#CBD5E1B2] relative border-[2px] cursor-pointer min-h-[429px] w-[376px] mx-auto rounded-[17px] transition-colors duration-200 flex flex-col ${
-        isSelected ? "bg-blue-100 border-blue-500" : "hover:bg-gray-100"
+      className={`p-[30px] border-[#CBD5E1B2] relative border-[2px] cursor-pointer min-h-[429px] w-[400px] mx-auto rounded-[17px] transition-colors duration-200 flex flex-col ${
+        isSelected ? " border-blue-500 border-[3px]" : "hover:border-blue-500"
       }`}
       onClick={() => onClick(job)}
     >
-      <img width={64} className="absolute top-[-15px] left-[-2px]" height={48} src={NEWIMAGE} />
+    {
+      job?.is_new &&   <img width={64} className="absolute top-[-15px] left-[-2px]" height={48} src={NEWIMAGE} />
+    }
       <div className="flex justify-between items-start">
-        <img width={64} height={64} className="mb-[14px]" src={'https://1000logos.net/wp-content/uploads/2017/05/Netflix-Logo-2006.png'} />
+        <img width={64} height={64} className="mb-[14px] rounded-full" src={job?.company_image_url} />
         <img width={18} height={18} className="mb-[14px]" src={BOOKMARK} />
       </div>
       <h4 className="font-semibold text-[18px]">{job.title}</h4>

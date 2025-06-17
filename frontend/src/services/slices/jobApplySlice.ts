@@ -6,24 +6,30 @@ interface job  {
     description: string;
     location: string;
     experience_level: string;
-    experience_years: string;
+    experience_years: string | null;
     job_type: string;
     work_type: string;
     company_name: string;
-    skills:string[],
+    company_image_url: string;
+    skills: string[];
     display_salary: string;
     created_at: string;
-    applicant_count: string;
+    applicant_count: number;
+    is_new: boolean;
 }
 
 interface JobApplyCardResponse {
     status: boolean;
     message: string;
-    data: job[]
-    
+    data: {
+        count: number;
+        next: string | null;
+        previous: string | null;
+        results: job[];
+    }
 }
 
- interface JobDetailJobApplyCardResponse {
+interface JobDetailCard {
     id: number;
     title: string;
     description: string;
@@ -62,12 +68,36 @@ interface JobApplyCardResponse {
       is_verified: boolean;
     };
     job_poster_name: string | null;
-  }
+}
+
+interface JobDetailJobApplyCardResponse {
+    status: boolean;
+    message: string;
+    data: JobDetailCard
+}
+
+interface JobApplyCardParams {
+    page?: number;
+    job_type?: string;
+    work_type?: string;
+    salary_mode?: string;
+    project_duration?: string;
+}
   
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getJobApplyCard: builder.query<JobApplyCardResponse, void>({
-            query: () => '/job-posts/newest/',
+        getJobApplyCard: builder.query<JobApplyCardResponse, JobApplyCardParams>({
+            query: (params) => ({
+                url: '/job-posts/search/',
+                params: {
+                    page: params.page,
+                    job_type: params.job_type,
+                    work_type: params.work_type,
+                    salary_mode: params.salary_mode,
+                    project_duration: params.project_duration,
+                    ordering: '-created_at'
+                }
+            }),
         }),
         getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
             query:(id)=>`/job-posts/${id}/`
@@ -75,4 +105,4 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
     })
 });
 
-export const { useGetJobApplyCardQuery,useGetDetailJobApplyCardQuery } = extendedJobApplySlice;
+export const { useGetJobApplyCardQuery, useGetDetailJobApplyCardQuery } = extendedJobApplySlice;
