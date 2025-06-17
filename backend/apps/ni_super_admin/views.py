@@ -2,6 +2,7 @@ from os import name
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from core.constants.constants import PARENT_COMPANY, ROLES
@@ -49,6 +50,34 @@ class NIAdminListAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+# region Company Approval Process
+
+class CompanyApprovalAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def post(self, request, slug):
+          try:
+               company = Company.objects.get(slug=slug)
+          except Company.DoesNotExist:
+               raise NotFound("Company not found!")
+          
+          if company.is_verified:
+               return Response(
+                    CustomResponse.error("Company already verified."),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          
+          company.is_verified = True
+          company.save()
+          
+          return Response(
+               CustomResponse.error("Company approved successfully."),
+               status=status.HTTP_200_OK
+          )
+
+# endregion Company Approval Process
+
 # Tempory Endpoint to pair Superadmin with NI Parent Company
 class SuperAdminPairingAPIView(APIView):
      authentication_classes = [TokenAuthentication]
@@ -66,10 +95,5 @@ class SuperAdminPairingAPIView(APIView):
                print("Parent company not exist yet. Creating...")
           
           super_admin_list.update(company=parent_company)
-          
-          # for super_admin in super_admin_list:
-          #      super_admin.company = parent_company
-               
-          #      super_admin.save()
           
           return Response(CustomResponse.success('Successfully paired superadmin with parent company.'), status=status.HTTP_200_OK)
