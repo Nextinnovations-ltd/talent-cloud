@@ -1,24 +1,5 @@
 from django.conf import settings
-from django.core.mail import send_mail as django_send_mail
-
-def _send_mail(subject, message, recipient_list):
-     """ Sending email with no template design using django 
-     email backend.
-     Args:
-     subject 
-     message
-     recipient_list
-     """
-     try:
-          django_send_mail(
-               subject,
-               message,
-               from_email=settings.EMAIL_FROM,
-               recipient_list=recipient_list
-          )
-     except Exception as e:
-          print(f"Error sending mail {str(e)}")
-          raise
+from services.notification.mail.mail_service import MailService
 
 def send_company_verification_email(company_email, token, verification_code):
      """
@@ -57,7 +38,7 @@ def send_company_verification_email(company_email, token, verification_code):
      """
 
      # Send the email using your helper function or Django's send_mail
-     _send_mail(
+     MailService._send_mail(
           subject,
           message,
           [company_email]

@@ -173,7 +173,7 @@ class AuthenticationService:
                     verify_request.verification_code = TokenUtil.generate_verification_code()
                     verify_request.save()
                     
-                    from utils.user.mail import send_verification_email
+                    from utils.user.custom_mail_types import send_verification_email
                     send_verification_email(email, token, verify_request.verification_code)
                return 'Verification code is sent back to user.'
           else:
