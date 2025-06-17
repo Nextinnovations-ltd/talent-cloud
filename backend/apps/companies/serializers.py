@@ -30,6 +30,11 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
                'id', 'name', 'description', 'image_url', 'industry', 'size', 
                'founded_date', 'is_verified'
           ]
+     
+class CompanyApproveSerializer(serializers.ModelSerializer):
+     class Meta:
+          model=Company
+          fields = ['id', 'is_verified']
 
 class IndustrySerializer(serializers.ModelSerializer):
      class Meta:
