@@ -200,7 +200,8 @@ class JobSearchListAPIView(CustomListAPIView):
      filterset_class = JobPostFilter
      ordering_fields = [ 'created_at', 'salary_min', 'experience_years' ]
      ordering = ['-created_at']    # Set default ordering
-     search_fields = [ 'title', 'description', 'location', 'specialization__name', 'role__name' ] # Fields for searching (eg. ?search=keyword)
+     search_fields = [ 'title', 'description', 'location' ] # Fields for searching (eg. ?search=keyword)
+     success_message = "Jobs Fetched successfully"
 
      def get_queryset(self):
           """

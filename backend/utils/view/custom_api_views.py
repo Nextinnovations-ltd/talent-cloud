@@ -8,7 +8,7 @@ class CustomListAPIView(ListAPIView):
      use_pagination = True
      
      def list(self, request, *args, **kwargs):
-          queryset = self.get_queryset()
+          queryset = self.filter_queryset(self.get_queryset())
 
           if self.use_pagination and self.paginator is not None:
                page = self.paginate_queryset(queryset)
