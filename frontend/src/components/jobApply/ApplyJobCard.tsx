@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import NEWIMAGE from '@/assets/New.png';
 import BOOKMARK from '@/assets/Bookmark.svg'
+import TOOLTIP from '@/assets/BookmarkTooltip.png'
+
 import SALARY from '@/assets/Dollar.svg'
 import USER from '@/assets/User.svg'
 import SKILLS from '@/assets/Skills.svg'
@@ -66,8 +68,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
              <img width={18} height={18}  src={BOOKMARK} />
              </div>
             </TooltipTrigger>
-            <TooltipContent className="w-[68px] mb-[5px] text-[14px] h-[38px] rounded-[16px] flex items-center justify-center bg-black text-white">
-              <p>Save</p>
+            <TooltipContent  >
+             <img width={68} src={TOOLTIP}/>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

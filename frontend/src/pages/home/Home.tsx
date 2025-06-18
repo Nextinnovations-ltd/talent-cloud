@@ -18,8 +18,8 @@ export const Home: React.FC = () => {
   const [filters, setFilters] = useState({
     job_type: searchParams.get('job_type') || '',
     work_type: searchParams.get('work_type') || '',
-    salary_mode: searchParams.get('salary_mode') || '',
     project_duration: searchParams.get('project_duration') || '',
+    salary_rate:searchParams.get('salary_rate') || ''
   });
 
   const { data, isLoading, isFetching } = useGetJobApplyCardQuery({ 
@@ -50,6 +50,7 @@ export const Home: React.FC = () => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
     setPage(1); // Reset page when filters change
+    setSelectedJob(null); // Clear selected job when filters change
 
     // Update URL with new filters
     const params = new URLSearchParams();

@@ -1,4 +1,5 @@
 import { FilterCombo } from "../common/ApplyJob/FilterCombo";
+import { SalaryRangeFilter } from "../common/ApplyJob/SalaryRangeFilter";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
@@ -28,16 +29,16 @@ const JOBTYPEDATA = [
       },
   ]
   
-  const SALARYMODETYPE = [
-    {
-        value: "fixed",
-        label: "Fixed",
-      },
-      {
-        value: "range",
-        label: "Range",
-      },
-  ]
+  //const SALARYMODETYPE = [
+ //   {
+  //      value: "fixed",
+   //     label: "Fixed",
+    //  },
+     // {
+       // value: "range",
+        //label: "Range",
+      //},
+  //]
 
   const PROJECTDURATIONTYPE = [
     {
@@ -68,6 +69,7 @@ interface ApplyJobFiltersProps {
     work_type?: string;
     salary_mode?: string;
     project_duration?: string;
+    salary_rate?: string;
   }) => void;
 }
 
@@ -115,11 +117,9 @@ export const ApplyJobFilters: React.FC<ApplyJobFiltersProps> = ({ onFiltersChang
                 onFilterChange={(value) => handleFilterChange('work_type', value)}
                 filterKey="work_type"
            />
-           <FilterCombo 
-                data={SALARYMODETYPE} 
-                title="Salary" 
-                onFilterChange={(value) => handleFilterChange('salary_mode', value)}
-                filterKey="salary_mode"
+           <SalaryRangeFilter
+                title="Salary Range"
+                onFilterChange={(value) => handleFilterChange('salary_rate', value)}
            />
            <FilterCombo 
                 data={PROJECTDURATIONTYPE} 

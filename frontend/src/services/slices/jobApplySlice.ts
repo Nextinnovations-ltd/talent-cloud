@@ -80,8 +80,8 @@ interface JobApplyCardParams {
     page?: number;
     job_type?: string;
     work_type?: string;
-    salary_mode?: string;
     project_duration?: string;
+    salary_rate?:string
 }
   
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
@@ -93,8 +93,8 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
                     page: params.page,
                     job_type: params.job_type,
                     work_type: params.work_type,
-                    salary_mode: params.salary_mode,
                     project_duration: params.project_duration,
+                    salary_rate:params.salary_rate,
                     ordering: '-created_at'
                 }
             }),
