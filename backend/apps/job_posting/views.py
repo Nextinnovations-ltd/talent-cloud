@@ -84,7 +84,7 @@ class JobPostActionAPIView(APIView):
                # Create or get the view record
                JobPostView.objects.get_or_create(job_post=job_post, job_seeker=job_seeker)
                
-          serializer = JobPostDetailSerializer(job_post)
+          serializer = JobPostDetailSerializer(job_post, context={ 'request': request }) # add the request context to get the current authenticated user for bookmarked flag
           
           return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
 
