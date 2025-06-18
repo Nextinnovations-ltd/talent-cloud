@@ -30,6 +30,7 @@ class JobPostListSerializer(serializers.ModelSerializer):
      company_image_url = serializers.SerializerMethodField()
      display_salary = serializers.SerializerMethodField()
      is_new = serializers.SerializerMethodField()
+     is_bookmarked = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -49,6 +50,7 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'created_at',
                'applicant_count',
                'is_new',
+               'is_bookmarked'
           ]
 
      def get_company_name(self, obj):
@@ -81,6 +83,18 @@ class JobPostListSerializer(serializers.ModelSerializer):
                return False
 
           return not JobPostView.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+     
+     def get_is_bookmarked(self, obj):
+          user = self.context['request'].user
+
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except:
+               return False
+
+          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()
@@ -92,9 +106,9 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      project_duration = serializers.CharField(source='get_project_duration_display', allow_null=True)
      salary_mode = serializers.CharField(source='get_salary_mode_display', allow_null=True)
      salary_type = serializers.CharField(source='get_salary_type_display', allow_null=True)
-     
      company = serializers.SerializerMethodField()
      job_poster_name = serializers.SerializerMethodField()
+     is_bookmarked = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -104,7 +118,8 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
                'job_type', 'work_type', 'number_of_positions', 'salary_mode', 'salary_type',
                'salary_min', 'salary_max', 'salary_fixed', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
-               'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name'
+               'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name',
+               'is_bookmarked'
           ]
 
      def get_company(self, obj):
@@ -118,7 +133,18 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      def get_job_poster_name(self, obj):
           return getattr(obj.posted_by, 'name', None)
 
+     def get_is_bookmarked(self, obj):
+          user = self.context['request'].user
 
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except:
+               return False
+
+          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+     
 class JobApplicationSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
