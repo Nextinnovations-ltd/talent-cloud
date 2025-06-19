@@ -1,6 +1,7 @@
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import MethodNotAllowed
 from utils.response import CustomResponse
 
 class CustomListAPIView(ListAPIView):
@@ -60,6 +61,22 @@ class CustomCreateAPIView(CreateAPIView):
                status=status.HTTP_201_CREATED
           )
 
+class CustomUpdateAPIView(UpdateAPIView):
+     update_message = "Fetched successfully"
+
+     def patch(self, request, *args, **kwargs):
+          instance = self.get_object()
+          serializer = self.get_serializer(instance, data=request.data, partial=True)
+          
+          serializer.is_valid(raise_exception=True)
+          
+          self.perform_update(serializer)
+
+          return Response(
+               CustomResponse.success(self.update_message, serializer.data),
+               status=status.HTTP_200_OK
+          )
+
 class CustomRetrieveDestroyAPIView(RetrieveDestroyAPIView):
      retrieve_message = "Fetched successfully"
      destroy_message = "Deleted successfully"
@@ -97,23 +114,25 @@ class CustomRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
                status=status.HTTP_200_OK
           )
 
-     def update(self, request, *args, **kwargs):
-          partial = kwargs.pop('partial', False)
+     def patch(self, request, *args, **kwargs):
           instance = self.get_object()
-          serializer = self.get_serializer(instance, data=request.data, partial=partial)
-
+          serializer = self.get_serializer(instance, data=request.data, partial=True)
+          
           if not serializer.is_valid():
                return Response(
                     CustomResponse.error("Validation failed", serializer.errors),
                     status=status.HTTP_400_BAD_REQUEST
                )
-
-          self.perform_update(serializer)
           
+          self.perform_update(serializer)
+
           return Response(
                CustomResponse.success(self.update_message, serializer.data),
                status=status.HTTP_200_OK
           )
+     
+     def put(self, request, *args, **kwargs):
+          raise MethodNotAllowed("PUT")
 
      def destroy(self, request, *args, **kwargs):
           instance = self.get_object()

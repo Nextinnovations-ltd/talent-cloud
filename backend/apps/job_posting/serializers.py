@@ -4,6 +4,33 @@ from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplica
 from apps.companies.serializers import CompanyDetailSerializer
 from utils.job_posting.job_posting_utils import format_salary
 
+class JobPostDisplayMixin:
+     def get_display_salary(self, obj):
+          if obj.salary_fixed:
+               fixed = format_salary(obj.salary_fixed)
+               return f"{fixed}MMK/{obj.get_salary_type_display()}"
+          elif obj.salary_min and obj.salary_max:
+               salary_min = format_salary(obj.salary_min)
+               salary_max = format_salary(obj.salary_max)
+               return f"{salary_min}-{salary_max}MMK/{obj.get_salary_type_display()}"
+          return "Not specified"
+
+     def get_company_name(self, obj):
+          return getattr(getattr(obj.posted_by, 'company', None), 'name', None)
+
+     def get_company_image_url(self, obj):
+          return getattr(getattr(obj.posted_by, 'company', None), 'image_url', None)
+
+     def get_is_bookmarked(self, obj):
+          user = self.context['request'].user
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except Exception:
+               return False
+          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+
 class JobPostSerializer(ModelSerializer):
      class Meta:
           model=JobPost
@@ -53,24 +80,18 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'is_bookmarked'
           ]
 
+     # Use JobPostDisplayMixin methods except get_is_new
      def get_company_name(self, obj):
-          # Handle company Null
-          return getattr(getattr(obj.posted_by, 'company', None), 'name', None)
-     
+          return JobPostDisplayMixin.get_company_name(self, obj)
+
      def get_company_image_url(self, obj):
-          # Handle company Null
-          return getattr(getattr(obj.posted_by, 'company', None), 'image_url', None)
-     
+          return JobPostDisplayMixin.get_company_image_url(self, obj)
+
      def get_display_salary(self, obj):
-          if obj.salary_fixed:
-               fixed=format_salary(obj.salary_fixed)
-               return f"{fixed} ({obj.get_salary_type_display()})"
-          elif obj.salary_min and obj.salary_max:
-               salary_min = format_salary(obj.salary_min)
-               salary_max = format_salary(obj.salary_max)
-               return f"{salary_min}-{salary_max}MMK/{obj.get_salary_type_display()}"
-          
-          return "Not specified"
+          return JobPostDisplayMixin.get_display_salary(self, obj)
+
+     def get_is_bookmarked(self, obj):
+          return JobPostDisplayMixin.get_is_bookmarked(self, obj)
      
      def get_is_new(self, obj):
           user = self.context['request'].user
@@ -83,18 +104,7 @@ class JobPostListSerializer(serializers.ModelSerializer):
                return False
 
           return not JobPostView.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
-     
-     def get_is_bookmarked(self, obj):
-          user = self.context['request'].user
 
-          if not user.is_authenticated:
-               return False
-          try:
-               job_seeker = user.jobseeker
-          except:
-               return False
-
-          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()
@@ -104,8 +114,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      job_type = serializers.CharField(source='get_job_type_display')
      work_type = serializers.CharField(source='get_work_type_display')
      project_duration = serializers.CharField(source='get_project_duration_display', allow_null=True)
-     salary_mode = serializers.CharField(source='get_salary_mode_display', allow_null=True)
-     salary_type = serializers.CharField(source='get_salary_type_display', allow_null=True)
+     display_salary = serializers.SerializerMethodField()
      company = serializers.SerializerMethodField()
      job_poster_name = serializers.SerializerMethodField()
      is_bookmarked = serializers.SerializerMethodField()
@@ -115,11 +124,10 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
           fields = [
                'id', 'title', 'description', 'responsibilities', 'requirements', 'offered_benefits', 
                'location', 'specialization', 'role', 'skills', 'experience_level', 'experience_years', 
-               'job_type', 'work_type', 'number_of_positions', 'salary_mode', 'salary_type',
-               'salary_min', 'salary_max', 'salary_fixed', 'is_salary_negotiable',
+               'job_type', 'work_type', 'number_of_positions', 'display_salary', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
                'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name',
-               'is_bookmarked'
+               'is_bookmarked', 'created_at'
           ]
 
      def get_company(self, obj):
@@ -134,16 +142,10 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
           return getattr(obj.posted_by, 'name', None)
 
      def get_is_bookmarked(self, obj):
-          user = self.context['request'].user
-
-          if not user.is_authenticated:
-               return False
-          try:
-               job_seeker = user.jobseeker
-          except:
-               return False
-
-          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+          return JobPostDisplayMixin.get_is_bookmarked(self, obj)
+     
+     def get_display_salary(self, obj):
+          return JobPostDisplayMixin.get_display_salary(self, obj)
      
 class JobApplicationSerializer(ModelSerializer):
      class Meta:
