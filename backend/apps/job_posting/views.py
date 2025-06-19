@@ -9,7 +9,8 @@ from rest_framework.exceptions import NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
-from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView
+from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, JobPostView
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.job_posting.serializers import (
     BookmarkedJobSerializer,
     JobApplicationCreateSerializer,
@@ -18,7 +19,6 @@ from apps.job_posting.serializers import (
     JobPostDetailSerializer,
     JobPostListSerializer,
     JobPostSerializer,
-    JobPostMetricSerializer
 )
 from apps.job_seekers.models import JobSeeker
 from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
@@ -34,6 +34,7 @@ from core.middleware.permission import (
 
 # region Job Post Views
 
+@extend_schema(tags=["Job Post"])
 class JobPostCreateAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -47,6 +48,7 @@ class JobPostCreateAPIView(APIView):
           
           return Response(CustomResponse.error("Error creating the job post."), status=status.HTTP_400_BAD_REQUEST)
 
+@extend_schema(tags=["Job Post"])
 class JobPostEditDetailAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [IsCompanyAdminOrSuperadminForJobPost]
@@ -60,6 +62,7 @@ class JobPostEditDetailAPIView(APIView):
           
           return Response(CustomResponse.success("Successfully fetched job post details", serializer.data), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Post"])
 class JobPostActionAPIView(APIView):
      authentication_classes = [TokenAuthentication]
 
@@ -88,17 +91,17 @@ class JobPostActionAPIView(APIView):
           
           return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
 
-     def put(self, request, pk):
-          instance = self.get_object(pk)
-          self.check_object_permissions(request, instance)
+     # def put(self, request, pk):
+     #      instance = self.get_object(pk)
+     #      self.check_object_permissions(request, instance)
           
-          serializer = JobPostSerializer(instance, data=request.data)
+     #      serializer = JobPostSerializer(instance, data=request.data)
           
-          if serializer.is_valid():
-               serializer.save()
-               return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
+     #      if serializer.is_valid():
+     #           serializer.save()
+     #           return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
           
-          return Response(CustomResponse.error("Validation errors", serializer.errors) , status=status.HTTP_400_BAD_REQUEST)
+     #      return Response(CustomResponse.error("Validation errors", serializer.errors) , status=status.HTTP_400_BAD_REQUEST)
 
      def patch(self, request, pk):
           instance = self.get_object(pk)
@@ -108,7 +111,7 @@ class JobPostActionAPIView(APIView):
           
           if serializer.is_valid():
                serializer.save()
-               return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
+               return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
           
           return Response(CustomResponse.error("Error updating job post.", serializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
@@ -124,6 +127,7 @@ class JobPostActionAPIView(APIView):
 
 # region Job Post List Views
 
+@extend_schema(tags=["Job Post"])
 class JobPostListAPIView(CustomListAPIView):
      queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
      authentication_classes = [TokenAuthentication]
@@ -132,6 +136,7 @@ class JobPostListAPIView(CustomListAPIView):
 
      success_message = "Successfully fetched all job posts."
 
+@extend_schema(tags=["Job Post"])
 class NewestJobPostAPIView(CustomListAPIView):
      queryset = JobPost.objects.filter(is_accepting_applications=True)\
         .order_by('-created_at')\
@@ -142,6 +147,7 @@ class NewestJobPostAPIView(CustomListAPIView):
 
      success_message = "Successfully fetched latest job posts."
 
+@extend_schema(tags=["Job Post"])
 class MatchedJobPostAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
@@ -188,7 +194,8 @@ class MatchedJobPostAPIView(CustomListAPIView):
           )
 
           return queryset
-     
+
+@extend_schema(tags=["Job Post"])
 class JobSearchListAPIView(CustomListAPIView):
      """
      General endpoint for searching and filtering JobPost objects.
@@ -210,11 +217,6 @@ class JobSearchListAPIView(CustomListAPIView):
           """
           queryset = JobPost.objects.filter(is_accepting_applications=True)
 
-          # Apply the default date filter
-          # today = date.today()
-          # date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-          # queryset = queryset.filter(date_filter_q)
-
           queryset = queryset.distinct()
 
           # select_related and prefetch_related for optimization
@@ -228,33 +230,51 @@ class JobSearchListAPIView(CustomListAPIView):
 
 # region Job Post Metric Views
 
-class JobPostMetricViewAPIView(APIView):
+# @extend_schema_view(get=extend_schema(tags=["Job Post"]))
+# class JobPostMetricViewAPIView(APIView):
+#      authentication_classes = [TokenAuthentication]
+#      permission_classes = [TalentCloudSuperAdminPermission]
+
+#      def get(self, request, pk):
+#           metric = get_object_or_404(JobPostMetric, job_post_id=pk)
+#           serializer = JobPostMetricSerializer(metric)
+          
+#           return Response(serializer.data, status=status.HTTP_200_OK)
+
+# @extend_schema_view(get=extend_schema(tags=["Job Post"]))
+# class IncrementJobPostViewCountAPIView(APIView):
+#      authentication_classes = [TokenAuthentication]
+#      permission_classes = [TalentCloudSuperAdminPermission]
+
+#      def post(self, request, pk):
+#           metric, created = JobPostMetric.objects.get_or_create(job_post_id=pk)
+          
+#           metric.view_count += 1
+#           metric.save()
+          
+#           return Response({'view_count': metric.view_count}, status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Company Job Post"])
+class CompanyJobListView(CustomListAPIView):
+     """
+     API endpoint for Admin/Superadmin to list all job posts for their company.
+     URL: /api/v1/company-job-posts/ (GET)
+     """
+     serializer_class = JobPostListSerializer
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
+     use_pagination = False
 
-     def get(self, request, pk):
-          metric = get_object_or_404(JobPostMetric, job_post_id=pk)
-          serializer = JobPostMetricSerializer(metric)
-          
-          return Response(serializer.data, status=status.HTTP_200_OK)
-
-class IncrementJobPostViewCountAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
-
-     def post(self, request, pk):
-          metric, created = JobPostMetric.objects.get_or_create(job_post_id=pk)
-          
-          metric.view_count += 1
-          metric.save()
-          
-          return Response({'view_count': metric.view_count}, status=status.HTTP_200_OK)
+     def get_queryset(self):
+          # Filter job posts by admin/superadmin
+          return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post Metric Views
 
 
 # region Job Application Views
 
+@extend_schema(tags=["Job Post-Application"])
 class JobApplicationCreateView(CustomCreateAPIView):
      """
      API endpoint for Job Seekers to apply for a job post.
@@ -279,6 +299,7 @@ class JobApplicationCreateView(CustomCreateAPIView):
 
           serializer.save(job_post=job_post, job_seeker=job_seeker)
 
+@extend_schema(tags=["Job Post-Application"])
 class JobSeekerApplicationListView(CustomListAPIView):
      """
      API endpoint for a Job Seeker to list their own applications.
@@ -293,6 +314,7 @@ class JobSeekerApplicationListView(CustomListAPIView):
           job_seeker = get_object_or_404(JobSeeker, user=self.request.user)
           return JobApplication.objects.filter(job_seeker=job_seeker)
 
+@extend_schema(tags=["Job Post-Application"])
 class JobSeekerApplicationDetailView(CustomRetrieveDestroyAPIView):
      """
      API endpoint for a Job Seeker to view or withdraw a specific application.
@@ -303,20 +325,7 @@ class JobSeekerApplicationDetailView(CustomRetrieveDestroyAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission, IsOwnerOfApplication]
 
-class CompanyJobListView(CustomListAPIView):
-     """
-     API endpoint for Admin/Superadmin to list all job posts for their company.
-     URL: /api/v1/company-job-posts/ (GET)
-     """
-     serializer_class = JobPostListSerializer
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
-     use_pagination = False
-
-     def get_queryset(self):
-          # Filter job posts by admin/superadmin
-          return JobPost.objects.filter(posted_by=self.request.user)
-
+@extend_schema(tags=["Company Job Post-Application"])
 class CompanyJobApplicationsListView(CustomListAPIView):
      """
      API endpoint for Admin/Superadmin to list applications for a specific job post in their company.
@@ -340,6 +349,13 @@ class CompanyJobApplicationsListView(CustomListAPIView):
           # Filter applications by the job post
           return JobApplication.objects.filter(job_post=job_post)
 
+# @extend_schema(tags=["Company Job Post-Application"])
+@extend_schema_view(
+    get=extend_schema(tags=["Company Job Post-Application"]),
+    patch=extend_schema(tags=["Company Job Post-Application"]),
+    delete=extend_schema(tags=["Company Job Post-Application"]),
+    put=extend_schema(exclude=True),  # Hides PUT
+)
 class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
      """
      API endpoint for Admin/Superadmin to view, update, or delete a specific application.
@@ -351,21 +367,16 @@ class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
      permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
 
      def get_serializer_class(self):
-          if self.request.method in ['PATCH', 'PUT']:
+          if self.request.method in ['PATCH']:
                return JobApplicationStatusUpdateSerializer
           return self.serializer_class
-
-     def perform_update(self, serializer):
-          serializer.save()
-
-     def perform_destroy(self, instance):
-          instance.delete()
 
 # endregion Job Application Views
 
 
 # region Bookmarked Job Views
 
+@extend_schema(tags=["Job Post-Bookmark"])
 class BookmarkJobView(APIView):
      """
      API endpoint for Job Seekers to bookmark or unbookmark a job post.
@@ -380,15 +391,14 @@ class BookmarkJobView(APIView):
 
           # Check if already bookmarked
           if BookmarkedJob.objects.filter(job_post=job_post, job_seeker=job_seeker).exists():
-               return Response(
-                    {"detail": "Job already bookmarked."},
-                    status=status.HTTP_400_BAD_REQUEST
-               )
+               return Response(CustomResponse.error("Job is already bookmarked."), status=status.HTTP_400_BAD_REQUEST)
 
           bookmarked_job = BookmarkedJob.objects.create(job_post=job_post, job_seeker=job_seeker)
           serializer = BookmarkedJobSerializer(bookmarked_job)
-          return Response(serializer.data, status=status.HTTP_201_CREATED)
+          
+          return Response(CustomResponse.success("Bookmarked the job.", serializer.data), status=status.HTTP_201_CREATED)
 
+@extend_schema(tags=["Job Post-Bookmark"])
 class BookmarkJobDeleteAPIView(APIView):
      """
      API endpoint for Job Seekers to delete a bookmarked job.
@@ -405,6 +415,7 @@ class BookmarkJobDeleteAPIView(APIView):
 
           return Response(CustomResponse.success("Successfully deleted the job post bookmark."), status=status.HTTP_204_NO_CONTENT)
 
+@extend_schema(tags=["Job Post-Bookmark"])
 class JobSeekerBookmarkedJobListView(CustomListAPIView):
      """
      API endpoint for a Job Seeker to list their bookmarked jobs.
@@ -418,20 +429,5 @@ class JobSeekerBookmarkedJobListView(CustomListAPIView):
      def get_queryset(self):
           job_seeker = get_object_or_404(JobSeeker, user=self.request.user)
           return BookmarkedJob.objects.filter(job_seeker=job_seeker)
-
-class IsBookmarkedView(APIView):
-     """
-     API endpoint for a Job Seeker to check if a specific job post is bookmarked.
-     URL: /api/my-bookmarks/{bookmark_id}/is_bookmarked/ (GET)
-     """
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-
-     def get(self, request, bookmark_id):
-          job_seeker = get_object_or_404(JobSeeker, user=request.user)
-
-          is_bookmarked = BookmarkedJob.objects.filter(id=bookmark_id, job_seeker=job_seeker).exists()
-
-          return Response({"is_bookmarked": is_bookmarked}, status=status.HTTP_200_OK)
 
 # endregion Bookmarked Job Views

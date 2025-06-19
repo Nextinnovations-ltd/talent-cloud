@@ -6,12 +6,9 @@ from .views import (
     JobPostCreateAPIView,
     JobPostActionAPIView,
     JobPostListAPIView,
-    JobPostMetricViewAPIView,
-    IncrementJobPostViewCountAPIView,
     JobSearchListAPIView,
     MatchedJobPostAPIView,
     NewestJobPostAPIView,
-    
     JobApplicationCreateView,
     JobSeekerApplicationListView,
     JobSeekerApplicationDetailView,
@@ -19,7 +16,6 @@ from .views import (
     CompanyApplicationDetailView,
     BookmarkJobView,
     JobSeekerBookmarkedJobListView,
-    IsBookmarkedView,
 )
 
 urlpatterns = [
@@ -46,8 +42,7 @@ urlpatterns = [
     path('my-bookmarks/', JobSeekerBookmarkedJobListView.as_view(), name='my-bookmarks-list'),
     path('job-posts/<int:job_post_id>/bookmark/', BookmarkJobView.as_view(), name='jobpost-bookmark'), # POST
     path('my-bookmarks/<int:bookmark_id>/', BookmarkJobDeleteAPIView.as_view(), name='delete-jobpost-bookmark'), # DELETE
-    path('my-bookmarks/<int:bookmark_id>/is_bookmarked/', IsBookmarkedView.as_view(), name='jobpost-is-bookmarked'), # GET
     
-    path('job-posts/<int:pk>/metrics/', JobPostMetricViewAPIView.as_view(), name='jobpost-metrics'),
-    path('job-posts/<int:pk>/increment-view/', IncrementJobPostViewCountAPIView.as_view(), name='jobpost-increment-view'),
+    # path('job-posts/<int:pk>/metrics/', JobPostMetricViewAPIView.as_view(), name='jobpost-metrics'),
+    # path('job-posts/<int:pk>/increment-view/', IncrementJobPostViewCountAPIView.as_view(), name='jobpost-increment-view'),
 ]
