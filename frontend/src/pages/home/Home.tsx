@@ -27,9 +27,6 @@ export const Home: React.FC = () => {
     ...filters
   });
 
-  console.log("-----")
-  console.log(data)
-  console.log("-----")
 
 
 
