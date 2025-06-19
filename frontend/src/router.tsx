@@ -25,6 +25,7 @@ import { SocialLinks } from "./pages/profile/subPages/SocialLinks";
 import { MainUserProfile } from "./pages/profile/MainUserProfile";
 import LandingPage from "./pages/landingPage/LandingPage";
 import { MainLayout } from "./layouts/MainLayout";
+import ApplyJob from "./pages/applyjobs";
 
 
 export const router = createBrowserRouter([
@@ -46,13 +47,18 @@ export const router = createBrowserRouter([
             index: true,
             element: <Home />,
           },
+         
           {
             path: "/user",
             children: [
               {
                 path: routesMap.mainProfile.path,
                 element: <MainUserProfile />
-              }
+              },
+              {
+                path: 'job_apply',
+                element: <ApplyJob />
+              },
             ]
 
 

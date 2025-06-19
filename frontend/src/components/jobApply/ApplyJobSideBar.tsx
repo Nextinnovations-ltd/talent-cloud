@@ -6,7 +6,7 @@ import { SkillsSection } from '../common/ApplyJob/SkillsSection';
 import { ActionButtons } from '../common/ApplyJob/ActionButtons';
 import { CompanyAbout } from '../common/ApplyJob/CompanyAbout';
 import AboutJob from '../common/ApplyJob/AboutJob';
-import { useGetDetailJobApplyCardQuery } from '@/services/slices/jobApplySlice';
+import {  useGetDetailJobApplyCardQuery } from '@/services/slices/jobApplySlice';
 import { X } from 'lucide-react';
 
 
@@ -29,7 +29,9 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
 
 
+
   const jobDetails = data?.data;
+
 
 
 
@@ -68,7 +70,7 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
         {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
         <JobInfoGrid job={selectedJob} />
         <SkillsSection skills={jobDetails?.skills || []} />
-        <ActionButtons />
+        <ActionButtons jobId={selectedJob?.id} />
         
         <p className="mt-2">{jobDetails?.description}</p>
       {

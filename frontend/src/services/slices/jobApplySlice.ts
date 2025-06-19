@@ -16,6 +16,7 @@ interface job  {
     created_at: string;
     applicant_count: number;
     is_new: boolean;
+    is_bookmarked:boolean
 }
 
 interface JobApplyCardResponse {
@@ -83,6 +84,11 @@ interface JobApplyCardParams {
     project_duration?: string;
     salary_rate?:string
 }
+
+interface BookmarkedJobResponse {
+    status: boolean;
+    message: string;
+  }
   
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -101,8 +107,15 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
         }),
         getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
             query:(id)=>`/job-posts/${id}/`
-        })
+        }),
+        bookMarkedJob: builder.mutation<BookmarkedJobResponse, number>({
+            query: (jobId) => ({
+              url: `/job-posts/${jobId}/bookmark/`,
+              method: "POST",
+            }),
+          }),
+        
     })
 });
 
-export const { useGetJobApplyCardQuery, useGetDetailJobApplyCardQuery } = extendedJobApplySlice;
+export const { useGetJobApplyCardQuery, useGetDetailJobApplyCardQuery,useBookMarkedJobMutation } = extendedJobApplySlice;

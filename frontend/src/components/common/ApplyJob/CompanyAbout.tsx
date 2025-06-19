@@ -2,6 +2,7 @@ import React from 'react';
 import { CompanyHeader } from './CompanyHeader';
 import { CompanyInfoGrid } from './CompanyInfoGrid';
 import { JOBDETAILTYPES } from '@/types/job-apply';
+import { ExternalLink } from 'lucide-react';
 
 
 
@@ -14,12 +15,15 @@ interface CompanyAbout {
 
 export const CompanyAbout: React.FC<CompanyAbout> = ({job}) => (
   <>
-   <div className='mb-[30px]'>
-   <h3 className="mt-[23px] mb-[14px] font-semibold text-[18px] line-clamp-2">About Company</h3>
+   <div className='mb-[30px] border-2 p-[20px] rounded-[20px] mt-[30px]'>
+<div className='flex  items-center justify-between'>
+<h3 className=" font-semibold text-[18px] line-clamp-2">About Company</h3>
+<p className='text-[#0389FF] text-sm items-center justify-center flex gap-[6px]'> <ExternalLink size={16}/>More</p>
+</div>
     <CompanyHeader companyLogo={job?.company?.image_url || ''} companyName={job?.company.name} />
-    <p>{job?.company?.description || ''}</p>
-   </div>
-
+    <p className=' line-clamp-3'>{job?.company?.description || ''}</p>
     <CompanyInfoGrid job={job}/>
+   </div>
+  
   </>
 ); 

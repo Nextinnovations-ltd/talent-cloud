@@ -27,6 +27,12 @@ export const Home: React.FC = () => {
     ...filters
   });
 
+  console.log("-----")
+  console.log(data)
+  console.log("-----")
+
+
+
   useEffect(() => {
     if (data?.data.results) {
       if (page === 1) {

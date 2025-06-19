@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import NEWIMAGE from '@/assets/New.png';
 import BOOKMARK from '@/assets/Bookmark.svg'
+import ACTIVEBOOKMARK from '@/assets/ActiveBookmark.png'
+
 import TOOLTIP from '@/assets/BookmarkTooltip.png'
 
 import SALARY from '@/assets/Dollar.svg'
@@ -27,6 +29,7 @@ export type Job = {
   created_at: string;
   applicant_count: number;
   is_new: boolean;
+  is_bookmarked:boolean
 };
 
 export type JobList = Job[];
@@ -51,8 +54,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
   return (
     <div
       ref={cardRef}
-      className={`p-[30px] border-[#CBD5E1B2] relative border-[2px] cursor-pointer min-h-[429px] w-[400px] mx-auto rounded-[17px] transition-colors duration-200 flex flex-col ${
-        isSelected ? " border-blue-500 border-[3px]" : "hover:border-blue-500"
+      className={`p-[30px] border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[429px] w-[400px] mx-auto rounded-[17px] transition-colors flex flex-col ${
+        isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
       }`}
       onClick={() => onClick(job)}
     >
@@ -64,8 +67,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-             <div className="w-[50px] h-[50px] rounded-full hover:bg-slate-50 flex items-center justify-center">
-             <img width={18} height={18}  src={BOOKMARK} />
+             <div className={`w-[50px] h-[50px] rounded-full duration-500 hover:bg-slate-50 flex items-center justify-center ${job?.is_bookmarked && 'bg-[#0389FF1F] hover:bg-blue-200'}`}>
+             <img width={24} height={24}  src={job?.is_bookmarked ? ACTIVEBOOKMARK:BOOKMARK} />
              </div>
             </TooltipTrigger>
             <TooltipContent  >
