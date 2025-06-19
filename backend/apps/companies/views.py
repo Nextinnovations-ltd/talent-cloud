@@ -2,13 +2,15 @@ from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from rest_framework.permissions import AllowAny
 from apps.companies.serializers import CompanySerializer, IndustrySerializer
+from .models import Company, Industry
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
-from .models import Company, Industry
-from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Industry"])
 class IndustryListAPIView(views.APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -22,6 +24,7 @@ class IndustryListAPIView(views.APIView):
           
           return Response(serializer.data)
 
+@extend_schema(tags=["Company"])
 class CompanyCreateAPIView(views.APIView):
      """
      API view to create a new company.
@@ -44,6 +47,7 @@ class CompanyCreateAPIView(views.APIView):
           
           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@extend_schema(tags=["Company"])
 class UnauthenticatedCompanyCreateAPIView(views.APIView):
      authentication_classes = []  # Disable all authentication
      permission_classes = [AllowAny]
@@ -67,6 +71,7 @@ class UnauthenticatedCompanyCreateAPIView(views.APIView):
 
           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@extend_schema(tags=["Company"])
 class CompanyListAPIView(views.APIView):
      """
      API view to list all companies.
@@ -84,6 +89,7 @@ class CompanyListAPIView(views.APIView):
           
           return Response(serializer.data)
 
+@extend_schema(tags=["Company"])
 class CompanyDetailAPIView(views.APIView):
      """
      API view to retrieve, update, or delete a specific company.

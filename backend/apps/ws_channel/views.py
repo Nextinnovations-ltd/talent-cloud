@@ -7,7 +7,9 @@ from core.middleware.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError
 from utils.response import CustomResponse
 from django.db import transaction
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Chat"])
 class UserChatListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      
@@ -23,8 +25,8 @@ class UserChatListAPIView(APIView):
                chat_list = ChatListSerializer(chats, many=True)
                
           return Response(CustomResponse.success("Chat List information retrieved successfully", chat_list.data))
-     
 
+@extend_schema(tags=["Chat"])
 class ChatRoomInfoAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      
@@ -52,7 +54,8 @@ class ChatRoomInfoAPIView(APIView):
           chat_response = ChatSerializer(chat_room)
           
           return Response(CustomResponse.success("Chatroom information retrieved successfully", chat_response.data))
-     
+
+@extend_schema(tags=["Chat"])     
 class NotificationListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      
