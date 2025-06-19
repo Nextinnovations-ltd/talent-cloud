@@ -10,7 +10,9 @@ from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
 from services.dashboard.dashboard_service import DashboardService
 from utils.response import CustomResponse
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["NI-Super Admin"])
 class JobSeekerStatisticsAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -20,6 +22,7 @@ class JobSeekerStatisticsAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["NI-Super Admin"])
 class JobSeekerListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -29,6 +32,7 @@ class JobSeekerListAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["NI-Super Admin"])
 class JobSeekerDetailAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -41,6 +45,7 @@ class JobSeekerDetailAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["NI-Super Admin"])
 class NIAdminListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -52,6 +57,7 @@ class NIAdminListAPIView(APIView):
 
 # region Company Approval Process
 
+@extend_schema(tags=["NI-Super Admin"])
 class CompanyApprovalAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
@@ -78,7 +84,9 @@ class CompanyApprovalAPIView(APIView):
 
 # endregion Company Approval Process
 
+
 # Tempory Endpoint to pair Superadmin with NI Parent Company
+@extend_schema(tags=["NI-Super Admin"])
 class SuperAdminPairingAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
