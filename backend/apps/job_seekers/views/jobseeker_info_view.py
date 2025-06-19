@@ -7,7 +7,9 @@ from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
 from services.job_seeker.profile_score_service import ProfileScoreService
 from utils.response import CustomResponse
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Profile Selectable Data"])
 class JobSeekerProfileSelectionOptionsAPIView(APIView):
      """Retrieve selection option for specialization and experience level in profile section"""
      authentication_classes = [TokenAuthentication]
@@ -18,6 +20,7 @@ class JobSeekerProfileSelectionOptionsAPIView(APIView):
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerProfileAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -43,6 +46,7 @@ class JobSeekerProfileAPIView(APIView):
 
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker-Skill Data"])
 class JobSeekerSkillSelectionOptionAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -52,6 +56,7 @@ class JobSeekerSkillSelectionOptionAPIView(APIView):
           
           return Response(CustomResponse.success(response['message', response['data']]), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile-Skill"])
 class JobSeekerSkillAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -74,6 +79,7 @@ class JobSeekerSkillAPIView(APIView):
                response['message'], response['data']
           ), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile-Social Link"])
 class JobSeekerSocialLinkAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -95,6 +101,7 @@ class JobSeekerSocialLinkAPIView(APIView):
 
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile-Setting"])
 class JobSeekerSettingAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -107,6 +114,7 @@ class JobSeekerSettingAPIView(APIView):
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker-Language Data"])
 class LanguageOptionAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -116,6 +124,7 @@ class LanguageOptionAPIView(APIView):
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile-Language"])
 class JobSeekerLanguageAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -136,6 +145,7 @@ class JobSeekerLanguageAPIView(APIView):
 
           return Response(CustomResponse.success(response['message']), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Profile Score"])
 class ProfileScoreAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]

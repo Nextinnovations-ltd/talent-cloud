@@ -7,7 +7,9 @@ from services.storage.s3_service import S3Service
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
 from utils.response import CustomResponse
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["S3 Upload"])
 class S3UploadAPIView(APIView):
      def get(self, request):
           file_path = f"orders/dlfjd.jpeg"
@@ -16,6 +18,7 @@ class S3UploadAPIView(APIView):
           
           return Response(CustomResponse.success("Presigned url is successfully generated.", { 'presigned_url': url }), status = status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker"])
 class ModifyUsernameAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -30,6 +33,7 @@ class ModifyUsernameAPIView(APIView):
           
           return Response(CustomResponse.success("Username has changed successfully."), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Job Seeker Onboarding"])
 class OnboardingAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]

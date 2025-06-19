@@ -5,7 +5,9 @@ from .models import UserActivityLog
 from rest_framework import status
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserDynamicPermission
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Audit Logs"])
 class AuthenticatedUserLogsView(APIView):
      """
      API endpoint to retrieve all activity logs for the authenticated user.
@@ -19,6 +21,7 @@ class AuthenticatedUserLogsView(APIView):
           
           return Response({"logs": data}, status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Audit Logs"])
 class AuthenticatedUserLogsByActionView(APIView):
      """
      API endpoint to retrieve logs for the authenticated user filtered by action.
@@ -40,6 +43,7 @@ class AuthenticatedUserLogsByActionView(APIView):
           
           return Response({"logs": data}, status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Audit Logs"])
 class AllUserLogsView(APIView):
      """
      API endpoint to retrieve all activity logs for all users.
@@ -51,6 +55,7 @@ class AllUserLogsView(APIView):
           
           return Response({"logs": data}, status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Audit Logs"])
 class AllUserLogsByActionView(APIView):
      """
      API endpoint to retrieve logs for all users filtered by action.
@@ -70,6 +75,7 @@ class AllUserLogsByActionView(APIView):
           
           return Response({"logs": data}, status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Audit Logs"])
 class ActionCountsView(APIView):
      """Retrieve the count of each action performed by all users."""
      authentication_classes = [TokenAuthentication]

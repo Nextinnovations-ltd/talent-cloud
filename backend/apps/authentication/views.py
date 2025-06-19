@@ -16,7 +16,9 @@ from services.auth.oauth_service import FacebookOAuthService, GoogleOAuthService
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserDynamicPermission
 from utils.response import CustomResponse
+from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Authentication-Superadmin"])
 class SuperAdminLoginAPIView(views.APIView):
     def post(self, request):
         data = request.data
@@ -43,6 +45,7 @@ class SuperAdminLoginAPIView(views.APIView):
         
         return response
 
+@extend_schema(tags=["Authentication-Superadmin"])
 class SuperAdminRegisterAPIView(views.APIView):
     def post(self, request):
         data = request.data
@@ -58,6 +61,7 @@ class SuperAdminRegisterAPIView(views.APIView):
         
         return Response(CustomResponse.success('Super admin user has been created successfully.', { 'token': token }), status=status.HTTP_201_CREATED)
 
+@extend_schema(tags=["Authentication-Superadmin"])
 class SuperAdminVerifyLoginAPIView(views.APIView):
     def post(self, request):
         token = request.data.get('token')
@@ -70,6 +74,7 @@ class SuperAdminVerifyLoginAPIView(views.APIView):
         
         return Response(CustomResponse.success('User login has been approved.'), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Authentication-Job Seeker"])
 class AuthenticationViewSet(viewsets.ModelViewSet):
     queryset = TalentCloudUser.objects.all()
 
@@ -193,6 +198,7 @@ class AuthenticationViewSet(viewsets.ModelViewSet):
         
         return Response(CustomResponse.success("Token is valid."), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["OAuth-Job Seeker"])
 class GoogleAuthAPIView(views.APIView):
     def get(self, request, *args, **kwargs):
         auth_code = request.query_params.get("code")
@@ -204,6 +210,7 @@ class GoogleAuthAPIView(views.APIView):
         
         return redirect(redirect_url)
 
+@extend_schema(tags=["OAuth-Job Seeker"])
 class LinkedinAuthAPIView(views.APIView):
     def get(self, request, *args, **kwargs):
         data = request.query_params
@@ -217,6 +224,7 @@ class LinkedinAuthAPIView(views.APIView):
         
         return redirect(redirect_url)
 
+@extend_schema(tags=["OAuth-Job Seeker"])
 class FacebookAuthAPIView(views.APIView):
     def get(self, request, *args, **kwargs):
         data = request.query_params
@@ -231,6 +239,7 @@ class FacebookAuthAPIView(views.APIView):
         
         return redirect(redirect_url)
 
+@extend_schema(tags=["Authentication-Job Seeker"])
 class UserInfoAPIView(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [TalentCloudUserDynamicPermission]
@@ -240,6 +249,7 @@ class UserInfoAPIView(views.APIView):
         
         return Response(CustomResponse.success("Username Information retrieved.", response_data), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["Authentication-Job Seeker"])
 class VerifyTokenAPIView(views.APIView):
     def post(self, request):
         token = request.data.get('token', None)
@@ -252,6 +262,7 @@ class VerifyTokenAPIView(views.APIView):
         
         return Response(CustomResponse.success("Access token is valid."), status=status.HTTP_200_OK)
 
+@extend_schema(tags=["OAuth-Job Seeker"])
 class OAuthVerifyTokenAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
         token = request.data.get('token', None)
@@ -272,7 +283,8 @@ class OAuthVerifyTokenAPIView(views.APIView):
         })
         
         return response
-    
+
+@extend_schema(tags=["Authentication-Job Seeker"])    
 class RefreshTokenAPIView(views.APIView):
     def post(self, request):
         refresh_token = request.COOKIES.get('refresh_token')    
