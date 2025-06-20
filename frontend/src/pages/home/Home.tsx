@@ -27,9 +27,6 @@ export const Home: React.FC = () => {
     ...filters
   });
 
-
-
-
   useEffect(() => {
     if (data?.data.results) {
       if (page === 1) {
@@ -44,6 +41,18 @@ export const Home: React.FC = () => {
       setIsLoadingMore(false);
     }
   }, [data, page]);
+
+  // Select job if jobId is present in URL
+  useEffect(() => {
+    const jobIdParam = searchParams.get('jobId');
+    if (jobIdParam && allJobs.length > 0) {
+      const jobId = Number(jobIdParam);
+      const foundJob = allJobs.find(job => job.id === jobId);
+      if (foundJob) {
+        setSelectedJob(foundJob);
+      }
+    }
+  }, [searchParams, allJobs]);
 
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);

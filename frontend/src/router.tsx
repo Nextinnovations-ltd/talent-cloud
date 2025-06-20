@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
                 element: <MainUserProfile />
               },
               {
-                path: 'job_apply',
+                path: 'job_apply/:id',
                 element: <ApplyJob />
               },
             ]

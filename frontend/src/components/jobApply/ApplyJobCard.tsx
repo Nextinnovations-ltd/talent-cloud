@@ -98,13 +98,13 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           {job.skills.slice(0, 2).map((item, index) => (
             <Badge
               key={index}
-              className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] ${isSelected && 'bg-blue-200'}`}
+              className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] `}
             >
               <p className="truncate">{item}</p>
             </Badge>
           ))}
           {job.skills.length > 2 && (
-            <Badge className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] ${isSelected && 'bg-blue-200'}`}>
+            <Badge className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] `}>
               ...
             </Badge>
           )}

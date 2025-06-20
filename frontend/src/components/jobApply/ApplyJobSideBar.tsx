@@ -71,7 +71,6 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
         <JobInfoGrid job={selectedJob} />
         <SkillsSection skills={jobDetails?.skills || []} />
         <ActionButtons jobId={selectedJob?.id} />
-        
         <p className="mt-2">{jobDetails?.description}</p>
       {
         jobDetails?.company?.id &&   <CompanyAbout job={jobDetails} />

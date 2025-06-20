@@ -90,6 +90,11 @@ interface BookmarkedJobResponse {
     message: string;
   }
   
+interface ApplyJobArg {
+    jobId: number;
+    credentials: Record<string, unknown>; // Use a safer type than any
+}
+
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getJobApplyCard: builder.query<JobApplyCardResponse, JobApplyCardParams>({
@@ -114,8 +119,15 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
               method: "POST",
             }),
           }),
+        applyJob: builder.mutation<unknown, ApplyJobArg>({
+            query: ({ jobId, credentials }) => ({
+                url: `/job-posts/${jobId}/applications/`,
+                method: "POST",
+                body: credentials
+            })
+        })
         
     })
 });
 
-export const { useGetJobApplyCardQuery, useGetDetailJobApplyCardQuery,useBookMarkedJobMutation } = extendedJobApplySlice;
+export const { useGetJobApplyCardQuery, useGetDetailJobApplyCardQuery,useBookMarkedJobMutation,useApplyJobMutation } = extendedJobApplySlice;
