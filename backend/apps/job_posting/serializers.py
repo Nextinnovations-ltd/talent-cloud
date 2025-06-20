@@ -13,6 +13,7 @@ class JobPostDisplayMixin:
                salary_min = format_salary(obj.salary_min)
                salary_max = format_salary(obj.salary_max)
                return f"{salary_min}-{salary_max}MMK/{obj.get_salary_type_display()}"
+          
           return "Not specified"
 
      def get_company_name(self, obj):
@@ -23,13 +24,39 @@ class JobPostDisplayMixin:
 
      def get_is_bookmarked(self, obj):
           user = self.context['request'].user
+          
           if not user.is_authenticated:
                return False
           try:
                job_seeker = user.jobseeker
           except Exception:
                return False
+          
           return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+     
+     def get_is_bookmarked(self, obj):
+          user = self.context['request'].user
+          
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except Exception:
+               return False
+          
+          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
+     
+     def get_is_applied(self, obj):
+          user = self.context['request'].user
+          
+          if not user.is_authenticated:
+               return False
+          try:
+               job_seeker = user.jobseeker
+          except Exception:
+               return False
+          
+          return JobApplication.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
 class JobPostSerializer(ModelSerializer):
      class Meta:
@@ -58,6 +85,7 @@ class JobPostListSerializer(serializers.ModelSerializer):
      display_salary = serializers.SerializerMethodField()
      is_new = serializers.SerializerMethodField()
      is_bookmarked = serializers.SerializerMethodField()
+     is_applied = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -77,7 +105,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'created_at',
                'applicant_count',
                'is_new',
-               'is_bookmarked'
+               'is_bookmarked',
+               'is_applied',
           ]
 
      # Use JobPostDisplayMixin methods except get_is_new
@@ -105,6 +134,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
 
           return not JobPostView.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
+     def get_is_applied(self,obj):
+          return JobPostDisplayMixin.get_is_applied(self, obj)
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()
@@ -118,6 +149,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      company = serializers.SerializerMethodField()
      job_poster_name = serializers.SerializerMethodField()
      is_bookmarked = serializers.SerializerMethodField()
+     is_applied = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -127,7 +159,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
                'job_type', 'work_type', 'number_of_positions', 'display_salary', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
                'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name',
-               'is_bookmarked', 'created_at'
+               'is_bookmarked', 'is_applied', 'created_at'
           ]
 
      def get_company(self, obj):
@@ -146,7 +178,9 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      
      def get_display_salary(self, obj):
           return JobPostDisplayMixin.get_display_salary(self, obj)
-     
+
+     def get_is_applied(self,obj):
+          return JobPostDisplayMixin.get_is_applied(self, obj)     
 class JobApplicationSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
