@@ -28,6 +28,32 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         
         return user
+    
+    def create_admin_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field is required.')
+        
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', False)
+
+        try:
+            role = Role.objects.get(name=ROLES.ADMIN)
+        except Role.DoesNotExist:
+            print("Admin Role does not exist. Creating Admin Role")
+            role, created = Role.objects.get_or_create(name=ROLES.ADMIN)
+
+        extra_fields.setdefault('role', role)
+        extra_fields.setdefault('is_verified', False)
+        
+        email = self.normalize_email(email)
+        
+        user = self.model(email=email, **extra_fields)
+        
+        user.set_password(password)
+        
+        user.save(using=self._db)
+        
+        return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         from apps.users.models import Role
@@ -153,7 +179,9 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
                     self.company = parent_company
                 elif self.role.name == ROLES.ADMIN:
                     # Later
-                    self.company = None
+                    pass
+                
+                    # self.company = None
                 elif self.role.name == ROLES.USER:
                     self.company = None
             else:

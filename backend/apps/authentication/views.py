@@ -18,6 +18,54 @@ from core.middleware.permission import TalentCloudUserDynamicPermission
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 
+@extend_schema(tags=["Authentication-Company Admin"])
+class CompanyAdminLoginAPIView(views.APIView):
+    def post(self, request):
+        data = request.data
+        email = data.get('email', None)
+        password = data.get('password', None)
+        
+        if not email and not password:
+            raise ValidationError("Invalid email or password!")
+        
+        with transaction.atomic():
+            user = AuthenticationService.is_authenticated(email, password, ROLES.ADMIN)
+            
+            # AuthEmailService.verify_user_loggedin(email)
+            
+            result = AuthenticationService.generate_login_success_response(user)
+        
+        response = Response(status=status.HTTP_200_OK)
+        
+        response.set_cookie(key='refresh_token', value=result['refresh_token'], httponly=True)
+        response.data = CustomResponse.success("User is authenticated.", {
+            'token': result['access_token'],
+            'is_generated_username': result['is_generated_username']
+        })
+        
+        return response
+
+@extend_schema(tags=["Authentication-Company Admin"])
+class CompanyAdminRegisterAPIView(views.APIView):
+    def post(self, request):
+        data = request.data
+        email = data.get('email', None)
+        password = data.get('password', None)
+        company_slug = data.get('company_slug', None)
+        role = ROLES.ADMIN
+        
+        if not company_slug:
+            raise ValidationError("Company Admin user can't be created without company referal")
+        
+        if TalentCloudUser.objects.filter(email=email).exists():
+            raise ValidationError("Talent cloud user with this email already exists.")
+        
+        # Create super admin user and response verify token 
+        token = AuthenticationService.register_company_admin_user(email, password, role, company_slug)
+        
+        return Response(CustomResponse.success('Company admin user has been created successfully.', { 'token': token }), status=status.HTTP_201_CREATED)
+
+
 @extend_schema(tags=["Authentication-Superadmin"])
 class SuperAdminLoginAPIView(views.APIView):
     def post(self, request):
