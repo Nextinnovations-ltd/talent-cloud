@@ -51,9 +51,6 @@ class CompanyCreateAPIView(views.APIView):
 class UnauthenticatedCompanyCreateAPIView(views.APIView):
      authentication_classes = []  # Disable all authentication
      permission_classes = [AllowAny]
-     
-     def get(self, request):
-          return Response("Hello")
 
      def post(self, request):
           """
