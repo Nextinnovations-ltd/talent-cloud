@@ -68,8 +68,7 @@ class TestGetOnboardingData(TestCase):
 
           # Set default job_seeker return value
           self.mock_get_job_seeker_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
 
           # Common mock attributes
           self.mock_job_seeker.profile_image_url = "http://example.com/profile.jpg"
@@ -90,7 +89,7 @@ class TestGetOnboardingData(TestCase):
           self.assertEqual(response['data']['specialization_id'], 3)
 
      def test_step_2_without_occupation(self):
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
           response = JobSeekerService.get_onboarding_data(self.mock_user, 2)
           self.assertIsNone(response['data'])
           self.assertEqual(response['message'], "No data existed yet.")
@@ -132,8 +131,7 @@ class TestPerformOnboarding(TestCase):
           self.mock_get_job_seeker_user.return_value = self.mock_job_seeker
 
           # Set up occupation logic
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           
           self.step_1_data = {
                'name': 'Alice',
@@ -150,7 +148,7 @@ class TestPerformOnboarding(TestCase):
           self.mock_job_seeker.save.assert_called_once()
 
      def test_step_1_without_existing_occupation(self):
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
 
           with patch('services.job_seeker.job_seeker_service.JobSeekerOccupation.objects.create') as mock_create:
                result = JobSeekerService.perform_onboarding(self.mock_user, 1, self.step_1_data)
@@ -281,8 +279,7 @@ class TesttJobSeekerProfileInfo(TestCase):
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_get_job_seeker_profile_info(self, mock_get_user):
           # Setup mock returns
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           mock_get_user.return_value = self.mock_job_seeker
 
           result = JobSeekerService.get_job_seeker_profile_info(self.mock_user)
@@ -293,7 +290,7 @@ class TesttJobSeekerProfileInfo(TestCase):
 
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_get_job_seeker_profile_info_validation_error(self, mock_get_user):
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
           mock_get_user.return_value = self.mock_job_seeker
 
           with self.assertRaises(ValidationError) as context:
@@ -306,8 +303,7 @@ class TesttJobSeekerProfileInfo(TestCase):
           self.mock_occupation.role = None
           self.mock_occupation.experience_level = None
 
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           mock_get_user.return_value = self.mock_job_seeker
 
           result = JobSeekerService.get_job_seeker_profile_info(self.mock_user)
@@ -338,7 +334,7 @@ class TesttJobSeekerProfileInfo(TestCase):
      def test_create_new_occupation_if_none_exists(self, mock_occupation_create, mock_get_job_seeker_user):
           # Mock that the job seeker does not have any occupation
           mock_get_job_seeker_user.return_value=self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
 
           data = {
                "role_id": 1,
@@ -358,8 +354,7 @@ class TesttJobSeekerProfileInfo(TestCase):
           }
           
           mock_get_job_seeker_user.return_value=self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           self.mock_occupation.role.id = 2
           self.mock_occupation.experience_level.id = 3
           
@@ -453,8 +448,7 @@ class TestJobSeekerSkills(TestCase):
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_get_job_seeker_skills_with_skills(self, mock_get_user):
           mock_get_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           self.mock_occupation.skills.exists.return_value = True
           self.mock_occupation.skills.values.return_value = self.sample_skills
 
@@ -470,7 +464,7 @@ class TestJobSeekerSkills(TestCase):
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_get_job_seeker_skills_no_occupation(self, mock_get_user):
           mock_get_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
 
           result = JobSeekerService.get_job_seeker_skills(self.mock_user)
 
@@ -479,8 +473,7 @@ class TestJobSeekerSkills(TestCase):
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_get_job_seeker_skills_empty_skills(self, mock_get_user):
           mock_get_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
           self.mock_occupation.skills.exists.return_value = False
 
           result = JobSeekerService.get_job_seeker_skills(self.mock_user)
@@ -500,7 +493,7 @@ class TestJobSeekerSkills(TestCase):
      @patch('apps.job_seekers.models.JobSeekerOccupation.objects.create')
      def test_perform_skills_update_new_occupation(self, mock_create, mock_get_user):
           mock_get_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = False
+          self.mock_job_seeker.occupation = None
           mock_create.return_value = self.mock_occupation
 
           data = {"skill_list": self.skill_id_list}
@@ -515,8 +508,7 @@ class TestJobSeekerSkills(TestCase):
      @patch('services.job_seeker.job_seeker_service.JobSeekerService.get_job_seeker_user')
      def test_perform_skills_update_existing_occupation(self, mock_get_user):
           mock_get_user.return_value = self.mock_job_seeker
-          self.mock_job_seeker.occupations.exists.return_value = True
-          self.mock_job_seeker.occupations.first.return_value = self.mock_occupation
+          self.mock_job_seeker.occupation = self.mock_occupation
 
           data = {"skill_list": self.skill_id_list}
 

@@ -44,7 +44,7 @@ class JobSeekerService:
      def get_onboarding_data(user, step):
           job_seeker = JobSeekerService.get_job_seeker_user(user)
 
-          job_seeker_occupation = job_seeker.occupations.first() if job_seeker.occupations.exists() else None
+          job_seeker_occupation = getattr(job_seeker, 'occupation', None)
           
           if step == 1:
                return {
@@ -89,6 +89,8 @@ class JobSeekerService:
                
           job_seeker = JobSeekerService.get_job_seeker_user(user)
           
+          job_seeker_occupation = getattr(job_seeker, 'occupation', None)
+          
           if step == 1:
                name = data.get('name', None)
                tagline = data.get('tagline', None)
@@ -105,8 +107,7 @@ class JobSeekerService:
                     job_seeker.name = name
                     job_seeker.tagline = tagline
                     
-                    if job_seeker.occupations.exists():
-                         job_seeker_occupation = job_seeker.occupations.first()
+                    if job_seeker_occupation:
                          job_seeker_occupation.experience_level_id = experience_level_id
                          job_seeker_occupation.experience_years = experience_years
                          job_seeker_occupation.save()
@@ -132,8 +133,7 @@ class JobSeekerService:
 
                with transaction.atomic():
                     # Check user already have occupation
-                    if job_seeker.occupations.exists():
-                         job_seeker_occupation = job_seeker.occupations.first()
+                    if job_seeker_occupation:
                          job_seeker_occupation.specialization_id = specialization_id
                          job_seeker_occupation.save()
                     else:
@@ -156,8 +156,7 @@ class JobSeekerService:
                     raise ValidationError("Role can't be empty.")
                
                with transaction.atomic():
-                    if job_seeker.occupations.exists():
-                         job_seeker_occupation = job_seeker.occupations.first()
+                    if job_seeker_occupation:
                          job_seeker_occupation.role_id = role_id
                          job_seeker_occupation.save()
                     else:
@@ -180,10 +179,8 @@ class JobSeekerService:
                if len(skill_id_list) < 5:
                     raise ValidationError("Choose minimum 5 skillsets.")
                
-               with transaction.atomic():
-                    if job_seeker.occupations.exists():
-                         job_seeker_occupation = job_seeker.occupations.first()
-                    else:
+               with transaction.atomic():                    
+                    if not job_seeker_occupation:
                          job_seeker_occupation = JobSeekerOccupation.objects.create(
                               user = job_seeker
                          )
@@ -218,7 +215,7 @@ class JobSeekerService:
      def get_job_seeker_profile_info(user: TalentCloudUser):
           job_seeker = JobSeekerService.get_job_seeker_user(user)
           
-          jobseeker_occupation = job_seeker.occupations.first() if job_seeker.occupations.exists() else None
+          jobseeker_occupation = getattr(job_seeker, 'occupation', None)
 
           if not jobseeker_occupation:
                raise ValidationError("No occupation related data existed yet.")
@@ -270,7 +267,7 @@ class JobSeekerService:
                experience_level_id = data.get("experience_level_id", None)
                experience_years = data.get("experience_years", None)
                
-               jobseeker_occupation = job_seeker.occupations.first() if job_seeker.occupations.exists() else None
+               jobseeker_occupation = getattr(job_seeker, 'occupation', None)
                
                if not jobseeker_occupation:
                     jobseeker_occupation = JobSeekerOccupation.objects.create(
@@ -330,7 +327,7 @@ class JobSeekerService:
      def get_job_seeker_skills(user):
           jobseeker = JobSeekerService.get_job_seeker_user(user)
 
-          jobseeker_occupation = jobseeker.occupations.first() if jobseeker.occupations.exists() else None
+          jobseeker_occupation = getattr(jobseeker, 'occupation', None)
 
           if not jobseeker_occupation:
                return {
@@ -360,7 +357,7 @@ class JobSeekerService:
           if not jobseeker:
                raise ValidationError("User is not a job seeker")
 
-          jobseeker_occupation = jobseeker.occupations.first() if jobseeker.occupations.exists() else None
+          jobseeker_occupation = getattr(jobseeker, 'occupation', None)
 
           with transaction.atomic():
                # Create or update the JobSeekerOccupation

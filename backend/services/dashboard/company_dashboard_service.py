@@ -1,4 +1,3 @@
-
 from apps.job_posting.models import JobApplication, JobPost
 from django.db.models import Sum
 
@@ -50,7 +49,18 @@ class CompanyDashboardService:
           applications = JobApplication.objects.filter(
                job_post__posted_by__company=company
           ).select_related(
-               'job_post', 'job_post__posted_by', 'job_seeker__user',
+               'job_post', 
+               'job_post__posted_by', 
+               'job_seeker__user', 
+               'job_seeker__occupation',
+               'job_seeker__occupation__role'
+          ).only(
+               'created_at',
+               'job_post__posted_by__company',
+               'job_seeker__user__id',
+               'job_seeker__user__name',
+               'job_seeker__user__profile_image_url',
+               'job_seeker__occupation__role__name'
           ).order_by('-created_at')
           
           result = []
@@ -58,17 +68,47 @@ class CompanyDashboardService:
           for application in applications:
                job_seeker = application.job_seeker
                user = job_seeker.user
-               # occupation = job_seeker.occupation
+               role = getattr(getattr(job_seeker, 'occupation', None), 'role', None)
                
                result.append({
                     'id': user.pk,
                     'name': user.name,
-                    # 'role': user.role.name,
+                    'role': role.name,
                     'applied_date': application.created_at,
                     'profile_image_url': user.profile_image_url,
                })
           
           return {
-               'message': 'Succefully generated most recent applicants by order.',
+               'message': 'Succefully generated applicants by most recent order.',
+               'data': result
+          }
+     
+     @staticmethod
+     def get_company_job_posts_by_latest_order(company):
+          # Get all applicants from all job posts
+          job_posts = JobPost.objects.filter(
+               posted_by__company=company
+          ).select_related(
+               'specialization'
+          ).only(
+               'specialization__name'
+          ).order_by('-created_at')
+          
+          result = []
+          
+          for job_post in job_posts:
+               specialization = getattr(job_post, 'specialization', None)
+               
+               result.append({
+                    'title': job_post.title,
+                    'specialization_name': specialization.name if specialization else None,
+                    'job_post_status': job_post.job_post_status,
+                    'applicant_count': job_post.applicant_count,
+                    'view_count': job_post.view_count,
+                    'posted_date': job_post.created_at,
+               })
+          
+          return {
+               'message': 'Succefully generated job posts by most recent order.',
                'data': result
           }
