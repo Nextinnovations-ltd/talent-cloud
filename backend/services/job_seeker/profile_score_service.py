@@ -138,7 +138,7 @@ class ProfileScoreService:
      
      @staticmethod
      def _get_job_seeker_occupation(job_seeker: JobSeeker):
-          return job_seeker.occupations.first() if job_seeker.occupations.exists() else None
+          return getattr(job_seeker, 'occupation', None)
      
      @staticmethod
      def _validate_profile(job_seeker: JobSeeker):

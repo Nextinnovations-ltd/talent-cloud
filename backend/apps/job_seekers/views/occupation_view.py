@@ -5,6 +5,8 @@ from .base_viewset import BaseModelViewSet, MinimalBaseViewSet
 from ..models import JobSeekerSpecialization, JobSeekerSkill, JobSeekerRole, JobSeekerExperienceLevel, JobSeekerOccupation, SpokenLanguage
 from ..serializers.occupation_serializer import JobSeekerSpecializationSerializer, JobSeekerSkillSerializer, JobSeekerRoleSerializer, JobSeekerExperienceLevelSerializer, JobSeekerOccupationSerializer, JobSeekerSpokenLanguageSerializer
 from utils.response import CustomResponse
+from django.db import IntegrityError
+from rest_framework.exceptions import ValidationError
 from drf_spectacular.utils import extend_schema
 
 @extend_schema(tags=["Specialization Data"])
@@ -43,3 +45,10 @@ class JobSeekerLanguageOptionViewSet(MinimalBaseViewSet):
 class JobSeekerOccupationViewSet(BaseModelViewSet):
     queryset = JobSeekerOccupation.objects.all()
     serializer_class = JobSeekerOccupationSerializer
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except IntegrityError as e:
+            # Customize this based on the actual error message or just handle all
+            raise ValidationError({"detail": "This job seeker already has an occupation created."})

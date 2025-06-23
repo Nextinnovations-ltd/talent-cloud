@@ -157,10 +157,10 @@ class MatchedJobPostAPIView(CustomListAPIView):
      
      def get_queryset(self):
           jobseeker = JobSeeker.objects.prefetch_related(
-               'occupations__skills', 'occupations__specialization'
+               'occupation__skills', 'occupation__specialization'
           ).get(user=self.request.user.jobseeker)
 
-          occupation = jobseeker.occupations.first()
+          occupation = getattr(jobseeker, 'occupation', None)
             
           if not occupation:
                raise NotFound("No occupation found for the user. Cannot find matched jobs.")
