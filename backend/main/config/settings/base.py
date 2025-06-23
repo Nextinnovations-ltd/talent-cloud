@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'apps.ws_channel',
     'apps.authentication',
     'apps.companies',
+    'apps.company_dashboard',
     'apps.users',
     'apps.ni_super_admin',
     'apps.job_seekers',

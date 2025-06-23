@@ -2,6 +2,7 @@ from django.db import models
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
 from apps.users.models import TalentCloudUser
 from services.models import TimeStampModel
+from django.utils import timezone
 
 class JobType(models.TextChoices):
      FULL_TIME = 'full_time', 'Full Time'
@@ -21,11 +22,55 @@ class PerSalaryType(models.TextChoices):
      MONTHLY = 'monthly', 'month'
 
 class ProjectDurationType(models.TextChoices):
-    LessThanOneMonth = "less_than_1_month", "Less than 1 month"
-    OneToThreeMonth = "1_to_3_months", "1 to 3 months"
-    ThreeToSixMonth = "3_to_6_months", "3 to 6 months"
-    MoreThanSixMonth = "more_than_6_months", "More than 6 months"
-    Ongoing = "ongoing", "Ongoing / Indefinite"
+     LessThanOneMonth = "less_than_1_month", "Less than 1 month"
+     OneToThreeMonth = "1_to_3_months", "1 to 3 months"
+     ThreeToSixMonth = "3_to_6_months", "3 to 6 months"
+     MoreThanSixMonth = "more_than_6_months", "More than 6 months"
+     Ongoing = "ongoing", "Ongoing / Indefinite"
+
+class StatusChoices(models.TextChoices):
+     PENDING = 'pending', 'pending'
+     ACTIVE = 'active', 'Active'
+     DRAFT = 'draft', 'Draft'
+     EXPIRED = 'expired', 'Expired'
+
+class JobPostQuerySet(models.QuerySet):
+     def active(self):
+          return self.filter(job_post_status=StatusChoices.ACTIVE)
+
+     def pending(self):
+          return self.filter(job_post_status=StatusChoices.PENDING)
+
+     def draft(self):
+          return self.filter(job_post_status=StatusChoices.DRAFT)
+
+     def expired(self):
+          return self.filter(job_post_status=StatusChoices.EXPIRED)
+
+     def auto_expired(self):
+          """Optional: Automatically detect expired jobs by date (even if status isn't updated)."""
+          today = timezone.now().date()
+          return self.filter(last_application_date__lt=today, job_post_status=StatusChoices.ACTIVE)
+
+class JobPostManager(models.Manager):
+     def get_queryset(self):
+          return JobPostQuerySet(self.model, using=self._db)
+
+     def active(self):
+          return self.get_queryset().active()
+
+     def expired(self):
+          return self.get_queryset().expired()
+
+     def pending(self):
+          return self.get_queryset().pending()
+
+     def draft(self):
+          return self.get_queryset().draft()
+
+     def auto_expired(self):
+          return self.get_queryset().auto_expired()
+
 
 # Job Post
 class JobPost(TimeStampModel):
@@ -70,6 +115,10 @@ class JobPost(TimeStampModel):
      view_count = models.PositiveIntegerField(default=0)
      applicant_count = models.PositiveIntegerField(default=0)
      bookmark_count = models.PositiveIntegerField(default=0)
+     
+     job_post_status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.ACTIVE, blank=True)
+     
+     objects = JobPostManager
 
 # End Job Post
 

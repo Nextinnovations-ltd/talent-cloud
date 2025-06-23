@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import check_password
 from apps.users.models import TalentCloudUser, VerifyLoggedInUser, VerifyRegisteredUser, PasswordReset
+from apps.companies.models import Company
 from core.constants.constants import ROLES
 from services.user.password_service import PasswordService
 from utils.token.jwt import TokenUtil
@@ -34,6 +35,26 @@ class AuthenticationService:
      def register_user_with_role(email, password, role):
           with transaction.atomic():
                user = TalentCloudUser.objects.create_user_with_role(email=email, password=password, role_name = role)
+
+               # Create verification code, token, and send mail to verify the user as active user
+               verify_token = AuthEmailService.verify_user_registration(user.email)
+
+               return verify_token
+          
+          return None
+     
+     @staticmethod
+     def register_company_admin_user(email, password, role, company_slug):
+          with transaction.atomic():
+               company = None
+               
+               if company_slug:
+                    try:
+                         company = Company.objects.get(slug=company_slug)
+                    except Company.DoesNotExist:
+                         raise ValidationError("Company with the provided slug does not exist.")
+               
+               user = TalentCloudUser.objects.create_admin_user(email=email, password=password, company = company)
 
                # Create verification code, token, and send mail to verify the user as active user
                verify_token = AuthEmailService.verify_user_registration(user.email)
