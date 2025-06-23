@@ -325,7 +325,7 @@ class AuthenticationServiceTest(TestCase):
 
           self.assertIn('Token is expired.', str(context.exception))
 
-     @patch('utils.user.mail.send_verification_email')
+     @patch('utils.user.custom_mail_types.send_verification_email')
      @patch('utils.token.jwt.TokenUtil.generate_verification_code')
      @patch('utils.token.jwt.TokenUtil.generate_expiration_time')
      @patch('utils.token.jwt.TokenUtil.decode_user_token')

@@ -97,7 +97,7 @@ class JobSeekerExperienceLevel(TimeStampModel):
           return f"{self.level}"
 
 class JobSeekerOccupation(TimeStampModel):
-     user = models.ForeignKey(JobSeeker, related_name='occupations', on_delete=models.CASCADE)
+     user = models.OneToOneField(JobSeeker, related_name='occupation', on_delete=models.CASCADE)
      specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.SET_NULL, null=True)
      role = models.ForeignKey(JobSeekerRole, on_delete=models.SET_NULL, null=True)
      skills = models.ManyToManyField(JobSeekerSkill, blank=True)
