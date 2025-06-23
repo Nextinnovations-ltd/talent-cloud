@@ -1,14 +1,16 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
-from .views import SuperAdminLoginAPIView, SuperAdminRegisterAPIView, AuthenticationViewSet, SuperAdminVerifyLoginAPIView, VerifyTokenAPIView, GoogleAuthAPIView, LinkedinAuthAPIView, FacebookAuthAPIView, OAuthVerifyTokenAPIView, RefreshTokenAPIView, UserInfoAPIView
+from .views import CompanyAdminLoginAPIView, CompanyAdminRegisterAPIView, SuperAdminLoginAPIView, SuperAdminRegisterAPIView, AuthenticationViewSet, SuperAdminVerifyLoginAPIView, VerifyTokenAPIView, GoogleAuthAPIView, LinkedinAuthAPIView, FacebookAuthAPIView, OAuthVerifyTokenAPIView, RefreshTokenAPIView, UserInfoAPIView
 
 router = SimpleRouter()
 router.register(r'auth', AuthenticationViewSet, basename='login')
 
 urlpatterns=[
+    path('auth/company-admin/login/', CompanyAdminLoginAPIView.as_view(), name='company-admin-login'),
+    path('auth/company-admin/register/', CompanyAdminRegisterAPIView.as_view(), name='company-admin-register'),
     path('auth/admin/login/', SuperAdminLoginAPIView.as_view(), name='admin-login'),
     path('auth/admin/verify-login/', SuperAdminVerifyLoginAPIView.as_view(), name='verify-admin-login'),
-    path('auth/admin/register/', SuperAdminRegisterAPIView.as_view(), name='admin-login'),
+    path('auth/admin/register/', SuperAdminRegisterAPIView.as_view(), name='admin-register'),
     path('auth/verify-token/', VerifyTokenAPIView.as_view(), name='verify-token'),
     path('auth/me/', UserInfoAPIView.as_view(), name = 'me'),
     path('auth/accounts/google/', GoogleAuthAPIView.as_view(), name="google-auth-callback"),
