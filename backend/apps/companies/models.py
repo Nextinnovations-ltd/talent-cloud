@@ -110,6 +110,9 @@ class Company(TimeStampModel):
           default=False,
           help_text="Whether the company profile has been verified by the platform."
      )
+     company_image_urls = models.JSONField(
+          default=list, blank=True
+     )
 
      class Meta:
           verbose_name = "Company"
@@ -130,7 +133,7 @@ class Company(TimeStampModel):
                     counter += 1
 
           super().save(*args, **kwargs)
-     
+
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)
     token = models.CharField(max_length=255, unique=True)
