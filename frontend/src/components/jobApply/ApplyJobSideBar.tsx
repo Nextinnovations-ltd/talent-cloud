@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import { Job } from './ApplyJobCard';
 import { ScrollArea } from '../ui/scroll-area';
 import { JobInfoGrid } from '../common/ApplyJob/JobInfoGrid';
@@ -31,6 +31,10 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
 
   const jobDetails = data?.data;
+
+  console.log({jobDetails})
+
+  
 
 
 
@@ -70,7 +74,11 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
         {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
         <JobInfoGrid job={selectedJob} />
         <SkillsSection skills={jobDetails?.skills || []} />
-        <ActionButtons jobId={selectedJob?.id} />
+        <ActionButtons  
+          alreadyApplied={jobDetails?.is_applied }
+          jobId={selectedJob?.id}
+          isBookmarked={jobDetails?.is_bookmarked}
+        />
         <p className="mt-2">{jobDetails?.description}</p>
       {
         jobDetails?.company?.id &&   <CompanyAbout job={jobDetails} />

@@ -41,7 +41,11 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: unknown) => {
   const result = await baseQuery(args, api, extraOptions);
 
-  if ((result.error as FetchBaseQueryError)?.status === 401) {
+  const status = (result.error as FetchBaseQueryError)?.status;
+
+
+ 
+if (status === 401 || status === 403)    {
     // Handle unauthorized error
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
@@ -54,7 +58,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: [],
+  tagTypes: ['JobList'],
   endpoints: () => ({}),
 });
 

@@ -29,7 +29,8 @@ export type Job = {
   created_at: string;
   applicant_count: number;
   is_new: boolean;
-  is_bookmarked:boolean
+  is_bookmarked:boolean;
+  is_applied:boolean
 };
 
 export type JobList = Job[];
@@ -115,10 +116,16 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
 
       <div className="border-t-[1px] border-slate-300"></div>
 
-      <div className="flex mt-[20px] text-[14px] items-center gap-2">
-        <h3 className="text-[#6B6B6B]">{formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</h3>
+      <div className="flex mt-[20px] text-[14px] justify-between
+       items-center gap-2">
+       <div className="flex items-center gap-2">
+       <h3 className="text-[#6B6B6B]">{formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</h3>
         <img width={4} height={4} src={DOT} />
         <h3 className="text-[#6B6B6B]">{job.applicant_count} Applicants</h3>
+       </div>
+      {
+        job.is_applied &&  <h3 className="text-[#0481EF]">Applied</h3>
+      }
       </div>
     </div>
   );

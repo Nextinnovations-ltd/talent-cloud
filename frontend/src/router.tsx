@@ -26,6 +26,7 @@ import { MainUserProfile } from "./pages/profile/MainUserProfile";
 import LandingPage from "./pages/landingPage/LandingPage";
 import { MainLayout } from "./layouts/MainLayout";
 import ApplyJob from "./pages/applyjobs";
+import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 
 
 export const router = createBrowserRouter([
@@ -58,6 +59,17 @@ export const router = createBrowserRouter([
               {
                 path: 'job_apply/:id',
                 element: <ApplyJob />
+              },
+            ]
+
+
+          },
+          {
+            path: "/organization",
+            children: [
+              {
+                path: 'detail/:id',
+                element: <OrganizationDetail />
               },
             ]
 

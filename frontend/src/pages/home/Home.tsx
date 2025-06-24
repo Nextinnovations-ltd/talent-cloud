@@ -22,10 +22,12 @@ export const Home: React.FC = () => {
     salary_rate:searchParams.get('salary_rate') || ''
   });
 
-  const { data, isLoading, isFetching } = useGetJobApplyCardQuery({ 
+  const { data, isLoading, isFetching,refetch } = useGetJobApplyCardQuery({ 
     page,
     ...filters
   });
+
+
 
   useEffect(() => {
     if (data?.data.results) {
@@ -56,6 +58,8 @@ export const Home: React.FC = () => {
 
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);
+    refetch()
+
   };
 
   const handleFiltersChange = (newFilters: Partial<typeof filters>) => {
@@ -131,6 +135,7 @@ export const Home: React.FC = () => {
           <ApplyJobSideBar
             selectedJob={selectedJob}
             setSelectedJob={setSelectedJob}
+            refetch={refetch}
           />
         )}
       </div>
