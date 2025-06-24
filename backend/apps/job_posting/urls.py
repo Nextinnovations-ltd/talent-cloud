@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import (
     BookmarkDeleteAPIView,
-    BookmarkJobDeleteAPIView,
     CompanyJobListView,
     JobPostEditDetailAPIView,
     JobPostCreateAPIView,
@@ -42,7 +41,6 @@ urlpatterns = [
     # Bookmarked Job Endpoints (Job Seeker)
     path('my-bookmarks/', JobSeekerBookmarkedJobListView.as_view(), name='my-bookmarks-list'),
     path('job-posts/<int:job_post_id>/bookmark/', BookmarkJobView.as_view(), name='jobpost-bookmark'), # POST
-    # path('my-bookmarks/<int:bookmark_id>/', BookmarkJobDeleteAPIView.as_view(), name='delete-jobpost-bookmark'), # DELETE
     path('my-bookmarks/<int:job_post_id>/', BookmarkDeleteAPIView.as_view(), name='delete-jobpost-bookmark'), # DELETE
     
     # path('job-posts/<int:pk>/metrics/', JobPostMetricViewAPIView.as_view(), name='jobpost-metrics'),
