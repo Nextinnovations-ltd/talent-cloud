@@ -225,6 +225,21 @@ class JobSearchListAPIView(CustomListAPIView):
           )
 
           return queryset
+     
+@extend_schema(tags=["Company Job Post"])
+class CompanyJobListView(CustomListAPIView):
+     """
+     API endpoint for Admin/Superadmin to list all job posts for their company.
+     URL: /api/v1/company-job-posts/ (GET)
+     """
+     serializer_class = JobPostListSerializer
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
+     use_pagination = False
+
+     def get_queryset(self):
+          # Filter job posts by admin/superadmin
+          return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post List Views
 
@@ -253,21 +268,6 @@ class JobSearchListAPIView(CustomListAPIView):
 #           metric.save()
           
 #           return Response({'view_count': metric.view_count}, status=status.HTTP_200_OK)
-
-@extend_schema(tags=["Company Job Post"])
-class CompanyJobListView(CustomListAPIView):
-     """
-     API endpoint for Admin/Superadmin to list all job posts for their company.
-     URL: /api/v1/company-job-posts/ (GET)
-     """
-     serializer_class = JobPostListSerializer
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
-     use_pagination = False
-
-     def get_queryset(self):
-          # Filter job posts by admin/superadmin
-          return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post Metric Views
 
@@ -414,6 +414,23 @@ class BookmarkJobDeleteAPIView(APIView):
           bookmark.delete()
 
           return Response(CustomResponse.success("Successfully deleted the job post bookmark."), status=status.HTTP_204_NO_CONTENT)
+
+@extend_schema(tags=["Job Post-Bookmark"])
+class BookmarkDeleteAPIView(APIView):
+     """
+     API endpoint for Job Seekers to delete a bookmarked job.
+     URL: /api/my-bookmarks/bookmark_id/ (DELETE)
+     """
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+
+     def delete(self, request, job_post_id):
+          job_seeker = get_object_or_404(JobSeeker, user=request.user)
+          
+          bookmark = get_object_or_404(BookmarkedJob, job_post_id=job_post_id, job_seeker=job_seeker)
+          bookmark.delete()
+
+          return Response(CustomResponse.success("Successfully deleted the job post bookmark."), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Post-Bookmark"])
 class JobSeekerBookmarkedJobListView(CustomListAPIView):
