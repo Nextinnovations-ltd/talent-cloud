@@ -118,7 +118,7 @@ class JobPost(TimeStampModel):
      
      job_post_status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.ACTIVE, blank=True)
      
-     objects = JobPostManager
+     objects = JobPostManager()
 
 # End Job Post
 

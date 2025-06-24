@@ -71,7 +71,7 @@ class CompanyDashboardService:
                role = getattr(getattr(job_seeker, 'occupation', None), 'role', None)
                
                result.append({
-                    'id': user.pk,
+                    'applicant_id': user.pk,
                     'name': user.name,
                     'role': role.name,
                     'applied_date': application.created_at,
@@ -100,6 +100,7 @@ class CompanyDashboardService:
                specialization = getattr(job_post, 'specialization', None)
                
                result.append({
+                    'id': job_post.pk,
                     'title': job_post.title,
                     'specialization_name': specialization.name if specialization else None,
                     'job_post_status': job_post.job_post_status,
@@ -110,5 +111,98 @@ class CompanyDashboardService:
           
           return {
                'message': 'Succefully generated job posts by most recent order.',
+               'data': result
+          }
+     
+     @staticmethod
+     def get_active_job_posts(company):
+          # Get all applicants from all job posts
+          job_posts = JobPost.objects.active().filter(
+               posted_by__company=company
+          ).select_related(
+               'specialization'
+          ).only(
+               'specialization__name'
+          ).order_by('-created_at')
+          
+          result = []
+          
+          for job_post in job_posts:
+               specialization = getattr(job_post, 'specialization', None)
+               
+               result.append({
+                    'id': job_post.pk,
+                    'title': job_post.title,
+                    'specialization_name': specialization.name if specialization else None,
+                    'job_post_status': job_post.job_post_status,
+                    'applicant_count': job_post.applicant_count,
+                    'view_count': job_post.view_count,
+                    'posted_date': job_post.created_at,
+               })
+          
+          return {
+               'message': 'Succefully generated active job posts by most recent order.',
+               'data': result
+          }
+     
+     @staticmethod
+     def get_draft_job_posts(company):
+          # Get all applicants from all job posts
+          job_posts = JobPost.objects.draft().filter(
+               posted_by__company=company
+          ).select_related(
+               'specialization'
+          ).only(
+               'specialization__name'
+          ).order_by('-created_at')
+          
+          result = []
+          
+          for job_post in job_posts:
+               specialization = getattr(job_post, 'specialization', None)
+               
+               result.append({
+                    'id': job_post.pk,
+                    'title': job_post.title,
+                    'specialization_name': specialization.name if specialization else None,
+                    'job_post_status': job_post.job_post_status,
+                    'applicant_count': job_post.applicant_count,
+                    'view_count': job_post.view_count,
+                    'posted_date': job_post.created_at,
+               })
+          
+          return {
+               'message': 'Succefully generated draft job posts by most recent order.',
+               'data': result
+          }
+          
+     @staticmethod
+     def get_expired_job_posts(company):
+          # Get all applicants from all job posts
+          job_posts = JobPost.objects.expired().filter(
+               posted_by__company=company
+          ).select_related(
+               'specialization'
+          ).only(
+               'specialization__name'
+          ).order_by('-created_at')
+          
+          result = []
+          
+          for job_post in job_posts:
+               specialization = getattr(job_post, 'specialization', None)
+               
+               result.append({
+                    'id': job_post.pk,
+                    'title': job_post.title,
+                    'specialization_name': specialization.name if specialization else None,
+                    'job_post_status': job_post.job_post_status,
+                    'applicant_count': job_post.applicant_count,
+                    'view_count': job_post.view_count,
+                    'posted_date': job_post.created_at,
+               })
+          
+          return {
+               'message': 'Succefully generated expired job posts by most recent order.',
                'data': result
           }
