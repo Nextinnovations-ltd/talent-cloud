@@ -21,6 +21,8 @@ from apps.job_posting.serializers import (
     JobPostSerializer,
 )
 from apps.job_seekers.models import JobSeeker
+from services.job_posting.job_service import JobService
+from rest_framework.exceptions import ValidationError
 from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
@@ -40,22 +42,13 @@ class JobPostCreateAPIView(APIView):
      permission_classes = [TalentCloudAdminOrSuperAdminPermission]
 
      def post(self, request):
-          serializer = JobPostSerializer(data=request.data)
-          
-          if serializer.is_valid():
-               serializer.save(posted_by=request.userd)
-               
+          try:
+               # The business logic for creating a job post is moved to JobService
+               job_post, serializer = JobService.create_job(request.data, request.user)
                return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
-          
-          return Response(CustomResponse.error("Error creating the job post."), status=status.HTTP_400_BAD_REQUEST)
-
-     # def post(self, request):
-     #      try:
-     #           job_post, serializer = create_job_post(request.data, request.user)
-     #           return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
-          
-     #      except ValidationError as e:
-     #           return Response(CustomResponse.error("Error creating the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
+          except ValidationError as e:
+               # The service layer raises ValidationError on invalid data
+               return Response(CustomResponse.error("Error creating the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(tags=["Job Post"])
 class JobPostEditDetailAPIView(APIView):
