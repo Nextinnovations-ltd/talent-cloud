@@ -1,4 +1,3 @@
-from amqp import NotFound
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -75,43 +74,40 @@ class JobPostActionAPIView(APIView):
                return [IsCompanyAdminOrSuperadminForJobPost()]
 
      def get_object(self, pk):
+          # This method is still needed for permission checks and to pass the instance to the service
           return get_object_or_404(JobPost, pk=pk)
 
      def get(self, request, pk):
-          job_post = self.get_object(pk)
-          
           try:
-               job_seeker = request.user.jobseeker
-          except JobSeeker.DoesNotExist:
-               job_seeker = None
-
-          if job_seeker:
-               # Create or get the view record
-               JobPostView.objects.get_or_create(job_post=job_post, job_seeker=job_seeker)
-               
-          serializer = JobPostDetailSerializer(job_post, context={ 'request': request }) # add the request context to get the current authenticated user for bookmarked flag
-          
-          return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
+               job_post = JobService.get_job_post_detail(pk, request.user)
+               serializer = JobPostDetailSerializer(job_post, context={ 'request': request })
+               return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
+          except NotFound as e:
+               return Response(CustomResponse.error(str(e)), status=status.HTTP_404_NOT_FOUND)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
      def patch(self, request, pk):
-          instance = self.get_object(pk)
-          self.check_object_permissions(request, instance)
+          instance = self.get_object(pk) # Get instance for permission check
+          self.check_object_permissions(request, instance) # Perform permission check
           
-          serializer = JobPostSerializer(instance, data=request.data, partial=True)
-          
-          if serializer.is_valid():
-               serializer.save()
+          try:
+               serializer = JobService.update_job_post(instance, request.data, partial=True)
                return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
-          
-          return Response(CustomResponse.error("Error updating job post.", serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+          except ValidationError as e:
+               return Response(CustomResponse.error("Error updating job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
      def delete(self, request, pk):
-          instance = self.get_object(pk)
-          self.check_object_permissions(request, instance)
+          instance = self.get_object(pk) # Get instance for permission check
+          self.check_object_permissions(request, instance) # Perform permission check
           
-          instance.delete()
-          
-          return Response(CustomResponse.success("Successfully deleted the job post."), status=status.HTTP_204_NO_CONTENT)
+          try:
+               JobService.delete_job_post(instance)
+               return Response(CustomResponse.success("Successfully deleted the job post."), status=status.HTTP_200_OK)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # endregion Job Post Views
 
