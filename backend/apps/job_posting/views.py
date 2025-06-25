@@ -37,16 +37,25 @@ from core.middleware.permission import (
 @extend_schema(tags=["Job Post"])
 class JobPostCreateAPIView(APIView):
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
 
      def post(self, request):
           serializer = JobPostSerializer(data=request.data)
           
           if serializer.is_valid():
-               serializer.save(posted_by=request.user)
+               serializer.save(posted_by=request.userd)
+               
                return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
           
           return Response(CustomResponse.error("Error creating the job post."), status=status.HTTP_400_BAD_REQUEST)
+
+     # def post(self, request):
+     #      try:
+     #           job_post, serializer = create_job_post(request.data, request.user)
+     #           return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
+          
+     #      except ValidationError as e:
+     #           return Response(CustomResponse.error("Error creating the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(tags=["Job Post"])
 class JobPostEditDetailAPIView(APIView):
@@ -91,18 +100,6 @@ class JobPostActionAPIView(APIView):
           
           return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
 
-     # def put(self, request, pk):
-     #      instance = self.get_object(pk)
-     #      self.check_object_permissions(request, instance)
-          
-     #      serializer = JobPostSerializer(instance, data=request.data)
-          
-     #      if serializer.is_valid():
-     #           serializer.save()
-     #           return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
-          
-     #      return Response(CustomResponse.error("Validation errors", serializer.errors) , status=status.HTTP_400_BAD_REQUEST)
-
      def patch(self, request, pk):
           instance = self.get_object(pk)
           self.check_object_permissions(request, instance)
@@ -125,6 +122,7 @@ class JobPostActionAPIView(APIView):
 
 # endregion Job Post Views
 
+
 # region Job Post List Views
 
 @extend_schema(tags=["Job Post"])
@@ -138,7 +136,7 @@ class JobPostListAPIView(CustomListAPIView):
 
 @extend_schema(tags=["Job Post"])
 class NewestJobPostAPIView(CustomListAPIView):
-     queryset = JobPost.objects.filter(is_accepting_applications=True)\
+     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
         .order_by('-created_at')\
         .select_related('role', 'experience_level', 'posted_by')
      authentication_classes = [TokenAuthentication]
@@ -172,7 +170,7 @@ class MatchedJobPostAPIView(CustomListAPIView):
           user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id)
 
           # Filter 1: Must be accepting applications
-          queryset = JobPost.objects.filter(is_accepting_applications=True)
+          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
 
           # Filter 2: Must match user's profile
           queryset = queryset.filter(user_match_q)
@@ -215,7 +213,7 @@ class JobSearchListAPIView(CustomListAPIView):
           Returns the base queryset of active JobPost objects with valid application dates.
           The filter backends will then apply additional search, filter, and ordering.
           """
-          queryset = JobPost.objects.filter(is_accepting_applications=True)
+          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
 
           queryset = queryset.distinct()
 
@@ -242,6 +240,7 @@ class CompanyJobListView(CustomListAPIView):
           return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post List Views
+
 
 # region Job Post Metric Views
 
