@@ -1,4 +1,3 @@
-from amqp import NotFound
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +20,8 @@ from apps.job_posting.serializers import (
     JobPostSerializer,
 )
 from apps.job_seekers.models import JobSeeker
+from services.job_posting.job_service import JobService
+from rest_framework.exceptions import ValidationError
 from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
@@ -37,16 +38,16 @@ from core.middleware.permission import (
 @extend_schema(tags=["Job Post"])
 class JobPostCreateAPIView(APIView):
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
 
      def post(self, request):
-          serializer = JobPostSerializer(data=request.data)
-          
-          if serializer.is_valid():
-               serializer.save(posted_by=request.user)
+          try:
+               # The business logic for creating a job post is moved to JobService
+               job_post, serializer = JobService.create_job(request.data, request.user)
                return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
-          
-          return Response(CustomResponse.error("Error creating the job post."), status=status.HTTP_400_BAD_REQUEST)
+          except ValidationError as e:
+               # The service layer raises ValidationError on invalid data
+               return Response(CustomResponse.error("Error creating the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(tags=["Job Post"])
 class JobPostEditDetailAPIView(APIView):
@@ -73,57 +74,43 @@ class JobPostActionAPIView(APIView):
                return [IsCompanyAdminOrSuperadminForJobPost()]
 
      def get_object(self, pk):
+          # This method is still needed for permission checks and to pass the instance to the service
           return get_object_or_404(JobPost, pk=pk)
 
      def get(self, request, pk):
-          job_post = self.get_object(pk)
-          
           try:
-               job_seeker = request.user.jobseeker
-          except JobSeeker.DoesNotExist:
-               job_seeker = None
-
-          if job_seeker:
-               # Create or get the view record
-               JobPostView.objects.get_or_create(job_post=job_post, job_seeker=job_seeker)
-               
-          serializer = JobPostDetailSerializer(job_post, context={ 'request': request }) # add the request context to get the current authenticated user for bookmarked flag
-          
-          return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
-
-     # def put(self, request, pk):
-     #      instance = self.get_object(pk)
-     #      self.check_object_permissions(request, instance)
-          
-     #      serializer = JobPostSerializer(instance, data=request.data)
-          
-     #      if serializer.is_valid():
-     #           serializer.save()
-     #           return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
-          
-     #      return Response(CustomResponse.error("Validation errors", serializer.errors) , status=status.HTTP_400_BAD_REQUEST)
+               job_post = JobService.get_job_post_detail(pk, request.user)
+               serializer = JobPostDetailSerializer(job_post, context={ 'request': request })
+               return Response(CustomResponse.success("Successfully fetched job post.", serializer.data), status=status.HTTP_200_OK)
+          except NotFound as e:
+               return Response(CustomResponse.error(str(e)), status=status.HTTP_404_NOT_FOUND)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
      def patch(self, request, pk):
-          instance = self.get_object(pk)
-          self.check_object_permissions(request, instance)
+          instance = self.get_object(pk) # Get instance for permission check
+          self.check_object_permissions(request, instance) # Perform permission check
           
-          serializer = JobPostSerializer(instance, data=request.data, partial=True)
-          
-          if serializer.is_valid():
-               serializer.save()
+          try:
+               serializer = JobService.update_job_post(instance, request.data, partial=True)
                return Response(CustomResponse.success("Successfully updated job post.", serializer.data), status=status.HTTP_200_OK)
-          
-          return Response(CustomResponse.error("Error updating job post.", serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+          except ValidationError as e:
+               return Response(CustomResponse.error("Error updating job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
      def delete(self, request, pk):
-          instance = self.get_object(pk)
-          self.check_object_permissions(request, instance)
+          instance = self.get_object(pk) # Get instance for permission check
+          self.check_object_permissions(request, instance) # Perform permission check
           
-          instance.delete()
-          
-          return Response(CustomResponse.success("Successfully deleted the job post."), status=status.HTTP_204_NO_CONTENT)
+          try:
+               JobService.delete_job_post(instance)
+               return Response(CustomResponse.success("Successfully deleted the job post."), status=status.HTTP_200_OK)
+          except Exception as e:
+               return Response(CustomResponse.error(f"An unexpected error occurred: {str(e)}"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # endregion Job Post Views
+
 
 # region Job Post List Views
 
@@ -138,7 +125,7 @@ class JobPostListAPIView(CustomListAPIView):
 
 @extend_schema(tags=["Job Post"])
 class NewestJobPostAPIView(CustomListAPIView):
-     queryset = JobPost.objects.filter(is_accepting_applications=True)\
+     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
         .order_by('-created_at')\
         .select_related('role', 'experience_level', 'posted_by')
      authentication_classes = [TokenAuthentication]
@@ -172,7 +159,7 @@ class MatchedJobPostAPIView(CustomListAPIView):
           user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id)
 
           # Filter 1: Must be accepting applications
-          queryset = JobPost.objects.filter(is_accepting_applications=True)
+          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
 
           # Filter 2: Must match user's profile
           queryset = queryset.filter(user_match_q)
@@ -215,7 +202,7 @@ class JobSearchListAPIView(CustomListAPIView):
           Returns the base queryset of active JobPost objects with valid application dates.
           The filter backends will then apply additional search, filter, and ordering.
           """
-          queryset = JobPost.objects.filter(is_accepting_applications=True)
+          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
 
           queryset = queryset.distinct()
 
@@ -242,6 +229,7 @@ class CompanyJobListView(CustomListAPIView):
           return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post List Views
+
 
 # region Job Post Metric Views
 
