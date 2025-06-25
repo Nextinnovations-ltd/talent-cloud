@@ -181,6 +181,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
 
      def get_is_applied(self,obj):
           return JobPostDisplayMixin.get_is_applied(self, obj)     
+
 class JobApplicationSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
@@ -207,7 +208,7 @@ class JobApplicationStatusUpdateSerializer(ModelSerializer):
                raise serializers.ValidationError("Invalid application status.")
           return value
 
-# Bookmarked Job Serializers
+# region Bookmarked Job Serializers
 
 class BookmarkedJobSerializer(ModelSerializer):
      class Meta:
@@ -215,7 +216,7 @@ class BookmarkedJobSerializer(ModelSerializer):
           fields = ['id', 'job_post', 'created_at']
           read_only_fields = ['id', 'job_post', 'created_at']
 
-# End Bookmarked Job Serializers
+# endregion Bookmarked Job Serializers
 
 class JobPostMetricSerializer(ModelSerializer):
      class Meta:
