@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from rest_framework.permissions import AllowAny
-from apps.companies.serializers import CompanySerializer, IndustrySerializer
+from apps.companies.serializers import CompanySerializer, IndustrySerializer, CompanyWithJobsSerializer
 from .models import Company, Industry
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudSuperAdminPermission
+from core.middleware.permission import TalentCloudAllPermission, TalentCloudSuperAdminPermission
 from drf_spectacular.utils import extend_schema
 
 @extend_schema(tags=["Industry"])
@@ -92,7 +92,7 @@ class CompanyDetailAPIView(views.APIView):
      API view to retrieve, update, or delete a specific company.
      """
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAllPermission]
 
      def get_object(self, slug):
           """
@@ -109,8 +109,8 @@ class CompanyDetailAPIView(views.APIView):
           Retrieve a specific company by slug.
           """
           company = self.get_object(slug)
-          serializer = CompanySerializer(company)
-          return Response(serializer.data)
+          serializer = CompanyWithJobsSerializer(company, context={'request': request})
+          return Response(serializer.data, status=status.HTTP_200_OK)
 
      def put(self, request, slug):
           """
