@@ -1,7 +1,6 @@
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from rest_framework.exceptions import ValidationError
-from apps.companies.models import Company
 from core.constants.constants import PARENT_COMPANY, ROLES, ROLE_LIST
 from services.company.company_service import get_or_create_parent_company
 from services.models import TimeStampModel
@@ -130,6 +129,8 @@ class Role(TimeStampModel):
         return self.name
 
 class TalentCloudUser(TimeStampModel, AbstractUser):
+    from apps.companies.models import Company
+    
     first_name = None
     last_name = None
     name = models.CharField(max_length=100, null=True, blank=True)
