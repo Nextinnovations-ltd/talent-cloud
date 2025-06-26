@@ -9,7 +9,7 @@ class CompanySerializer(serializers.ModelSerializer):
      class Meta:
           model = Company
           fields = [
-               'id', 'name', 'slug', 'address', 'image_url', 'website',
+               'id', 'name', 'slug', 'address', 'image_url', 'website', 'why_join_us',
                'description', 'industry', 'size', 'tagline', 'contact_email',
                'contact_phone', 'founded_date', 'is_verified', 'company_image_urls',
                'created_at', 'updated_at'
@@ -47,11 +47,11 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
           model = Company
           fields = [
                'id', 'name', 'description', 'image_url', 'industry', 'size',
-               'founded_date', 'is_verified', 'company_image_urls'
+               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us'
           ]
           read_only_fields = [
                'id', 'name', 'description', 'image_url', 'industry', 'size', 
-               'founded_date', 'is_verified'
+               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us'
           ]
      
 class CompanyApproveSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
      class Meta:
           model = Company
           fields = [
-               'id', 'name', 'slug', 'address', 'image_url', 'website',
+               'id', 'name', 'slug', 'address', 'image_url', 'website', 'why_join_us',
                'description', 'industry', 'size', 'tagline', 'contact_email',
                'contact_phone', 'founded_date', 'is_verified', 'company_image_urls',
                'job_posts', 'created_at', 'updated_at'

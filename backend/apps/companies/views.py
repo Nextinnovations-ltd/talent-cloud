@@ -92,7 +92,12 @@ class CompanyDetailAPIView(views.APIView):
      API view to retrieve, update, or delete a specific company.
      """
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAllPermission]
+     
+     def get_permissions(self):
+          if self.request.method == 'GET':
+               return [TalentCloudAllPermission()]
+          else:
+               return [TalentCloudSuperAdminPermission()]
 
      def get_object(self, slug):
           """
