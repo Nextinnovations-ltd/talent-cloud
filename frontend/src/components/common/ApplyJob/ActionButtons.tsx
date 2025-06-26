@@ -4,7 +4,7 @@ import { useBookMarkedJobMutation, useDeleteBookMarkedJobMutation } from '@/serv
 import { LoadingSpinner } from '../LoadingSpinner';
 import {  Link } from 'react-router-dom';
 import useToast from '@/hooks/use-toast';
-import { Bookmark } from 'lucide-react';
+
 
 interface ActionButtonsProps {
   jobId: number;
@@ -63,21 +63,23 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ jobId, alreadyAppl
 
   return (
     <div className='gap-[28px] mb-[40px] flex'>
-      {
+     <div className='flex items-center gap-[28px] justify-center'>
+     {
         !alreadyApplied ? (
           <Link to={`user/job_apply/${jobId}`}>
-            <Button className='bg-blue-500 drop-shadow-lg rounded-[12px] text-white'>Quick Apply</Button>
+            <Button className='bg-blue-500 text-[16px]  drop-shadow-lg rounded-[12px] text-white'>Quick Apply</Button>
           </Link>
         ) : (
-          <Button disabled className='bg-blue-500 drop-shadow-lg rounded-[12px] text-white'>Already Apply</Button>
+          <p  className='text-blue-500 text-[16px]  drop-shadow-lg rounded-[12px]'>Already applied</p>
         )
       }
+     </div>
       <Button
         onClick={() => (isBookmarked ? handleDeleteBookmark(jobId) : handleBookmark(jobId))}
-        className={`bg-[#E6F3FF] rounded-[12px] w-[100px] text-[#0481EF] gap-2`}
+        className={` rounded-[12px] text-[16px]   w-[100px] text-[#0481EF] gap-2 bg-[#E6F3FF]   `}
         disabled={JOBBOOKLOADING || DELETELOADING}
       >
-        {(JOBBOOKLOADING || DELETELOADING) ? <LoadingSpinner /> : <><Bookmark />{isBookmarked ? 'Saved' : 'Save'}</>}
+        {(JOBBOOKLOADING || DELETELOADING) ? <LoadingSpinner /> : <>{isBookmarked ? 'Unsave' : 'Save'}</>}
       </Button>
     </div>
   );

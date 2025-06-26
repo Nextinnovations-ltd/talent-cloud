@@ -72,6 +72,7 @@ interface JobDetailCard {
   };
   job_poster_name: string | null;
   is_applied: boolean;
+  is_bookmarked:boolean;
 }
 
 interface JobDetailJobApplyCardResponse {

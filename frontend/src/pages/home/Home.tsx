@@ -7,6 +7,8 @@ import ApplyJobFilters from "@/components/jobApply/ApplyJobFilters";
 import ApplyJobHero from "@/components/jobApply/ApplyJobHero";
 import { useGetJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { useSearchParams } from "react-router-dom";
+import EMPTY from '@/assets/EmptyState.png'
+import { motion } from "framer-motion";
 
 export const Home: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -115,14 +117,27 @@ export const Home: React.FC = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <ApplyJobCardSkeleton key={index} />
               ))
-            : allJobs.map((job) => (
-                <ApplyJobCard
-                  key={job.id}
-                  job={job}
-                  onClick={handleJobClick}
-                  isSelected={selectedJob?.id === job.id}
-                />
-              ))}
+            : allJobs.length === 0 && !isLoading ? (
+                <motion.div
+                  className="col-span-full flex flex-col items-center justify-center text-center text-gray-500 py-8"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <img src={EMPTY} width={240}/>
+                  <h3 className="text-[28px] text-black font-semibold mt-[10px] mb-[15px]">No Jobs</h3>
+                  <p>Try adjusting your search to find what you are looking for</p>
+                </motion.div>
+              ) : (
+                allJobs.map((job) => (
+                  <ApplyJobCard
+                    key={job.id}
+                    job={job}
+                    onClick={handleJobClick}
+                    isSelected={selectedJob?.id === job.id}
+                  />
+                ))
+              )}
           {isLoadingMore && (
             <div className="col-span-full flex justify-center gap-[60px] mt-4 animate-fade-in">
               {Array.from({ length: 3 }).map((_, index) => (

@@ -20,7 +20,10 @@ export const NavBar = () => {
         <NavigationMenuDemo />
         <div className="flex gap-[30px]  items-center justify-center">
           <MessageIcon />
+          <Link to={`organization/detail/1`}>
           <BellIcon />
+          </Link>
+         
           <Button
             className="w-[132px] h-[50px] rounded-[33px]"
             variant={"outline"}
