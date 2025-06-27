@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.ni_super_admin.views import CompanyApprovalAPIView
+from apps.ni_dashboard.views import CompanyApprovalAPIView
 from .views import (
     CompanyCreateAPIView,
     CompanyListAPIView,
