@@ -1,12 +1,27 @@
 from apps.job_seekers.models import JobSeeker
 from apps.users.models import TalentCloudUser
+from apps.job_posting.models import JobPost
+from apps.job_posting.models import StatusChoices
+from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import ROLES
 from core.middleware.chunk_optimizer import chunked_queryset
 from services.job_seeker.profile_score_service import ProfileScoreService
 
 class DashboardService:
      @staticmethod
-     def get_job_seeker_statistics():
+     def get_job_seeker_statistics(company):
+          # Job Post Statistics
+          jobs = JobPost.objects.filter(posted_by__company = company)
+          
+          job_posts_count = jobs.count()
+          job_post_active_count = jobs.filter(job_post_status=StatusChoices.ACTIVE).count()
+          job_post_draft_count = jobs.filter(job_post_status=StatusChoices.DRAFT).count()
+          job_post_expired_count = jobs.filter(job_post_status=StatusChoices.EXPIRED).count()
+          job_post_applicants_count = SharedDashboardService.get_company_applicant_count(company)
+          job_post_bookmarks_count = SharedDashboardService.get_company_bookmark_count(company)
+          job_post_views_count = SharedDashboardService.get_company_view_count(company)
+          
+          # Job Seeker Statistics
           job_seeker_users = JobSeeker.objects.all()
           total_users = JobSeeker.objects.count()
           verified_users = JobSeeker.objects.filter(is_verified=True).count()
@@ -23,6 +38,14 @@ class DashboardService:
           return {
                'message': 'Succefully generated job seeker count',
                'data': {
+                    'total_job_posts': job_posts_count,
+                    'job_post_active_count': job_post_active_count,
+                    'job_post_draft_count': job_post_draft_count,
+                    'job_post_expired_count': job_post_expired_count,
+                    'job_post_applicants_count': job_post_applicants_count,
+                    'job_post_bookmarks_count': job_post_bookmarks_count,
+                    'job_post_views_count': job_post_views_count,
+                    
                     'total_user_count': total_users,
                     'verified_user_count': verified_users,
                     'unverified_user_count': unverified_users,
