@@ -7,7 +7,7 @@ from apps.users.models import TalentCloudUser
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudSuperAdminPermission
-from services.dashboard.dashboard_service import DashboardService
+from services.dashboard.ni_dashboard_service import DashboardService
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 
