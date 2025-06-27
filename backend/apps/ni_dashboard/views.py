@@ -17,7 +17,12 @@ class JobSeekerStatisticsAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          result = DashboardService.get_job_seeker_statistics()
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+
+          result = DashboardService.get_job_seeker_statistics(company)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
