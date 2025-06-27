@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'apps.companies',
     'apps.company_dashboard',
     'apps.users',
-    'apps.ni_super_admin',
+    'apps.ni_dashboard',
     'apps.job_seekers',
     'apps.job_posting',
     'apps.audit_log',

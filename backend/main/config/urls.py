@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Local API
     path('api/v1/', include('apps.authentication.urls')),
-    path('api/v1/', include('apps.ni_super_admin.urls')),
+    path('api/v1/', include('apps.ni_dashboard.urls')),
     path('api/v1/', include('apps.company_dashboard.urls')),
     path('api/v1/', include('apps.companies.urls')),
     path('api/v1/', include('apps.job_seekers.urls')),
