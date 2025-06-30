@@ -128,6 +128,20 @@ class Role(TimeStampModel):
     def __str__(self):
         return self.name
 
+class Country(models.Model):
+    code = models.CharField(max_length=2, unique=True)  # ISO code
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Location(models.Model):
+    city = models.CharField(max_length=100)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
+
+    def __str__(self):
+        return f"{self.name}, {self.country.code}"
+
 class TalentCloudUser(TimeStampModel, AbstractUser):
     from apps.companies.models import Company
     
@@ -143,6 +157,7 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     address = models.CharField(null=True, blank=True, max_length=255)
     profile_image_url = models.URLField(null=True, blank=True, max_length=200)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     
     company = models.ForeignKey(

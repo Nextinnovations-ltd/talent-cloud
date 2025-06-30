@@ -1,8 +1,9 @@
-from apps.companies.models import Company, Industry
 from core.constants.constants import PARENT_COMPANY
 
 
 def get_or_create_parent_company(name):
+     from apps.companies.models import Company, Industry
+     
      try:
           company = Company.objects.get(
                name=PARENT_COMPANY.name
