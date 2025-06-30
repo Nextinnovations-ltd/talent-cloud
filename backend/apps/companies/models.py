@@ -47,13 +47,13 @@ class Company(TimeStampModel):
           blank=True,
           help_text="URL-friendly version of the company name."
      )
-     # location = models.ForeignKey(
-     #      Location,
-     #      on_delete=models.SET_NULL,
-     #      null=True,
-     #      blank=True,
-     #      help_text="The location of the company."
-     # )
+     location = models.ForeignKey(
+          'users.Location',
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          help_text="The location of the company."
+     )
      address = models.CharField(
           max_length=255,
           null=True,
