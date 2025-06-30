@@ -9,6 +9,10 @@ from services.job_seeker.profile_score_service import ProfileScoreService
 
 class DashboardService:
      @staticmethod
+     def get_percent(count, total):
+          return round((count / total * 100), 2) if total > 0 else 0.0
+
+     @staticmethod
      def get_job_seeker_statistics(company):
           # Job Post Statistics
           jobs = JobPost.objects.filter(posted_by__company = company)
@@ -17,6 +21,20 @@ class DashboardService:
           job_post_active_count = jobs.filter(job_post_status=StatusChoices.ACTIVE).count()
           job_post_draft_count = jobs.filter(job_post_status=StatusChoices.DRAFT).count()
           job_post_expired_count = jobs.filter(job_post_status=StatusChoices.EXPIRED).count()
+
+          job_post_active = {
+               'count': job_post_active_count,
+               'percent': DashboardService.get_percent(job_post_active_count, job_posts_count)
+          }
+          job_post_draft = {
+               'count': job_post_draft_count,
+               'percent': DashboardService.get_percent(job_post_draft_count, job_posts_count)
+          }
+          job_post_expired = {
+               'count': job_post_expired_count,
+               'percent': DashboardService.get_percent(job_post_expired_count, job_posts_count)
+          }
+          
           job_post_applicants_count = SharedDashboardService.get_company_applicant_count(company)
           job_post_bookmarks_count = SharedDashboardService.get_company_bookmark_count(company)
           job_post_views_count = SharedDashboardService.get_company_view_count(company)
@@ -39,9 +57,9 @@ class DashboardService:
                'message': 'Succefully generated job seeker count',
                'data': {
                     'total_job_posts': job_posts_count,
-                    'job_post_active_count': job_post_active_count,
-                    'job_post_draft_count': job_post_draft_count,
-                    'job_post_expired_count': job_post_expired_count,
+                    'job_post_active': job_post_active,
+                    'job_post_draft': job_post_draft,
+                    'job_post_expired': job_post_expired,
                     'job_post_applicants_count': job_post_applicants_count,
                     'job_post_bookmarks_count': job_post_bookmarks_count,
                     'job_post_views_count': job_post_views_count,
@@ -50,29 +68,6 @@ class DashboardService:
                     'verified_user_count': verified_users,
                     'unverified_user_count': unverified_users,
                     'completed_profiles_count': completed_profile_count
-               }
-          }
-     
-     @staticmethod
-     def get_job_seeker_list():
-          job_seekers = JobSeeker.objects.all()
-
-          job_seeker_list = []
-          for user in job_seekers:
-               job_seeker_list.append({
-                    'id': user.id,
-                    'email': user.email,
-                    'name': user.name,
-                    'username': user.username,
-                    'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
-                    'registered_data': user.created_at,
-               })
-
-          
-          return {
-               'message': 'Succefully generated job seeker count',
-               'data': {
-                    'job_seeker_list': job_seeker_list
                }
           }
      
@@ -116,7 +111,8 @@ class DashboardService:
                     'name': user.name,
                     'username': user.username,
                     'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
-                    'registered_data': user.created_at,
+                    'profile_image_url': user.profile_image_url,
+                    'registered_date': user.created_at,
                })
 
           
