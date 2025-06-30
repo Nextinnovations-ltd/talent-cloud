@@ -77,6 +77,7 @@ reset-db:
 
 migrations: all
 	@echo "\n\033[1;34m=== Creating Migrations ===\033[0m"
+	@$(VENV_DIR)/bin/python -c "import sys; print(sys.executable)"
 	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m\n"
 	@$(VENV_DIR)/bin/python manage.py makemigrations --settings=$(SETTINGS)
 	@echo "\n\033[1;32m✓ Migrations created\033[0m"

@@ -6,7 +6,9 @@ class JobSeeker(TalentCloudUser):
      user = models.OneToOneField(TalentCloudUser, on_delete=models.CASCADE, parent_link=True)
      onboarding_step = models.IntegerField(default=1)
      resume_url = models.URLField(max_length=2048, null=True, blank=True)
+     is_open_to_work = models.BooleanField(default=True)
      tagline = models.CharField(max_length=150, null=True, blank=True)
+     expected_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
      def __str__(self):
           return f'{self.user.username} - {self.user.email}'
