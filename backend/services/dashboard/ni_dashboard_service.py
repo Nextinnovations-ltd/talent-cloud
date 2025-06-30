@@ -122,3 +122,49 @@ class DashboardService:
                     'ni_admin_list': ni_super_admins_list
                }
           }
+
+     @staticmethod
+     def get_job_seeker_statistics_by_occupation_role():
+          """
+          Generate statistics about job seeker counts based on top six occupation roles
+          """
+          from django.db.models import Count
+          from apps.job_seekers.models import JobSeekerOccupation
+          
+          # Get job seeker counts by occupation role, ordered by count (descending)
+          role_statistics = JobSeekerOccupation.objects.select_related('role').filter(
+               role__isnull=False
+          ).values(
+               'role__id',
+               'role__name',
+               'role__specialization__name'
+          ).annotate(
+               job_seeker_count=Count('user', distinct=True)
+          ).order_by('-job_seeker_count')[:6]  # Get top 6 roles
+          
+          total_job_seekers_with_roles = JobSeekerOccupation.objects.filter(
+               role__isnull=False
+          ).count()
+          
+          # Format the data with percentages
+          formatted_statistics = []
+          
+          for role_stat in role_statistics:
+               count = role_stat['job_seeker_count']
+               percentage = DashboardService.get_percent(count, total_job_seekers_with_roles)
+               
+               formatted_statistics.append({
+                    'role_id': role_stat['role__id'],
+                    'role_name': role_stat['role__name'],
+                    'specialization_name': role_stat['role__specialization__name'],
+                    'job_seeker_count': count,
+                    'percentage': percentage
+               })
+          
+          return {
+               'message': 'Successfully generated job seeker statistics by top occupation roles',
+               'data': {
+                    'total_job_seekers_with_roles': total_job_seekers_with_roles,
+                    'top_occupation_roles': formatted_statistics
+               }
+          }
