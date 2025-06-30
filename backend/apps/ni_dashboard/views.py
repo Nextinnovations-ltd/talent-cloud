@@ -38,6 +38,21 @@ class JobSeekerStatisticsAPIView(APIView):
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["NI Dashboard"])
+class JobSeekerRoleStatisticsAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+
+          result = DashboardService.get_job_seeker_statistics_by_occupation_role()
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["NI Dashboard"])
 class NIApplicantListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
