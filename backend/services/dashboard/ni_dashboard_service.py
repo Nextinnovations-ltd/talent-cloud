@@ -72,29 +72,6 @@ class DashboardService:
           }
      
      @staticmethod
-     def get_job_seeker_list():
-          job_seekers = JobSeeker.objects.all()
-
-          job_seeker_list = []
-          for user in job_seekers:
-               job_seeker_list.append({
-                    'id': user.id,
-                    'email': user.email,
-                    'name': user.name,
-                    'username': user.username,
-                    'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
-                    'registered_data': user.created_at,
-               })
-
-          
-          return {
-               'message': 'Succefully generated job seeker count',
-               'data': {
-                    'job_seeker_list': job_seeker_list
-               }
-          }
-     
-     @staticmethod
      def get_job_seeker_detail(user_id):
           try:
                user = JobSeeker.objects.get(id=user_id)
@@ -134,7 +111,8 @@ class DashboardService:
                     'name': user.name,
                     'username': user.username,
                     'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
-                    'registered_data': user.created_at,
+                    'profile_image_url': user.profile_image_url,
+                    'registered_date': user.created_at,
                })
 
           

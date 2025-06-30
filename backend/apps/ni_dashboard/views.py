@@ -4,12 +4,23 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
+from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudSuperAdminPermission
+from core.middleware.permission import IsSuperadminForJobPost, TalentCloudSuperAdminPermission
 from services.dashboard.ni_dashboard_service import DashboardService
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
+
+@extend_schema(tags=["NI Dashboard"])
+class NIAdminListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          result = DashboardService.get_ni_admin_list()
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["NI Dashboard"])
 class JobSeekerStatisticsAPIView(APIView):
@@ -27,35 +38,90 @@ class JobSeekerStatisticsAPIView(APIView):
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["NI Dashboard"])
-class JobSeekerListAPIView(APIView):
+class NIApplicantListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          result = DashboardService.get_job_seeker_list()
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+          
+          result = SharedDashboardService.get_company_applicants_by_latest_order(company)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
-@extend_schema(tags=["NI Dashboard"])
-class JobSeekerDetailAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+# @extend_schema(tags=["NI Dashboard"])
+# class NIApplicantDetailAPIView(APIView):
+#      authentication_classes = [TokenAuthentication]
+#      permission_classes = [TalentCloudSuperAdminPermission]
      
-     def get(self, request, user_id):
-          if not user_id:
-               return Response(CustomResponse.success("User not found with this id."), status=status.HTTP_404_NOT_FOUND)
+#      def get(self, request, user_id):
+#           if not user_id:
+#                return Response(CustomResponse.success("User not found with this id."), status=status.HTTP_404_NOT_FOUND)
           
-          result = DashboardService.get_job_seeker_detail(user_id)
+#           result = DashboardService.get_job_seeker_detail(user_id)
           
-          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+#           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["NI Dashboard"])
-class NIAdminListAPIView(APIView):
+class AllJobPostListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          result = DashboardService.get_ni_admin_list()
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+               
+          result = SharedDashboardService.get_company_job_posts_by_latest_order(company)
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["NI Dashboard"])
+class ActiveJobPostListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+               
+          result = SharedDashboardService.get_active_job_posts(company)
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["NI Dashboard"])
+class DraftJobPostListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+               
+          result = SharedDashboardService.get_draft_job_posts(company)
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["NI Dashboard"])
+class ExpiredJobPostListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          try:
+               company = request.user.company
+          except:
+               raise NotFound("Company didn't exists for the user.")
+               
+          result = SharedDashboardService.get_expired_job_posts(company)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
@@ -88,8 +154,25 @@ class CompanyApprovalAPIView(APIView):
 
 # endregion Company Approval Process
 
+@extend_schema(tags=["NI Dashboard"])
+class ToggleJobPostStatusAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [IsSuperadminForJobPost]
+     
+     def post(self, request, job_post_id):
+          if not job_post_id:
+               return Response(
+                    CustomResponse.error("Job post ID is required."),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          
+          result = SharedDashboardService.toggle_job_post_status(job_post_id)
+          
+          return Response(
+               CustomResponse.success(result['message'], result['data']),
+               status=status.HTTP_200_OK
+          )
 
-# Tempory Endpoint to pair Superadmin with NI Parent Company
 @extend_schema(tags=["NI Dashboard"])
 class SuperAdminPairingAPIView(APIView):
      authentication_classes = [TokenAuthentication]
