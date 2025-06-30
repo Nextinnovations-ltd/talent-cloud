@@ -93,6 +93,38 @@ class IsOwnerOfBookmarkedJob(BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.job_seeker.user == request.user
 
+class IsSuperadminForJobPost(BasePermission):
+    """
+    Custom permission to allow Admin/Superadmin to manage JobPosts belonging to their company.
+    For a single JobPost instance or a list related to a company.
+    """
+    def has_permission(self, request, view):
+        user = request.user
+        if not (user.is_authenticated and user.role and user.role.name in [ROLES.SUPERADMIN]):
+            return False
+
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        return user.is_authenticated and user.role and user.role.name in [ROLES.SUPERADMIN] and user.company == obj.posted_by.company
+
+class IsCompanyAdminForJobPost(BasePermission):
+    """
+    Custom permission to allow Admin/Superadmin to manage JobPosts belonging to their company.
+    For a single JobPost instance or a list related to a company.
+    """
+    def has_permission(self, request, view):
+        user = request.user
+        if not (user.is_authenticated and user.role and user.role.name in [ROLES.ADMIN]):
+            return False
+
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        return user.is_authenticated and user.role and user.role.name in [ROLES.ADMIN] and user.company == obj.posted_by.company
+
 class IsCompanyAdminOrSuperadminForJobPost(BasePermission):
     """
     Custom permission to allow Admin/Superadmin to manage JobPosts belonging to their company.
