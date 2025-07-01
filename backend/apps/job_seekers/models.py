@@ -92,6 +92,32 @@ class JobSeekerSkill(TimeStampModel):
      def __str__(self):
           return f'{self.title}'
 
+class JobSeekerSpecialSkill(TimeStampModel):
+     user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='special_skills')
+     skill = models.ForeignKey(JobSeekerSkill, on_delete=models.CASCADE)
+     year_of_experience = models.PositiveSmallIntegerField(
+          null=True, 
+          blank=True,
+          help_text="Years of experience with this skill"
+     )
+     
+     class Meta:
+          unique_together = ['user', 'skill']  # Prevent duplicate skills for same user
+          verbose_name = "Job Seeker Special Skill"
+          verbose_name_plural = "Job Seeker Special Skills"
+     
+     def __str__(self):
+          return f"{self.user.username} - {self.skill.title} ({self.year_of_experience}yrs)"
+     
+     def save(self, *args, **kwargs):
+          # Check if user already has 6 special skills
+          if not self.pk:  # Only check for new records
+               existing_skills_count = JobSeekerSpecialSkill.objects.filter(user=self.user).count()
+               if existing_skills_count >= 6:
+                    from django.core.exceptions import ValidationError
+                    raise ValidationError("A job seeker cannot have more than 6 special skills.")
+          super().save(*args, **kwargs)
+
 class JobSeekerExperienceLevel(TimeStampModel):
      level = models.CharField(max_length=50)
      

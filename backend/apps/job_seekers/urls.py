@@ -1,6 +1,7 @@
 from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
-from backend.apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, LanguageOptionAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, JobSeekerSkillSelectionOptionAPIView, JobSeekerSocialLinkAPIView, ProfileScoreAPIView
+from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, LanguageOptionAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, JobSeekerSkillSelectionOptionAPIView, JobSeekerSocialLinkAPIView, ProfileScoreAPIView
+from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
 from .views.certification_view import CertificationViewSet
 from .views.education_view import EducationViewSet
 from .views.experience_view import ExperienceViewSet
@@ -24,6 +25,8 @@ urlpatterns = [
      path('onboarding/', OnboardingAPIView.as_view(), name='perform-onboarding'),
      path('update-username/', ModifyUsernameAPIView.as_view(), name='update-username'),
      path('jobseeker/profile/selection-options/', JobSeekerProfileSelectionOptionsAPIView.as_view(), name='jobseeker-profile-option'),
+     path('jobseeker/special-skills/', JobSeekerSpecialSkillListAPIView.as_view(), name='special-skills-list'),
+     path('jobseeker/special-skills/<int:skill_id>/', JobSeekerSpecialSkillDetailAPIView.as_view(), name='special-skills-detail'),     # Retrieve, update, or delete a specific special skill
      path('jobseeker/profile/', JobSeekerProfileAPIView.as_view(), name='jobseeker-profile'),
      path('jobseeker/skill/', JobSeekerSkillAPIView.as_view(), name='jobseeker-skill'),
      path('jobseeker/skill/selection-options/', JobSeekerSkillSelectionOptionAPIView.as_view(), name='jobseeker-skill-option'),
@@ -32,7 +35,7 @@ urlpatterns = [
      path('jobseeker/social/', JobSeekerSocialLinkAPIView.as_view(), name='jobseeker-social'),
      path('jobseeker/profile-score/', ProfileScoreAPIView.as_view(), name='jobseeker-profile-score'),
      path('jobseeker/setting/', JobSeekerSettingAPIView.as_view(), name='jobseeker-setting'),
-     path('s3/upload/', S3UploadAPIView.as_view(), name='s3-upload')
+     path('s3/upload/', S3UploadAPIView.as_view(), name='s3-upload'),
 ]
 
 urlpatterns += router.urls
