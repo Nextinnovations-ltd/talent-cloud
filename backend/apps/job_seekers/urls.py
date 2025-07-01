@@ -1,6 +1,6 @@
 from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
-from backend.apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, LanguageOptionAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, JobSeekerSkillSelectionOptionAPIView, JobSeekerSocialLinkAPIView, ProfileScoreAPIView
+from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, LanguageOptionAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, JobSeekerSkillSelectionOptionAPIView, JobSeekerSocialLinkAPIView, ProfileScoreAPIView
 from .views.certification_view import CertificationViewSet
 from .views.education_view import EducationViewSet
 from .views.experience_view import ExperienceViewSet

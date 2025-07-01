@@ -1,6 +1,6 @@
 import json
-from rest_framework.exceptions import ValidationError
 from django.db import transaction
+from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
 from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer, JobSeekerSkillSerializer, SpokenLanguageSerializer
 from apps.users.models import TalentCloudUser
@@ -213,33 +213,14 @@ class JobSeekerService:
      
      @staticmethod
      def get_job_seeker_profile_info(user: TalentCloudUser):
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
           
-          jobseeker_occupation = getattr(job_seeker, 'occupation', None)
+          occupation: JobSeekerOccupation = getattr(job_seeker, 'occupation', None)
 
-          if not jobseeker_occupation:
+          if not occupation:
                raise ValidationError("No occupation related data existed yet.")
           
-          profile_response = {
-               'profile_image_url': job_seeker.profile_image_url,
-               'name': job_seeker.name,
-               'username': job_seeker.username,
-               'tagline': job_seeker.tagline,
-               'role': {
-                    'id': jobseeker_occupation.role.id,
-                    'name': jobseeker_occupation.role.name,
-               } if jobseeker_occupation.role else None,
-               'experience_level': {
-                    'id': jobseeker_occupation.experience_level.id,
-                    'level': jobseeker_occupation.experience_level.level,
-               } if jobseeker_occupation.experience_level else None,
-               'experience_years': jobseeker_occupation.experience_years,
-               'country_code': job_seeker.country_code,
-               'phone_number': job_seeker.phone_number,
-               'date_of_birth': job_seeker.date_of_birth,
-               'address': job_seeker.address,
-               'bio': job_seeker.bio
-          }
+          profile_response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation)
                
           return {
                'message': "Profile information is generated.",
@@ -248,18 +229,20 @@ class JobSeekerService:
      
      @staticmethod
      def perform_job_seeker_profile_info_update(user, data):
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
 
           with transaction.atomic():
                # Extract and update JobSeeker profile fields
                job_seeker.name = data.get("name", job_seeker.name)
                job_seeker.username = data.get("username", job_seeker.username)
+               job_seeker.email = data.get("email", job_seeker.email)
                job_seeker.tagline = data.get("tagline", job_seeker.tagline)
                job_seeker.country_code = data.get("country_code", job_seeker.country_code)
                job_seeker.phone_number = data.get("phone_number", job_seeker.phone_number)
                job_seeker.date_of_birth = data.get("date_of_birth", job_seeker.date_of_birth)
                job_seeker.address = data.get("address", job_seeker.address)
                job_seeker.bio = data.get("bio", job_seeker.bio)
+               job_seeker.resume_url = data.get("resume_url", job_seeker.resume_url)
 
                job_seeker.save()
 
@@ -267,50 +250,57 @@ class JobSeekerService:
                experience_level_id = data.get("experience_level_id", None)
                experience_years = data.get("experience_years", None)
                
-               jobseeker_occupation = getattr(job_seeker, 'occupation', None)
+               occupation = getattr(job_seeker, 'occupation', None)
                
-               if not jobseeker_occupation:
-                    jobseeker_occupation = JobSeekerOccupation.objects.create(
+               if not occupation:
+                    occupation = JobSeekerOccupation.objects.create(
                          user = job_seeker
                     )
                
                if role_id:
-                    jobseeker_occupation.role_id = role_id
+                    occupation.role_id = role_id
                
                if experience_level_id:
-                    jobseeker_occupation.experience_level_id = experience_level_id
+                    occupation.experience_level_id = experience_level_id
 
                if experience_years:
-                    jobseeker_occupation.experience_years = experience_years
+                    occupation.experience_years = experience_years
 
-               jobseeker_occupation.save()
+               occupation.save()
 
           # Prepare response data
-          response = {
-               'profile_image_url': job_seeker.profile_image_url,
-               'name': job_seeker.name,
-               'username': job_seeker.username,
-               'tagline': job_seeker.tagline,
-               'role': {
-                    'id': jobseeker_occupation.role.id,
-                    'name': jobseeker_occupation.role.name,
-               } if jobseeker_occupation.role else None,
-               'experience_level': {
-                    'id': jobseeker_occupation.experience_level.id,
-                    'level': jobseeker_occupation.experience_level.level,
-               } if jobseeker_occupation.experience_level else None,
-               'experience_years': jobseeker_occupation.experience_years,
-               'country_code': job_seeker.country_code,
-               'phone_number': job_seeker.phone_number,
-               'date_of_birth': job_seeker.date_of_birth,
-               'address': job_seeker.address,
-               'bio': job_seeker.bio
-          }
+          response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation)
 
           return {
                'message': "Profile updated successfully.",
                'data': response
           }
+     
+     @staticmethod
+     def build_job_seeker_profile_response(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
+          return {
+               'profile_image_url': job_seeker.profile_image_url,
+               'name': job_seeker.name,
+               'username': job_seeker.username,
+               'email': job_seeker.email,
+               'tagline': job_seeker.tagline,
+               'role': {
+                    'id': occupation.role.id,
+                    'name': occupation.role.name,
+               } if occupation and occupation.role else None,
+               'experience_level': {
+                    'id': occupation.experience_level.id,
+                    'level': occupation.experience_level.level,
+               } if occupation and occupation.experience_level else None,
+               'experience_years': occupation.experience_years if occupation else None,
+               'country_code': job_seeker.country_code,
+               'phone_number': job_seeker.phone_number,
+               'date_of_birth': job_seeker.date_of_birth,
+               'address': job_seeker.address,
+               'bio': job_seeker.bio,
+               'resume_url': job_seeker.resume_url
+          }
+
      
      @staticmethod
      def get_skill_options():
@@ -374,7 +364,73 @@ class JobSeekerService:
 
           return {
                'message': "Successfully updated job seeker skills.",
-               'data': skill_id_list
+               'data': {
+                    'skills': skill_id_list
+               }
+          }
+     
+     @staticmethod
+     def get_language_options():
+          languages = SpokenLanguage.objects.all()
+
+          return {
+               'message': "Successfully generated all language options.",
+               'data': {
+                    'languages': SpokenLanguageSerializer(languages, many=True).data
+               }
+          }
+     
+     @staticmethod
+     def get_job_seeker_langauges(user):
+          jobseeker_user = JobSeekerService.get_job_seeker_user(user)
+               
+          languages = (
+               [
+                    {
+                         'proficiency': lang['proficiency_level'],
+                         'language_id': lang['language__id'],
+                         'language_name': lang['language__name']
+                    }
+                    for lang in
+                    jobseeker_user.language_proficiencies.values("proficiency_level", "language__id", "language__name")
+               ]
+               if jobseeker_user.language_proficiencies.exists() 
+               else []
+          )
+     
+          return {
+               'message': "Successfully generated user occupation",
+               'data': {
+                    'language_list': languages
+               }
+          }
+     
+     @staticmethod
+     def perform_job_seeker_languages_update(user, data):
+          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          
+          if not job_seeker:
+               raise ValidationError("No job seeker with this data")
+          
+          language_list = data.get("language_list", [])  # [{'language_id': 1, 'proficiency': 'intermediate'}, ...]
+          
+          if not isinstance(language_list, list) or not language_list:
+               return {
+                    'message': "Failed to update language proficiency.",
+                    'data': None
+               }
+          
+          with transaction.atomic():
+               for lang in language_list:
+                    JobSeekerService._update_single_language(
+                         job_seeker,
+                         lang.get("language_id", None),
+                         lang.get("proficiency", "None")
+                    )
+          
+          return {
+               'message': "Successfully updated job seeker language proficiency.",
+               'data': None
           }
      
      @staticmethod
@@ -446,70 +502,6 @@ class JobSeekerService:
                'data': {
                     'email': job_seeker.email
                }
-          }
-     
-     @staticmethod
-     def get_language_options():
-          languages = SpokenLanguage.objects.all()
-
-          return {
-               'message': "Successfully generated all language options.",
-               'data': {
-                    'languages': SpokenLanguageSerializer(languages, many=True).data
-               }
-          }
-     
-     @staticmethod
-     def get_job_seeker_langauges(user):
-          jobseeker_user = JobSeekerService.get_job_seeker_user(user)
-               
-          languages = (
-               [
-                    {
-                         'proficiency': lang['proficiency_level'],
-                         'language_id': lang['language__id'],
-                         'language_name': lang['language__name']
-                    }
-                    for lang in
-                    jobseeker_user.language_proficiencies.values("proficiency_level", "language__id", "language__name")
-               ]
-               if jobseeker_user.language_proficiencies.exists() 
-               else []
-          )
-     
-          return {
-               'message': "Successfully generated user occupation",
-               'data': {
-                    'language_list': languages
-               }
-          }
-     
-     @staticmethod
-     def perform_job_seeker_languages_update(user, data):
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
-          
-          if not job_seeker:
-               raise ValidationError("No job seeker with this data")
-          
-          language_list = data.get("language_list", [])  # [{'language_id': 1, 'proficiency': 'intermediate'}, ...]
-          
-          if not isinstance(language_list, list) or not language_list:
-               return {
-                    'message': "Failed to update language proficiency.",
-                    'data': None
-               }
-          
-          with transaction.atomic():
-               for lang in language_list:
-                    JobSeekerService._update_single_language(
-                         job_seeker,
-                         lang.get("language_id", None),
-                         lang.get("proficiency", "None")
-                    )
-          
-          return {
-               'message': "Successfully updated job seeker language proficiency.",
-               'data': None
           }
           
      @staticmethod
