@@ -5,7 +5,6 @@ import { LoadingSpinner } from '../LoadingSpinner';
 import {  Link } from 'react-router-dom';
 import useToast from '@/hooks/use-toast';
 
-
 interface ActionButtonsProps {
   jobId: number;
   alreadyApplied: boolean | undefined;

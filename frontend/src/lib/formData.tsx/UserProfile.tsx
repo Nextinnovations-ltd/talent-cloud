@@ -22,19 +22,6 @@ export const fields: any[] = [
     maxLength: 20,
   },
   {
-    fieldName: "name",
-    placeholder: "Choose your own nickname",
-    isError: (form: any) => !!form.formState.errors.displayName,
-    required: true,
-    requiredLabel: true,
-    languageName: "userProfile",
-    type: "text",
-    showPasswordIcon: null,
-    hidePasswordIcon: null,
-    showLetterCount: true, // New prop to show/hide letter count
-    maxLength: 20,
-  },
-  {
     fieldName: "username",
     placeholder: "Set your ID so that users can search for you",
     isError: (form: any) => !!form.formState.errors.userName,
@@ -66,7 +53,7 @@ export const fields: any[] = [
   },
   {
     type: "select",
-    fieldName: "specialization_id",
+    fieldName: "role",
     placeholder: "eg. Development & IT/ Frontend Developer",
     required: true,
     labelName: "Specialization Role",
@@ -77,7 +64,7 @@ export const fields: any[] = [
   },
   {
     type: "select",
-    fieldName: "experience_level_id",
+    fieldName: "experience_level",
     placeholder: "eg. Junior Level",
     labelName: "Level",
     requiredLabel: true,
@@ -86,8 +73,8 @@ export const fields: any[] = [
     data: MONTHDATA,
   },
   {
-    type: "select",
-    fieldName: "experience_level_id",
+    type: "text",
+    fieldName: "experience_years",
     placeholder: "eg. Less than 1 year",
     labelName: "Years of Experience",
     requiredLabel: true,

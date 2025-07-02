@@ -31,32 +31,50 @@ export const ProfileUser = () => {
     refetch,
   } = useGetJobSeekerProfileQuery();
 
-  console.log("-------")
-  console.log(profileData)
-  console.log("-------")
-
-
  
   const form = useForm<UserProfile>({
     resolver: yupResolver(UserProfileSchema),
     defaultValues: {
-      ...profileData?.data,
-      specialization_id: profileData?.data?.specialization?.id,
-      experience_level_id: profileData?.data?.experience_level?.id,
+      profile_image_url: profileData?.data?.profile_image_url || "",
+      name: profileData?.data?.name || "",
+      username: profileData?.data?.username || "",
+      tagline: profileData?.data?.tagline || "",
+      role: profileData?.data?.role?.id || 0,
+      experience_level: profileData?.data?.experience_level?.id || 0,
+      experience_years: profileData?.data?.experience_years || 0,
+      bio: profileData?.data?.bio || "",
+      email: profileData?.data?.email || "",
+      phone_number: profileData?.data?.phone_number || "",
+      country_code: profileData?.data?.country_code || "",
+      date_of_birth: profileData?.data?.date_of_birth || "",
+      address: profileData?.data?.address || "",
+      resume_url: profileData?.data?.resume_url || "",
     },
   });
 
   useEffect(() => {
     if (profileData) {
- 
+
+      console.log({profileData})
 
       form.reset({
-        ...profileData.data,
-        specialization_id: profileData.data?.specialization?.id,
-        experience_level_id: profileData.data?.experience_level?.id,
+        profile_image_url: profileData.data?.profile_image_url || "",
+        name: profileData.data?.name || "",
+        username: profileData.data?.username || "",
+        tagline: profileData.data?.tagline || "",
+        role: profileData.data?.role?.id || 0,
+        experience_level: profileData.data?.experience_level?.id || 0,
+        experience_years: profileData.data?.experience_years || 0,
+        bio: profileData.data?.bio || "",
+        email: profileData.data?.email || "",
+        phone_number: profileData.data?.phone_number || "",
+        country_code: profileData.data?.country_code || "",
+        date_of_birth: profileData.data?.date_of_birth || "",
+        address: profileData.data?.address || "",
+        resume_url: profileData.data?.resume_url || "",
       });
     }
-  }, [profileData, form]);
+  }, [profileData, form,isProfileLoading]);
 
   const onSubmitHandler = async (values: UserProfile) => {
     try {
@@ -66,20 +84,27 @@ export const ProfileUser = () => {
         date_of_birth: values.date_of_birth 
           ? new Date(values.date_of_birth).toISOString().split('T')[0]
           : null,
-        role:values.specialization_id
       };
 
       const response = await executeApiCall(formattedValues);
 
-      console.log("Response")
-      console.log(response)
-      console.log("Response")
 
       if (response?.data?.data) {
         form.reset({
-          ...response.data.data,
-          specialization_id: response.data.data.specialization?.id,
-          experience_level_id: response.data.data.experience_level?.id,
+          profile_image_url: response.data.data?.profile_image_url || "",
+          name: response.data.data?.name || "",
+          username: response.data.data?.username || "",
+          tagline: response.data.data?.tagline || "",
+          role: response.data.data?.role?.id || 0,
+          experience_level: response.data.data?.experience_level?.id || 0,
+          experience_years: response.data.data?.experience_years || 0,
+          bio: response.data.data?.bio || "",
+          email: response.data.data?.email || "",
+          phone_number: response.data.data?.phone_number || "",
+          country_code: response.data.data?.country_code || "",
+          date_of_birth: response.data.data?.date_of_birth || "",
+          address: response.data.data?.address || "",
+          resume_url: response.data.data?.resume_url || "",
         });
         refetch();
       }

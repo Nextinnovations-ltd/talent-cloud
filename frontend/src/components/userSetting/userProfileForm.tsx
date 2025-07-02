@@ -29,8 +29,8 @@ export const UserProfileForm = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
-  const { data: FORMATTEDDATA } = useFormattedSpecialization();
-  const { data: EXPERIENCEDATA } = useFormattedExperience();
+  const { data: FORMATTEDDATA,isLoading:FORMATTEDLOADING } = useFormattedSpecialization();
+  const { data: EXPERIENCEDATA,isLoading:EXPERIENCELOADING } = useFormattedExperience();
 
 
 
@@ -167,7 +167,7 @@ export const UserProfileForm = ({
               showRequiredLabel={field.requiredLabel}
               placeholder={field.placeholder}
               data={
-                field.fieldName === "specialization_id"
+                field.fieldName === "role"
                   ? FORMATTEDDATA
                   : EXPERIENCEDATA
               }

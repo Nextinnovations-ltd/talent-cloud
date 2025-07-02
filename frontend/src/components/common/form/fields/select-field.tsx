@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 interface SelectFieldProps {
@@ -52,11 +52,6 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       control={form.control}
       name={name}
       render={({ field }) => {
-
-        console.log("dkkd333kd---")
-        console.log(field.value)
-        console.log("dkkd333kd---")
-
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
