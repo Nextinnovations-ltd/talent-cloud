@@ -2,6 +2,7 @@ from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
 from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, LanguageOptionAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, JobSeekerSkillSelectionOptionAPIView, JobSeekerSocialLinkAPIView, ProfileScoreAPIView
 from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
+from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView
 from .views.certification_view import CertificationViewSet
 from .views.education_view import EducationViewSet
 from .views.experience_view import ExperienceViewSet
@@ -27,9 +28,13 @@ urlpatterns = [
      path('jobseeker/profile/selection-options/', JobSeekerProfileSelectionOptionsAPIView.as_view(), name='jobseeker-profile-option'),
      path('jobseeker/special-skills/', JobSeekerSpecialSkillListAPIView.as_view(), name='special-skills-list'),
      path('jobseeker/special-skills/<int:skill_id>/', JobSeekerSpecialSkillDetailAPIView.as_view(), name='special-skills-detail'),     # Retrieve, update, or delete a specific special skill
+     path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
+     path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),
      path('jobseeker/profile/', JobSeekerProfileAPIView.as_view(), name='jobseeker-profile'),
      path('jobseeker/skill/', JobSeekerSkillAPIView.as_view(), name='jobseeker-skill'),
      path('jobseeker/skill/selection-options/', JobSeekerSkillSelectionOptionAPIView.as_view(), name='jobseeker-skill-option'),
+     path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
+     path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),     # Retrieve, update, or delete a specific project
      path('jobseeker/language/', JobSeekerLanguageAPIView.as_view(), name='jobseeker-language'),
      path('jobseeker/language/selection-options', LanguageOptionAPIView.as_view(), name='jobseeker-language-options'),
      path('jobseeker/social/', JobSeekerSocialLinkAPIView.as_view(), name='jobseeker-social'),

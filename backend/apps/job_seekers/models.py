@@ -69,6 +69,47 @@ class JobSeekerCertification(TimeStampModel):
 
 # endregion PROFILE DETAILS
 
+class JobSeekerProject(TimeStampModel):
+     """
+     Represents a project completed by a job seeker
+     """
+     user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='projects')
+     title = models.CharField(max_length=255, help_text="Project title")
+     description = models.TextField(help_text="Detailed description of the project")
+     tags = models.JSONField(
+          default=list,
+          blank=True,
+          help_text="List of technologies, tools, or frameworks used in the project (e.g., ['Python', 'Django', 'React'])"
+     )
+     project_url = models.URLField(
+          max_length=2048, 
+          null=True, 
+          blank=True, 
+          help_text="URL to live project or demo"
+     )
+     project_image_url = models.URLField(
+          max_length=2048, 
+          null=True, 
+          blank=True, 
+          help_text="URL to project screenshot or image"
+     )
+     start_date = models.DateField(null=True, blank=True, help_text="Project start date")
+     end_date = models.DateField(null=True, blank=True, help_text="Project completion date")
+     is_ongoing = models.BooleanField(default=False, help_text="Is this project still ongoing")
+     team_size = models.PositiveSmallIntegerField(
+          null=True, 
+          blank=True, 
+          help_text="Number of team members (including yourself)"
+     )
+     
+     class Meta:
+          verbose_name = "Job Seeker Project"
+          verbose_name_plural = "Job Seeker Projects"
+          ordering = ['-start_date', '-created_at']
+     
+     def __str__(self):
+          return f"{self.user.username} - {self.title}"
+
 # region OCCUPATIONS
 class JobSeekerSpecialization(TimeStampModel):
      name = models.CharField(max_length=150)
