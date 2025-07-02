@@ -5,6 +5,7 @@ import SHADOWRIGHT from '@/assets/Login/ShadowRight.svg';
 import EDITPEN from '@/assets/Login/Edit.svg';
 import EYE from '@/assets/Login/Eye.svg';
 import { motion } from "framer-motion";
+import { Link } from 'react-router-dom';
 
 // Animation variants
 const containerVariants = {
@@ -112,27 +113,10 @@ export const UserProfile = () => {
         Lead UI/UX Designer at NEXT INNOVATIONS
       </motion.h3>
 
-      <motion.h3
-        className='text-[14px] flex justify-center items-center gap-[5px] font-[500] text-[#6B6B6B] mt-[12px] mb-[36px] z-30'
-        variants={itemVariants}
-      >
-        <ToolTips />
-        <span>
-          <span className='text-[#05060F]'>1.2K </span>
-          Followers
-        </span>
-        <div className='h-[4px] w-[4px] bg-[#6B6B6B] rounded-full'></div>
-        <span>
-          <span className='text-[#05060F]'>50</span> Following
-        </span>
-        <div className='h-[4px] w-[4px] bg-[#6B6B6B] rounded-full'></div>
-        <span>
-          <span className='text-[#05060F]'>0</span> Topics
-        </span>
-      </motion.h3>
+     
 
       <motion.div
-        className='gap-[14px] flex justify-center items-center z-30'
+        className='gap-[14px] mt-[70px] flex justify-center items-center z-30'
         variants={itemVariants}
       >
         <IconPreviewButton />
@@ -186,6 +170,7 @@ export default ToolTips;
 
 const IconButton = () => {
   return (
+   <Link to={'/user/edit/profile'}>
     <motion.button
       className='w-[118px] h-[48px] bg-[#0389FF] flex items-center justify-center gap-[5px] rounded-[8px] text-[16px] font-[600] text-white z-40'
       whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(3, 137, 255, 0.3)" }}
@@ -194,7 +179,7 @@ const IconButton = () => {
     >
       <img src={EDITPEN} />
       Edit
-    </motion.button>
+    </motion.button></Link>
   )
 }
 

@@ -1,5 +1,8 @@
 import { motion } from 'framer-motion';
 import CRYSTAL from '@/assets/Login/Vector.svg';
+import ActiveActionsButtons from './ActiveActionsButtons';
+import SvgAdd from '@/assets/svgs/SvgAdd';
+import SvgEdit from '@/assets/svgs/SvgEdit';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -66,15 +69,16 @@ const crystalVariants = {
     }
 };
 
-export const Title = ({ title }: { title: string }) => {
+export const Title = ({ title, isEdit, onEditToggle }: { title: string; isEdit?: boolean; onEditToggle?: () => void }) => {
     return (
         <motion.div
-            className="flex items-center justify-start gap-[10px] mb-[43px]"
+            className="flex items-center justify-between gap-[10px] mb-[43px]"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
         >
-            <motion.h3
+           <div className='flex items-center gap-4'>
+           <motion.h3
                 className="text-[40px] font-[600]"
                 variants={textVariants}
             >
@@ -90,6 +94,19 @@ export const Title = ({ title }: { title: string }) => {
                 animate={["visible", "pulse"]}
                 whileHover="hover"
             />
+           </div>
+
+            <div className='flex items-center  gap-5'>
+              <ActiveActionsButtons icon={<SvgAdd/>} title='Add'/>  
+              {onEditToggle && (
+                <ActiveActionsButtons 
+                  icon={<SvgEdit/>} 
+                  title={isEdit ? 'UnEdit' : 'Edit'} 
+                  onClick={onEditToggle}
+                />
+              )}
+            </div>
+
         </motion.div>
     );
 };

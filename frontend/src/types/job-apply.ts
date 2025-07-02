@@ -38,3 +38,23 @@ export  interface JOBDETAILTYPES {
     };
     job_poster_name: string | null;
   }
+
+ export interface Job {
+    id: number;
+    title: string;
+    description: string;
+    location: string;
+    experience_level: string;
+    experience_years: string | null;
+    job_type: string;
+    work_type: string;
+    company_name: string;
+    company_image_url: string;
+    skills: string[];
+    display_salary: string;
+    created_at: string;
+    applicant_count: number;
+    is_new: boolean;
+    is_bookmarked: boolean;
+    is_applied: boolean;
+  }

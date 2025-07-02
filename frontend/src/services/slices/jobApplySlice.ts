@@ -1,25 +1,8 @@
+import { Job } from "@/types/job-apply";
 import apiSlice from "../api/apiSlice";
 
 // Interfaces
-interface Job {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  experience_level: string;
-  experience_years: string | null;
-  job_type: string;
-  work_type: string;
-  company_name: string;
-  company_image_url: string;
-  skills: string[];
-  display_salary: string;
-  created_at: string;
-  applicant_count: number;
-  is_new: boolean;
-  is_bookmarked: boolean;
-  is_applied: boolean;
-}
+
 
 interface JobApplyCardResponse {
   status: boolean;
@@ -87,6 +70,7 @@ interface JobApplyCardParams {
   work_type?: string;
   project_duration?: string;
   salary_rate?: string;
+  search?:string
 }
 
 interface BookmarkedJobResponse {
@@ -112,6 +96,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
           project_duration: params.project_duration,
           salary_rate: params.salary_rate,
           ordering: '-created_at',
+          search:params.search
         },
       }),
       providesTags: ['JobList'],

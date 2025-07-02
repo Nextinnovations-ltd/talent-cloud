@@ -54,7 +54,7 @@ interface UseJobSeekerProfileResponse {
     country_code: string;
     email: string;
     facebook_url: string;
-    linkedin_url: string;
+    linkedin_url: string;                
     name: string;
     phone_number: string;
     portfolio_url: string;

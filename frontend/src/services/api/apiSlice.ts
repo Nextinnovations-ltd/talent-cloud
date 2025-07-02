@@ -4,7 +4,6 @@ import {
   removeTokenFromSessionStorage,
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
-import { toast } from "sonner";
 
 interface RootState {
   auth: {
@@ -38,18 +37,19 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: unknown) => {
+const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: object = {}) => {
   const result = await baseQuery(args, api, extraOptions);
 
   const status = (result.error as FetchBaseQueryError)?.status;
 
-
- 
-if (status === 401 || status === 403)    {
-    // Handle unauthorized error
+  if (status === 401 || status === 403) {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
-    toast.error("Session expired. Please login again.");
+    console.log(status)
+    // Dynamically import Zustand store and trigger modal
+    import("@/state/zustand/global-modal").then(({ default: useGlobalModal }) => {
+      useGlobalModal.getState().openModal("Session expired. Please login again.");
+    });
   }
 
   return result;

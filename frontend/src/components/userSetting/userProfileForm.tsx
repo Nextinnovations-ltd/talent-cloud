@@ -32,6 +32,8 @@ export const UserProfileForm = ({
   const { data: FORMATTEDDATA } = useFormattedSpecialization();
   const { data: EXPERIENCEDATA } = useFormattedExperience();
 
+
+
   const fieldHeight = "h-12";
   const fieldWidth = "max-w-[672px]";
 
@@ -102,22 +104,24 @@ export const UserProfileForm = ({
 
   return (
     <div className="space-y-[30px] my-4">
-      <div className="md:w-[50%] flex gap-[30px] items-center">
-        <div
-          {...getRootProps()}
-          className="w-[110px] h-[110px] rounded-full cursor-pointer flex items-center justify-center bg transition-all duration-300"
-        >
-          {preview ? (
-            <img
-              src={preview as string}
-              alt="Uploaded"
-              className="w-full h-full rounded-full object-cover"
-            />
-          ) : (
-            <SVGProfile />
-          )}
-        </div>
-        <div>
+      <div className="flex gap-[30px] items-center">
+      <div
+  {...getRootProps()}
+  className="border-2 rounded-full cursor-pointer flex items-center justify-center bg-transparent transition-all duration-300 w-[110px] h-[110px]"
+>
+  {preview ? (
+    <img
+      src={preview as string}
+      width={110}
+      height={110}
+      alt="Uploaded"
+      className="rounded-full object-cover w-full h-full"
+    />
+  ) : (
+    <SVGProfile />
+  )}
+</div>
+        <div className="flex ">
           <Button
             type="button"
             className="p-0 w-[139px] text-white h-[45px] bg-[#0389FF]"
@@ -151,11 +155,15 @@ export const UserProfileForm = ({
         }
 
         if (field.type === "select") {
+
+          
+
           return (
             <SelectField
               name={field.fieldName}
               labelName={field.labelName}
               error={field.isError(form)}
+              isRequired={field.required}
               showRequiredLabel={field.requiredLabel}
               placeholder={field.placeholder}
               data={

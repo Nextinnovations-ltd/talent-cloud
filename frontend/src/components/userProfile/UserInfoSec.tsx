@@ -128,6 +128,10 @@ export const UserInfoSec = () => {
     const y = useMotionValue(0);
     const { scrollY } = useScroll();
     const [showDock, setShowDock] = useState(false);
+    const [isWorkExperienceEdit, setIsWorkExperienceEdit] = useState(false);
+    const [isEducationEdit, setIsEducationEdit] = useState(false);
+    const [isCertificationEdit, setIsCertificationEdit] = useState(false);
+    const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
 
     // Track scroll position and update dock visibility
     useEffect(() => {
@@ -153,7 +157,6 @@ export const UserInfoSec = () => {
         animate(y, relativeY, { type: "spring", stiffness: 300, damping: 20 });
     };
 
-    console.log("kdkdkdk")
 
     return (
         <motion.div
@@ -232,7 +235,11 @@ export const UserInfoSec = () => {
 
                 <FocusCards cards={cards}/>
 
-                <Title title={" Selected Projects"} />
+                <Title 
+                    title={" Selected Projects"} 
+                    isEdit={isSelectedProjectsEdit}
+                    onEditToggle={() => setIsSelectedProjectsEdit((prev) => !prev)}
+                />
 
                 <motion.div
                     className='grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-[72px] mb-20 md:mb-32 lg:mb-[140px]'
@@ -249,7 +256,7 @@ export const UserInfoSec = () => {
                                 title="/youtube.com"
                                 href="https://twitter.com/mannupaaji"
                             >
-                                <SelectedProjects img={img} />
+                                <SelectedProjects img={img} isEdit={isSelectedProjectsEdit} />
                             </PinContainer>
                         </motion.div>
                     ))}
@@ -269,7 +276,11 @@ export const UserInfoSec = () => {
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}
 
-                <Title title={" Work Experience"} />
+                <Title 
+                    title={" Work Experience"} 
+                    isEdit={isWorkExperienceEdit}
+                    onEditToggle={() => setIsWorkExperienceEdit((prev) => !prev)}
+                />
 
                 <motion.div
                     className='grid grid-cols-2 gap-[143px] mb-[140px]'
@@ -282,6 +293,7 @@ export const UserInfoSec = () => {
                             companyName='Next Innovations'
                             experience='Mar 2025 - Present'
                             description='Collaborated with the development team to implement a responsive design  approach, improving the mobile user experience and increasing mobile app engagement.'
+                            isEdit={isWorkExperienceEdit}
                         />
                     </motion.div>
                     <motion.div variants={itemVariants}>
@@ -290,37 +302,35 @@ export const UserInfoSec = () => {
                             companyName="See Ocean"
                             experience="Dec 2023 - Feb 2025"
                             description="Collaborated with the development team to implement a responsive design approach, improving the mobile user experience and increasing mobile app engagement."
+                            isEdit={isWorkExperienceEdit}
                         />
                     </motion.div>
                 </motion.div>
 
                 {/* Education */}
 
-
-                <ScrollVelocity
-                    texts={['PHOTOSHOP ILLUSTRATOR ', 'ADOBE XD FIGMA',]}
-                    className="custom-scroll-text text-[#0389FF] h-[110px]  text-[108px]"
+                <Title 
+                    title={"Education"} 
+                    isEdit={isEducationEdit}
+                    onEditToggle={() => setIsEducationEdit((prev) => !prev)}
                 />
-
-                <motion.h3
-                    className='text-[40px] font-[600] mb-[43px] mt-[140px]'
-                    variants={itemVariants}
-                >
-                    Education
-                </motion.h3>
 
                 <motion.div
                     className='grid grid-cols-2 gap-[143px] mb-[143px]'
                     variants={containerVariants}
                 >
                     <motion.div variants={itemVariants}>
-                        <EducationCard />
+                        <EducationCard isEdit={isEducationEdit} />
                     </motion.div>
                 </motion.div>
 
                 {/* Certifications */}
 
-                <Title title={"Certifications"} />
+                <Title 
+                    title={"Certifications"} 
+                    isEdit={isCertificationEdit}
+                    onEditToggle={() => setIsCertificationEdit((prev) => !prev)}
+                />
 
                 <motion.div
                     className='grid grid-cols-2 gap-[74px] mb-[143px]'
@@ -333,6 +343,7 @@ export const UserInfoSec = () => {
                             org='Google'
                             id="Credential ID:  GG0123456789"
                             expire='Issued Apr 2023  .  No Expiration Date'
+                            isEdit={isCertificationEdit}
                         />
                     </motion.div>
                     <motion.div variants={itemVariants}>
@@ -341,7 +352,9 @@ export const UserInfoSec = () => {
                             name='Professional Diploma in UX Design'
                             org='UX Design Institue'
                             id="Credential ID:  UXD123456789"
-                            expire='Expiration Date:  Dec 2026' />
+                            expire='Expiration Date:  Dec 2026'
+                            isEdit={isCertificationEdit}
+                        />
                     </motion.div>
                 </motion.div>
 

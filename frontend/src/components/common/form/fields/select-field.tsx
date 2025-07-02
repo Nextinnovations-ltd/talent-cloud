@@ -53,6 +53,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       name={name}
       render={({ field }) => {
 
+        console.log("dkkd333kd---")
+        console.log(field.value)
+        console.log("dkkd333kd---")
+
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
@@ -65,7 +69,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
               <div>
                 <Select
                   onValueChange={field.onChange}
-                  value={field.value}
+                  value={`${field.value}`}
                   disabled={isDisabled}
                 >
                   <SelectTrigger
@@ -78,7 +82,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                       "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
                     )}
                   >
-                    <SelectValue placeholder={placeholder} />
+                    <SelectValue  placeholder={placeholder} />
                   </SelectTrigger>
                   <SelectContent className="h-[200px] p-2">
                     {data.map((item) => (

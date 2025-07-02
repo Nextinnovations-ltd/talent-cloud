@@ -1,15 +1,20 @@
 export type UserProfile = {
   name: string;
   username: string;
+  tagline?: string;
   specialization_id: number;
   experience_level_id: number;
+  experience_years?: number;
   phone_number: string;
   country_code: string;
+  date_of_birth?: Date | string | null;
   address: string;
   bio: string;
+  role?: string | null;
   profile_image_url?: File | string | null;
   facebook_url?: string;
   linkedin_url?: string;
+  github_url?: string;
   behance_url?: string;
   portfolio_url?: string;
 };

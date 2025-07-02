@@ -1,6 +1,6 @@
 {
     "name":"Display name",
-    "username":"User name",
+    "username":"Username",
     "email":"Email address",
     "address":"Location",
     "bio":"Bio",
@@ -13,5 +13,6 @@
     "jobTitle":"Job Title",
     "startDate":"Start Date",
     "endDate":"End Date",
-    "description":"Description"
+    "description":"Description",
+    "tagline":"Tagline"
 }

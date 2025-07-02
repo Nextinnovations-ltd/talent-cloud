@@ -31,6 +31,12 @@ export const ProfileUser = () => {
     refetch,
   } = useGetJobSeekerProfileQuery();
 
+  console.log("-------")
+  console.log(profileData)
+  console.log("-------")
+
+
+ 
   const form = useForm<UserProfile>({
     resolver: yupResolver(UserProfileSchema),
     defaultValues: {
@@ -42,6 +48,8 @@ export const ProfileUser = () => {
 
   useEffect(() => {
     if (profileData) {
+ 
+
       form.reset({
         ...profileData.data,
         specialization_id: profileData.data?.specialization?.id,
@@ -52,7 +60,20 @@ export const ProfileUser = () => {
 
   const onSubmitHandler = async (values: UserProfile) => {
     try {
-      const response = await executeApiCall(values);
+      // Convert date_of_birth to YYYY-MM-DD format if it exists
+      const formattedValues = {
+        ...values,
+        date_of_birth: values.date_of_birth 
+          ? new Date(values.date_of_birth).toISOString().split('T')[0]
+          : null,
+        role:values.specialization_id
+      };
+
+      const response = await executeApiCall(formattedValues);
+
+      console.log("Response")
+      console.log(response)
+      console.log("Response")
 
       if (response?.data?.data) {
         form.reset({
@@ -87,7 +108,7 @@ export const ProfileUser = () => {
             form={form}
             setIsOpen={setIsOpen}
           />
-          <div className="mt-[60px]">
+          <div className="mt-[60px] ">
             <div className="max-w-[672px] flex items-center justify-end">
               <Button
                 type="submit"
