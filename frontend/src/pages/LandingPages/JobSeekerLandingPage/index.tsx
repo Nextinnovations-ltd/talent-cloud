@@ -1,8 +1,11 @@
+import { Button } from "@/components/ui/button"
 
 
- const JobSeekerLandingPage = () => {
+const JobSeekerLandingPage = () => {
   return (
-    <div>JobSeekerLandingPage</div>
+    <div>
+      <Button className="bg-blue-400">test</Button>
+    </div>
   )
 }
 

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface SliderProps {
   images?: string[];
