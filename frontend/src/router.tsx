@@ -23,16 +23,17 @@ import { ParsingTokenLayout } from "./layouts/ParsingTokenLayout";
 import { Language } from "./pages/profile/subPages/Language";
 import { SocialLinks } from "./pages/profile/subPages/SocialLinks";
 import { MainUserProfile } from "./pages/profile/MainUserProfile";
-import LandingPage from "./pages/landingPage/LandingPage";
+
 import { MainLayout } from "./layouts/MainLayout";
 import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
+import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
 
 
 export const router = createBrowserRouter([
   {
-   path:"/lg",
-   element:<LandingPage/>
+   path:"/jobseeker/lp",
+   element:<JobSeekerLandingPage/>
   },
   {
     path: "/",
