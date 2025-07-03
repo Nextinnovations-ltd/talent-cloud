@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 const JobSeekerLandingPage = () => {
   return (
     <div>
-      <Button className="bg-blue-400">test</Button>
+      <p>Test</p>
+      <Button  className="round bg-red" variant={'ghost'}></Button>
     </div>
   )
 }
