@@ -5,7 +5,6 @@ import SampleImage4 from '../../assets/Login/IIDA.png';
 import { UserProfile } from './UserProfile';
 import StarBorder from '../common/StarBorder';
 import THUMBNAIL from '@/assets/Login/Thumbnail.png';
-import LOGO from '@/assets/Login/Logo.svg';
 import GOOGLECER from '@/assets/Login/Certificate Photo.png';
 import { animate, motion, useMotionValue, useTransform, useScroll } from "framer-motion";
 import { PinContainer } from '../common/3d-pin';
@@ -33,6 +32,8 @@ import { EducationCard } from './components/EducationCard';
 import { WorkExperienceCard } from './components/WorkExperienceCard';
 import { CertificationCard } from './components/CertificationCard';
 import { FocusCards } from '../common/Focus-Card';
+import { useNavigate } from 'react-router-dom';
+import WorkExperienceSection from './sections/WorkExperienceSection';
 
 // Animation variants
 const containerVariants = {
@@ -114,13 +115,13 @@ const links = [
 
 
 const cards = [
-        { title: "Figma", year: '03', cardColor: '#0389FF', ellipseColor: '#0D84EC' },
-        { title: "Photoshop", year: '02', cardColor: '#1DA787', ellipseColor: '#189F7F' },
-        { title: "Adobe XD", year: '01', cardColor: '#F59502', ellipseColor: '#EA8E0A' },
-        { title: "Protopie", year: '01', cardColor: '#F57E9B', ellipseColor: '#EC7391' },
-        { title: "Canva", year: '02', cardColor: '#F87E56', ellipseColor: '#F3754B' },
-        { title: "Motiff", year: '01', cardColor: '#C003FF', ellipseColor: '#B611ED' },
-    ]
+    { title: "Figma", year: '03', cardColor: '#0389FF', ellipseColor: '#0D84EC' },
+    { title: "Photoshop", year: '02', cardColor: '#1DA787', ellipseColor: '#189F7F' },
+    { title: "Adobe XD", year: '01', cardColor: '#F59502', ellipseColor: '#EA8E0A' },
+    { title: "Protopie", year: '01', cardColor: '#F57E9B', ellipseColor: '#EC7391' },
+    { title: "Canva", year: '02', cardColor: '#F87E56', ellipseColor: '#F3754B' },
+    { title: "Motiff", year: '01', cardColor: '#C003FF', ellipseColor: '#B611ED' },
+]
 
 export const UserInfoSec = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -132,6 +133,8 @@ export const UserInfoSec = () => {
     const [isEducationEdit, setIsEducationEdit] = useState(false);
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
+
+    const navigate = useNavigate();
 
     // Track scroll position and update dock visibility
     useEffect(() => {
@@ -169,74 +172,15 @@ export const UserInfoSec = () => {
                 className='max-w-[1104px] mx-auto'
                 variants={containerVariants}
             >
-                <motion.h3
-                    className="mt-[60px] text-center flex justify-center items-center gap-2"
-                    variants={itemVariants}
-                >
-                    <motion.div
-                        className="w-[25px] h-[25px] bg-[#0DDE3433] rounded-full flex items-center justify-center"
-                        animate={{
-                            scale: [1, 1.3, 1],
-                            opacity: [1, 0.8, 1],
-                            rotate: [0, 5, -5, 0],
-                        }}
-                        transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "anticipate",
-                            repeatType: "reverse",
-                            times: [0, 0.5, 1],
-                        }}
-                    >
-                        <motion.div
-                            className="w-[8px] h-[8px] bg-[#0DDE34] rounded-full"
-                            animate={{
-                                scale: [1, 0.9, 1],
-                                opacity: [1, 0.9, 1],
-                            }}
-                            transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                        />
-                    </motion.div>
-                    Available for work
-                </motion.h3>
 
-                <motion.div
-                    className='flex gap-[24px] mt-[100px] mb-[100px]'
-                    variants={itemVariants}
-                >
-                    <StarBorder as="button" color="#0389FF" speed="4s">
-                        <h1 className='text-[30px] font-[500]'>--</h1>
-                        <p className='text-[14px]'>Experience Level</p>
-                    </StarBorder>
-                    <StarBorder as="button" color="#0389FF" speed="4s">
-                        <h1 className='text-[30px] font-[500]'>1-2</h1>
-                        <p className='text-[14px]'>Years of Experience</p>
-                    </StarBorder>
-                    <StarBorder as="button" color="#0389FF" speed="4s">
-                        <h1 className='text-[30px] font-[500]'>Remote</h1>
-                        <p className='text-[14px]'>Workplace Type</p>
-                    </StarBorder>
-                    <StarBorder as="button" color="#0389FF" speed="4s">
-                        <h1 className='text-[30px] font-[500]'>--</h1>
-                        <p className='text-[14px]'>Expected Salary</p>
-                    </StarBorder>
-                </motion.div>
 
-                <motion.h3
-                    className='text-[24px] mb-[70px]'
-                    variants={itemVariants}
-                >
-                    Experienced UI/UX Designer with a passion for crafting intuitive and visually appealing digital experiences. Skilled in user research, wireframing, prototyping, and visual design. Proven ability to deliver innovative solutions that meet user needs and business objectives. With over... Read more
-                </motion.h3>
 
-                <FocusCards cards={cards}/>
 
-                <Title 
-                    title={" Selected Projects"} 
+
+                <FocusCards cards={cards} />
+
+                <Title
+                    title={" Selected Projects"}
                     isEdit={isSelectedProjectsEdit}
                     onEditToggle={() => setIsSelectedProjectsEdit((prev) => !prev)}
                 />
@@ -276,41 +220,13 @@ export const UserInfoSec = () => {
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}
 
-                <Title 
-                    title={" Work Experience"} 
-                    isEdit={isWorkExperienceEdit}
-                    onEditToggle={() => setIsWorkExperienceEdit((prev) => !prev)}
-                />
+                <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
 
-                <motion.div
-                    className='grid grid-cols-2 gap-[143px] mb-[140px]'
-                    variants={containerVariants}
-                >
-                    <motion.div variants={itemVariants}>
-                        <WorkExperienceCard
-                            logo={LOGO}
-                            title='Mid Level UI/UX Designer'
-                            companyName='Next Innovations'
-                            experience='Mar 2025 - Present'
-                            description='Collaborated with the development team to implement a responsive design  approach, improving the mobile user experience and increasing mobile app engagement.'
-                            isEdit={isWorkExperienceEdit}
-                        />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <WorkExperienceCard
-                            title="Junior UI/UX Designer"
-                            companyName="See Ocean"
-                            experience="Dec 2023 - Feb 2025"
-                            description="Collaborated with the development team to implement a responsive design approach, improving the mobile user experience and increasing mobile app engagement."
-                            isEdit={isWorkExperienceEdit}
-                        />
-                    </motion.div>
-                </motion.div>
 
                 {/* Education */}
 
-                <Title 
-                    title={"Education"} 
+                <Title
+                    title={"Education"}
                     isEdit={isEducationEdit}
                     onEditToggle={() => setIsEducationEdit((prev) => !prev)}
                 />
@@ -326,8 +242,8 @@ export const UserInfoSec = () => {
 
                 {/* Certifications */}
 
-                <Title 
-                    title={"Certifications"} 
+                <Title
+                    title={"Certifications"}
                     isEdit={isCertificationEdit}
                     onEditToggle={() => setIsCertificationEdit((prev) => !prev)}
                 />

@@ -88,9 +88,15 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                 descriptionText={descriptionText}
                 {...field}
               />
+              
             </>
           </FormControl>
           <FormMessage />
+          {description && (
+          <h3 className="text-[#686C73] font-normal mt-[10px] text-[14px]">
+            {descriptionText}
+          </h3>
+        )}
         </FormItem>
       )}
     />

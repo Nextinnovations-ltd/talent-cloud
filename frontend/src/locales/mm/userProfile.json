@@ -14,5 +14,6 @@
     "startDate":"Start Date",
     "endDate":"End Date",
     "description":"Description",
-     "tagline":"Tagline"
+     "tagline":"Tagline",
+     "experience_years":"Experience Years"
 }

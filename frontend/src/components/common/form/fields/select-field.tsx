@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
 
 interface SelectFieldProps {
@@ -77,17 +77,14 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                       "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
                     )}
                   >
-                    <SelectValue  placeholder={placeholder} />
+                 <SelectValue  placeholder={placeholder} />
                   </SelectTrigger>
                   <SelectContent className="h-[200px] p-2">
                     {data.map((item) => (
                       <SelectItem value={item.value}>{item.label}</SelectItem>
                     ))}
-                   
                   </SelectContent>
-                 
                 </Select>
-                
                 {description && (
                   <h3 className="text-[#686C73] text-[14px] mt-[8px]">
                     {description}

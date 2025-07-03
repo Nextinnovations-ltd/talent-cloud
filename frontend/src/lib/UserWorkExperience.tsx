@@ -34,5 +34,7 @@ export const UserWorkExperienceSchema = yup.object({
 
   is_present_work: yup
     .boolean()
-    .required('')
+    .required(''),
+
+  description:yup.string().max(250)
 });

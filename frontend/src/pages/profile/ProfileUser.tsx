@@ -55,7 +55,6 @@ export const ProfileUser = () => {
   useEffect(() => {
     if (profileData) {
 
-      console.log({profileData})
 
       form.reset({
         profile_image_url: profileData.data?.profile_image_url || "",
@@ -74,7 +73,13 @@ export const ProfileUser = () => {
         resume_url: profileData.data?.resume_url || "",
       });
     }
-  }, [profileData, form,isProfileLoading]);
+  }, [profileData,isProfileLoading]);
+
+
+  useEffect(()=>{
+    console.log("Form Values:", form.getValues());
+  },[form.getValues()]);
+
 
   const onSubmitHandler = async (values: UserProfile) => {
     try {
@@ -119,6 +124,8 @@ export const ProfileUser = () => {
     );
   }
 
+
+
   return (
     <div className="mb-[120px]">
       <ProfileTitle title="Profile" />
@@ -128,11 +135,12 @@ export const ProfileUser = () => {
           className="space-y-[30px]  my-4"
         >
           <UserProfileForm
-            preview={preview}
-            setPreview={setPreview}
             form={form}
+            setPreview={setPreview}
+            preview={preview}
             setIsOpen={setIsOpen}
-          />
+            />
+         
           <div className="mt-[60px] ">
             <div className="max-w-[672px] flex items-center justify-end">
               <Button

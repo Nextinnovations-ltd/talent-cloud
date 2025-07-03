@@ -69,7 +69,7 @@ const crystalVariants = {
     }
 };
 
-export const Title = ({ title, isEdit, onEditToggle }: { title: string; isEdit?: boolean; onEditToggle?: () => void }) => {
+export const Title = ({ title, isEdit, onEditToggle,onpressAdd }: { title: string; isEdit?: boolean; onEditToggle?: () => void ,onpressAdd?:()=>void}) => {
     return (
         <motion.div
             className="flex items-center justify-between gap-[10px] mb-[43px]"
@@ -97,11 +97,11 @@ export const Title = ({ title, isEdit, onEditToggle }: { title: string; isEdit?:
            </div>
 
             <div className='flex items-center  gap-5'>
-              <ActiveActionsButtons icon={<SvgAdd/>} title='Add'/>  
+              <ActiveActionsButtons onClick={onpressAdd}  icon={<SvgAdd/>} title='Add'/>  
               {onEditToggle && (
                 <ActiveActionsButtons 
                   icon={<SvgEdit/>} 
-                  title={isEdit ? 'UnEdit' : 'Edit'} 
+                  title={isEdit ? 'Cancel' : 'Edit'} 
                   onClick={onEditToggle}
                 />
               )}

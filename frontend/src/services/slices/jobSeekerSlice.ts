@@ -81,7 +81,7 @@ interface UseSocialProfileResponse {
 interface UseExperienceResponse {
   status: boolean;
   message: string;
-  data: {
+  data:{
     id: number;
     title: string;
     organization: string;
@@ -91,7 +91,7 @@ interface UseExperienceResponse {
     end_date: string;
     description: string;
     is_present_work: boolean;
-  };
+  }[];
 }
 
 interface Skill {
@@ -132,6 +132,10 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
         body: JSON.stringify(credentials),
       }),
     }),
+    getExperienceById:builder.query<unknown,unknown>({
+      query:(id)=>`/experiences/${id}`,
+    }),
+
     addJobSeekerSkills: builder.mutation<unknown, void>({
       query: (credentials) => ({
         url: "/jobseeker/skill/",
@@ -166,5 +170,6 @@ export const {
   useAddExperienceProfileMutation,
   useAddJobSeekerSkillsMutation,
   useGetJobSeekerSkillsQuery,
-  useGetJobSeekerUserSkillsQuery
+  useGetJobSeekerUserSkillsQuery,
+  useGetExperienceByIdQuery,
 } = extendedJobSeekerSlice;

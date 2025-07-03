@@ -8,12 +8,9 @@ export interface InputProps
   showPasswordIcon?: React.ReactNode;
   hidePasswordIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
-  inputClasses?: string;
   isError?: boolean;
   showLetterCount?: boolean; // New prop to show/hide letter count
   maxLength?: number; // Max length for input
-  description?: boolean;
-  descriptionText?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -25,11 +22,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       endIcon,
       showPasswordIcon,
       hidePasswordIcon,
-      inputClasses,
       showLetterCount,
       maxLength,
-      description,
-      descriptionText,
       startIcon,
       ...props
     },
@@ -115,11 +109,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </Button>
           )}
         </div>
-        {description && (
-          <h3 className="text-[#686C73] font-normal mt-[10px] text-[14px]">
-            {descriptionText}
-          </h3>
-        )}
       </div>
     );
   }
