@@ -1,18 +1,20 @@
 import apiSlice from "../api/apiSlice";
 
 interface JobSeekerCredentials {
-  name: string;
-  username: string;
-  email: string;
-  conuntry_code: string;
-  phone_number: string;
-  profile_image_url: string;
-  address: string;
-  bio: string;
-  facebook_url: string;
-  linkedin_url: string;
-  behance_url: string;
-  portfolio_url: string;
+    profile_image_url?: string;
+    name: string;
+    username: string;
+    email: string;
+    tagline:string;
+    role: number;
+    experience_level: number;
+    experience_years:number;
+    country_code: string;
+    phone_number: string;
+    date_of_birth:string;
+    address: string;
+    bio: string;
+    resume_url?:string
 }
 
 //credentials
@@ -39,7 +41,7 @@ interface LabelType {
   level: string;
 }
 
-interface SpecializationType {
+interface RoleType {
   id: number;
   name: string;
 }
@@ -48,20 +50,20 @@ interface UseJobSeekerProfileResponse {
   status: boolean;
   message: string;
   data: {
-    address: string;
-    behance_url: string;
-    bio: string;
-    country_code: string;
-    email: string;
-    facebook_url: string;
-    linkedin_url: string;
-    name: string;
-    phone_number: string;
-    portfolio_url: string;
     profile_image_url: string;
+    name: string;
     username: string;
+    email: string;
+    tagline:string;
+    role: RoleType;
     experience_level: LabelType;
-    specialization: SpecializationType;
+    experience_years:number;
+    country_code: string;
+    phone_number: string;
+    date_of_birth:string;
+    address: string;
+    bio: string;
+    resume_url:string
   };
 }
 
@@ -79,7 +81,7 @@ interface UseSocialProfileResponse {
 interface UseExperienceResponse {
   status: boolean;
   message: string;
-  data: {
+  data:{
     id: number;
     title: string;
     organization: string;
@@ -89,7 +91,7 @@ interface UseExperienceResponse {
     end_date: string;
     description: string;
     is_present_work: boolean;
-  };
+  }[];
 }
 
 interface Skill {
@@ -130,6 +132,10 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
         body: JSON.stringify(credentials),
       }),
     }),
+    getExperienceById:builder.query<unknown,unknown>({
+      query:(id)=>`/experiences/${id}`,
+    }),
+
     addJobSeekerSkills: builder.mutation<unknown, void>({
       query: (credentials) => ({
         url: "/jobseeker/skill/",
@@ -164,5 +170,6 @@ export const {
   useAddExperienceProfileMutation,
   useAddJobSeekerSkillsMutation,
   useGetJobSeekerSkillsQuery,
-  useGetJobSeekerUserSkillsQuery
+  useGetJobSeekerUserSkillsQuery,
+  useGetExperienceByIdQuery,
 } = extendedJobSeekerSlice;

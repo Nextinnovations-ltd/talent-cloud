@@ -17,7 +17,6 @@ export const PhoneNumberInput = ({
     <div className={isError && "border-2 border-red-500  rounded-md"}>
       <PhoneInput
         className="border-red-500 border-2"
-        defaultCountry="mm"
         value={`${value}`}
         onChange={(phone) => setValue(phone)}
       />

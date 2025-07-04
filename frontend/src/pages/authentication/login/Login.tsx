@@ -23,7 +23,8 @@ export const Login = () => {
 
       if (res.success) {
         if (res.data.data.is_generated_username) {
-          window.location.href = "/verify";
+          //window.location.href = "/verify";
+          window.location.href = "/";
         } else {
           window.location.href = "/";
         }

@@ -28,7 +28,9 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
       const { is_generated_username, onboarding_step } = userInfo?.data || {};
 
       if (is_generated_username) {
-        navigate("/verify");
+       // navigate("/verify");
+       navigate("/verify");
+
         return;
       }
 

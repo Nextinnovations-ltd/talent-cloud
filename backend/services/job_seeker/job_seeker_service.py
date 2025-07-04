@@ -236,11 +236,13 @@ class JobSeekerService:
                job_seeker.name = data.get("name", job_seeker.name)
                job_seeker.username = data.get("username", job_seeker.username)
                job_seeker.email = data.get("email", job_seeker.email)
-               job_seeker.tagline = data.get("tagline", job_seeker.tagline)
+               job_seeker.is_open_to_work = data.get("is_open_to_work", job_seeker.is_open_to_work)
+               job_seeker.expected_salary = data.get("expected_salary", job_seeker.expected_salary)
                job_seeker.country_code = data.get("country_code", job_seeker.country_code)
                job_seeker.phone_number = data.get("phone_number", job_seeker.phone_number)
                job_seeker.date_of_birth = data.get("date_of_birth", job_seeker.date_of_birth)
                job_seeker.address = data.get("address", job_seeker.address)
+               job_seeker.tagline = data.get("tagline", job_seeker.tagline)
                job_seeker.bio = data.get("bio", job_seeker.bio)
                job_seeker.resume_url = data.get("resume_url", job_seeker.resume_url)
 
@@ -283,7 +285,6 @@ class JobSeekerService:
                'name': job_seeker.name,
                'username': job_seeker.username,
                'email': job_seeker.email,
-               'tagline': job_seeker.tagline,
                'role': {
                     'id': occupation.role.id,
                     'name': occupation.role.name,
@@ -293,12 +294,15 @@ class JobSeekerService:
                     'level': occupation.experience_level.level,
                } if occupation and occupation.experience_level else None,
                'experience_years': occupation.experience_years if occupation else None,
+               'is_open_to_work': job_seeker.is_open_to_work,
+               'expected_salary': job_seeker.expected_salary,
                'country_code': job_seeker.country_code,
                'phone_number': job_seeker.phone_number,
                'date_of_birth': job_seeker.date_of_birth,
                'address': job_seeker.address,
+               'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
-               'resume_url': job_seeker.resume_url
+               'resume_url': job_seeker.resume_url,
           }
 
      

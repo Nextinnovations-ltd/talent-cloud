@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import NEWIMAGE from '@/assets/New.png';
 import BOOKMARK from '@/assets/Bookmark.svg'
+import ACTIVEBOOKMARK from '@/assets/ActiveBookmark.png'
+
 import TOOLTIP from '@/assets/BookmarkTooltip.png'
 
 import SALARY from '@/assets/Dollar.svg'
@@ -27,6 +29,8 @@ export type Job = {
   created_at: string;
   applicant_count: number;
   is_new: boolean;
+  is_bookmarked:boolean;
+  is_applied:boolean
 };
 
 export type JobList = Job[];
@@ -51,8 +55,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
   return (
     <div
       ref={cardRef}
-      className={`p-[30px] border-[#CBD5E1B2] relative border-[2px] cursor-pointer min-h-[429px] w-[400px] mx-auto rounded-[17px] transition-colors duration-200 flex flex-col ${
-        isSelected ? " border-blue-500 border-[3px]" : "hover:border-blue-500"
+      className={`p-[30px] border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[429px] w-[400px] mx-auto rounded-[17px] transition-colors flex flex-col ${
+        isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
       }`}
       onClick={() => onClick(job)}
     >
@@ -64,8 +68,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-             <div className="w-[50px] h-[50px] rounded-full hover:bg-slate-50 flex items-center justify-center">
-             <img width={18} height={18}  src={BOOKMARK} />
+             <div className={`w-[50px] h-[50px] rounded-full duration-500 hover:bg-slate-50 flex items-center justify-center ${job?.is_bookmarked && 'bg-[#0389FF1F] hover:bg-blue-200'}`}>
+             <img width={24} height={24}  src={job?.is_bookmarked ? ACTIVEBOOKMARK:BOOKMARK} />
              </div>
             </TooltipTrigger>
             <TooltipContent  >
@@ -95,13 +99,13 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           {job.skills.slice(0, 2).map((item, index) => (
             <Badge
               key={index}
-              className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] ${isSelected && 'bg-blue-200'}`}
+              className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] `}
             >
               <p className="truncate">{item}</p>
             </Badge>
           ))}
           {job.skills.length > 2 && (
-            <Badge className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] ${isSelected && 'bg-blue-200'}`}>
+            <Badge className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black truncate max-w-[120px] `}>
               ...
             </Badge>
           )}
@@ -112,10 +116,16 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
 
       <div className="border-t-[1px] border-slate-300"></div>
 
-      <div className="flex mt-[20px] text-[14px] items-center gap-2">
-        <h3 className="text-[#6B6B6B]">{formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</h3>
+      <div className="flex mt-[20px] text-[14px] justify-between
+       items-center gap-2">
+       <div className="flex items-center gap-2">
+       <h3 className="text-[#6B6B6B]">{formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</h3>
         <img width={4} height={4} src={DOT} />
         <h3 className="text-[#6B6B6B]">{job.applicant_count} Applicants</h3>
+       </div>
+      {
+        job.is_applied &&  <h3 className="text-[#0481EF]">Applied</h3>
+      }
       </div>
     </div>
   );
