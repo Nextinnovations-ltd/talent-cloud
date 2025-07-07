@@ -25,6 +25,7 @@ class Chat(TimeStampModel):
     participants = models.ManyToManyField('users.TalentCloudUser', related_name="chat_rooms")
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class Message(TimeStampModel):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey('users.TalentCloudUser', on_delete=models.CASCADE)
