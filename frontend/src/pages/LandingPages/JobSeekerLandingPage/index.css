@@ -1,0 +1,23 @@
+.cloud {
+    overflow: hidden;
+
+}
+
+.cloud img {
+    animation: cld calc(17s * var(--i)) linear infinite;
+    opacity: .6;
+    max-width: 100%;
+    position: absolute;
+    bottom: 0%;
+
+}
+
+@keyframes cld {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
