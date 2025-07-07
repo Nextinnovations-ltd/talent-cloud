@@ -57,6 +57,11 @@ const routesMap: RoutesMap = {
     path: "workexperience",
     name: "Experience",
   },
+  selectedProjects:{
+    path:"selectedProjects",
+    name:'selectedProjects'
+  }
+  ,
   education: {
     path: "education",
     name: "education",

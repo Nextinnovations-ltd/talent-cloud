@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import THAN from '@/assets/Login/Login/Mask group.png';
+import DEFAULT from '@/assets/ProfileNoData.png';
 
 export const AvatarProfile = ({ size, status }: { size?: string, status: boolean }) => {
   return (
     <div className="relative">
       <Avatar className={cn(size)}>
-        <AvatarImage className="object-cover" src={THAN} /> {/* Use the imported image here */}
+        <AvatarImage className="object-cover" src={DEFAULT} /> {/* Use the imported image here */}
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       {status && (

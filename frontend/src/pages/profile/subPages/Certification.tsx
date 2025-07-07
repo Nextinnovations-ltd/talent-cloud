@@ -7,6 +7,14 @@ import { CertificationYupSchema } from "@/lib/CertificationSchema";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
+import { useAddCertificationMutation, useGetCerificationByIdQuery,} from "@/services/slices/jobSeekerSlice";
+import { useSearchParams } from "react-router-dom";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import clsx from "clsx";
+import useToast from "@/hooks/use-toast";
+
 
 type CertificationFormType = {
   certificationName: string;
@@ -16,7 +24,6 @@ type CertificationFormType = {
   expirationYear: string;
   expirationMonth: string;
   noExpired: boolean;
-  credentialId: string;
   credentialURL: string;
 };
 
@@ -32,6 +39,34 @@ const generateYearData = (
 };
 
 export const Certification = () => {
+
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const {showNotification} = useToast();
+  const id = searchParams.get("id");
+
+  const [addCertification, { isLoading }] = useAddCertificationMutation();
+  const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(id, { skip: !id });
+
+  console.log(CertificationData)
+
+ // const CertificationData = {
+ //   "id": 1,
+  //  "title": "Test",
+  //  "organization": "Test",
+  //  "issued_date": "2010-02-01",
+  //  "expiration_date": "2000-01-01",
+  //  "has_expiration_date": true,
+  //  "url": "https://www.facebook.com",
+  //  "user": 1
+ // }
+
+ 
+
+
+
+
   const form = useForm<CertificationFormType>({
     resolver: yupResolver(CertificationYupSchema),
     defaultValues: {
@@ -39,7 +74,49 @@ export const Certification = () => {
     },
   });
 
-  const onSubmit = (data: CertificationFormType) => console.log(data);
+  useEffect(()=>{
+  console.log(form.getValues())
+  },[form])
+
+  useEffect(() => {
+    if (id && CertificationData) {
+      form.reset({
+        certificationName: CertificationData.title || "",
+        organizationIssue: CertificationData.organization || "",
+        issueYear: CertificationData.issued_date ? CertificationData.issued_date.split("-")[0] : "",
+        issueMonth: CertificationData.issued_date ? CertificationData.issued_date.split("-")[1] : "",
+        expirationYear: CertificationData.has_expiration_date && CertificationData.expiration_date
+          ? CertificationData.expiration_date.split("-")[0]
+          : "",
+        expirationMonth: CertificationData.has_expiration_date && CertificationData.expiration_date
+          ? CertificationData.expiration_date.split("-")[1]
+          : "",
+        noExpired: !CertificationData.has_expiration_date,
+        credentialURL: CertificationData.url || "",
+      });
+    }
+  }, [id, CertificationData, form]);
+
+  const onSubmit = async (data: CertificationFormType) => {
+    try {
+      // Transform form data to match API payload format
+      const payload = {
+        title: data.certificationName,
+        organization: data.organizationIssue,
+        issued_date: `${data.issueYear}-${data.issueMonth.padStart(2, '0')}-01`,
+        expiration_date: data.noExpired ? "" : `${data.expirationYear}-${data.expirationMonth.padStart(2, '0')}-01`,
+        has_expiration_date: !data.noExpired,
+        url: data.credentialURL || ""
+      };
+
+      await addCertification(payload).unwrap();
+      navigate('/user/mainProfile')
+
+      console.log('Certification added successfully');
+    } catch (error) {
+      console.error('Failed to add certification:', error);
+    }
+  };
 
   // Watch the value of the 'noExpired' field
   const noExpired = useWatch({
@@ -47,6 +124,8 @@ export const Certification = () => {
     name: "noExpired",
     defaultValue: false,
   });
+
+  if(getLoadiing) return <p>Loading...</p>
 
   return (
     <div className="mb-[120px]">
@@ -142,14 +221,6 @@ export const Certification = () => {
               typeStyle="mono"
             />
             <InputField
-              fieldName={`credentialId`}
-              languageName=""
-              isError={!!form.formState.errors?.credentialId}
-              lableName="Credential ID"
-              required={false}
-              placeholder="ID"
-            />
-            <InputField
               fieldName={`credentialURL`}
               languageName=""
               isError={!!form.formState.errors?.credentialURL}
@@ -160,9 +231,10 @@ export const Certification = () => {
             <div className="max-w-[672px] flex items-center justify-end">
               <button
                 type="submit"
-                className="mt-4 w-[155px] h-[48px] rounded-[26px] bg-blue-500 text-white px-4 py-2"
+                disabled={isLoading}
+                className={clsx("mt-4  h-[48px] rounded-[26px] bg-blue-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed justify-center items-center",id? 'w-[200px] ' : 'w-[165px]')}
               >
-                Save Profile
+                {isLoading ? <LoadingSpinner /> : id ? "Update Experience" : "Save Experience"}
               </button>
             </div>
           </div>

@@ -4,6 +4,7 @@ import {
   removeTokenFromSessionStorage,
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
+import useGlobalModal from "@/state/zustand/global-modal";
 
 interface RootState {
   auth: {
@@ -42,14 +43,16 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 
   const status = (result.error as FetchBaseQueryError)?.status;
 
+  // Detailed logging for debugging
+  console.log('baseQueryWithReauth error:', result.error);
+  console.log('baseQueryWithReauth status:', status);
+
   if (status === 401 || status === 403) {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
     console.log(status)
-    // Dynamically import Zustand store and trigger modal
-    import("@/state/zustand/global-modal").then(({ default: useGlobalModal }) => {
-      useGlobalModal.getState().openModal("Session expired. Please login again.");
-    });
+    // Directly trigger Zustand store and modal
+    useGlobalModal.getState().openModal("Session expired. Please login again.");
   }
 
   return result;
@@ -58,7 +61,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['JobList'],
+  tagTypes: ['JobList', 'CertificationList','EducationsList'],
   endpoints: () => ({}),
 });
 

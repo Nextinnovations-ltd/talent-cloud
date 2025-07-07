@@ -28,6 +28,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
+import SelectedProject from "./pages/profile/subPages/SelectedProject";
 
 
 export const router = createBrowserRouter([
@@ -109,6 +110,10 @@ export const router = createBrowserRouter([
                 path: routesMap.languages.path,
                 element: <Language />,
               },
+              {
+                path:routesMap.selectedProjects.path,
+                element:<SelectedProject/>
+              }
             ],
           },
         ],

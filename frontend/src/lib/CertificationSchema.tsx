@@ -5,9 +5,14 @@ export const CertificationYupSchema = yup.object({
   organizationIssue: yup.string().required("Issuing Organization is required"),
   issueYear: yup.string().required("Issue Date is required"),
   issueMonth: yup.string().required("Issue Date is required"),
-  expirationYear: yup.string().required("Expiration Date is required"),
-  expirationMonth: yup.string().required("Expiration Month is required"),
+  expirationYear: yup.string().when("noExpired", (noExpired, schema) => {
+    if (!noExpired) return schema.required("Expiration Date is required");
+    return schema;
+  }),
+  expirationMonth: yup.string().when("noExpired", (noExpired, schema) => {
+    if (!noExpired) return schema.required("Expiration Month is required");
+    return schema;
+  }),
   noExpired: yup.boolean().required(),
-  credentialId: yup.string().required("Credential ID is required"),
   credentialURL: yup.string().required("Credential URL is required"),
 });

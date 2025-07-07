@@ -2,7 +2,6 @@ import React from 'react'
 import { Title } from '../Title';
 import { motion, Variants } from 'framer-motion';
 import { WorkExperienceCard } from '../components/WorkExperienceCard';
-import LOGO from '@/assets/Login/Logo.svg';
 import { useNavigate } from 'react-router-dom';
 import { useGetExperiencesQuery } from '@/services/slices/jobSeekerSlice';
 
@@ -20,41 +19,41 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
   itemVariants,
 }) => {
 
-    const navigate = useNavigate();
-    const {data,isLoading:ExperienceLoading} = useGetExperiencesQuery();
+  const navigate = useNavigate();
+  const { data } = useGetExperiencesQuery();
 
 
-    const EXPERIENCEDATA = data?.data;
+  const EXPERIENCEDATA = data?.data;
 
 
-    
+
   return (
     <div>
-         <Title 
-                    title={" Work Experience"} 
-                    onpressAdd={()=>navigate('/user/edit/workexperience')}
-                    isEdit={isWorkExperienceEdit}
-                    onEditToggle={() => setIsWorkExperienceEdit((prev) => !prev)}
-                />
+      <Title
+        title={" Work Experience"}
+        onpressAdd={() => navigate('/user/edit/workexperience')}
+        isEdit={isWorkExperienceEdit}
+        onEditToggle={EXPERIENCEDATA?.length > 0 ? () => setIsWorkExperienceEdit((prev) => !prev) : undefined}
+      />
 
-                <motion.div
-                    className='grid grid-cols-2 gap-[143px] mb-[140px]'
-                    variants={containerVariants}
-                >
-                     {
-                    EXPERIENCEDATA?.map((e, index) => <motion.div key={index} variants={itemVariants}>
-                        <WorkExperienceCard
-                            id={e.id}
-                            title={e.title}
-                            companyName={e.organization}
-                            experience='Mar 2025 - Present'
-                            description={e.description}
-                            isEdit={isWorkExperienceEdit}
-                        />
-                    </motion.div>)
-                }
+      <motion.div
+        className='grid grid-cols-2 gap-[143px] mb-[140px]'
+        variants={containerVariants}
+      >
+        {
+          EXPERIENCEDATA?.map((e, index) => <motion.div key={index} variants={itemVariants}>
+            <WorkExperienceCard
+              id={e.id}
+              title={e.title}
+              companyName={e.organization}
+              experience='Mar 2025 - Present'
+              description={e.description}
+              isEdit={isWorkExperienceEdit}
+            />
+          </motion.div>)
+        }
 
-                </motion.div>
+      </motion.div>
     </div>
   )
 }

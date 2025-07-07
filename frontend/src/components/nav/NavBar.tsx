@@ -57,7 +57,7 @@ export const NavBar = () => {
           onClick={handleBlurOverlay}
         />
       )}
-      <div className="h-[100px] bg-white  z-[1000] fixed top-0  w-full right-0 px-[40px] ">
+      <div className="h-[100px] bg-white  z-[900] fixed top-0  w-full right-0 px-[40px] ">
         <div className="flex items-center justify-evenly  gap-[30px] h-full ">
           <Logo />
           <form onSubmit={handleSearch}>

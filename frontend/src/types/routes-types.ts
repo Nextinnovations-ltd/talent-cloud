@@ -24,6 +24,7 @@ type RoutesMap = {
   redirectLoading: Route;
   socialLinks: Route;
   mainProfile: Route;
+  selectedProjects:Route;
 };
 
 export default RoutesMap;
