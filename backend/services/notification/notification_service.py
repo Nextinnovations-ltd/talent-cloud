@@ -433,7 +433,7 @@ class CompanyNotificationService:
             company_id=company.id
         )
 
-
+# Job Notification
 class JobNotificationService:
     """Service for job-related notifications"""
     
@@ -475,7 +475,7 @@ class JobNotificationService:
             company_id=company.id
         )
 
-
+# System Notification
 class SystemNotificationService:
     """Service for system-wide notifications"""
     
@@ -496,7 +496,7 @@ class SystemNotificationService:
             message=message
         )
 
-
+# Admin Notification
 class AdminNotificationService:
     """Service for admin-specific notifications"""
     
