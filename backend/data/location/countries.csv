@@ -1,0 +1,45 @@
+id,name,code2,code3,continent
+1010,Afghanistan,AF,AFG,AS
+1011,Australia,AU,AUS,OC
+1012,Bangladesh,BD,BGD,AS
+1013,Brazil,BR,BRA,SA
+1030,Cambodia,KH,KHM,AS
+1014,Canada,CA,CAN,NA
+1016,China,CN,CHN,AS
+1019,Finland,FI,FIN,EU
+1020,France,FR,FRA,EU
+1017,Germany,DE,DEU,EU
+1024,India,IN,IND,AS
+1022,Indonesia,ID,IDN,AS
+1026,Iran,IR,IRN,AS
+1025,Iraq,IQ,IRQ,AS
+1023,Israel,IL,ISR,AS
+1027,Italy,IT,ITA,EU
+1029,Japan,JP,JPN,AS
+1028,Jordan,JO,JOR,AS
+1032,Laos,LA,LAO,AS
+1035,Malaysia,MY,MYS,AS
+1034,Myanmar,MM,MMR,AS
+1038,Nepal,NP,NPL,AS
+1037,Norway,NO,NOR,EU
+1039,Oman,OM,OMN,AS
+1041,Pakistan,PK,PAK,AS
+1040,Philippines,PH,PHL,AS
+1042,Poland,PL,POL,EU
+1043,Qatar,QA,QAT,AS
+1044,Russia,RU,RUS,EU
+1045,Saudi Arabia,SA,SAU,AS
+1047,Singapore,SG,SGP,AS
+1031,South Korea,KR,KOR,AS
+1018,Spain,ES,ESP,EU
+1033,Sri Lanka,LK,LKA,AS
+1046,Sweden,SE,SWE,EU
+1015,Switzerland,CH,CHE,EU
+1049,Taiwan,TW,TWN,AS
+1048,Thailand,TH,THA,AS
+1036,The Netherlands,NL,NLD,EU
+1050,Ukraine,UA,UKR,EU
+1009,United Arab Emirates,AE,ARE,AS
+1021,United Kingdom,GB,GBR,EU
+1051,United States,US,USA,NA
+1052,Vietnam,VN,VNM,AS

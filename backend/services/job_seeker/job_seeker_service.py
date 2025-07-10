@@ -3,7 +3,7 @@ from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
 from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer, JobSeekerSkillSerializer, SpokenLanguageSerializer
-from apps.users.models import TalentCloudUser
+from apps.users.models import Address, TalentCloudUser
 
 class JobSeekerService:
      @staticmethod
@@ -87,16 +87,16 @@ class JobSeekerService:
           if step == 0:
                step = job_seeker.onboarding_step
                
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
           
-          job_seeker_occupation = getattr(job_seeker, 'occupation', None)
+          job_seeker_occupation: JobSeekerOccupation = getattr(job_seeker, 'occupation', None)
           
           if step == 1:
                name = data.get('name', None)
                tagline = data.get('tagline', None)
                experience_level_id = data.get('experience_level_id', None)
                experience_years = data.get('experience_years', None)
-               
+               address_data = data.get('address', None)
                # profile_image = request.FILES.get('profile_image', None)
 
                # Perform Image Upload
@@ -117,7 +117,25 @@ class JobSeekerService:
                               experience_level_id = experience_level_id,
                               experience_years = experience_years
                          )
-               
+                    
+                    if address_data:
+                         address: Address = getattr(job_seeker, 'address', None)
+                         
+                         if address:
+                              address.address = address_data.get('address', None)
+                              address.city_id = address_data.get('city',None)
+                              address.country_id = address_data.get('country', None)
+
+                              address.save()
+                         else:
+                              address = Address.objects.create(
+                                   address= address_data.get('address', None),
+                                   city_id = address_data.get('city',None),
+                                   country_id = address_data.get('country', None)
+                              )
+                         
+                         job_seeker.address = address
+                       
                     job_seeker.onboarding_step = 2
                     
                     job_seeker.save()
@@ -299,7 +317,7 @@ class JobSeekerService:
                'country_code': job_seeker.country_code,
                'phone_number': job_seeker.phone_number,
                'date_of_birth': job_seeker.date_of_birth,
-               'address': job_seeker.address,
+               'address': JobSeekerService._get_extracted_address(job_seeker),
                'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
                'resume_url': job_seeker.resume_url,
@@ -507,6 +525,26 @@ class JobSeekerService:
                     'email': job_seeker.email
                }
           }
+          
+     @staticmethod
+     def _get_extracted_address(job_seeker: JobSeeker):
+          address = job_seeker.address
+          address_data = None
+
+          if address:
+               return {
+                    'city': {
+                         'id': address.city.id,
+                         'name': address.city.name,
+                    } if address.city else None,
+                    'country': {
+                         'id': address.country.id,
+                         'name': address.country.name,
+                    },
+                    'address': address.address
+               }
+          
+          return None
           
      @staticmethod
      def _update_single_language(job_seeker, language_id, proficiency_level):
