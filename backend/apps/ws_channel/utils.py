@@ -13,7 +13,7 @@ def notify_each_user(user_id, message, destination_url = None):
      
      channel_layer = get_channel_layer()
      async_to_sync(channel_layer.group_send)(
-          f"user_{user_id}",
+          f"user_{user_id}_notifications",
           {
                "type": "send_notification", #call the send_notification method from consumer
                "message": message
