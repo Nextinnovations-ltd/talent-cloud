@@ -7,7 +7,7 @@ import { CertificationYupSchema } from "@/lib/CertificationSchema";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
-import { useAddCertificationMutation, useGetCerificationByIdQuery,} from "@/services/slices/jobSeekerSlice";
+import { useAddCertificationMutation, useGetCerificationByIdQuery, useUpdateCertificationMutation,} from "@/services/slices/jobSeekerSlice";
 import { useSearchParams } from "react-router-dom";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useNavigate } from 'react-router-dom';
@@ -21,8 +21,8 @@ type CertificationFormType = {
   organizationIssue: string;
   issueYear: string;
   issueMonth: string;
-  expirationYear: string;
-  expirationMonth: string;
+  expirationYear?: string;
+  expirationMonth?: string;
   noExpired: boolean;
   credentialURL: string;
 };
@@ -48,6 +48,7 @@ export const Certification = () => {
 
   const [addCertification, { isLoading }] = useAddCertificationMutation();
   const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(id, { skip: !id });
+  const [updateCertification,{isLoading:isUpading}]  = useUpdateCertificationMutation();
 
   console.log(CertificationData)
 
@@ -70,7 +71,14 @@ export const Certification = () => {
   const form = useForm<CertificationFormType>({
     resolver: yupResolver(CertificationYupSchema),
     defaultValues: {
+      certificationName: "",
+      organizationIssue: "",
+      issueYear: "",
+      issueMonth: "",
+      expirationYear: "",
+      expirationMonth: "",
       noExpired: false,
+      credentialURL: "",
     },
   });
 
@@ -104,17 +112,29 @@ export const Certification = () => {
         title: data.certificationName,
         organization: data.organizationIssue,
         issued_date: `${data.issueYear}-${data.issueMonth.padStart(2, '0')}-01`,
-        expiration_date: data.noExpired ? "" : `${data.expirationYear}-${data.expirationMonth.padStart(2, '0')}-01`,
+        expiration_date: data.noExpired ? "" : `${data.expirationYear || ""}-${(data.expirationMonth || "01").padStart(2, '0')}-01`,
         has_expiration_date: !data.noExpired,
         url: data.credentialURL || ""
       };
 
-      await addCertification(payload).unwrap();
-      navigate('/user/mainProfile')
+      let response;
+      if (id) {
+        // Update mode
+        response = await updateCertification({ id, credentials: payload }).unwrap();
+      } else {
+        // Add mode
+        response = await addCertification(payload).unwrap();
 
-      console.log('Certification added successfully');
+      }
+      // Reset form with new data if needed
+      if (response) {
+       
+        showNotification({ message: id ? "Certification updated successfully" : "Certification added successfully", type: "success" });
+        navigate('/user/mainProfile');
+      }
     } catch (error) {
-      console.error('Failed to add certification:', error);
+      showNotification({ message: 'Failed to save certification', type: "danger" });
+      console.error('Failed to save certification:', error);
     }
   };
 
@@ -231,10 +251,10 @@ export const Certification = () => {
             <div className="max-w-[672px] flex items-center justify-end">
               <button
                 type="submit"
-                disabled={isLoading}
-                className={clsx("mt-4  h-[48px] rounded-[26px] bg-blue-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed justify-center items-center",id? 'w-[200px] ' : 'w-[165px]')}
+                disabled={isLoading || isUpading}
+                className={clsx("mt-4  h-[48px] rounded-[26px] bg-blue-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed justify-center items-center", id ? 'w-[200px]' : 'w-[200px]')}
               >
-                {isLoading ? <LoadingSpinner /> : id ? "Update Experience" : "Save Experience"}
+                {(isLoading || isUpading) ? <LoadingSpinner /> : id ? "Update Certification" : "Save Certification"}
               </button>
             </div>
           </div>

@@ -25,6 +25,7 @@ type RoutesMap = {
   socialLinks: Route;
   mainProfile: Route;
   selectedProjects:Route;
+  videoIntroduction:Route;
 };
 
 export default RoutesMap;

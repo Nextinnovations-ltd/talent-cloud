@@ -3,7 +3,8 @@ import { Title } from "../Title";
 import { EducationCard } from "../components/EducationCard";
 import { useNavigate } from 'react-router-dom';
 import { useGetEducationsQuery } from "@/services/slices/jobSeekerSlice";
-
+import EmptyEducations from '@/assets/Login/EmptyEducations.png';
+import { EmptyData } from '@/components/common/EmptyData';
 
 
 interface EducationSectionProps {
@@ -28,16 +29,26 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
                 onEditToggle={() => setIsEducationEdit((prev) => !prev)}
             />
 
-            <motion.div
-                className='grid grid-cols-2 gap-[143px] mb-[143px]'
-                variants={containerVariants}
-            >
-                {
-                    data?.data?.map((e, index) => <motion.div key={index} variants={itemVariants}>
-                        <EducationCard id={e.id} degree={e.degree} institution={e.institution} start_date={e.start_date} end_date={e.end_date} isEdit={isEducationEdit} description={e.description} is_currently_attending={false} />
-                    </motion.div>)
-                }
-            </motion.div>
+            {(!data?.data || data.data.length === 0) && (
+                <EmptyData
+                    image={<img src={EmptyEducations} alt="No Education" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    title="Education"
+                    description="This user does not have any education records yet."
+                />
+            )}
+
+            {data?.data && data.data.length > 0 && (
+                <motion.div
+                    className='grid grid-cols-2 gap-[143px] mb-[143px]'
+                    variants={containerVariants}
+                >
+                    {
+                        data.data.map((e, index) => <motion.div key={index} variants={itemVariants}>
+                            <EducationCard id={e.id} degree={e.degree} institution={e.institution} start_date={e.start_date} end_date={e.end_date} isEdit={isEducationEdit} description={e.description} is_currently_attending={false} />
+                        </motion.div>)
+                    }
+                </motion.div>
+            )}
         </>
     )
 }

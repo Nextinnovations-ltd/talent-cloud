@@ -49,6 +49,7 @@ export const ProfileUser = () => {
       date_of_birth: profileData?.data?.date_of_birth || "",
       address: profileData?.data?.address || "",
       resume_url: profileData?.data?.resume_url || "",
+      is_open_to_work:profileData?.data?.is_open_to_work || false
     },
   });
 
@@ -71,6 +72,7 @@ export const ProfileUser = () => {
         date_of_birth: profileData.data?.date_of_birth || "",
         address: profileData.data?.address || "",
         resume_url: profileData.data?.resume_url || "",
+        is_open_to_work:profileData?.data?.is_open_to_work || false
       });
     }
   }, [profileData,isProfileLoading]);
@@ -110,6 +112,7 @@ export const ProfileUser = () => {
           date_of_birth: response.data.data?.date_of_birth || "",
           address: response.data.data?.address || "",
           resume_url: response.data.data?.resume_url || "",
+          is_open_to_work:profileData?.data?.is_open_to_work || false
         });
         refetch();
       }

@@ -130,8 +130,6 @@ export const WorkExperience = () => {
       description: data.description
     };
 
-
-
     try {
       let response;
       if (id) {

@@ -14,5 +14,6 @@ export const UserProfileSchema = yup.object({
  country_code: yup.string().required("Country code is required"),
  date_of_birth:yup.string().optional(),
  address:yup.string().optional(),
- resume_url:yup.string().optional()
+ resume_url:yup.string().optional(),
+ is_open_to_work:yup.boolean().required()
 });

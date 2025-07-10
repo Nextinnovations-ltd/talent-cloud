@@ -1,10 +1,9 @@
 
 import { UserProfile } from './UserProfile';
-import THUMBNAIL from '@/assets/Login/Thumbnail.png';
 import { animate, motion, useMotionValue, useTransform, useScroll } from "framer-motion";
 import ScrollVelocity from '../common/ScrollVelocity';
 import CRYSTAL from '@/assets/Login/Vector.svg';
-import { Title } from './Title';
+
 import SHADOWLEFT from '@/assets/Login/ShadowLeft.svg';
 import SHADOWRIGHT from '@/assets/Login/ShadowRight.svg';
 import { BackGroundGrid } from '@/constants/svgs';
@@ -24,6 +23,7 @@ import WorkExperienceSection from './sections/WorkExperienceSection';
 import CertificationSection from './sections/CertificationSection';
 import EducationSection from './sections/EducationSection';
 import SelectedProjectsSection from './sections/SelectedProjectsSection';
+import VideoIntroductionSection from './sections/VideoIntroductionSection';
 
 // Animation variants
 const containerVariants = {
@@ -174,14 +174,7 @@ export const UserInfoSec = () => {
                
                 {/* Rest of the content with similar motion wrappers */}
 
-                <Title title={"Video Introduction"} />
-
-                <motion.div
-                    className='mb-[70px] px-[100px]'
-                    variants={itemVariants}
-                >
-                    <img src={THUMBNAIL} alt="" />
-                </motion.div>
+              <VideoIntroductionSection/>
 
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}

@@ -66,6 +66,10 @@ const routesMap: RoutesMap = {
     path: "education",
     name: "education",
   },
+  videoIntroduction:{
+    path:"video-introduction",
+    name:"video-introduction"
+  },
   socialLinks: {
     path: "sockial-links",
     name: "socialLinks",

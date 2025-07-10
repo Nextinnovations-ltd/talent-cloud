@@ -29,6 +29,7 @@ import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
 import SelectedProject from "./pages/profile/subPages/SelectedProject";
+import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 
 
 export const router = createBrowserRouter([
@@ -113,6 +114,10 @@ export const router = createBrowserRouter([
               {
                 path:routesMap.selectedProjects.path,
                 element:<SelectedProject/>
+              },
+              {
+                path:routesMap.videoIntroduction.path,
+                element:<VideoIntroduction/>
               }
             ],
           },

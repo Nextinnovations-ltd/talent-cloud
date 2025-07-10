@@ -2,8 +2,10 @@ import { motion } from "framer-motion"
 import { Title } from "../Title"
 import { CertificationCard } from "../components/CertificationCard";
 import DefaultCertifi from '@/assets/Login/Login/Certificate Photo.png';
+import EmptyCerttifications from '@/assets/Login/EmptyCerttifications.png';
 import { useNavigate } from 'react-router-dom';
 import { useGetCertificationsQuery } from "@/services/slices/jobSeekerSlice";
+import { EmptyData } from '@/components/common/EmptyData';
 
 
 const containerVariants = {
@@ -50,30 +52,34 @@ const CertificationSection = ({
                 onEditToggle={() => setIsCertificationEdit((prev) => !prev)}
             />
 
-            <motion.div
-                className='grid grid-cols-2 gap-[74px] mb-[143px]'
-                variants={containerVariants}
-            >
-                {
-                    CERTIIFICATIONS?.data?.map((e,index)=> {
+            {(!CERTIIFICATIONS?.data || CERTIIFICATIONS.data.length === 0) && (
+                <EmptyData
+                    image={<img src={EmptyCerttifications} alt="No Certifications" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                    title="Certifications"
+                    description="This user does not have any certifications yet."
+                />
+            )}
 
-                        console.log(e.expiration_date,e.issued_date)
-
-                        return ( <motion.div variants={itemVariants}>
+            {CERTIIFICATIONS?.data && CERTIIFICATIONS.data.length > 0 && (
+                <motion.div
+                    className='grid grid-cols-2 gap-[74px] mb-[143px]'
+                    variants={containerVariants}
+                >
+                    {CERTIIFICATIONS.data.map((e, index) => (
+                        <motion.div variants={itemVariants} key={index}>
                             <CertificationCard
-                                key={index}
                                 url={e.url}
-                                img={ DefaultCertifi}
+                                img={DefaultCertifi}
                                 id={e.id}
                                 name={e.title}
                                 org={e.organization}
-                                expire={`Issued ${e.issued_date}  .  ${e.has_expiration_date ? e.expiration_date  : "No Expiration Date"} `}
+                                expire={`Issued ${e.issued_date}  .  ${e.has_expiration_date ? e.expiration_date : "No Expiration Date"} `}
                                 isEdit={isCertificationEdit}
                             />
-                        </motion.div>)
-                    })
-                }
-            </motion.div>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            )}
         </>
     )
 }

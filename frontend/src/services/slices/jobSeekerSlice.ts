@@ -16,6 +16,7 @@ interface JobSeekerCredentials {
     address: string;
     bio: string;
     resume_url?:string
+    is_open_to_work:boolean
 }
 
 //credentials
@@ -66,7 +67,8 @@ interface UseJobSeekerProfileResponse {
     date_of_birth:string;
     address: string;
     bio: string;
-    resume_url:string
+    resume_url:string;
+    is_open_to_work:boolean
   };
 }
 
@@ -151,6 +153,36 @@ interface JobSeekerEducationResponse {
   data:JobSeekerEducationCredentials[]
 }
 
+
+
+export interface ProjectCredentials {
+  title: string;
+  description: string;
+  tags: string[];
+  project_url?: string; // optional
+  project_image_url?: string; // optional
+  start_date: string | Date;
+  end_date?: string | Date; // optional if is_ongoing is true
+  is_ongoing: boolean;
+  team_size: number;
+}
+
+interface ProjectsCredentialsWithId extends ProjectCredentials {
+  id: number; // or string, if your ID is a UUID
+}
+
+interface ProjdctsWithIdResponse {
+  status: boolean;
+  messages:string;
+  data:ProjectsCredentialsWithId
+}
+
+interface ProjectsResponse{
+  status: boolean;
+  messages:string;
+  data:ProjectsCredentialsWithId[]
+}
+
 export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addJobSeekerProfile: builder.mutation<unknown, JobSeekerCredentials>({
@@ -195,7 +227,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['JobList'],
     }),
     getExperienceById:builder.query<WorkExperience,unknown>({
-      query:(id)=>`/experiences/${id}`,
+      query:(id)=>`/experiences/${id}/`,
     }),
    
     addJobSeekerSkills: builder.mutation<unknown, void>({
@@ -231,7 +263,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['CertificationList']
     }),
     getCerificationById:builder.query<CertificationsCredentials,unknown>({
-      query:(id)=>`/certifications/${id}`,
+      query:(id)=>`/certifications/${id}/`,
     }),
     deleteCertificationById: builder.mutation<unknown, number | string>({
       query: (id) => ({
@@ -240,7 +272,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['CertificationList'],
     }),
-    updateCertification: builder.mutation<unknown, { id: number | string; credentials: unknown }>({
+    updateCertification: builder.mutation<CertificaitonsResponse, { id: number | string; credentials: unknown }>({
       query: ({ id, credentials }) => ({
         url: `/certifications/${id}/`,
         method: "PUT",
@@ -262,7 +294,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     }),
     getEducationById:builder.query<unknown,number|string>({
       query:(id)=>({
-        url:`/educations/${id}`
+        url:`/educations/${id}/`
       })
     }),
     deleteEducationById:builder.mutation<unknown,number | string>({
@@ -279,8 +311,40 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
         body:JSON.stringify(credentials)
       }),
       invalidatesTags: ['EducationsList']
+    }),
+    getSelectedProjects:builder.query<ProjectsResponse,void>({
+      query:()=>'/jobseeker/projects/',
+      providesTags:['selectprojectsList']
+    }),
+    getSelectedProjectsById:builder.query<ProjdctsWithIdResponse,number|string>({
+      query:(id)=>({
+        url:`/jobseeker/projects/${id}/`
+      }),
 
-    })
+    }),
+    deleteSelectedProjects:builder.mutation<unknown,number | string> ({
+      query:(id)=>({
+        url:`/jobseeker/projects/${id}/`,
+        method:'DELETE'
+      }),
+      invalidatesTags: ['selectprojectsList']
+    }),
+    updateSelectedProjects:builder.mutation<unknown,{id:number| string; credentials:ProjectCredentials}>({
+      query:({id,credentials})=>({
+        url:`/jobseeker/projects/${id}/`,
+        method:"PUT",
+        body:JSON.stringify(credentials)
+      }),
+      invalidatesTags: ['selectprojectsList']
+    }),
+    addSelectedProjects: builder.mutation<unknown, ProjectCredentials>({
+      query: (credentials) => ({
+        url: "/jobseeker/projects/",
+        method: "POST",
+        body: JSON.stringify(credentials),
+      }),
+      invalidatesTags: ['selectprojectsList']
+    }),
   }),
 });
 
@@ -306,5 +370,10 @@ export const {
   useAddEducationsMutation,
   useGetEducationByIdQuery,
   useDeleteEducationByIdMutation,
-  useUpdateEducationMutation
+  useUpdateEducationMutation,
+  useGetSelectedProjectsByIdQuery,
+  useGetSelectedProjectsQuery,
+  useAddSelectedProjectsMutation,
+  useDeleteSelectedProjectsMutation,
+  useUpdateSelectedProjectsMutation
 } = extendedJobSeekerSlice;

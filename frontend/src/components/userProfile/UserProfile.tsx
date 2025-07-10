@@ -175,12 +175,46 @@ export const UserProfile = () => {
           <IconButton />
         </motion.div>
       </motion.div>
-      <motion.h3
+    {
+      userData?.is_open_to_work ?   <motion.h3
+      className="mt-[60px] text-center flex justify-center items-center gap-2"
+      variants={itemVariants}
+    >
+      <motion.div
+        className="w-[25px] h-[25px] bg-[#0DDE3433] rounded-full flex items-center justify-center"
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [1, 0.8, 1],
+          rotate: [0, 5, -5, 0],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "anticipate",
+          repeatType: "reverse",
+          times: [0, 0.5, 1],
+        }}
+      >
+        <motion.div
+          className="w-[8px] h-[8px] bg-[#0DDE34] rounded-full"
+          animate={{
+            scale: [1, 0.9, 1],
+            opacity: [1, 0.9, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.div>
+      Available for work
+    </motion.h3>:   <motion.h3
         className="mt-[60px] text-center flex justify-center items-center gap-2"
         variants={itemVariants}
       >
         <motion.div
-          className="w-[25px] h-[25px] bg-[#0DDE3433] rounded-full flex items-center justify-center"
+          className="w-[25px] h-[25px] bg-[#f92b2b33] rounded-full flex items-center justify-center"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [1, 0.8, 1],
@@ -195,7 +229,7 @@ export const UserProfile = () => {
           }}
         >
           <motion.div
-            className="w-[8px] h-[8px] bg-[#0DDE34] rounded-full"
+            className="w-[8px] h-[8px] bg-red-500 rounded-full"
             animate={{
               scale: [1, 0.9, 1],
               opacity: [1, 0.9, 1],
@@ -207,8 +241,9 @@ export const UserProfile = () => {
             }}
           />
         </motion.div>
-        Available for work
+      Not available for work
       </motion.h3>
+    }
       
       <motion.div
         className='flex max-w-[1104px] mx-auto gap-[24px] mt-[40px] mb-[50px]'

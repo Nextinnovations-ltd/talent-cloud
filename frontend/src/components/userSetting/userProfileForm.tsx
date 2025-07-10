@@ -8,6 +8,7 @@ import { useFormattedSpecialization } from "@/lib/dropData.tsx/ReturnSpecializat
 import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
 import ImagePicker from "../common/ImagePicker";
 import { Separator } from "../ui/separator";
+import { Switch } from "../ui/switch";
 
 export const UserProfileForm = ({
   form,
@@ -74,6 +75,21 @@ export const UserProfileForm = ({
         description={true}
         descriptionText={"* Username can only be changed once per 7 days"}
       />
+
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="is_open_to_work"
+          className=""
+          checked={form.watch("is_open_to_work")}
+          onCheckedChange={(checked: boolean) => form.setValue("is_open_to_work", checked)}
+        />
+        <label htmlFor="is_open_to_work" className="text-sm font-medium">
+          Open to work
+        </label>
+      </div>
+
+
+
 
       <InputField
         fieldName="tagline"
