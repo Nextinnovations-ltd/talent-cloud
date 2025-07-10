@@ -267,7 +267,6 @@ class JobSeekerService:
                job_seeker.tagline = data.get("tagline", None)
                job_seeker.bio = data.get("bio", None)
                job_seeker.resume_url = data.get("resume_url", None)
-               job_seeker.video_url = data.get("video_url", None)
 
                 # Address Create, Update
                address_data = data.get("address", None)
@@ -288,8 +287,9 @@ class JobSeekerService:
                     address.address = address_field
                     
                     address.save()
-
-               job_seeker.address = address
+                    
+                    job_seeker.address = address
+               
                job_seeker.save()
 
                # Occupation Create, Update
@@ -367,7 +367,6 @@ class JobSeekerService:
                'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
                'resume_url': job_seeker.resume_url,
-               'video_url': job_seeker.video_url,
                
                # Address
                'address': JobSeekerService._get_extracted_address(job_seeker),
@@ -380,6 +379,34 @@ class JobSeekerService:
                'github_url': social_links.github_social_url if social_links else None,
           }
 
+      
+     @staticmethod
+     def get_job_seeker_video_url(user: TalentCloudUser):
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
+               
+          return {
+               'message': "Profile information is generated.",
+               'data': {
+                    "video_url": job_seeker.video_url
+               }
+          }
+     
+     @staticmethod
+     def update_job_seeker_video_url(user: TalentCloudUser, data):
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
+          
+          video_url = data.get("video_url", None)
+          
+          job_seeker.video_url=video_url
+          
+          job_seeker.save()
+          
+          return {
+               'message': "Video url is updated.",
+               'data': {
+                    "video_url": job_seeker.video_url
+               }
+          }
      
      @staticmethod
      def get_skill_options():
