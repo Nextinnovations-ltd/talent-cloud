@@ -156,9 +156,14 @@ class Address(models.Model):
     def save(self, *args, **kwargs):
         if self.country is None:
             raise ValidationError("Country must not be empty.")
+        
+        if self.country.id == 1034 and self.city is None:
+            raise ValidationError("You need to select residing city if your country location is Myanmar.")
+        
         if self.city is not None:
             if self.city.country != self.country:
                 raise ValidationError("Selected city does not belong to the selected country.")
+        
         super().save(*args, **kwargs)
     
 class TalentCloudUser(TimeStampModel, AbstractUser):

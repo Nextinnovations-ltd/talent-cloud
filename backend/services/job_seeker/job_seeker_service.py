@@ -235,10 +235,15 @@ class JobSeekerService:
           
           occupation: JobSeekerOccupation = getattr(job_seeker, 'occupation', None)
 
-          if not occupation:
-               raise ValidationError("No occupation related data existed yet.")
+          # if not occupation:
+          #      raise ValidationError("No occupation related data existed yet.")
           
-          profile_response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation)
+          social_links = getattr(job_seeker, 'social_links', None)
+
+          if social_links:
+               social_links = social_links.first()
+          
+          profile_response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation, social_links)
                
           return {
                'message': "Profile information is generated.",
@@ -253,19 +258,41 @@ class JobSeekerService:
                # Extract and update JobSeeker profile fields
                job_seeker.name = data.get("name", job_seeker.name)
                job_seeker.username = data.get("username", job_seeker.username)
-               job_seeker.email = data.get("email", job_seeker.email)
+               # job_seeker.email = data.get("email", job_seeker.email)
                job_seeker.is_open_to_work = data.get("is_open_to_work", job_seeker.is_open_to_work)
                job_seeker.expected_salary = data.get("expected_salary", job_seeker.expected_salary)
                job_seeker.country_code = data.get("country_code", job_seeker.country_code)
                job_seeker.phone_number = data.get("phone_number", job_seeker.phone_number)
                job_seeker.date_of_birth = data.get("date_of_birth", job_seeker.date_of_birth)
-               job_seeker.address = data.get("address", job_seeker.address)
-               job_seeker.tagline = data.get("tagline", job_seeker.tagline)
-               job_seeker.bio = data.get("bio", job_seeker.bio)
-               job_seeker.resume_url = data.get("resume_url", job_seeker.resume_url)
+               job_seeker.tagline = data.get("tagline", None)
+               job_seeker.bio = data.get("bio", None)
+               job_seeker.resume_url = data.get("resume_url", None)
+               job_seeker.video_url = data.get("video_url", None)
 
+                # Address Create, Update
+               address_data = data.get("address", None)
+               
+               if address_data:
+                    country_id = address_data.get("country_id", None)
+                    city_id = address_data.get("city_id", None)
+                    address_field = address_data.get("address", None)
+                    
+                    address = getattr(job_seeker, 'address', None)
+                    
+                    if not address:
+                         address = Address.objects.create(
+                              country_id=country_id
+                         )
+                    
+                    address.city_id = city_id
+                    address.address = address_field
+                    
+                    address.save()
+
+               job_seeker.address = address
                job_seeker.save()
 
+               # Occupation Create, Update
                role_id = data.get("role_id", None)
                experience_level_id = data.get("experience_level_id", None)
                experience_years = data.get("experience_years", None)
@@ -287,9 +314,25 @@ class JobSeekerService:
                     occupation.experience_years = experience_years
 
                occupation.save()
+               
+               # Social Link Create, Update
+               social_links = job_seeker.social_links.first()
+               
+               if not social_links:
+                    social_links = JobSeekerSocialLink.objects.create(
+                         user = job_seeker
+                    )
+               
+               social_links.facebook_social_url = data.get("facebook_url", None)
+               social_links.linkedin_social_url = data.get("linkedin_url", None)
+               social_links.github_social_url = data.get("github_url", None)
+               social_links.behance_social_url = data.get("behance_url", None)
+               social_links.portfolio_social_url = data.get("portfolio_url", None)
 
+               social_links.save()
+               
           # Prepare response data
-          response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation)
+          response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation, social_links)
 
           return {
                'message': "Profile updated successfully.",
@@ -297,7 +340,11 @@ class JobSeekerService:
           }
      
      @staticmethod
-     def build_job_seeker_profile_response(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
+     def build_job_seeker_profile_response(
+          job_seeker: JobSeeker, 
+          occupation: JobSeekerOccupation = None,
+          social_links: JobSeekerSocialLink = None
+     ):
           return {
                'profile_image_url': job_seeker.profile_image_url,
                'name': job_seeker.name,
@@ -317,10 +364,20 @@ class JobSeekerService:
                'country_code': job_seeker.country_code,
                'phone_number': job_seeker.phone_number,
                'date_of_birth': job_seeker.date_of_birth,
-               'address': JobSeekerService._get_extracted_address(job_seeker),
                'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
                'resume_url': job_seeker.resume_url,
+               'video_url': job_seeker.video_url,
+               
+               # Address
+               'address': JobSeekerService._get_extracted_address(job_seeker),
+               
+               # Social Links
+               'facebook_url': social_links.facebook_social_url if social_links else None,
+               'linkedin_url': social_links.linkedin_social_url if social_links else None,
+               'behance_url': social_links.behance_social_url if social_links else None,
+               'portfolio_url': social_links.portfolio_social_url if social_links else None,
+               'github_url': social_links.github_social_url if social_links else None,
           }
 
      
@@ -528,8 +585,7 @@ class JobSeekerService:
           
      @staticmethod
      def _get_extracted_address(job_seeker: JobSeeker):
-          address = job_seeker.address
-          address_data = None
+          address = getattr(job_seeker, 'address', None)
 
           if address:
                return {
@@ -540,7 +596,7 @@ class JobSeekerService:
                     'country': {
                          'id': address.country.id,
                          'name': address.country.name,
-                    },
+                    } if address.country else None,
                     'address': address.address
                }
           
