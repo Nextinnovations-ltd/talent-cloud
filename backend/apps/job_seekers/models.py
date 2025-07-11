@@ -6,7 +6,7 @@ class JobSeeker(TalentCloudUser):
      user = models.OneToOneField(TalentCloudUser, on_delete=models.CASCADE, parent_link=True)
      onboarding_step = models.IntegerField(default=1)
      resume_url = models.URLField(max_length=2048, null=True, blank=True)
-     video_url = models.URLField(max_length=2048, null=True, blank=True)
+     video_url = models.TextField(null=True, blank=True)
      is_open_to_work = models.BooleanField(default=True)
      tagline = models.CharField(max_length=150, null=True, blank=True)
      expected_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -183,7 +183,7 @@ class JobSeekerOccupation(TimeStampModel):
           return f"{self.user.username}"
 
 class JobSeekerSocialLink(TimeStampModel):
-     user = models.ForeignKey(JobSeeker, related_name='social_links', on_delete=models.CASCADE)
+     user = models.OneToOneField(JobSeeker, related_name='social_links', on_delete=models.CASCADE)
      facebook_social_url = models.URLField(max_length=2048, null=True, blank=True)
      linkedin_social_url = models.URLField(max_length=2048, null=True, blank=True)
      behance_social_url = models.URLField(max_length=2048, null=True, blank=True)
