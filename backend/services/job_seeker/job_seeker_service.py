@@ -254,11 +254,7 @@ class JobSeekerService:
                     city_id = address_data.get("city_id", None)
                     address_field = address_data.get("address", None)
                     
-                    # Try to get existing address using OneToOneField
-                    try:
-                         address = job_seeker.address
-                    except Address.DoesNotExist:
-                         address = None
+                    address = job_seeker.address
                     
                     if not address:
                          address = Address.objects.create(
@@ -598,21 +594,22 @@ class JobSeekerService:
           
      @staticmethod
      def _get_extracted_address(job_seeker: JobSeeker):
-          try:
-               address = job_seeker.address
-               return {
-                    'city': {
-                         'id': address.city.id,
-                         'name': address.city.name,
-                    } if address.city else None,
-                    'country': {
-                         'id': address.country.id,
-                         'name': address.country.name,
-                    } if address.country else None,
-                    'address': address.address
-               }
-          except Address.DoesNotExist:
+          address: Address = job_seeker.address
+          
+          if not address:
                return None
+          
+          return {
+               'city': {
+                    'id': address.city.id,
+                    'name': address.city.name,
+               } if address.city else None,
+               'country': {
+                    'id': address.country.id,
+                    'name': address.country.name,
+               } if address.country else None,
+               'address': address.address
+          }
           
      @staticmethod
      def _update_single_language(job_seeker, language_id, proficiency_level):
