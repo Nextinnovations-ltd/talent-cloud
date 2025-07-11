@@ -5,14 +5,8 @@ import { useForm } from "react-hook-form";
 
 
 type SpecialSkillType = {
-  certificationName: string;
-  organizationIssue: string;
-  issueYear: string;
-  issueMonth: string;
-  expirationYear?: string;
-  expirationMonth?: string;
-  noExpired: boolean;
-  credentialURL: string;
+  skill_id:string;
+  year_of_experience:string;
 };
 
 const SpecailSkills = () => {
@@ -21,7 +15,8 @@ const SpecailSkills = () => {
   const form = useForm<SpecialSkillType>({
     resolver:yupResolver(SpecialSkillYupSchema),
     defaultValues:{
-      
+      skill_id:0,
+      year_of_experience:0
     }
   })
 
