@@ -50,6 +50,25 @@ class JobSeekerProfileAPIView(APIView):
 
 # endregion Profile Section One
 
+# region Profile Video
+@extend_schema(tags=["Job Seeker Profile"])
+class JobSeekerVideoAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+
+     def get(self, request):
+          response = JobSeekerService.get_job_seeker_video_url(request.user)
+               
+          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+
+     def post(self, request):
+          """Update job seeker's video url"""
+          response = JobSeekerService.update_job_seeker_video_url(request.user, request.data)
+
+          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+
+# endregion Profile Video
+
 
 # region Profile Section Two
 @extend_schema(tags=["Job Seeker Profile"])
@@ -87,27 +106,27 @@ class JobSeekerSkillAPIView(APIView):
 
 # region Profile Section Two
 
-@extend_schema(tags=["Job Seeker Profile"])
-class JobSeekerSocialLinkAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
+# @extend_schema(tags=["Job Seeker Profile"])
+# class JobSeekerSocialLinkAPIView(APIView):
+#      authentication_classes = [TokenAuthentication]
+#      permission_classes = [TalentCloudUserPermission]
 
-     def get(self, request):
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
+#      def get(self, request):
+#           if not request.user or not request.user.is_authenticated:
+#                raise ValidationError("User not authenticated")
 
-          response = JobSeekerService.get_job_seeker_social_link(request.user)
+#           response = JobSeekerService.get_job_seeker_social_link(request.user)
                
-          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+#           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
-     def post(self, request):
-          """Update job seeker's social links"""
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
+#      def post(self, request):
+#           """Update job seeker's social links"""
+#           if not request.user or not request.user.is_authenticated:
+#                raise ValidationError("User not authenticated")
 
-          response = JobSeekerService.perform_job_seeker_social_link_update(request.user, request.data)
+#           response = JobSeekerService.perform_job_seeker_social_link_update(request.user, request.data)
 
-          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+#           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerSettingAPIView(APIView):

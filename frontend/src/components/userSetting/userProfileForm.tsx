@@ -8,6 +8,8 @@ import { useFormattedSpecialization } from "@/lib/dropData.tsx/ReturnSpecializat
 import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
 import ImagePicker from "../common/ImagePicker";
 import { Separator } from "../ui/separator";
+import { Switch } from "../ui/switch";
+import { socialLinkFields } from "@/lib/formData.tsx/UserProfile";
 
 export const UserProfileForm = ({
   form,
@@ -75,6 +77,21 @@ export const UserProfileForm = ({
         descriptionText={"* Username can only be changed once per 7 days"}
       />
 
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="is_open_to_work"
+          className=""
+          checked={form.watch("is_open_to_work")}
+          onCheckedChange={(checked: boolean) => form.setValue("is_open_to_work", checked)}
+        />
+        <label htmlFor="is_open_to_work" className="text-sm font-medium">
+          Open to work
+        </label>
+      </div>
+
+
+
+
       <InputField
         fieldName="tagline"
         placeholder={'eg. Frontend Developer Lead at Google'}
@@ -130,7 +147,7 @@ export const UserProfileForm = ({
         fieldWidth={fieldWidth}
       />
 
-     <TextAreaField
+      <TextAreaField
         disabled={false}
         fieldName={'bio'}
         placeholder={'A brief introduction about yourself'}
@@ -138,7 +155,7 @@ export const UserProfileForm = ({
         required={false}
         requiredLabel={true}
         languageName={"userProfile"}
-        fieldHeight={ "h-[128px]"}
+        fieldHeight={"h-[128px]"}
         fieldWidth={fieldWidth}
         showLetterCount={true}
         maxLength={250}
@@ -203,6 +220,18 @@ export const UserProfileForm = ({
         fieldHeight={cn("w-full", fieldHeight)}
         fieldWidth={fieldWidth}
       />
+
+      {socialLinkFields.map((field) => (
+        <InputField
+          key={field.fieldName}
+          fieldName={field.fieldName}
+          isError={field.isError?.(form)}
+          startIcon={field.startIcon}
+          languageName={"userProfile"}
+          required={false}
+          placeholder=""
+        />
+      ))}
     </div>
   );
 };

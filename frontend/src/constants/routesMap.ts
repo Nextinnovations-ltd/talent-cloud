@@ -57,9 +57,18 @@ const routesMap: RoutesMap = {
     path: "workexperience",
     name: "Experience",
   },
+  selectedProjects:{
+    path:"selectedProjects",
+    name:'selectedProjects'
+  }
+  ,
   education: {
     path: "education",
     name: "education",
+  },
+  videoIntroduction:{
+    path:"video-introduction",
+    name:"video-introduction"
   },
   socialLinks: {
     path: "sockial-links",
@@ -81,6 +90,10 @@ const routesMap: RoutesMap = {
     path: "redirectLoading",
     name: "redirectLoading",
   },
+  specialSkills:{
+   path:"specialSkills",
+   name:"specialSkills"
+  }
 };
 
 // verify/create-username

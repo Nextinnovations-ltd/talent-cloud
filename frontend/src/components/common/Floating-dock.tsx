@@ -33,6 +33,18 @@ export const FloatingDock = ({
     );
 };
 
+function handleDockClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+    if (href.startsWith('#')) {
+        e.preventDefault();
+        const id = href.slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+            const y = el.getBoundingClientRect().top + window.pageYOffset - 110;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    }
+}
+
 const FloatingDockMobile = ({
     items,
     className,
@@ -70,6 +82,7 @@ const FloatingDockMobile = ({
                                     href={item.href}
                                     key={item.title}
                                     className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-md border border-neutral-200 shadow-md shadow-neutral-200/30 flex items-center justify-center hover:bg-white/80 transition-colors"
+                                    onClick={e => handleDockClick(e, item.href)}
                                 >
                                     <div className="h-4 w-4 text-neutral-800">{item.icon}</div>
                                 </a>
@@ -165,7 +178,7 @@ function IconContainer({
     const [hovered, setHovered] = useState(false);
 
     return (
-        <a href={href}>
+        <a href={href} onClick={e => handleDockClick(e, href)}>
             <motion.div
                 ref={ref}
                 style={{ width, height }}

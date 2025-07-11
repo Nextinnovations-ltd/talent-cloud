@@ -47,18 +47,12 @@ class Company(TimeStampModel):
           blank=True,
           help_text="URL-friendly version of the company name."
      )
-     location = models.ForeignKey(
-          'users.Location',
+     address = models.ForeignKey(
+          'users.Address',
           on_delete=models.SET_NULL,
           null=True,
           blank=True,
-          help_text="The location of the company."
-     )
-     address = models.CharField(
-          max_length=255,
-          null=True,
-          blank=True,
-          help_text="The address of the company (deprecated - use location instead)."
+          help_text="The address of the company."
      )
      why_join_us = models.TextField(
           null=True,

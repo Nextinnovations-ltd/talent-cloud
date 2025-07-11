@@ -89,6 +89,12 @@ migrate: all
 	@$(VENV_DIR)/bin/python manage.py migrate --settings=$(SETTINGS)
 	@echo "\n\033[1;32m✓ Migrations applied successfully\033[0m\n"
 
+migrate-cities: all
+	@echo "\n\033[1;34m=== Applying City Migrations ===\033[0m"
+	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m\n"
+	@$(VENV_DIR)/bin/python manage.py cities_light
+	@echo "\n\033[1;32m✓ City Migrations applied successfully\033[0m\n"
+
 ## User Management
 createsuperuser: all
 	@echo "\n\033[1;34m=== Creating Superuser ===\033[0m"
@@ -122,6 +128,13 @@ run-celery: all
 run-celery-beat: all
 	@echo "Starting Celery beat..."
 	@$(VENV_DIR)/bin/celery -A main beat -l info
+
+# Import Data
+import-location-data: all
+	@echo "\n\033[1;34m=== Importing Location Data ===\033[0m"
+	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m"
+	@$(VENV_DIR)/bin/python manage.py import_location_data
+	@echo "\n\033[1;32m✓ Location Data imported.\033[0m\n"
 
 ## Deployment
 collectstatic: all

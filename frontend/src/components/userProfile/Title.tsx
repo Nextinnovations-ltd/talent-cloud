@@ -69,7 +69,7 @@ const crystalVariants = {
     }
 };
 
-export const Title = ({ title, isEdit, onEditToggle,onpressAdd }: { title: string; isEdit?: boolean; onEditToggle?: () => void ,onpressAdd?:()=>void}) => {
+export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true }: { title: string; isEdit?: boolean; onEditToggle?: () => void, onpressAdd?: () => void, isTitle?: boolean }) => {
     return (
         <motion.div
             className="flex items-center justify-between gap-[10px] mb-[43px]"
@@ -77,34 +77,40 @@ export const Title = ({ title, isEdit, onEditToggle,onpressAdd }: { title: strin
             initial="hidden"
             animate="visible"
         >
-           <div className='flex items-center gap-4'>
-           <motion.h3
-                className="text-[40px] font-[600]"
-                variants={textVariants}
-            >
-                {title}
-            </motion.h3>
+            {
+                isTitle && <div className='flex items-center gap-4'>
+                    <motion.h3
+                        className="text-[40px] font-[600]"
+                        variants={textVariants}
+                    >
+                        {title}
+                    </motion.h3>
 
-            <motion.img
-                src={CRYSTAL}
-                alt="Crystal"
-                className="translate-y-[-30px]"
-                variants={crystalVariants}
-                initial="hidden"
-                animate={["visible", "pulse"]}
-                whileHover="hover"
-            />
-           </div>
+                    <motion.img
+                        src={CRYSTAL}
+                        alt="Crystal"
+                        className="translate-y-[-30px]"
+                        variants={crystalVariants}
+                        initial="hidden"
+                        animate={["visible", "pulse"]}
+                        whileHover="hover"
+                    />
+                </div>
+            }
+
+            {
+                !isTitle && <div></div>
+            }
 
             <div className='flex items-center  gap-5'>
-              <ActiveActionsButtons onClick={onpressAdd}  icon={<SvgAdd/>} title='Add'/>  
-              {onEditToggle && (
-                <ActiveActionsButtons 
-                  icon={<SvgEdit/>} 
-                  title={isEdit ? 'Cancel' : 'Edit'} 
-                  onClick={onEditToggle}
-                />
-              )}
+                <ActiveActionsButtons onClick={onpressAdd} icon={<SvgAdd />} title='Add' />
+                {onEditToggle && (
+                    <ActiveActionsButtons
+                        icon={<SvgEdit />}
+                        title={isEdit ? 'Cancel' : 'Edit'}
+                        onClick={onEditToggle}
+                    />
+                )}
             </div>
 
         </motion.div>

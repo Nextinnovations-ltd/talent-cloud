@@ -1,21 +1,13 @@
-import SampleImage from '../../assets/Login/Frame 35677.png';
-import SampleImage2 from '../../assets/Login/Frame 35681.png';
-import SampleImage3 from '../../assets/Login/Bluelife 1.png';
-import SampleImage4 from '../../assets/Login/IIDA.png';
+
 import { UserProfile } from './UserProfile';
-import StarBorder from '../common/StarBorder';
-import THUMBNAIL from '@/assets/Login/Thumbnail.png';
-import GOOGLECER from '@/assets/Login/Certificate Photo.png';
 import { animate, motion, useMotionValue, useTransform, useScroll } from "framer-motion";
-import { PinContainer } from '../common/3d-pin';
 import ScrollVelocity from '../common/ScrollVelocity';
 import CRYSTAL from '@/assets/Login/Vector.svg';
-import { Title } from './Title';
+
 import SHADOWLEFT from '@/assets/Login/ShadowLeft.svg';
 import SHADOWRIGHT from '@/assets/Login/ShadowRight.svg';
 import { BackGroundGrid } from '@/constants/svgs';
 import { useRef, useEffect, useState } from 'react';
-import DefaultCertifi from '@/assets/Login/Login/Certificate Photo.png';
 import { FloatingDock } from '../common/Floating-dock';
 import {
     IconBrandGithub,
@@ -26,14 +18,17 @@ import {
     IconTerminal2,
 } from "@tabler/icons-react";
 
-// Import the new components
-import { SelectedProjects } from './components/SelectedProjects';
-import { EducationCard } from './components/EducationCard';
-import { WorkExperienceCard } from './components/WorkExperienceCard';
-import { CertificationCard } from './components/CertificationCard';
 import { FocusCards } from '../common/Focus-Card';
-import { useNavigate } from 'react-router-dom';
 import WorkExperienceSection from './sections/WorkExperienceSection';
+import CertificationSection from './sections/CertificationSection';
+import EducationSection from './sections/EducationSection';
+import SelectedProjectsSection from './sections/SelectedProjectsSection';
+import VideoIntroductionSection from './sections/VideoIntroductionSection';
+import SvgDockUser from '@/assets/svgs/docks/SvgDockUser';
+import SvgDockProjects from '@/assets/svgs/docks/SvgDockProjects';
+import SvgDockVideo from '@/assets/svgs/docks/SvgDockVideo';
+import SvgDockExperiences from '@/assets/svgs/docks/SvgDockExperiences';
+import SvgDockEducation from '@/assets/svgs/docks/SvgDockEducation';
 
 // Animation variants
 const containerVariants = {
@@ -61,55 +56,40 @@ const itemVariants = {
 
 const links = [
     {
-        title: "Home",
+        title: "User",
         icon: (
-            <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+           <SvgDockUser/>
         ),
-        href: "#",
+        href: "#user-section",
     },
 
     {
-        title: "Products",
+        title: "Projects",
         icon: (
-            <IconTerminal2 className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+            <SvgDockProjects/>
         ),
-        href: "#",
+        href: "#projects-section",
     },
     {
-        title: "Components",
+        title: "Videos",
         icon: (
-            <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+           <SvgDockVideo/>
         ),
-        href: "#",
+        href: "#videos-section",
     },
     {
-        title: "Aceternity UI",
+        title: "Work Experience",
         icon: (
-            <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+          <SvgDockExperiences/>
         ),
-        href: "#",
+        href: "#work-experience-section",
     },
     {
-        title: "Changelog",
+        title: "Education",
         icon: (
-            <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+            <SvgDockEducation/>
         ),
-        href: "#",
-    },
-
-    {
-        title: "Twitter",
-        icon: (
-            <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-        ),
-        href: "#",
-    },
-    {
-        title: "GitHub",
-        icon: (
-            <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-        ),
-        href: "#",
+        href: "#education-section",
     },
 ];
 
@@ -134,7 +114,6 @@ export const UserInfoSec = () => {
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
 
-    const navigate = useNavigate();
 
     // Track scroll position and update dock visibility
     useEffect(() => {
@@ -167,114 +146,50 @@ export const UserInfoSec = () => {
             animate="visible"
             variants={containerVariants}
         >
-            <UserProfile />
+            <div id="user-section">
+                <UserProfile />
+            </div>
             <motion.div
                 className='max-w-[1104px] mx-auto'
                 variants={containerVariants}
             >
 
-
-
-
-
                 <FocusCards cards={cards} />
 
-                <Title
-                    title={" Selected Projects"}
-                    isEdit={isSelectedProjectsEdit}
-                    onEditToggle={() => setIsSelectedProjectsEdit((prev) => !prev)}
-                />
-
-                <motion.div
-                    className='grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-[72px] mb-20 md:mb-32 lg:mb-[140px]'
-                    variants={containerVariants}
-                >
-                    {[SampleImage, SampleImage2, SampleImage4, SampleImage3].map((img, index) => (
-                        <motion.div
-                            key={index}
-                            className="h-[25rem] w-full flex items-center justify-center"
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.03 }}
-                        >
-                            <PinContainer
-                                title="/youtube.com"
-                                href="https://twitter.com/mannupaaji"
-                            >
-                                <SelectedProjects img={img} isEdit={isSelectedProjectsEdit} />
-                            </PinContainer>
-                        </motion.div>
-                    ))}
-                </motion.div>
+                <div id="projects-section">
+                    <SelectedProjectsSection
+                        isSelectedProjectsEdit={isSelectedProjectsEdit}
+                        containerVariants={containerVariants}
+                        itemVariants={itemVariants}
+                        setIsSelectedProjectsEdit={setIsSelectedProjectsEdit}
+                    />
+                </div>
 
                 {/* Rest of the content with similar motion wrappers */}
 
-                <Title title={"Video Introduction"} />
-
-                <motion.div
-                    className='mb-[70px] px-[100px]'
-                    variants={itemVariants}
-                >
-                    <img src={THUMBNAIL} alt="" />
-                </motion.div>
+                <div id="videos-section">
+                    <VideoIntroductionSection />
+                </div>
 
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}
 
-                <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
-
+                <div id="work-experience-section">
+                    <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                </div>
 
                 {/* Education */}
 
-                <Title
-                    title={"Education"}
-                    isEdit={isEducationEdit}
-                    onEditToggle={() => setIsEducationEdit((prev) => !prev)}
-                />
+                <div id="education-section">
+                    <EducationSection isEducationEdit={isEducationEdit} setIsEducationEdit={setIsEducationEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                </div>
 
-                <motion.div
-                    className='grid grid-cols-2 gap-[143px] mb-[143px]'
-                    variants={containerVariants}
-                >
-                    <motion.div variants={itemVariants}>
-                        <EducationCard isEdit={isEducationEdit} />
-                    </motion.div>
-                </motion.div>
+
+
 
                 {/* Certifications */}
 
-                <Title
-                    title={"Certifications"}
-                    isEdit={isCertificationEdit}
-                    onEditToggle={() => setIsCertificationEdit((prev) => !prev)}
-                />
-
-                <motion.div
-                    className='grid grid-cols-2 gap-[74px] mb-[143px]'
-                    variants={containerVariants}
-                >
-                    <motion.div variants={itemVariants}>
-                        <CertificationCard
-                            img={GOOGLECER}
-                            name='Google UX Design Professional'
-                            org='Google'
-                            id="Credential ID:  GG0123456789"
-                            expire='Issued Apr 2023  .  No Expiration Date'
-                            isEdit={isCertificationEdit}
-                        />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <CertificationCard
-                            img={DefaultCertifi}
-                            name='Professional Diploma in UX Design'
-                            org='UX Design Institue'
-                            id="Credential ID:  UXD123456789"
-                            expire='Expiration Date:  Dec 2026'
-                            isEdit={isCertificationEdit}
-                        />
-                    </motion.div>
-                </motion.div>
-
-
+                <CertificationSection isCertificationEdit={isCertificationEdit} setIsCertificationEdit={setIsCertificationEdit} />
                 <motion.div
                     ref={containerRef}
                     className="w-full border-2 relative rounded-[30px] h-[459px] flex flex-col justify-center overflow-hidden items-center gap-[30px] mb-[100px]"
@@ -349,5 +264,6 @@ export const UserInfoSec = () => {
                 </div>
             </motion.div>
         </motion.div>
+        //dock
     )
 }
