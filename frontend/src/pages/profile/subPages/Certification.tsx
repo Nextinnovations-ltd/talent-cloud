@@ -50,8 +50,6 @@ export const Certification = () => {
   const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(id, { skip: !id });
   const [updateCertification,{isLoading:isUpading}]  = useUpdateCertificationMutation();
 
-  console.log(CertificationData)
-
  // const CertificationData = {
  //   "id": 1,
   //  "title": "Test",
@@ -62,11 +60,6 @@ export const Certification = () => {
   //  "url": "https://www.facebook.com",
   //  "user": 1
  // }
-
- 
-
-
-
 
   const form = useForm<CertificationFormType>({
     resolver: yupResolver(CertificationYupSchema),

@@ -13,7 +13,12 @@ export type UserProfile = {
   address?: string;
   bio?: string;
   resume_url?: string;
-  is_open_to_work:boolean
+  is_open_to_work:boolean;
+  linkedin_url?:string;
+  behance_url?:string;
+  portfolio_url?:string;
+  github_url?:string;
+  facebook_url?:string;
 };
 
 export type WorkExperience = {

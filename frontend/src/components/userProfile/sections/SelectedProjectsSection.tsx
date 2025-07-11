@@ -49,10 +49,9 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
           {PROJECTS.map((project) => (
             <motion.div
               key={project.id}
-              className="h-[25rem] w-full flex items-center justify-center"
+              className="w-full flex items-center justify-center"
               variants={itemVariants}
             >
-            
                 <SelectedProjects
                   id={project.id}
                   title={project.title}
@@ -66,7 +65,6 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
                   team_size={project.team_size}
                   isEdit={isSelectedProjectsEdit}
                   onEdit={() => navigate(`/user/edit/SelectedProjects?id=${project.id}`)}
-                  onDelete={() => { /* TODO: implement delete logic */ }}
                 />
 
             </motion.div>

@@ -54,7 +54,6 @@ const SelectedProject = () => {
   const id = searchParams.get("id");
   const { data: projectData, isLoading: isFetching } = useGetSelectedProjectsByIdQuery(id, { skip: !id });
 
-  console.log(projectData)
 
   const form = useForm<SelectedProjectForm>({
     resolver: yupResolver(SelectedProjectSchema),

@@ -1,7 +1,7 @@
 import SvgDelete from "@/assets/svgs/SvgDelete";
 import SvgEdit from "@/assets/svgs/SvgEdit";
 import { useDeleteSelectedProjectsMutation } from "@/services/slices/jobSeekerSlice";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import useToast from "@/hooks/use-toast";
 
@@ -28,10 +28,6 @@ export const SelectedProjects = ({
   tags,
   project_url,
   project_image_url,
-  start_date,
-  end_date,
-  is_ongoing,
-  team_size,
   isEdit = false,
   onEdit,
 }: SelectedProjectsProps) => {
@@ -39,13 +35,6 @@ export const SelectedProjects = ({
   const [deleteSelectedProject] = useDeleteSelectedProjectsMutation();
   const { showNotification } = useToast();
 
-  // Format date range
-  const formatDate = (date: string | Date) => {
-    if (!date) return "-";
-    const d = typeof date === "string" ? new Date(date) : date;
-    return d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
-  };
-  const dateRange = `${formatDate(start_date)} - ${is_ongoing ? "Present" : formatDate(end_date || "")}`;
 
   const handleDelete = async () => {
     try {
@@ -58,7 +47,7 @@ export const SelectedProjects = ({
   };
 
   return (
-    <div className="relative w-full max-w-[500px]  bg-white rounded-[20px]  p-6 flex flex-col gap-4  border-[#E5E7EB]">
+    <div className="relative w-full max-w-[500px]   bg-white rounded-[20px]  flex flex-col gap-4  border-[#E5E7EB]">
       {isEdit && (
         <div className="absolute top-2 right-2 flex gap-2 z-10">
           <button
@@ -78,19 +67,17 @@ export const SelectedProjects = ({
         </div>
       )}
       {project_image_url && (
-        <img className="h-[180px] w-full object-cover rounded-lg mb-2" src={project_image_url} alt={title} />
+        <img className="h-[230px] w-full object-cover rounded-lg mb-2" src={project_image_url} alt={title} />
       )}
       <div className="flex flex-col gap-2">
         <h3 className="text-[22px] font-bold text-[#05060F]">{title}</h3>
         <p className="text-[15px] text-[#6B6B6B]">{description}</p>
         <div className="flex flex-wrap gap-2 mt-2">
           {tags && tags.map((tag, idx) => (
-            <span key={idx} className="bg-[#E0F2FE] text-[#0389FF] px-3 py-1 rounded-full text-xs font-medium">{tag}</span>
+            <span key={idx} className="border-[1px] border-[#CBD5E1] text-[#05060F] px-3 py-1 rounded-full text-sm font-medium">{tag}</span>
           ))}
         </div>
         <div className="flex flex-col gap-1 mt-2 text-[14px] text-[#6B6B6B]">
-          <span><b>Date:</b> {dateRange}</span>
-          <span><b>Team Size:</b> {team_size}</span>
           {project_url && (
             <a
               href={project_url}

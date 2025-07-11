@@ -29,7 +29,7 @@ const VideoIntroductionSection = () => {
                 className='mb-[70px] px-[100px]'
                 variants={itemVariants}
             >
-                <iframe width="100%" height="515" src="https://www.youtube.com/embed/H85zpTco5Ek?si=eo6dmxDxrZDyJPFP" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ></iframe>
+                <iframe width="100%" height="515" src="https://youtu.be/7W-Xk28EuxU?si=JaMCIy87TKGhvFjt" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ></iframe>
             </motion.div>
         </>
     )

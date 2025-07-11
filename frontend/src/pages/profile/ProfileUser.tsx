@@ -21,7 +21,6 @@ import { useForm } from "react-hook-form";
 export const ProfileUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(
     useAddJobSeekerProfileMutation
   );
@@ -30,6 +29,7 @@ export const ProfileUser = () => {
     isLoading: isProfileLoading,
     refetch,
   } = useGetJobSeekerProfileQuery();
+
 
  
   const form = useForm<UserProfile>({
@@ -49,7 +49,12 @@ export const ProfileUser = () => {
       date_of_birth: profileData?.data?.date_of_birth || "",
       address: profileData?.data?.address || "",
       resume_url: profileData?.data?.resume_url || "",
-      is_open_to_work:profileData?.data?.is_open_to_work || false
+      is_open_to_work:profileData?.data?.is_open_to_work || false,
+      facebook_url:profileData?.data?.facebook_url || "",
+      linkedin_url:profileData?.data?.linkedin_url || "",
+      behance_url:profileData?.data?.behance_url || "",
+      portfolio_url:profileData?.data?.portfolio_url || "",
+      github_url:profileData?.data?.github_url || "",
     },
   });
 
@@ -72,15 +77,15 @@ export const ProfileUser = () => {
         date_of_birth: profileData.data?.date_of_birth || "",
         address: profileData.data?.address || "",
         resume_url: profileData.data?.resume_url || "",
-        is_open_to_work:profileData?.data?.is_open_to_work || false
+        is_open_to_work:profileData?.data?.is_open_to_work || false,
+        linkedin_url:profileData?.data?.linkedin_url || "",
+        behance_url:profileData?.data?.behance_url || "",
+        portfolio_url:profileData?.data?.portfolio_url || "",
+        facebook_url:profileData?.data?.facebook_url || "",
+        github_url:profileData?.data?.github_url || "",
       });
     }
-  }, [profileData,isProfileLoading]);
-
-
-  useEffect(()=>{
-    console.log("Form Values:", form.getValues());
-  },[form.getValues()]);
+  }, [profileData, isProfileLoading, form]);
 
 
   const onSubmitHandler = async (values: UserProfile) => {
@@ -112,7 +117,12 @@ export const ProfileUser = () => {
           date_of_birth: response.data.data?.date_of_birth || "",
           address: response.data.data?.address || "",
           resume_url: response.data.data?.resume_url || "",
-          is_open_to_work:profileData?.data?.is_open_to_work || false
+          is_open_to_work:profileData?.data?.is_open_to_work || false,
+          facebook_url:profileData?.data?.facebook_url || "",
+          linkedin_url:profileData?.data?.linkedin_url || "",
+          behance_url:profileData?.data?.behance_url || "",
+          portfolio_url:profileData?.data?.portfolio_url || "",
+          github_url:profileData?.data?.github_url || "",
         });
         refetch();
       }
