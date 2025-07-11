@@ -90,6 +90,10 @@ const routesMap: RoutesMap = {
     path: "redirectLoading",
     name: "redirectLoading",
   },
+  specialSkills:{
+   path:"specialSkills",
+   name:"specialSkills"
+  }
 };
 
 // verify/create-username

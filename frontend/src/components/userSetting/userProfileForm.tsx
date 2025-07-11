@@ -9,6 +9,7 @@ import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
 import ImagePicker from "../common/ImagePicker";
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
+import { socialLinkFields } from "@/lib/formData.tsx/UserProfile";
 
 export const UserProfileForm = ({
   form,
@@ -146,7 +147,7 @@ export const UserProfileForm = ({
         fieldWidth={fieldWidth}
       />
 
-     <TextAreaField
+      <TextAreaField
         disabled={false}
         fieldName={'bio'}
         placeholder={'A brief introduction about yourself'}
@@ -154,7 +155,7 @@ export const UserProfileForm = ({
         required={false}
         requiredLabel={true}
         languageName={"userProfile"}
-        fieldHeight={ "h-[128px]"}
+        fieldHeight={"h-[128px]"}
         fieldWidth={fieldWidth}
         showLetterCount={true}
         maxLength={250}
@@ -219,6 +220,18 @@ export const UserProfileForm = ({
         fieldHeight={cn("w-full", fieldHeight)}
         fieldWidth={fieldWidth}
       />
+
+      {socialLinkFields.map((field) => (
+        <InputField
+          key={field.fieldName}
+          fieldName={field.fieldName}
+          isError={field.isError?.(form)}
+          startIcon={field.startIcon}
+          languageName={"userProfile"}
+          required={false}
+          placeholder=""
+        />
+      ))}
     </div>
   );
 };

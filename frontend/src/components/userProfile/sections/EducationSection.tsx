@@ -3,7 +3,7 @@ import { Title } from "../Title";
 import { EducationCard } from "../components/EducationCard";
 import { useNavigate } from 'react-router-dom';
 import { useGetEducationsQuery } from "@/services/slices/jobSeekerSlice";
-import EmptyEducations from '@/assets/Login/EmptyEducations.png';
+import EmptyEducations from '@/assets/Login/EmptyEducation.png';
 import { EmptyData } from '@/components/common/EmptyData';
 
 

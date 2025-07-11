@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { LeftEllipse, RightEllipse } from "@/constants/svgs"
+import { useNavigate } from "react-router-dom";
+import { Title } from "../userProfile/Title";
 
 
 export const Card = React.memo(
@@ -71,11 +73,24 @@ type Card = {
     ellipseColor: string
 };
 
-export function FocusCards({ cards }: { cards: Card[] }) {
+export function FocusCards({ cards, isFocusCardEdit, setIsFocusCardEdit }: {
+    cards: Card[], isFocusCardEdit: boolean;
+    setIsFocusCardEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
     const [hovered, setHovered] = useState<number | null>(null);
+
+    const navigate = useNavigate();
 
 
     return (
+     <div>
+           <Title
+               title=""
+               isTitle={false}
+                onpressAdd={() => navigate('/user/edit/specialSkills')}
+                isEdit={isFocusCardEdit}
+                onEditToggle={() => setIsFocusCardEdit((prev) => !prev)}
+            />
         <div className='grid grid-cols-3 gap-[15px] mb-[70px]'>
             {cards.map((card, index) => (
                 <Card
@@ -87,5 +102,6 @@ export function FocusCards({ cards }: { cards: Card[] }) {
                 />
             ))}
         </div>
+     </div>
     );
 }

@@ -24,6 +24,11 @@ import CertificationSection from './sections/CertificationSection';
 import EducationSection from './sections/EducationSection';
 import SelectedProjectsSection from './sections/SelectedProjectsSection';
 import VideoIntroductionSection from './sections/VideoIntroductionSection';
+import SvgDockUser from '@/assets/svgs/docks/SvgDockUser';
+import SvgDockProjects from '@/assets/svgs/docks/SvgDockProjects';
+import SvgDockVideo from '@/assets/svgs/docks/SvgDockVideo';
+import SvgDockExperiences from '@/assets/svgs/docks/SvgDockExperiences';
+import SvgDockEducation from '@/assets/svgs/docks/SvgDockEducation';
 
 // Animation variants
 const containerVariants = {
@@ -51,55 +56,40 @@ const itemVariants = {
 
 const links = [
     {
-        title: "Home",
+        title: "User",
         icon: (
-            <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+           <SvgDockUser/>
         ),
-        href: "#",
+        href: "#user-section",
     },
 
     {
-        title: "Products",
+        title: "Projects",
         icon: (
-            <IconTerminal2 className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+            <SvgDockProjects/>
         ),
-        href: "#",
+        href: "#projects-section",
     },
     {
-        title: "Components",
+        title: "Videos",
         icon: (
-            <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+           <SvgDockVideo/>
         ),
-        href: "#",
+        href: "#videos-section",
     },
     {
-        title: "Aceternity UI",
+        title: "Work Experience",
         icon: (
-            <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+          <SvgDockExperiences/>
         ),
-        href: "#",
+        href: "#work-experience-section",
     },
     {
-        title: "Changelog",
+        title: "Education",
         icon: (
-            <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+            <SvgDockEducation/>
         ),
-        href: "#",
-    },
-
-    {
-        title: "Twitter",
-        icon: (
-            <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-        ),
-        href: "#",
-    },
-    {
-        title: "GitHub",
-        icon: (
-            <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-        ),
-        href: "#",
+        href: "#education-section",
     },
 ];
 
@@ -156,7 +146,9 @@ export const UserInfoSec = () => {
             animate="visible"
             variants={containerVariants}
         >
-            <UserProfile />
+            <div id="user-section">
+                <UserProfile />
+            </div>
             <motion.div
                 className='max-w-[1104px] mx-auto'
                 variants={containerVariants}
@@ -164,27 +156,33 @@ export const UserInfoSec = () => {
 
                 <FocusCards cards={cards} />
 
-                <SelectedProjectsSection
-                isSelectedProjectsEdit={isSelectedProjectsEdit}
-                containerVariants={containerVariants}
-                itemVariants={itemVariants}
-                setIsSelectedProjectsEdit={setIsSelectedProjectsEdit}
-                />
+                <div id="projects-section">
+                    <SelectedProjectsSection
+                        isSelectedProjectsEdit={isSelectedProjectsEdit}
+                        containerVariants={containerVariants}
+                        itemVariants={itemVariants}
+                        setIsSelectedProjectsEdit={setIsSelectedProjectsEdit}
+                    />
+                </div>
 
-               
                 {/* Rest of the content with similar motion wrappers */}
 
-              <VideoIntroductionSection/>
+                <div id="videos-section">
+                    <VideoIntroductionSection />
+                </div>
 
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}
 
-                <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
-
+                <div id="work-experience-section">
+                    <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                </div>
 
                 {/* Education */}
 
-                <EducationSection isEducationEdit={isEducationEdit} setIsEducationEdit={setIsEducationEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                <div id="education-section">
+                    <EducationSection isEducationEdit={isEducationEdit} setIsEducationEdit={setIsEducationEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                </div>
 
 
 
@@ -192,7 +190,6 @@ export const UserInfoSec = () => {
                 {/* Certifications */}
 
                 <CertificationSection isCertificationEdit={isCertificationEdit} setIsCertificationEdit={setIsCertificationEdit} />
-
                 <motion.div
                     ref={containerRef}
                     className="w-full border-2 relative rounded-[30px] h-[459px] flex flex-col justify-center overflow-hidden items-center gap-[30px] mb-[100px]"
@@ -267,5 +264,6 @@ export const UserInfoSec = () => {
                 </div>
             </motion.div>
         </motion.div>
+        //dock
     )
 }

@@ -24,10 +24,7 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
   const navigate = useNavigate();
   const { data } = useGetExperiencesQuery();
 
-
   const EXPERIENCEDATA = data?.data;
-
-
 
   return (
     <div>
