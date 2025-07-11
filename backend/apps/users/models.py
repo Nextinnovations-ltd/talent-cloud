@@ -153,17 +153,20 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.address or 'No Address'}, {self.city.name}, {self.country.name}"
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         if self.country is None:
             raise ValidationError("Country must not be empty.")
         
-        if self.country.id == 1034 and self.city is None:
+        # Use country code instead of hardcoded ID
+        if self.country.code2 == 'MM' and self.city is None:
             raise ValidationError("You need to select residing city if your country location is Myanmar.")
         
         if self.city is not None:
             if self.city.country != self.country:
                 raise ValidationError("Selected city does not belong to the selected country.")
-        
+    
+    def save(self, *args, **kwargs):
+        self.clean()
         super().save(*args, **kwargs)
     
 class TalentCloudUser(TimeStampModel, AbstractUser):
@@ -180,7 +183,13 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, related_name='users', null= True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True, max_length=200)
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
+    address = models.OneToOneField(
+        Address, 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        related_name='user'
+    )
     is_verified = models.BooleanField(default=False)
     
     company = models.ForeignKey(

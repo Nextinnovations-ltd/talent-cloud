@@ -96,7 +96,6 @@ class JobSeekerService:
                tagline = data.get('tagline', None)
                experience_level_id = data.get('experience_level_id', None)
                experience_years = data.get('experience_years', None)
-               address_data = data.get('address', None)
                # profile_image = request.FILES.get('profile_image', None)
 
                # Perform Image Upload
@@ -117,24 +116,6 @@ class JobSeekerService:
                               experience_level_id = experience_level_id,
                               experience_years = experience_years
                          )
-                    
-                    if address_data:
-                         address: Address = getattr(job_seeker, 'address', None)
-                         
-                         if address:
-                              address.address = address_data.get('address', None)
-                              address.city_id = address_data.get('city',None)
-                              address.country_id = address_data.get('country', None)
-
-                              address.save()
-                         else:
-                              address = Address.objects.create(
-                                   address= address_data.get('address', None),
-                                   city_id = address_data.get('city',None),
-                                   country_id = address_data.get('country', None)
-                              )
-                         
-                         job_seeker.address = address
                        
                     job_seeker.onboarding_step = 2
                     
@@ -235,13 +216,10 @@ class JobSeekerService:
           
           occupation: JobSeekerOccupation = getattr(job_seeker, 'occupation', None)
 
-          # if not occupation:
-          #      raise ValidationError("No occupation related data existed yet.")
-          
-          social_links = getattr(job_seeker, 'social_links', None)
-
-          if social_links:
-               social_links = social_links.first()
+          try:
+               social_links = job_seeker.social_links
+          except JobSeekerSocialLink.DoesNotExist:
+               social_links = None
           
           profile_response = JobSeekerService.build_job_seeker_profile_response(job_seeker, occupation, social_links)
                
@@ -268,7 +246,7 @@ class JobSeekerService:
                job_seeker.bio = data.get("bio", None)
                job_seeker.resume_url = data.get("resume_url", None)
 
-                # Address Create, Update
+               # Address Create, Update
                address_data = data.get("address", None)
                
                if address_data:
@@ -276,19 +254,24 @@ class JobSeekerService:
                     city_id = address_data.get("city_id", None)
                     address_field = address_data.get("address", None)
                     
-                    address = getattr(job_seeker, 'address', None)
+                    # Try to get existing address using OneToOneField
+                    try:
+                         address = job_seeker.address
+                    except Address.DoesNotExist:
+                         address = None
                     
                     if not address:
                          address = Address.objects.create(
-                              country_id=country_id
+                              country_id=country_id,
+                              city_id=city_id,
+                              address=address_field
                          )
-                    
-                    address.city_id = city_id
-                    address.address = address_field
-                    
-                    address.save()
-                    
-                    job_seeker.address = address
+                         job_seeker.address = address
+                    else:
+                         address.country_id = country_id
+                         address.city_id = city_id
+                         address.address = address_field
+                         address.save()
                
                job_seeker.save()
 
@@ -316,7 +299,10 @@ class JobSeekerService:
                occupation.save()
                
                # Social Link Create, Update
-               social_links = job_seeker.social_links.first()
+               try:
+                    social_links = job_seeker.social_links
+               except JobSeekerSocialLink.DoesNotExist:
+                    social_links = None
                
                if not social_links:
                     social_links = JobSeekerSocialLink.objects.create(
@@ -543,9 +529,9 @@ class JobSeekerService:
      def get_job_seeker_social_link(user):
           job_seeker = JobSeekerService.get_job_seeker_user(user)
           
-          if JobSeekerSocialLink.objects.filter(user = job_seeker).exists():
-               social_links = JobSeekerSocialLink.objects.get(user = job_seeker)
-          else:
+          try:
+               social_links = job_seeker.social_links
+          except JobSeekerSocialLink.DoesNotExist:
                social_links = None
 
           profile_data = {
@@ -567,9 +553,9 @@ class JobSeekerService:
 
           with transaction.atomic():
                # Extract and update JobSeeker social links
-               if JobSeekerSocialLink.objects.filter(user = job_seeker).exists():
-                    social_links = JobSeekerSocialLink.objects.get(user = job_seeker)
-               else:
+               try:
+                    social_links = job_seeker.social_links
+               except JobSeekerSocialLink.DoesNotExist:
                     social_links = None
 
                # Extract and update/create social links
@@ -612,9 +598,8 @@ class JobSeekerService:
           
      @staticmethod
      def _get_extracted_address(job_seeker: JobSeeker):
-          address = getattr(job_seeker, 'address', None)
-
-          if address:
+          try:
+               address = job_seeker.address
                return {
                     'city': {
                          'id': address.city.id,
@@ -626,8 +611,8 @@ class JobSeekerService:
                     } if address.country else None,
                     'address': address.address
                }
-          
-          return None
+          except Address.DoesNotExist:
+               return None
           
      @staticmethod
      def _update_single_language(job_seeker, language_id, proficiency_level):
