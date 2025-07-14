@@ -133,6 +133,9 @@ class JobSeekerService:
                with transaction.atomic():
                     # Check user already have occupation
                     if job_seeker_occupation:
+                         # If changing specialization, clear existing role to prevent mismatch
+                         if job_seeker_occupation.specialization_id != specialization_id:
+                              job_seeker_occupation.role = None
                          job_seeker_occupation.specialization_id = specialization_id
                          job_seeker_occupation.save()
                     else:
@@ -156,9 +159,20 @@ class JobSeekerService:
                
                with transaction.atomic():
                     if job_seeker_occupation:
+                         # Validate role belongs to current specialization
+                         if job_seeker_occupation.specialization:
+                              try:
+                                   from apps.job_seekers.models import JobSeekerRole
+                                   role = JobSeekerRole.objects.get(id=role_id)
+                                   if role.specialization != job_seeker_occupation.specialization:
+                                        raise ValidationError("Selected role does not belong to the current specialization.")
+                              except JobSeekerRole.DoesNotExist:
+                                   raise ValidationError("Invalid role selected.")
+                         
                          job_seeker_occupation.role_id = role_id
                          job_seeker_occupation.save()
                     else:
+                         # If no occupation exists, create with just role (specialization should be set in step 2)
                          JobSeekerOccupation.objects.create(
                               user = job_seeker,
                               role_id = role_id
@@ -284,11 +298,39 @@ class JobSeekerService:
                          user = job_seeker
                     )
                
-               if specialization_id:
-                    occupation.specialization_id = specialization_id
-               
-               if role_id:
-                    occupation.role_id = role_id
+               # Handle specialization and role updates
+               if specialization_id or role_id:
+                    # If updating specialization, clear role if it doesn't match the new specialization
+                    if specialization_id:
+                         occupation.specialization_id = specialization_id
+                         # If role is provided, validate it belongs to the new specialization
+                         if role_id:
+                              try:
+                                   from apps.job_seekers.models import JobSeekerRole
+                                   role = JobSeekerRole.objects.get(id=role_id)
+                                   if role.specialization_id != specialization_id:
+                                        raise ValidationError(f"Selected role does not belong to the selected specialization.")
+                                   occupation.role_id = role_id
+                              except JobSeekerRole.DoesNotExist:
+                                   raise ValidationError("Invalid role selected.")
+                         else:
+                              # Clear role if only specialization is updated
+                              occupation.role = None
+                    
+                    # If only role is updated (no specialization change)
+                    elif role_id and not specialization_id:
+                         try:
+                              from apps.job_seekers.models import JobSeekerRole
+                              role = JobSeekerRole.objects.get(id=role_id)
+                              # Ensure the current specialization matches the role's specialization
+                              if occupation.specialization and role.specialization != occupation.specialization:
+                                   raise ValidationError("Selected role does not belong to specialization. Please update specialization first.")
+                              occupation.role_id = role_id
+                              # If no current specialization, set it from the role
+                              if not occupation.specialization:
+                                   occupation.specialization = role.specialization
+                         except JobSeekerRole.DoesNotExist:
+                              raise ValidationError("Invalid role selected.")
                
                if experience_level_id:
                     occupation.experience_level_id = experience_level_id

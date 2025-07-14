@@ -179,6 +179,24 @@ class JobSeekerOccupation(TimeStampModel):
                models.Index(fields=['specialization', 'role','experience_level'])  # Composite index on both fields
           ]
 
+     def clean(self):
+          """Validate that role belongs to the selected specialization"""
+          from django.core.exceptions import ValidationError
+          
+          # If both specialization and role are provided, validate they match
+          if self.specialization and self.role:
+               if self.role.specialization != self.specialization:
+                    raise ValidationError("Selected role does not belong to specialization. Please update specialization first.")
+          
+          # If role is provided but no specialization, that's invalid
+          if self.role and not self.specialization:
+               raise ValidationError("Specialization is required when selecting a role.")
+
+     def save(self, *args, **kwargs):
+          # Run validation before saving
+          self.clean()
+          super().save(*args, **kwargs)
+
      def __str__(self):
           return f"{self.user.username}"
 
