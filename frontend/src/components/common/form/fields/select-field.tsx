@@ -46,12 +46,14 @@ export const SelectField: React.FC<SelectFieldProps> = ({
 }) => {
   const form = useFormContext();
 
-
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => {
+
+        console.log(name,field.value)
+
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
@@ -64,7 +66,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
               <div>
                 <Select
                   onValueChange={field.onChange}
-                  value={`${field.value}`}
+                  value={field.value}
                   disabled={isDisabled}
                 >
                   <SelectTrigger

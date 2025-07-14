@@ -1,15 +1,16 @@
 import { useEffect, useMemo } from "react";
-import { useGetUserSpecializationQuery } from "@/services/slices/onBoardingSlice";
 
-export const useFormattedSpecialization = () => {
-  const { data, isLoading } = useGetUserSpecializationQuery();
+import { useGetJobSeekerSkillsOptionsQuery } from "@/services/slices/jobSeekerSlice";
+
+export const useFormattedSkillsOpions = () => {
+  const { data, isLoading } = useGetJobSeekerSkillsOptionsQuery();
 
   const formattedData = useMemo(() => {
     if (!data?.data) return []; // Ensure data exists before accessing .data
 
-    return data.data.map((item: { id: number; name: string }) => ({
-      value: item.id,
-      label: item.name, // Fixed: Correctly access name from item
+    return data.data?.map((item: { id: number; name: string }) => ({
+      value: item.id.toString(),
+      label: item.title, // Fixed: Correctly access name from item
     }));
   }, [data]);
 

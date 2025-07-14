@@ -19,6 +19,8 @@ export type UserProfile = {
   portfolio_url?:string;
   github_url?:string;
   facebook_url?:string;
+  country:number,
+  city:number,
 };
 
 export type WorkExperience = {

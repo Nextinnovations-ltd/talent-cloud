@@ -10,6 +10,8 @@ import ImagePicker from "../common/ImagePicker";
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
 import { socialLinkFields } from "@/lib/formData.tsx/UserProfile";
+import { useFormattedCountryList } from "@/lib/dropData.tsx/ReturnCountryListOptions";
+import { useFormattedCityList } from "@/lib/dropData.tsx/ReturnCityListOptions";
 
 export const UserProfileForm = ({
   form,
@@ -23,18 +25,25 @@ export const UserProfileForm = ({
   setPreview: any;
 }) => {
 
+  const selectedCountryId = form.watch("country");
   const { data: FORMATTEDDATA, isLoading: FORMATTEDDATALoading } = useFormattedSpecialization();
   const { data: EXPERIENCEDATA, isLoading: EXPERIENCEDATALoading } = useFormattedExperience();
+  const { data:COUNTRYDATA, isLoading:COUNTRYLoading } = useFormattedCountryList();
+  const { data: CITYDATA, isLoading: CITYLoading } = useFormattedCityList(selectedCountryId);
+
+
+  console.log(CITYDATA)
+
 
   const fieldHeight = "h-12";
   const fieldWidth = "max-w-[672px]";
 
-  const loading = FORMATTEDDATALoading || EXPERIENCEDATALoading;
+  const loading = FORMATTEDDATALoading || EXPERIENCEDATALoading ||COUNTRYLoading 
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[400px]">
-        <p>Loading...</p>
+       
       </div>
     );
   }
@@ -44,7 +53,7 @@ export const UserProfileForm = ({
 
       <ImagePicker
         setIsOpen={setIsOpen}
-        preview={preview}
+        preview={preview}  
         form={form}
         setPreview={setPreview} />
 
@@ -207,9 +216,36 @@ export const UserProfileForm = ({
         fieldWidth={""}
       />
 
+      {/* ---------- */}
+
+      <SelectField
+        name={"country"}
+        labelName={"Country"}
+        error={form.formState.errors.country}
+        isRequired={true}
+        showRequiredLabel={true}
+        placeholder={"Please select the country"}
+        data={COUNTRYDATA}
+        width=" max-w-[672px] mt-[24px]"
+      />
+
+      <SelectField
+        name={"city"}
+        labelName={"City"}
+        error={form.formState.errors.city}
+        isRequired={true}
+        showRequiredLabel={true}
+        placeholder={"Please select the city"}
+        data={CITYDATA}
+        width=" max-w-[672px] mt-[24px]"
+        isDisabled={CITYLoading}
+      />
+
+      {/* ---------- */}
+
       <InputField
         fieldName="address"
-        placeholder={'Choose your location'}
+        placeholder={'Choose your address'}
         isError={form.formState.errors.address}
         required={false}
         requiredLabel={true}

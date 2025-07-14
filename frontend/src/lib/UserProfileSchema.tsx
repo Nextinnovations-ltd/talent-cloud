@@ -16,6 +16,8 @@ export const UserProfileSchema = yup.object({
     address: yup.string().optional(),
     resume_url: yup.string().optional(),
     is_open_to_work: yup.boolean().required(),
+    country:yup.number().required(),
+    city:yup.number().required(),
     linkedin_url: yup.string().optional(),
     behance_url: yup.string().optional(),
     portfolio_url: yup.string().optional(),

@@ -9,13 +9,13 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import { useWatch } from "react-hook-form";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
-import TagInputField from "@/components/common/form/fields/tag-input-field";
 import ImagePicker from "@/components/common/ImagePicker";
 import { useState } from "react";
 import { useAddSelectedProjectsMutation, useUpdateSelectedProjectsMutation, useGetSelectedProjectsByIdQuery } from "@/services/slices/jobSeekerSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useToast from "@/hooks/use-toast";
 import { useEffect } from "react";
+import TagInputField from "@/components/common/form/fields/tag-input-field";
 
 
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {

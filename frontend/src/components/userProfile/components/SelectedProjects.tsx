@@ -4,7 +4,7 @@ import { useDeleteSelectedProjectsMutation } from "@/services/slices/jobSeekerSl
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import useToast from "@/hooks/use-toast";
-
+import DEFAULT_EMPTY from '@/assets/Login/EmptyProject.png'
 interface SelectedProjectsProps {
   id: number;
   title: string;
@@ -68,6 +68,9 @@ export const SelectedProjects = ({
       )}
       {project_image_url && (
         <img className="h-[230px] w-full object-cover rounded-lg mb-2" src={project_image_url} alt={title} />
+      )}
+       {!project_image_url && (
+        <img className="h-[230px] w-full object-cover rounded-lg mb-2" src={DEFAULT_EMPTY} alt={title} />
       )}
       <div className="flex flex-col gap-2">
         <h3 className="text-[22px] font-bold text-[#05060F]">{title}</h3>

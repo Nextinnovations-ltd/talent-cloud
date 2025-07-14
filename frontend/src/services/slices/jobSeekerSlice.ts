@@ -1,4 +1,4 @@
-import {  WorkExperience } from "@/types/job-seeker-types";
+import { WorkExperience } from "@/types/job-seeker-types";
 import apiSlice from "../api/apiSlice";
 
 interface JobSeekerCredentials {
@@ -17,11 +17,11 @@ interface JobSeekerCredentials {
   bio: string;
   resume_url?: string
   is_open_to_work: boolean
-  linkedin_url?:string;
-  behance_url?:string;
-  portfolio_url?:string;
-  github_url?:string;
-  facebook_url?:string
+  linkedin_url?: string;
+  behance_url?: string;
+  portfolio_url?: string;
+  github_url?: string;
+  facebook_url?: string
 }
 
 //credentials
@@ -73,7 +73,6 @@ interface UseJobSeekerProfileResponse {
     country_code: string;
     phone_number: string;
     date_of_birth: string;
-    address: string;
     bio: string;
     resume_url: string;
     is_open_to_work: boolean;
@@ -81,7 +80,12 @@ interface UseJobSeekerProfileResponse {
     behance_url?: string;
     portfolio_url?: string;
     github_url?: string;
-    facebook_url?:string
+    facebook_url?: string;
+    address: {
+      country: { id: number, name: string },
+      address: string,
+      city: { id: number, name: string }
+    }
   };
 }
 
@@ -196,8 +200,25 @@ interface ProjectsResponse {
   data: ProjectsCredentialsWithId[]
 }
 
+export type Skills = {
+  id: number;
+  title: string;
+};
+
+export type JobSeekerSkillsOptionsResponse = {
+  status: boolean;
+  message: string;
+  data: {
+    skills: Skills[];
+  };
+};
+
+
 export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getJobSeekerSkillsOptions: builder.query<JobSeekerSkillsOptionsResponse, void>({
+      query: () => "/jobseeker/skill/selection-options/",
+    }),
     addJobSeekerProfile: builder.mutation<unknown, JobSeekerCredentials>({
       query: (credentials) => ({
         url: "/jobseeker/profile/",
@@ -358,6 +379,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['selectprojectsList']
     }),
+
   }),
 });
 
@@ -388,5 +410,6 @@ export const {
   useGetSelectedProjectsQuery,
   useAddSelectedProjectsMutation,
   useDeleteSelectedProjectsMutation,
-  useUpdateSelectedProjectsMutation
+  useUpdateSelectedProjectsMutation,
+  useGetJobSeekerSkillsOptionsQuery,
 } = extendedJobSeekerSlice;

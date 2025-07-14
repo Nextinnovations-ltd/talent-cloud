@@ -30,6 +30,9 @@ export const ProfileUser = () => {
     refetch,
   } = useGetJobSeekerProfileQuery();
 
+  console.log({profileData})
+
+
 
  
   const form = useForm<UserProfile>({
@@ -47,7 +50,6 @@ export const ProfileUser = () => {
       phone_number: profileData?.data?.phone_number || "",
       country_code: profileData?.data?.country_code || "",
       date_of_birth: profileData?.data?.date_of_birth || "",
-      address: profileData?.data?.address || "",
       resume_url: profileData?.data?.resume_url || "",
       is_open_to_work:profileData?.data?.is_open_to_work || false,
       facebook_url:profileData?.data?.facebook_url || "",
@@ -55,6 +57,9 @@ export const ProfileUser = () => {
       behance_url:profileData?.data?.behance_url || "",
       portfolio_url:profileData?.data?.portfolio_url || "",
       github_url:profileData?.data?.github_url || "",
+      country:profileData?.data?.address?.country?.id || undefined,
+      city:profileData?.data?.address?.city?.id || undefined ,
+      address: profileData?.data?.address?.address || "",
     },
   });
 
@@ -75,7 +80,6 @@ export const ProfileUser = () => {
         phone_number: profileData.data?.phone_number || "",
         country_code: profileData.data?.country_code || "",
         date_of_birth: profileData.data?.date_of_birth || "",
-        address: profileData.data?.address || "",
         resume_url: profileData.data?.resume_url || "",
         is_open_to_work:profileData?.data?.is_open_to_work || false,
         linkedin_url:profileData?.data?.linkedin_url || "",
@@ -83,6 +87,9 @@ export const ProfileUser = () => {
         portfolio_url:profileData?.data?.portfolio_url || "",
         facebook_url:profileData?.data?.facebook_url || "",
         github_url:profileData?.data?.github_url || "",
+        country:profileData?.data?.address?.country?.id || 0,
+        city:profileData?.data?.address?.city?.id || 0,
+        address: profileData?.data?.address?.address || "",
       });
     }
   }, [profileData, isProfileLoading, form]);
@@ -90,12 +97,19 @@ export const ProfileUser = () => {
 
   const onSubmitHandler = async (values: UserProfile) => {
     try {
+      // Destructure to remove flat address fields
+      const { country, city, address, ...rest } = values;
       // Convert date_of_birth to YYYY-MM-DD format if it exists
       const formattedValues = {
-        ...values,
+        ...rest,
         date_of_birth: values.date_of_birth 
           ? new Date(values.date_of_birth).toISOString().split('T')[0]
           : null,
+        address: {
+          country_id: country,
+          city_id: city,
+          address: address,
+        },
       };
 
       const response = await executeApiCall(formattedValues);
@@ -115,7 +129,6 @@ export const ProfileUser = () => {
           phone_number: response.data.data?.phone_number || "",
           country_code: response.data.data?.country_code || "",
           date_of_birth: response.data.data?.date_of_birth || "",
-          address: response.data.data?.address || "",
           resume_url: response.data.data?.resume_url || "",
           is_open_to_work:profileData?.data?.is_open_to_work || false,
           facebook_url:profileData?.data?.facebook_url || "",
@@ -123,6 +136,9 @@ export const ProfileUser = () => {
           behance_url:profileData?.data?.behance_url || "",
           portfolio_url:profileData?.data?.portfolio_url || "",
           github_url:profileData?.data?.github_url || "",
+          country:profileData?.data?.address?.country?.id || 0,
+          city:profileData?.data?.address?.city?.id || 0,
+          address: profileData?.data?.address?.address || "",
         });
         refetch();
       }

@@ -30,6 +30,10 @@ import mmStepTwo from "./locales/mm/stepTwo.json";
 import enUserProfile from "./locales/en/userProfile.json";
 import mmUserProfile from "./locales/mm/userProfile.json";
 
+//professional skilll
+import enProfessionalSkill from  "./locales/en/professionalSkill.json";
+import mmProfessionalSkill from './locales/mm/professionalSkill.json';
+
 const resources = {
   en: {
     auth: enAuth,
@@ -39,6 +43,7 @@ const resources = {
     createUsername: enUsername,
     stepTwo: enStepTwo,
     userProfile: enUserProfile,
+    professionalSkill:enProfessionalSkill
   },
   mm: {
     auth: mmAuth,
@@ -48,6 +53,7 @@ const resources = {
     createUsername: mmUsername,
     stepTwo: mmStepTwo,
     userProfile: mmUserProfile,
+    professionalSkill:mmProfessionalSkill
   },
 };
 
