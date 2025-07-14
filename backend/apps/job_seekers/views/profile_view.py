@@ -72,16 +72,6 @@ class JobSeekerVideoAPIView(APIView):
 
 # region Profile Section Two
 @extend_schema(tags=["Job Seeker Profile"])
-class JobSeekerSkillSelectionOptionAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-     
-     def get(self, request):
-          response = JobSeekerService.get_skill_options()
-          
-          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
-
-@extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerSkillAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -138,16 +128,6 @@ class JobSeekerSettingAPIView(APIView):
                raise ValidationError("User not authenticated")
           
           response = JobSeekerService.get_job_seeker_setting_info(request.user)
-          
-          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
-
-@extend_schema(tags=["Job Seeker Profile"])
-class LanguageOptionAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-     
-     def get(self, request):
-          response = JobSeekerService.get_language_options()
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 

@@ -272,6 +272,7 @@ class JobSeekerService:
                job_seeker.save()
 
                # Occupation Create, Update
+               specialization_id = data.get("specialization_id", None)
                role_id = data.get("role_id", None)
                experience_level_id = data.get("experience_level_id", None)
                experience_years = data.get("experience_years", None)
@@ -282,6 +283,9 @@ class JobSeekerService:
                     occupation = JobSeekerOccupation.objects.create(
                          user = job_seeker
                     )
+               
+               if specialization_id:
+                    occupation.specialization_id = specialization_id
                
                if role_id:
                     occupation.role_id = role_id
@@ -332,6 +336,10 @@ class JobSeekerService:
                'name': job_seeker.name,
                'username': job_seeker.username,
                'email': job_seeker.email,
+               'specialization': {
+                    'id': occupation.specialization.id,
+                    'name': occupation.specialization.name,
+               } if occupation and occupation.specialization else None,
                'role': {
                     'id': occupation.role.id,
                     'name': occupation.role.name,
@@ -389,18 +397,7 @@ class JobSeekerService:
                     "video_url": job_seeker.video_url
                }
           }
-     
-     @staticmethod
-     def get_skill_options():
-          skills = JobSeekerSkill.objects.all()
 
-          return {
-               'message': "Successfully fetched job seeker skills options.",
-               'data': {
-                    'skills': JobSeekerSkillSerializer(skills, many=True).data
-               }
-          }
-     
      @staticmethod
      def get_job_seeker_skills(user):
           jobseeker = JobSeekerService.get_job_seeker_user(user)
@@ -411,7 +408,7 @@ class JobSeekerService:
                return {
                     'message': "No occupation data existed yet.",
                     'data': {
-                         'skills': []
+                         []
                     }     
                }
 
@@ -424,7 +421,7 @@ class JobSeekerService:
           return {
                'message': "Successfully fetched job seeker skills.",
                'data': {
-                    'skills': jobseeker_skills
+                    jobseeker_skills
                }     
           }
      
@@ -453,18 +450,7 @@ class JobSeekerService:
           return {
                'message': "Successfully updated job seeker skills.",
                'data': {
-                    'skills': skill_id_list
-               }
-          }
-     
-     @staticmethod
-     def get_language_options():
-          languages = SpokenLanguage.objects.all()
-
-          return {
-               'message': "Successfully generated all language options.",
-               'data': {
-                    'languages': SpokenLanguageSerializer(languages, many=True).data
+                    skill_id_list
                }
           }
      
