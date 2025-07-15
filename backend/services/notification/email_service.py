@@ -23,18 +23,20 @@ class EmailService:
     TEMPLATE_MAPPING = {
         NotificationType.GENERIC: 'emails/generic_notification.html',
         NotificationType.JOB_POSTED: 'emails/job_posted.html',
-        NotificationType.JOB_APPLIED: 'emails/job_applied.html',
-        NotificationType.COMPANY_APPROVED: 'emails/company_approved.html',
-        NotificationType.ADMIN_COMPANY_REGISTRATION: 'emails/admin_company_registration.html',
-        NotificationType.ADMIN_USER_REGISTRATION: 'emails/admin_user_registration.html',
-        NotificationType.ADMIN_JOB_POSTING: 'emails/admin_job_posting.html',
-        NotificationType.ADMIN_SYSTEM_ALERT: 'emails/admin_system_alert.html',
-        NotificationType.ADMIN_PLATFORM_ACTIVITY: 'emails/admin_platform_activity.html',
-        NotificationType.ADMIN_REPORT_GENERATED: 'emails/admin_report_generated.html',
-        NotificationType.ADMIN_COMPANY_VERIFICATION: 'emails/admin_company_verification.html',
-        NotificationType.ADMIN_CONTENT_MODERATION: 'emails/admin_content_moderation.html',
-        NotificationType.ADMIN_VIOLATION_REPORT: 'emails/admin_violation_report.html',
-        NotificationType.ADMIN_MAINTENANCE: 'emails/admin_maintenance.html',
+        NotificationType.JOB_APPLIED: 'emails/job_application_received.html',
+        NotificationType.APPLICATION_STATUS_UPDATE: 'emails/application_status_update.html',
+        NotificationType.COMPANY_APPROVED: 'emails/company_approval.html',
+        NotificationType.COMPANY_REJECTED: 'emails/company_rejection.html',
+        NotificationType.ADMIN_COMPANY_REGISTRATION: 'emails/company_registration_to_admin.html',
+        NotificationType.ADMIN_USER_REGISTRATION: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_JOB_POSTING: 'emails/job_posted.html',  # Reuse job posted template
+        NotificationType.ADMIN_SYSTEM_ALERT: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_PLATFORM_ACTIVITY: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_REPORT_GENERATED: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_COMPANY_VERIFICATION: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_CONTENT_MODERATION: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_VIOLATION_REPORT: 'emails/generic_notification.html',  # Fallback
+        NotificationType.ADMIN_MAINTENANCE: 'emails/system_maintenance.html',
     }
     
     @staticmethod

@@ -237,6 +237,50 @@ class NotificationService:
             logger.error(f"Error sending email notification to {user.email}: {str(e)}")
     
     @staticmethod
+    def _send_email_notification_with_template(
+        user: TalentCloudUser, 
+        notification: Notification,
+        email_template_name: Optional[str] = None,
+        email_subject: Optional[str] = None,
+        email_context: Optional[Dict[str, Any]] = None,
+        is_urgent: bool = False
+    ):
+        """Send email notification using template from database"""
+        try:
+            from services.notification.email_service import EmailService
+            
+            # Use provided template or fall back to default
+            template = email_template_name or EmailService.get_template_for_notification_type(
+                NotificationType(notification.notification_type)
+            )
+            
+            # Use provided subject or notification title
+            subject = email_subject or notification.title
+            
+            # Prepare email context
+            context = {
+                'user': user,
+                'title': notification.title,
+                'message': notification.message,
+                'destination_url': notification.destination_url,
+                'notification_id': notification.id,
+                'is_urgent': is_urgent,
+                **(email_context or {})
+            }
+            
+            # Send email
+            EmailService.send_email(
+                recipient_email=user.email,
+                subject=subject,
+                template=template,
+                context=context,
+                is_urgent=is_urgent
+            )
+            
+        except Exception as e:
+            logger.error(f"Error sending templated email notification to {user.email}: {str(e)}")
+
+    @staticmethod
     def _send_push_notification(
         user: TalentCloudUser, 
         notification: Notification, 
@@ -260,6 +304,148 @@ class NotificationService:
             
         except Exception as e:
             logger.error(f"Error sending push notification to user {user.id}: {str(e)}")
+
+    @staticmethod
+    def send_notification_with_template(
+        notification_type: NotificationType,
+        target_roles: Optional[List[NotificationTarget]] = None,
+        target_users: Optional[List[TalentCloudUser]] = None,
+        target_emails: Optional[List[str]] = None,
+        company_id: Optional[int] = None,
+        channel: NotificationChannel = NotificationChannel.BOTH,
+        template_context: Optional[Dict[str, Any]] = None,
+        override_title: Optional[str] = None,
+        override_message: Optional[str] = None,
+        override_destination_url: Optional[str] = None,
+        override_is_urgent: Optional[bool] = None
+    ) -> List[Notification]:
+        """
+        Send notifications using database templates
+        
+        Args:
+            notification_type: Type of notification
+            target_roles: List of roles to target
+            target_users: Specific users to target
+            target_emails: Specific emails to target
+            company_id: Company context for admin users
+            channel: Delivery channel(s)
+            template_context: Context variables for template rendering
+            override_title: Override template title
+            override_message: Override template message
+            override_destination_url: Override template destination URL
+            override_is_urgent: Override template urgency setting
+            
+        Returns:
+            List of created Notification objects
+        """
+        from apps.ws_channel.models import NotificationTemplate
+        
+        # Collect all target users
+        all_target_users = set()
+        
+        # Add users by roles
+        if target_roles:
+            role_users = NotificationService.get_users_by_roles(target_roles, company_id)
+            all_target_users.update(role_users)
+        
+        # Add specific users
+        if target_users:
+            all_target_users.update(target_users)
+        
+        # Add users by email
+        if target_emails:
+            email_users = TalentCloudUser.objects.filter(email__in=target_emails, is_active=True)
+            all_target_users.update(email_users)
+        
+        target_users_list = list(all_target_users)
+        
+        if not target_users_list:
+            logger.warning("No target users found for notification")
+            return []
+        
+        notifications = []
+        template_context = template_context or {}
+        
+        try:
+            with transaction.atomic():
+                for user in target_users_list:
+                    # Enhance context with user data
+                    enhanced_context = {
+                        'user_name': user.get_full_name() or user.email,
+                        'user_email': user.email,
+                        'platform_name': 'TalentCloud',
+                        **template_context
+                    }
+                    
+                    # Get templates for this notification type
+                    websocket_template = None
+                    email_template = None
+                    
+                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
+                        websocket_template = NotificationTemplate.get_template(
+                            notification_type, NotificationChannel.WEBSOCKET
+                        )
+                    
+                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
+                        email_template = NotificationTemplate.get_template(
+                            notification_type, NotificationChannel.EMAIL
+                        )
+                    
+                    # Determine title, message, and destination URL
+                    if websocket_template:
+                        title = override_title or websocket_template.render_title(enhanced_context)
+                        message = override_message or websocket_template.render_message(enhanced_context)
+                        destination_url = override_destination_url or websocket_template.render_destination_url(enhanced_context)
+                        is_urgent = override_is_urgent if override_is_urgent is not None else websocket_template.is_urgent_by_default
+                    elif email_template:
+                        title = override_title or email_template.render_title(enhanced_context)
+                        message = override_message or email_template.render_message(enhanced_context)
+                        destination_url = override_destination_url or email_template.render_destination_url(enhanced_context)
+                        is_urgent = override_is_urgent if override_is_urgent is not None else email_template.is_urgent_by_default
+                    else:
+                        # Fallback if no templates found
+                        title = override_title or f"{notification_type.name} Notification"
+                        message = override_message or "You have a new notification."
+                        destination_url = override_destination_url
+                        is_urgent = override_is_urgent or False
+                    
+                    # Create notification
+                    notification = Notification.objects.create(
+                        user=user,
+                        title=title,
+                        message=message,
+                        destination_url=destination_url,
+                        notification_type=notification_type.value
+                    )
+                    notifications.append(notification)
+                    
+                    # Send via appropriate channels
+                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
+                        NotificationService._send_websocket_notification(user, notification)
+                    
+                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
+                        # Use email template if available
+                        email_template_name = email_template.email_template_name if email_template else None
+                        email_subject = email_template.render_subject(enhanced_context) if email_template else title
+                        
+                        NotificationService._send_email_notification_with_template(
+                            user, 
+                            notification,
+                            email_template_name,
+                            email_subject,
+                            enhanced_context,
+                            is_urgent
+                        )
+                    
+                    if channel == NotificationChannel.PUSH:
+                        NotificationService._send_push_notification(user, notification, is_urgent)
+                        
+            logger.info(f"Sent {len(notifications)} templated notifications: {title}")
+            
+        except Exception as e:
+            logger.error(f"Error sending templated notifications: {str(e)}")
+            
+        return notifications
 
     # Utility methods for common notification operations
     @staticmethod
@@ -308,72 +494,87 @@ class NotificationService:
 # Convenience methods for common notification scenarios
 class NotificationHelpers:
     """
-    Helper methods for sending common types of notifications
+    Helper methods for sending common types of notifications using database templates
     """
     
     @staticmethod
     def notify_job_posted(job, company):
         """Notify admins when a new job is posted"""
-        return NotificationService.send_notification(
-            title=f"New Job Posted: {job.title}",
-            message=f"Company {company.company_name} has posted a new job: {job.title}",
+        context = {
+            'job_title': job.title,
+            'job_id': job.id,
+            'company_name': company.company_name,
+            'job_description': getattr(job, 'description', ''),
+        }
+        
+        return NotificationService.send_notification_with_template(
             notification_type=NotificationType.ADMIN_JOB_POSTING,
             target_roles=[NotificationTarget.ADMIN, NotificationTarget.SUPERADMIN],
-            destination_url=f"/admin/jobs/{job.id}",
-            email_context={'job': job, 'company': company}
+            template_context=context
         )
     
     @staticmethod
     def notify_job_application(job, applicant, company):
         """Notify company admins when someone applies for a job"""
-        return NotificationService.send_notification(
-            title=f"New Application for {job.title}",
-            message=f"{applicant.get_full_name()} has applied for the position: {job.title}",
+        context = {
+            'job_title': job.title,
+            'job_id': job.id,
+            'applicant_name': applicant.get_full_name(),
+            'applicant_email': applicant.email,
+            'company_name': company.company_name,
+        }
+        
+        return NotificationService.send_notification_with_template(
             notification_type=NotificationType.JOB_APPLIED,
             target_roles=[NotificationTarget.ADMIN],
             company_id=company.id,
-            destination_url=f"/company/applications/{job.id}",
-            email_context={'job': job, 'applicant': applicant, 'company': company}
+            template_context=context
         )
     
     @staticmethod
     def notify_company_registration(company):
         """Notify superadmins when a new company registers"""
-        return NotificationService.send_notification(
-            title=f"New Company Registration: {company.company_name}",
-            message=f"A new company '{company.company_name}' has registered and is pending approval.",
+        context = {
+            'company_name': company.company_name,
+            'company_id': company.id,
+        }
+        
+        return NotificationService.send_notification_with_template(
             notification_type=NotificationType.ADMIN_COMPANY_REGISTRATION,
             target_roles=[NotificationTarget.SUPERADMIN],
-            destination_url=f"/admin/companies/{company.id}",
-            email_context={'company': company}
+            template_context=context
         )
     
     @staticmethod
     def notify_company_approved(company, admin_users):
         """Notify company admins when their company is approved"""
-        return NotificationService.send_notification(
-            title="Company Registration Approved",
-            message=f"Congratulations! Your company '{company.company_name}' has been approved and is now active on TalentCloud.",
+        context = {
+            'company_name': company.company_name,
+            'company_id': company.id,
+        }
+        
+        return NotificationService.send_notification_with_template(
             notification_type=NotificationType.COMPANY_APPROVED,
             target_users=admin_users,
-            destination_url="/company/dashboard",
-            email_context={'company': company}
+            template_context=context
         )
     
     @staticmethod
     def notify_system_maintenance(title, message, affected_users=None, is_urgent=False):
         """Send system maintenance notifications"""
-        target_roles = [NotificationTarget.ALL_ROLES] if not affected_users else None
+        context = {
+            'maintenance_info': message,
+        }
         
-        return NotificationService.send_notification(
-            title=title,
-            message=message,
+        return NotificationService.send_notification_with_template(
             notification_type=NotificationType.ADMIN_MAINTENANCE,
-            target_roles=target_roles,
+            target_roles=[NotificationTarget.ALL_ROLES] if not affected_users else None,
             target_users=affected_users,
             channel=NotificationChannel.BOTH,
-            is_urgent=is_urgent,
-            email_context={'maintenance_info': message}
+            template_context=context,
+            override_title=title,
+            override_message=message,
+            override_is_urgent=is_urgent
         )
 
 
