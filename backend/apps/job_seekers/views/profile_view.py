@@ -94,30 +94,6 @@ class JobSeekerSkillAPIView(APIView):
                response['message'], response['data']
           ), status=status.HTTP_200_OK)
 
-# region Profile Section Two
-
-# @extend_schema(tags=["Job Seeker Profile"])
-# class JobSeekerSocialLinkAPIView(APIView):
-#      authentication_classes = [TokenAuthentication]
-#      permission_classes = [TalentCloudUserPermission]
-
-#      def get(self, request):
-#           if not request.user or not request.user.is_authenticated:
-#                raise ValidationError("User not authenticated")
-
-#           response = JobSeekerService.get_job_seeker_social_link(request.user)
-               
-#           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
-
-#      def post(self, request):
-#           """Update job seeker's social links"""
-#           if not request.user or not request.user.is_authenticated:
-#                raise ValidationError("User not authenticated")
-
-#           response = JobSeekerService.perform_job_seeker_social_link_update(request.user, request.data)
-
-#           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
-
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerSettingAPIView(APIView):
      authentication_classes = [TokenAuthentication]

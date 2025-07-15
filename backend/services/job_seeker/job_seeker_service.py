@@ -481,15 +481,82 @@ class JobSeekerService:
                          user=jobseeker
                     )
 
-               # Set ManyToManyField for skills
-               skill_id_list = data.get("skill_list", [])
-               jobseeker_occupation.skills.add(*skill_id_list)
+               # Handle skills - can be either IDs or new skill names
+               skill_data = data.get("skill_list", [])
+               skill_ids = []
+               created_skills = []
+
+               for skill_item in skill_data:
+                    if isinstance(skill_item, dict):
+                         # If it's a dict, check for 'id' or 'title'
+                         if 'id' in skill_item and skill_item['id']:
+                              # Existing skill by ID
+                              try:
+                                   skill = JobSeekerSkill.objects.get(id=skill_item['id'])
+                                   skill_ids.append(skill.id)
+                              except JobSeekerSkill.DoesNotExist:
+                                   raise ValidationError(f"Skill with ID {skill_item['id']} does not exist")
+                         elif 'title' in skill_item and skill_item['title']:
+                              # New skill by title
+                              skill_title = skill_item['title'].strip()
+                              if skill_title:
+                                   # Check if skill already exists (case-insensitive)
+                                   existing_skill = JobSeekerSkill.objects.filter(
+                                        title__iexact=skill_title
+                                   ).first()
+                                   
+                                   if existing_skill:
+                                        skill_ids.append(existing_skill.id)
+                                   else:
+                                        # Create new skill
+                                        new_skill = JobSeekerSkill.objects.create(title=skill_title)
+                                        skill_ids.append(new_skill.id)
+                                        created_skills.append({
+                                             'id': new_skill.id,
+                                             'title': new_skill.title
+                                        })
+                         else:
+                              raise ValidationError("Each skill must have either 'id' or 'title'")
+                    elif isinstance(skill_item, (int, str)):
+                         # If it's a simple ID (backward compatibility)
+                         try:
+                              skill_id = int(skill_item)
+                              skill = JobSeekerSkill.objects.get(id=skill_id)
+                              skill_ids.append(skill.id)
+                         except (ValueError, JobSeekerSkill.DoesNotExist):
+                              # If it's not a valid ID, treat it as a title
+                              skill_title = str(skill_item).strip()
+                              if skill_title:
+                                   existing_skill = JobSeekerSkill.objects.filter(
+                                        title__iexact=skill_title
+                                   ).first()
+                                   
+                                   if existing_skill:
+                                        skill_ids.append(existing_skill.id)
+                                   else:
+                                        new_skill = JobSeekerSkill.objects.create(title=skill_title)
+                                        skill_ids.append(new_skill.id)
+                                        created_skills.append({
+                                             'id': new_skill.id,
+                                             'title': new_skill.title
+                                        })
+                    else:
+                         raise ValidationError("Invalid skill data format")
+
+               # Clear existing skills and set new ones
+               jobseeker_occupation.skills.clear()
+               if skill_ids:
+                    jobseeker_occupation.skills.add(*skill_ids)
 
                jobseeker_occupation.save()
 
           return {
                'message': "Successfully updated job seeker skills.",
-               'data': skill_id_list
+               'data': {
+                    'skill_ids': skill_ids,
+                    'created_skills': created_skills,
+                    'total_skills': len(skill_ids)
+               }
           }
      
      @staticmethod
