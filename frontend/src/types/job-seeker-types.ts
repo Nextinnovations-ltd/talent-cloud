@@ -5,6 +5,7 @@ export type UserProfile = {
   email: string;
   tagline: string;
   role: number;
+  specializations:number,
   experience_level: number;
   experience_years: number;
   country_code: string;

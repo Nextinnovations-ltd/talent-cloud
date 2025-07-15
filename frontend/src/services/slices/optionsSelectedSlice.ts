@@ -1,15 +1,23 @@
-import { CityListResponse, CountryListResponse } from "@/types/options-selected-sice-types";
+import {  CityListsOptionsResponse, CountryListOptionsResponse, RolesListsOptionsResopnse, SpecializationsListsOptionsResponse } from "@/types/options-selected-sice-types";
 import apiSlice from "../api/apiSlice";
-
 
 
 export const extendedSelectedOptionsSlice = apiSlice.injectEndpoints({
     endpoints:(builder)=>({
-        getCountryListsOptions: builder.query<CountryListResponse,void>({
+        getCountryListsOptions: builder.query<CountryListOptionsResponse,void>({
             query:()=>"/location/country-list/"
         }),
-        getCityListsOptions:builder.query<CityListResponse,{id:number | string}>({
+        getCityListsOptions:builder.query<CityListsOptionsResponse,{id:number | string}>({
             query:(id)=> `/location/city-list/${id.id}/`
+        }),
+        getSpecializationsOptions:builder.query<SpecializationsListsOptionsResponse,void>({
+            query:()=>"/specializations/"
+        }),
+        getSpecializationRoleOptions:builder.query<RolesListsOptionsResopnse,void>({
+            query:()=>"/roles/"
+        }),
+        getRolesBySpecializationsOptions:builder.query<RolesListsOptionsResopnse,{id:number | string}>({
+            query:(id)=>`/roles/by-specialization/${id?.id}/`
         })
     })
 });
@@ -18,4 +26,7 @@ export const extendedSelectedOptionsSlice = apiSlice.injectEndpoints({
 export const {
     useGetCountryListsOptionsQuery,
     useGetCityListsOptionsQuery,
+    useGetSpecializationsOptionsQuery,
+    useGetSpecializationRoleOptionsQuery,
+    useGetRolesBySpecializationsOptionsQuery
 }  = extendedSelectedOptionsSlice;

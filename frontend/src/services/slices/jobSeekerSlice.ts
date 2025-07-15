@@ -50,7 +50,7 @@ interface LabelType {
   level: string;
 }
 
-interface RoleType {
+interface OptionsItemType {
   id: number;
   name: string;
 }
@@ -58,7 +58,7 @@ interface RoleType {
 
 
 
-interface UseJobSeekerProfileResponse {
+export interface UseJobSeekerProfileResponse {
   status: boolean;
   message: string;
   data: {
@@ -67,7 +67,8 @@ interface UseJobSeekerProfileResponse {
     username: string;
     email: string;
     tagline: string;
-    role: RoleType;
+    role: OptionsItemType;
+    specialization:OptionsItemType;
     experience_level: LabelType;
     experience_years: number;
     country_code: string;
@@ -212,6 +213,18 @@ export type JobSeekerSkillsOptionsResponse = {
     skills: Skills[];
   };
 };
+
+interface getVideoResponse {
+  status:boolean;
+  messages:string;
+  data: {
+    video_url:string
+  }
+}
+
+export interface VideoIntroductionCredentials {
+  video_url:string
+}
 
 
 export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
@@ -379,6 +392,17 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['selectprojectsList']
     }),
+    getVideoIntroduction:builder.query<getVideoResponse , void>({
+      query: () => '/jobseeker/video-introduction/',
+    }),
+    addVideoIndroduction:builder.mutation<getVideoResponse,VideoIntroductionCredentials>({
+      query: (credentials) => ({
+        url: "/jobseeker/video-introduction/",
+        method: "POST",
+        body: JSON.stringify(credentials),
+      }),
+    })
+
 
   }),
 });
@@ -412,4 +436,5 @@ export const {
   useDeleteSelectedProjectsMutation,
   useUpdateSelectedProjectsMutation,
   useGetJobSeekerSkillsOptionsQuery,
+  useAddVideoIndroductionMutation
 } = extendedJobSeekerSlice;

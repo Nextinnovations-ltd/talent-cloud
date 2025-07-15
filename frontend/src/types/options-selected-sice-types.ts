@@ -3,7 +3,7 @@ export type OptionsItems = {
     name: string;
   };
   
-  export type CountryListResponse = {
+  export type CountryListOptionsResponse = {
     status: boolean;
     message: string;
     data: OptionsItems[];
@@ -11,8 +11,21 @@ export type OptionsItems = {
 
   
   
-export type CityListResponse = {
+export type CityListsOptionsResponse = {
   status:boolean;
   message:string;
   data:OptionsItems[]
 }
+
+export type SpecializationsListsOptionsResponse = {
+  status:boolean;
+  message:string;
+  data:OptionsItems[]
+}
+
+export type RolesListsOptionsResopnse = {
+  status:boolean;
+  message:string;
+  data:OptionsItems[]
+}
+

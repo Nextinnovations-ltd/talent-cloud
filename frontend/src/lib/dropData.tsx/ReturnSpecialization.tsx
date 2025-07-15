@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { useGetUserSpecializationQuery } from "@/services/slices/onBoardingSlice";
+import { useGetSpecializationsOptionsQuery } from "@/services/slices/optionsSelectedSlice";
 
 export const useFormattedSpecialization = () => {
-  const { data, isLoading } = useGetUserSpecializationQuery();
+  const { data, isLoading } = useGetSpecializationsOptionsQuery();
 
   const formattedData = useMemo(() => {
     if (!data?.data) return []; // Ensure data exists before accessing .data

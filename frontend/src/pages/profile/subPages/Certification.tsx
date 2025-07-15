@@ -75,10 +75,6 @@ export const Certification = () => {
     },
   });
 
-  useEffect(()=>{
-  console.log(form.getValues())
-  },[form])
-
   useEffect(() => {
     if (id && CertificationData) {
       form.reset({

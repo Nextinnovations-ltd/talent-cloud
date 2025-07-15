@@ -26,7 +26,7 @@ interface SelectFieldProps {
   showRequiredLabel?: boolean;
   isDisabled?: boolean;
   error?: boolean;
-  data?: { value: string; label: string }[]; // Explicitly defining data type
+  data?: { value: number; label: string }[]; // Explicitly defining data type
   labelName?: string;
   description?: string;
 }
@@ -66,14 +66,14 @@ export const SelectField: React.FC<SelectFieldProps> = ({
               <div>
                 <Select
                   onValueChange={field.onChange}
-                  value={field.value}
+                  value={field.value?.toString()}
                   disabled={isDisabled}
                 >
                   <SelectTrigger
                     {...field}
                     className={cn(
                       height,
-                      field.value === undefined?
+                      field.value === ""?
                       "text-slate-300" : "text-black",
                       error &&
                       "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
@@ -83,7 +83,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                   </SelectTrigger>
                   <SelectContent className="h-[200px] p-2">
                     {data.map((item) => (
-                      <SelectItem value={item.value}>{item.label}</SelectItem>
+                      <SelectItem value={item.value?.toString()}>{item.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

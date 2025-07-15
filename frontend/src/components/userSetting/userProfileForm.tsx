@@ -12,6 +12,9 @@ import { Switch } from "../ui/switch";
 import { socialLinkFields } from "@/lib/formData.tsx/UserProfile";
 import { useFormattedCountryList } from "@/lib/dropData.tsx/ReturnCountryListOptions";
 import { useFormattedCityList } from "@/lib/dropData.tsx/ReturnCityListOptions";
+import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/ReturnRoleOptionsBySpecialization";
+import { useEffect } from "react";
+
 
 export const UserProfileForm = ({
   form,
@@ -26,19 +29,19 @@ export const UserProfileForm = ({
 }) => {
 
   const selectedCountryId = form.watch("country");
-  const { data: FORMATTEDDATA, isLoading: FORMATTEDDATALoading } = useFormattedSpecialization();
+  const selectedSpecializationId = form.watch("specializations");
+  const { data: SPECIALIZATIONDATA, isLoading: FORMATTEDDATALoading } = useFormattedSpecialization();
   const { data: EXPERIENCEDATA, isLoading: EXPERIENCEDATALoading } = useFormattedExperience();
   const { data:COUNTRYDATA, isLoading:COUNTRYLoading } = useFormattedCountryList();
   const { data: CITYDATA, isLoading: CITYLoading } = useFormattedCityList(selectedCountryId);
+  const { data: ROLEDATA, isLoading: ROLELoading } = useFormattedRolesBySpecializationList(selectedSpecializationId);
 
-
-  console.log(CITYDATA)
-
+ 
 
   const fieldHeight = "h-12";
   const fieldWidth = "max-w-[672px]";
 
-  const loading = FORMATTEDDATALoading || EXPERIENCEDATALoading ||COUNTRYLoading 
+  const loading = FORMATTEDDATALoading || EXPERIENCEDATALoading ||COUNTRYLoading || ROLELoading
 
   if (loading) {
     return (
@@ -98,9 +101,6 @@ export const UserProfileForm = ({
         </label>
       </div>
 
-
-
-
       <InputField
         fieldName="tagline"
         placeholder={'eg. Frontend Developer Lead at Google'}
@@ -120,13 +120,25 @@ export const UserProfileForm = ({
       <Separator />
 
       <SelectField
-        name={"role"}
-        labelName={"Specialization Role"}
+        name={"specializations"}
+        labelName={"Specializations"}
         error={form.formState.errors.role}
         isRequired={true}
         showRequiredLabel={true}
+        placeholder={"eg. Web / Animation"}
+        data={SPECIALIZATIONDATA}
+        width=" max-w-[672px] mt-[24px]"
+        description="System use only for job filtering and will not be visible to users."
+      />
+
+      <SelectField
+        name={"role"}
+        labelName={"Role"}
+        error={form.formState.errors.role}
+        isRequired={false}
+        showRequiredLabel={true}
         placeholder={"eg. Development & IT/ Frontend Developer"}
-        data={FORMATTEDDATA}
+        data={ROLEDATA}
         width=" max-w-[672px] mt-[24px]"
         description="System use only for job filtering and will not be visible to users."
       />

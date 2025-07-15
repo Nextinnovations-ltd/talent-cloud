@@ -43,6 +43,7 @@ export const ProfileUser = () => {
       username: profileData?.data?.username || "",
       tagline: profileData?.data?.tagline || "",
       role: profileData?.data?.role?.id || 0,
+      specializations:profileData?.data?.specialization?.id || 0,
       experience_level: profileData?.data?.experience_level?.id || 0,
       experience_years: profileData?.data?.experience_years || 0,
       bio: profileData?.data?.bio || "",
@@ -73,6 +74,7 @@ export const ProfileUser = () => {
         username: profileData.data?.username || "",
         tagline: profileData.data?.tagline || "",
         role: profileData.data?.role?.id || 0,
+        specializations:profileData?.data?.specialization?.id || 0,
         experience_level: profileData.data?.experience_level?.id || 0,
         experience_years: profileData.data?.experience_years || 0,
         bio: profileData.data?.bio || "",
@@ -98,7 +100,7 @@ export const ProfileUser = () => {
   const onSubmitHandler = async (values: UserProfile) => {
     try {
       // Destructure to remove flat address fields
-      const { country, city, address, ...rest } = values;
+      const { country, city, address,role,specializations, ...rest } = values;
       // Convert date_of_birth to YYYY-MM-DD format if it exists
       const formattedValues = {
         ...rest,
@@ -110,6 +112,9 @@ export const ProfileUser = () => {
           city_id: city,
           address: address,
         },
+        role_id:role,
+        specialization_id:specializations
+
       };
 
       const response = await executeApiCall(formattedValues);
@@ -122,6 +127,7 @@ export const ProfileUser = () => {
           username: response.data.data?.username || "",
           tagline: response.data.data?.tagline || "",
           role: response.data.data?.role?.id || 0,
+          specializations:profileData?.data?.specialization?.id || 0,
           experience_level: response.data.data?.experience_level?.id || 0,
           experience_years: response.data.data?.experience_years || 0,
           bio: response.data.data?.bio || "",
