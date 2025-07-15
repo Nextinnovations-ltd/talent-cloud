@@ -63,19 +63,21 @@ class NotificationListAPIView(APIView):
         }
     )
     def get(self, request):
-        """Get notifications for authenticated user"""
+        """Get in-app notifications for authenticated user"""
         limit = int(request.query_params.get('limit', 10))
         offset = int(request.query_params.get('offset', 0))
         unread_only = request.query_params.get('unread_only', 'false').lower() == 'true'
         
-        notifications = NotificationService.get_user_notifications(
+        # Only get in-app (websocket) notifications for the user feed
+        notifications = NotificationService.get_user_in_app_notifications(
             user_id=request.user.id,
             limit=limit,
             offset=offset,
             unread_only=unread_only
         )
         
-        unread_count = NotificationService.get_unread_count(request.user.id)
+        # Only count unread in-app notifications
+        unread_count = NotificationService.get_unread_in_app_count(request.user.id)
         
         serializer = NotificationListSerializer(notifications, many=True)
         
@@ -272,6 +274,104 @@ class NotificationUnreadCountAPIView(APIView):
             CustomResponse.success(
                 "Unread count retrieved successfully.",
                 {"unread_count": unread_count}
+            ),
+            status=status.HTTP_200_OK
+        )
+
+
+@extend_schema(tags=["Notifications"])
+class NotificationByChannelAPIView(APIView):
+    """
+    Get notifications filtered by specific channel
+    """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [TalentCloudUserPermission]
+    
+    @extend_schema(
+        summary="Get notifications by channel",
+        description="Retrieve notifications for the authenticated user filtered by channel",
+        parameters=[
+            OpenApiParameter(
+                name='channel',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description='Channel type: email, websocket, or both'
+            ),
+            OpenApiParameter(
+                name='limit',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description='Number of notifications to return (default: 20)'
+            ),
+            OpenApiParameter(
+                name='offset',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description='Number of notifications to skip (default: 0)'
+            ),
+            OpenApiParameter(
+                name='unread_only',
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description='Return only unread notifications (default: false)'
+            )
+        ],
+        responses={
+            200: NotificationListSerializer(many=True),
+            400: "Invalid channel",
+            401: "Unauthorized"
+        }
+    )
+    def get(self, request, channel):
+        """Get notifications for authenticated user filtered by channel"""
+        from utils.notification.types import NotificationChannel
+        
+        # Validate channel
+        valid_channels = [c.value for c in NotificationChannel]
+        if channel not in valid_channels:
+            return Response(
+                CustomResponse.error(
+                    f"Invalid channel. Valid channels are: {', '.join(valid_channels)}"
+                ),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        limit = int(request.query_params.get('limit', 10))
+        offset = int(request.query_params.get('offset', 0))
+        unread_only = request.query_params.get('unread_only', 'false').lower() == 'true'
+        
+        # Get notifications for the specific channel
+        if channel == 'both':
+            # If 'both' is requested, get all notifications
+            notifications = NotificationService.get_user_notifications(
+                user_id=request.user.id,
+                limit=limit,
+                offset=offset,
+                unread_only=unread_only
+            )
+            unread_count = NotificationService.get_unread_count(request.user.id)
+        else:
+            # Get notifications for specific channel
+            channel_enum = NotificationChannel(channel)
+            notifications = NotificationService.get_user_notifications(
+                user_id=request.user.id,
+                limit=limit,
+                offset=offset,
+                unread_only=unread_only,
+                channel=channel_enum
+            )
+            unread_count = NotificationService.get_unread_count(request.user.id, channel_enum)
+        
+        serializer = NotificationListSerializer(notifications, many=True)
+        
+        return Response(
+            CustomResponse.success(
+                f"Notifications for {channel} channel retrieved successfully.",
+                {
+                    'notifications': serializer.data,
+                    'unread_count': unread_count,
+                    'channel': channel
+                }
             ),
             status=status.HTTP_200_OK
         )

@@ -137,34 +137,41 @@ class NotificationService:
         
         try:
             with transaction.atomic():
-                # Create in-app notifications
+                # Determine which channels to use
+                channels_to_use = []
+                if channel == NotificationChannel.BOTH:
+                    channels_to_use = [NotificationChannel.WEBSOCKET, NotificationChannel.EMAIL]
+                else:
+                    channels_to_use = [channel]
+                
+                # Create notifications for each channel
                 for user in target_users_list:
-                    notification = Notification.objects.create(
-                        user=user,
-                        title=title,
-                        message=message,
-                        destination_url=destination_url,
-                        notification_type=notification_type.value
-                    )
-                    notifications.append(notification)
-                    
-                    # Send via appropriate channels
-                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
-                        NotificationService._send_websocket_notification(user, notification)
-                    
-                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
-                        NotificationService._send_email_notification(
-                            user, 
-                            notification, 
-                            email_template, 
-                            email_context,
-                            is_urgent
+                    for notification_channel in channels_to_use:
+                        notification = Notification.objects.create(
+                            user=user,
+                            title=title,
+                            message=message,
+                            destination_url=destination_url,
+                            notification_type=notification_type.value,
+                            channel=notification_channel.value
                         )
-                    
-                    if channel == NotificationChannel.PUSH:
-                        NotificationService._send_push_notification(user, notification, is_urgent)
+                        notifications.append(notification)
                         
-            logger.info(f"Sent {len(notifications)} notifications: {title}")
+                        # Send via the specific channel
+                        if notification_channel == NotificationChannel.WEBSOCKET:
+                            NotificationService._send_websocket_notification(user, notification)
+                        elif notification_channel == NotificationChannel.EMAIL:
+                            NotificationService._send_email_notification(
+                                user, 
+                                notification, 
+                                email_template, 
+                                email_context,
+                                is_urgent
+                            )
+                        elif notification_channel == NotificationChannel.PUSH:
+                            NotificationService._send_push_notification(user, notification, is_urgent)
+                        
+            logger.info(f"Sent {len(notifications)} notifications across {len(channels_to_use)} channels: {title}")
             
         except Exception as e:
             logger.error(f"Error sending notifications: {str(e)}")
@@ -368,6 +375,13 @@ class NotificationService:
         
         try:
             with transaction.atomic():
+                # Determine which channels to use
+                channels_to_use = []
+                if channel == NotificationChannel.BOTH:
+                    channels_to_use = [NotificationChannel.WEBSOCKET, NotificationChannel.EMAIL]
+                else:
+                    channels_to_use = [channel]
+                
                 for user in target_users_list:
                     # Enhance context with user data
                     enhanced_context = {
@@ -377,70 +391,56 @@ class NotificationService:
                         **template_context
                     }
                     
-                    # Get templates for this notification type
-                    websocket_template = None
-                    email_template = None
-                    
-                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
-                        websocket_template = NotificationTemplate.get_template(
-                            notification_type, NotificationChannel.WEBSOCKET
+                    for notification_channel in channels_to_use:
+                        # Get template for this channel
+                        template = NotificationTemplate.get_template(
+                            notification_type, notification_channel
                         )
-                    
-                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
-                        email_template = NotificationTemplate.get_template(
-                            notification_type, NotificationChannel.EMAIL
-                        )
-                    
-                    # Determine title, message, and destination URL
-                    if websocket_template:
-                        title = override_title or websocket_template.render_title(enhanced_context)
-                        message = override_message or websocket_template.render_message(enhanced_context)
-                        destination_url = override_destination_url or websocket_template.render_destination_url(enhanced_context)
-                        is_urgent = override_is_urgent if override_is_urgent is not None else websocket_template.is_urgent_by_default
-                    elif email_template:
-                        title = override_title or email_template.render_title(enhanced_context)
-                        message = override_message or email_template.render_message(enhanced_context)
-                        destination_url = override_destination_url or email_template.render_destination_url(enhanced_context)
-                        is_urgent = override_is_urgent if override_is_urgent is not None else email_template.is_urgent_by_default
-                    else:
-                        # Fallback if no templates found
-                        title = override_title or f"{notification_type.name} Notification"
-                        message = override_message or "You have a new notification."
-                        destination_url = override_destination_url
-                        is_urgent = override_is_urgent or False
-                    
-                    # Create notification
-                    notification = Notification.objects.create(
-                        user=user,
-                        title=title,
-                        message=message,
-                        destination_url=destination_url,
-                        notification_type=notification_type.value
-                    )
-                    notifications.append(notification)
-                    
-                    # Send via appropriate channels
-                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
-                        NotificationService._send_websocket_notification(user, notification)
-                    
-                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
-                        # Use email template if available
-                        email_template_name = email_template.email_template_name if email_template else None
-                        email_subject = email_template.render_subject(enhanced_context) if email_template else title
                         
-                        NotificationService._send_email_notification_with_template(
-                            user, 
-                            notification,
-                            email_template_name,
-                            email_subject,
-                            enhanced_context,
-                            is_urgent
-                        )
-                    
-                    if channel == NotificationChannel.PUSH:
-                        NotificationService._send_push_notification(user, notification, is_urgent)
+                        # Determine title, message, and destination URL
+                        if template:
+                            title = override_title or template.render_title(enhanced_context)
+                            message = override_message or template.render_message(enhanced_context)
+                            destination_url = override_destination_url or template.render_destination_url(enhanced_context)
+                            is_urgent = override_is_urgent if override_is_urgent is not None else template.is_urgent_by_default
+                        else:
+                            # Fallback if no template found
+                            title = override_title or f"{notification_type.name} Notification"
+                            message = override_message or "You have a new notification."
+                            destination_url = override_destination_url
+                            is_urgent = override_is_urgent or False
                         
-            logger.info(f"Sent {len(notifications)} templated notifications: {title}")
+                        # Create notification for this specific channel
+                        notification = Notification.objects.create(
+                            user=user,
+                            title=title,
+                            message=message,
+                            destination_url=destination_url,
+                            notification_type=notification_type.value,
+                            channel=notification_channel.value
+                        )
+                        notifications.append(notification)
+                        
+                        # Send via the specific channel
+                        if notification_channel == NotificationChannel.WEBSOCKET:
+                            NotificationService._send_websocket_notification(user, notification)
+                        elif notification_channel == NotificationChannel.EMAIL:
+                            # Use email template if available
+                            email_template_name = template.email_template_name if template else None
+                            email_subject = template.render_subject(enhanced_context) if template else title
+                            
+                            NotificationService._send_email_notification_with_template(
+                                user, 
+                                notification,
+                                email_template_name,
+                                email_subject,
+                                enhanced_context,
+                                is_urgent
+                            )
+                        elif notification_channel == NotificationChannel.PUSH:
+                            NotificationService._send_push_notification(user, notification, is_urgent)
+                        
+            logger.info(f"Sent {len(notifications)} templated notifications across {len(channels_to_use)} channels: {title}")
             
         except Exception as e:
             logger.error(f"Error sending templated notifications: {str(e)}")
@@ -466,9 +466,17 @@ class NotificationService:
         return Notification.objects.filter(user_id=user_id, is_read=False).update(is_read=True)
     
     @staticmethod
-    def get_unread_count(user_id: int) -> int:
-        """Get count of unread notifications for a user"""
-        return Notification.objects.filter(user_id=user_id, is_read=False).count()
+    def get_unread_count(user_id: int, channel: Optional[NotificationChannel] = None) -> int:
+        """Get count of unread notifications for a user, optionally filtered by channel"""
+        queryset = Notification.objects.filter(user_id=user_id, is_read=False)
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        return queryset.count()
+    
+    @staticmethod
+    def get_unread_in_app_count(user_id: int) -> int:
+        """Get count of unread in-app (websocket) notifications for a user"""
+        return NotificationService.get_unread_count(user_id, NotificationChannel.WEBSOCKET)
     
     @staticmethod
     def delete_notification(notification_id: int, user_id: int) -> bool:
@@ -481,14 +489,39 @@ class NotificationService:
             return False
     
     @staticmethod
-    def get_user_notifications(user_id: int, limit: int = 20, offset: int = 0, unread_only: bool = False):
-        """Get notifications for a user with pagination"""
+    def get_user_notifications(
+        user_id: int, 
+        limit: int = 20, 
+        offset: int = 0, 
+        unread_only: bool = False,
+        channel: Optional[NotificationChannel] = None
+    ):
+        """Get notifications for a user with pagination, optionally filtered by channel"""
         queryset = Notification.objects.filter(user_id=user_id)
         
         if unread_only:
             queryset = queryset.filter(is_read=False)
         
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        
         return queryset.order_by('-created_at')[offset:offset+limit]
+    
+    @staticmethod
+    def get_user_in_app_notifications(
+        user_id: int, 
+        limit: int = 20, 
+        offset: int = 0, 
+        unread_only: bool = False
+    ):
+        """Get in-app (websocket) notifications for a user - this is what should be shown in the user feed"""
+        return NotificationService.get_user_notifications(
+            user_id=user_id,
+            limit=limit,
+            offset=offset,
+            unread_only=unread_only,
+            channel=NotificationChannel.WEBSOCKET
+        )
 
 
 # Convenience methods for common notification scenarios

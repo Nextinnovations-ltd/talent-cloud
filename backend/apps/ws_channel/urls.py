@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.ws_channel.views.notification_views import TestAPIView
+from apps.ws_channel.views.notification_views import TestAPIView, NotificationByChannelAPIView
 from .views import ChatRoomInfoAPIView, NotificationListAPIView, UserChatListAPIView
 from .admin_views import (
     AdminNotificationAPIView, 
@@ -9,6 +9,7 @@ from .admin_views import (
 
 urlpatterns = [
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
+    path('notifications/channel/<str:channel>/', NotificationByChannelAPIView.as_view(), name='notification-list-by-channel'),
     path('chat-room-list/', UserChatListAPIView.as_view(), name='user-chat-room-list'),
     path('chat-room-info/<int:receiver_id>/', ChatRoomInfoAPIView.as_view(), name='chat-room'),
     

@@ -13,11 +13,23 @@ class Notification(TimeStampModel):
         choices=[(tag.value, tag.name) for tag in NotificationType],
         default=NotificationType.GENERIC.value
     )
+    channel = models.CharField(
+        max_length=20,
+        choices=[(channel.value, channel.name) for channel in NotificationChannel],
+        default=NotificationChannel.WEBSOCKET.value,
+        help_text="The channel through which this notification was/will be delivered"
+    )
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'channel', 'is_read']),
+            models.Index(fields=['user', 'notification_type', 'channel']),
+        ]
+
     def __str__(self):
-        return f"Notification for {self.user.username}: {self.message[:50]}"
+        return f"Notification for {self.user.username} ({self.channel}): {self.message[:50]}"
 
 
 class Chat(TimeStampModel):
