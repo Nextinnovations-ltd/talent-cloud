@@ -1,0 +1,40 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Company Registration Update - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>📋 Company Registration Update</h2>
+
+<p>Hello,</p>
+
+<p>Thank you for your interest in joining {{ platform_name }}. We've reviewed your company registration for <strong>{{ company_name }}</strong> and need some additional information or updates before we can approve your account.</p>
+
+<div class="info-box">
+    <h3>{{ company_name }}</h3>
+    <p><strong>Status:</strong> <span style="color: orange; font-weight: bold;">Requires Review</span></p>
+    {% if rejection_reason %}
+    <p><strong>Reason:</strong> {{ rejection_reason }}</p>
+    {% endif %}
+</div>
+
+{% if rejection_reason %}
+<h4>Additional Information Needed:</h4>
+<p>{{ rejection_reason }}</p>
+{% else %}
+<p>We need to verify some additional details about your company before we can approve your registration.</p>
+{% endif %}
+
+<h4>Next Steps:</h4>
+<ul>
+    <li>Review the information you provided during registration</li>
+    <li>Ensure all company details are accurate and complete</li>
+    <li>Contact our support team if you need assistance</li>
+</ul>
+
+<p>Please contact our support team at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a> for assistance with your registration.</p>
+
+<p>Thank you for your patience as we work to maintain the quality and security of our platform.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

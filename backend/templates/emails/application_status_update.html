@@ -1,0 +1,39 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Application Status Update - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>📬 Application Status Update</h2>
+
+<p>Hello {{ user.first_name|default:"" }},</p>
+
+<p>We have an update regarding your job application:</p>
+
+<div class="info-box">
+    <h3>{{ job_title }}</h3>
+    <p><strong>Company:</strong> {{ company_name }}</p>
+    <p><strong>Application Status:</strong> 
+        <span style="color: {% if status == 'accepted' %}green{% elif status == 'rejected' %}red{% else %}orange{% endif %}; font-weight: bold;">
+            {{ status|title }}
+        </span>
+    </p>
+    <p><strong>Updated on:</strong> {{ application.updated_at|date:"F d, Y at g:i A" }}</p>
+</div>
+
+{% if status == 'accepted' %}
+<p>🎉 Congratulations! Your application has been accepted. The company will be in touch with you soon regarding next steps.</p>
+{% elif status == 'rejected' %}
+<p>Thank you for your interest in this position. While your application was not selected for this role, we encourage you to continue applying for other opportunities on our platform.</p>
+{% else %}
+<p>Your application status has been updated. Please check your application dashboard for more details.</p>
+{% endif %}
+
+<p style="text-align: center;">
+    <a href="{{ application_url }}" class="button">View Application Details</a>
+</p>
+
+<p>Thank you for using {{ platform_name }} for your job search.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

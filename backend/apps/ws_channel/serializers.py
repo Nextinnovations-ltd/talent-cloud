@@ -14,7 +14,7 @@ class NotificationListSerializer(serializers.ModelSerializer):
         model = Notification
         fields = [
             'id', 'title', 'message', 'destination_url', 
-            'notification_type', 'is_read', 'created_at'
+            'notification_type', 'channel', 'is_read', 'created_at'
         ]
 
 class NotificationDetailSerializer(serializers.ModelSerializer):
@@ -25,14 +25,14 @@ class NotificationDetailSerializer(serializers.ModelSerializer):
         model = Notification
         fields = [
             'id', 'user', 'title', 'message', 'destination_url', 
-            'notification_type', 'is_read', 'created_at', 'updated_at'
+            'notification_type', 'channel', 'is_read', 'created_at', 'updated_at'
         ]
 
 class NotificationCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating notifications"""
     class Meta:
         model = Notification
-        fields = ['title', 'message', 'destination_url', 'notification_type']
+        fields = ['title', 'message', 'destination_url', 'notification_type', 'channel']
     
     def create(self, validated_data):
         user = self.context['user']

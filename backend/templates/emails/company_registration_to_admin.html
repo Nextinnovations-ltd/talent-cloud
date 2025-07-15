@@ -1,0 +1,41 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Company Registration - {{ platform_name }} Admin{% endblock %}
+
+{% block content %}
+<h2>🏢 New Company Registration Requires Review</h2>
+
+<p>Hello Admin,</p>
+
+<p>A new company has registered on {{ platform_name }} and requires verification:</p>
+
+<div class="info-box">
+    <h3>{{ company_name }}</h3>
+    <p><strong>Registration Date:</strong> {{ registration_date|date:"F d, Y at g:i A" }}</p>
+    {% if company_website %}
+    <p><strong>Website:</strong> <a href="{{ company_website }}" target="_blank">{{ company_website }}</a></p>
+    {% endif %}
+    {% if company_email %}
+    <p><strong>Email:</strong> {{ company_email }}</p>
+    {% endif %}
+    <p><strong>Company ID:</strong> #{{ company.id }}</p>
+</div>
+
+<p>Please review the company details and verify their legitimacy before approving the registration.</p>
+
+<h4>Required Actions:</h4>
+<ul>
+    <li>Verify company legitimacy and website</li>
+    <li>Check business registration details</li>
+    <li>Approve or reject the registration</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="{{ review_url }}" class="button">Review Company Registration</a>
+</p>
+
+<p>Please complete the review process promptly to maintain a positive user experience.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} System</p>
+{% endblock %}

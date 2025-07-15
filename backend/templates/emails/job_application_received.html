@@ -1,0 +1,29 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Application Received - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>📋 New Job Application Received</h2>
+
+<p>Hello,</p>
+
+<p>You have received a new application for your job posting:</p>
+
+<div class="info-box">
+    <h3>{{ job_post.title }}</h3>
+    <p><strong>Applicant:</strong> {{ applicant_name }}</p>
+    <p><strong>Applied on:</strong> {{ application.created_at|date:"F d, Y at g:i A" }}</p>
+    <p><strong>Application ID:</strong> #{{ application.id }}</p>
+</div>
+
+<p>You can review the applicant's profile and application details by clicking the button below:</p>
+
+<p style="text-align: center;">
+    <a href="{{ application_url }}" class="button">Review Application</a>
+</p>
+
+<p>Please review the application promptly and update the candidate on their application status.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

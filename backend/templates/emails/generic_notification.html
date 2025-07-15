@@ -1,0 +1,22 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}{{ title }} - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>📢 {{ title }}</h2>
+
+<p>Hello {{ user.first_name|default:"" }},</p>
+
+<p>{{ message }}</p>
+
+{% if destination_url %}
+<p style="text-align: center;">
+    <a href="{{ frontend_url }}{{ destination_url }}" class="button">View Details</a>
+</p>
+{% endif %}
+
+<p>Thank you for being part of the {{ platform_name }} community.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

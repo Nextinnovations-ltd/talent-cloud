@@ -58,3 +58,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                "type": "notification",
                **payload
           }))
+     
+     async def notification_message(self, event):
+          """Handle notification_message type sent from NotificationService"""
+          payload = event.get("notification", {})
+          
+          await self.send(text_data=json.dumps({
+               "type": "notification",
+               **payload
+          }))

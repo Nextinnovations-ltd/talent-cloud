@@ -3,6 +3,11 @@ from apps.job_posting.models import JobPost, JobPostView
 from apps.job_seekers.models import JobSeeker
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
+from services.notification.notification_service import NotificationHelpers
+from utils.notification.types import NotificationChannel
+import logging
+
+logger = logging.getLogger(__name__)
 
 class JobService():
      @staticmethod
@@ -10,6 +15,18 @@ class JobService():
           serializer = JobPostSerializer(data=data)
           serializer.is_valid(raise_exception=True)
           job_post = serializer.save(posted_by=user)
+          
+          # Send notifications about the new job posting
+          try:
+               NotificationHelpers.notify_job_posted(
+                    job_post, 
+                    user.company if hasattr(user, 'company') else None
+               )
+               logger.info(f"Job posting notifications sent for job: {job_post.title}")
+          except Exception as e:
+               logger.error(f"Failed to send job posting notifications: {str(e)}")
+               # Don't fail the job creation if notifications fail
+          
           return job_post, serializer
 
      @staticmethod
