@@ -10,12 +10,22 @@ from apps.ws_channel.serializers import (
     NotificationDetailSerializer,
     NotificationUpdateSerializer
 )
-from services.notification.notification_service import NotificationService
+from services.notification.notification_service import NotificationService, NotificationHelpers
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
 from utils.response import CustomResponse
 
 
+class TestAPIView(APIView):
+    def get(self, request):
+        NotificationHelpers.notify_system_maintenance(title="System maintenance", message="System Maintanence will be tonight 12:00 AM.")
+        
+        return Response(
+            CustomResponse.success(
+                message="Notifications sent successfully.",
+            ),
+            status=status.HTTP_200_OK
+        )
 @extend_schema(tags=["Notifications"])
 class NotificationListAPIView(APIView):
     """
