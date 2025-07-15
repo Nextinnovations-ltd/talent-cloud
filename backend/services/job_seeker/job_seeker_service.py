@@ -462,9 +462,7 @@ class JobSeekerService:
 
           return {
                'message': "Successfully fetched job seeker skills.",
-               'data': {
-                    jobseeker_skills
-               }     
+               'data': jobseeker_skills 
           }
      
      @staticmethod
@@ -491,9 +489,7 @@ class JobSeekerService:
 
           return {
                'message': "Successfully updated job seeker skills.",
-               'data': {
-                    skill_id_list
-               }
+               'data': skill_id_list
           }
      
      @staticmethod
@@ -516,9 +512,7 @@ class JobSeekerService:
      
           return {
                'message': "Successfully generated user occupation",
-               'data': {
-                    'language_list': languages
-               }
+               'data': languages
           }
      
      @staticmethod
