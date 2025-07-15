@@ -32,6 +32,9 @@ from core.middleware.permission import (
     IsOwnerOfApplication,
     IsCompanyAdminOrSuperadminForApplication
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 # region Job Post Views
 
@@ -285,7 +288,22 @@ class JobApplicationCreateView(CustomCreateAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                )
 
-          serializer.save(job_post=job_post, job_seeker=job_seeker)
+          application = serializer.save(job_post=job_post, job_seeker=job_seeker)
+          
+          # Send notification about the new application
+          try:
+               from services.notification.notification_service import NotificationHelpers
+               from utils.notification.types import NotificationChannel
+               
+               NotificationHelpers.notify_job_application(
+                    job_post, 
+                    self.request.user,
+                    job_post.posted_by.company if hasattr(job_post.posted_by, 'company') else None
+               )
+               logger.info(f"Application notification sent for job: {job_post.title}")
+          except Exception as e:
+               logger.error(f"Failed to send application notification: {str(e)}")
+               # Don't fail the application creation if notification fails
 
 @extend_schema(tags=["Job Post-Application"])
 class JobSeekerApplicationListView(CustomListAPIView):
@@ -358,6 +376,36 @@ class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
           if self.request.method in ['PATCH']:
                return JobApplicationStatusUpdateSerializer
           return self.serializer_class
+     
+     def perform_update(self, serializer):
+          """Override to add notification for status updates"""
+          old_status = self.get_object().status
+          application = serializer.save()
+          new_status = application.status
+          
+          # Send notification if status changed
+          if old_status != new_status:
+               try:
+                    from services.notification.notification_service import NotificationService
+                    from utils.notification.types import NotificationChannel, NotificationType
+                    
+                    NotificationService.send_notification(
+                         title="Application Status Update",
+                         message=f"Your application for '{application.job_post.title}' has been updated to: {new_status}",
+                         notification_type=NotificationType.JOB_APPLIED,  # Could add APPLICATION_STATUS_UPDATE type
+                         target_users=[application.job_seeker.user],
+                         destination_url=f"/my-applications/{application.id}",
+                         channel=NotificationChannel.BOTH,
+                         email_context={
+                              'application': application,
+                              'old_status': old_status,
+                              'new_status': new_status
+                         }
+                    )
+                    logger.info(f"Application status update notification sent for application: {application.id}")
+               except Exception as e:
+                    logger.error(f"Failed to send application status update notification: {str(e)}")
+                    # Don't fail the update if notification fails
 
 # endregion Job Application Views
 

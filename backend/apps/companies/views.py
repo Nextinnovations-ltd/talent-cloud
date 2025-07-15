@@ -9,6 +9,9 @@ from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudAllPermission, TalentCloudSuperAdminPermission
 from drf_spectacular.utils import extend_schema
+import logging
+
+logger = logging.getLogger(__name__)
 
 @extend_schema(tags=["Industry"])
 class IndustryListAPIView(views.APIView):
@@ -61,8 +64,18 @@ class UnauthenticatedCompanyCreateAPIView(views.APIView):
 
           if serializer.is_valid():
                serializer.validated_data['is_verified'] = False
+               company = serializer.save()
 
-               serializer.save()
+               # Send notification to superadmins about new company registration
+               try:
+                    from services.notification.notification_service import NotificationHelpers
+                    from utils.notification.types import NotificationChannel
+                    
+                    NotificationHelpers.notify_company_registration(company)
+                    logger.info(f"Company registration notification sent for: {company.name}")
+               except Exception as e:
+                    logger.error(f"Failed to send company registration notification: {str(e)}")
+                    # Don't fail the company creation if notification fails
 
                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -122,10 +135,57 @@ class CompanyDetailAPIView(views.APIView):
           Update a specific company by slug.
           """
           company = self.get_object(slug)
+          old_is_verified = company.is_verified
+          
           serializer = CompanySerializer(company, data=request.data, partial=True)
           
           if serializer.is_valid():
-               serializer.save()
+               updated_company = serializer.save()
+               new_is_verified = updated_company.is_verified
+               
+               # Send notification if company verification status changed
+               if old_is_verified != new_is_verified:
+                    try:
+                         from services.notification.notification_service import NotificationService, NotificationTarget
+                         from utils.notification.types import NotificationChannel, NotificationType
+                         from apps.users.models import TalentCloudUser
+                         
+                         # Get company users
+                         company_users = TalentCloudUser.objects.filter(
+                              company=updated_company, 
+                              role__name='admin', 
+                              is_active=True
+                         )
+                         
+                         if new_is_verified:
+                              # Company was approved
+                              NotificationService.send_notification(
+                                   title="Company Registration Approved",
+                                   message=f"Congratulations! Your company '{updated_company.name}' has been approved and is now active on TalentCloud.",
+                                   notification_type=NotificationType.COMPANY_APPROVED,
+                                   target_users=list(company_users),
+                                   destination_url="/company/dashboard",
+                                   channel=NotificationChannel.BOTH,
+                                   email_context={'company': updated_company}
+                              )
+                              logger.info(f"Company approval notification sent for: {updated_company.name}")
+                         else:
+                              # Company was rejected or revoked
+                              reason = request.data.get('rejection_reason', 'Verification status updated by administrator')
+                              NotificationService.send_notification(
+                                   title="Company Registration Status Updated",
+                                   message=f"Your company '{updated_company.name}' verification status has been updated." + (f" Reason: {reason}" if reason else ""),
+                                   notification_type=NotificationType.COMPANY_APPROVED,
+                                   target_users=list(company_users),
+                                   destination_url="/company/dashboard",
+                                   channel=NotificationChannel.BOTH,
+                                   email_context={'company': updated_company, 'reason': reason}
+                              )
+                              logger.info(f"Company status notification sent for: {updated_company.name}")
+                              
+                    except Exception as e:
+                         logger.error(f"Failed to send company status notification: {str(e)}")
+                         # Don't fail the update if notification fails
                
                return Response(serializer.data, status=status.HTTP_200_OK)
           
