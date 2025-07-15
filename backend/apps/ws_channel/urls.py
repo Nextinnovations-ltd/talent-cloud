@@ -9,6 +9,8 @@ from .views import (
     NotificationListAPIView,
     NotificationDetailAPIView,
     NotificationByChannelAPIView,
+    NotificationMarkAllReadAPIView,
+    NotificationUnreadCountAPIView,
     TestAPIView,
     
     # Admin views
@@ -20,7 +22,9 @@ from .views import (
 urlpatterns = [
     # Notification endpoints
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
-    path('notifications/<int:notification_id>', NotificationDetailAPIView.as_view(), name='notification-details'),
+    path('notifications/<int:notification_id>/', NotificationDetailAPIView.as_view(), name='notification-detail'),
+    path('notifications/mark-all-read/', NotificationMarkAllReadAPIView.as_view(), name='notification-mark-all-read'),
+    path('notifications/unread-count/', NotificationUnreadCountAPIView.as_view(), name='notification-unread-count'),
     path('notifications/channel/<str:channel>/', NotificationByChannelAPIView.as_view(), name='notification-list-by-channel'),
     
     # Chat endpoints
