@@ -1,7 +1,6 @@
 """
-Admin views for managing notifications and company approvals
+Admin views for ws_channel app
 """
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,7 +17,7 @@ from services.notification.notification_service import (
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from utils.response import CustomResponse
-from utils.notification.types import NotificationChannel
+from utils.notification.types import NotificationType, NotificationChannel
 from datetime import datetime
 import logging
 
@@ -74,42 +73,16 @@ class AdminNotificationAPIView(APIView):
             if specific_emails:
                 specific_users = list(TalentCloudUser.objects.filter(email__in=specific_emails))
 
-            # Send custom notification
-            if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
-                # Get target users
-                target_users = []
-                if notification_targets:
-                    target_users.extend(NotificationService.get_users_by_roles(notification_targets))
-                if specific_users:
-                    target_users.extend(specific_users)
-                
-                # Remove duplicates
-                target_users = list(set(target_users))
-                
-                if target_users:
-                    from utils.notification.types import NotificationType
-                    
-                    NotificationService.send_notification(
-                        title=subject,
-                        message=message,
-                        notification_type=NotificationType.ADMIN_SYSTEM_ALERT if is_urgent else NotificationType.GENERIC,
-                        target_users=target_users,
-                        channel=NotificationChannel.EMAIL,
-                        is_urgent=is_urgent
-                    )
-
-            # Send in-app notification if required
-            if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
-                from utils.notification.types import NotificationType
-                
-                NotificationService.create_notification_by_roles(
-                    target_roles=notification_targets if notification_targets else None,
-                    title=subject,
-                    message=message,
-                    notification_type=NotificationType.GENERIC,
-                    channel=NotificationChannel.WEBSOCKET,
-                    specific_users=specific_users if specific_users else None
-                )
+            # Send notification using the new channel-aware system
+            NotificationService.send_notification(
+                title=subject,
+                message=message,
+                notification_type=NotificationType.ADMIN_SYSTEM_ALERT if is_urgent else NotificationType.GENERIC,
+                target_roles=notification_targets if notification_targets else None,
+                target_users=specific_users if specific_users else None,
+                channel=channel,
+                is_urgent=is_urgent
+            )
 
             return Response(
                 CustomResponse.success("Notification sent successfully"),
@@ -161,9 +134,6 @@ class AdminCompanyApprovalAPIView(APIView):
                 company.save()
                 
                 # Send approval notification
-                from apps.users.models import TalentCloudUser
-                from utils.notification.types import NotificationType
-                
                 company_users = TalentCloudUser.objects.filter(
                     company=company, 
                     role__name='admin', 
@@ -172,7 +142,7 @@ class AdminCompanyApprovalAPIView(APIView):
                 
                 NotificationService.send_notification(
                     title="Company Registration Approved",
-                    message=f"Congratulations! Your company '{company.name}' has been approved and is now active on TalentCloud.",
+                    message=f"Congratulations! Your company '{company.company_name}' has been approved and is now active on TalentCloud.",
                     notification_type=NotificationType.COMPANY_APPROVED,
                     target_users=list(company_users),
                     destination_url="/company/dashboard",
@@ -181,7 +151,7 @@ class AdminCompanyApprovalAPIView(APIView):
                 )
                 
                 return Response(
-                    CustomResponse.success(f"Company '{company.name}' has been approved"),
+                    CustomResponse.success(f"Company '{company.company_name}' has been approved"),
                     status=status.HTTP_200_OK
                 )
                 
@@ -190,9 +160,6 @@ class AdminCompanyApprovalAPIView(APIView):
                 company.save()
                 
                 # Send rejection notification
-                from apps.users.models import TalentCloudUser
-                from utils.notification.types import NotificationType
-                
                 company_users = TalentCloudUser.objects.filter(
                     company=company, 
                     role__name='admin', 
@@ -201,8 +168,8 @@ class AdminCompanyApprovalAPIView(APIView):
                 
                 NotificationService.send_notification(
                     title="Company Registration Rejected",
-                    message=f"Your company '{company.name}' registration has been rejected." + (f" Reason: {reason}" if reason else ""),
-                    notification_type=NotificationType.COMPANY_APPROVED,  # We can add a COMPANY_REJECTED type later
+                    message=f"Your company '{company.company_name}' registration has been rejected." + (f" Reason: {reason}" if reason else ""),
+                    notification_type=NotificationType.COMPANY_REJECTED,
                     target_users=list(company_users),
                     destination_url="/company/dashboard",
                     channel=channel,
@@ -210,7 +177,7 @@ class AdminCompanyApprovalAPIView(APIView):
                 )
                 
                 return Response(
-                    CustomResponse.success(f"Company '{company.name}' has been rejected"),
+                    CustomResponse.success(f"Company '{company.company_name}' has been rejected"),
                     status=status.HTTP_200_OK
                 )
 
@@ -264,26 +231,11 @@ class AdminSystemMaintenanceAPIView(APIView):
             except ValueError:
                 channel = NotificationChannel.BOTH
 
-            # Send maintenance notification
-            from utils.notification.types import NotificationType
-            
-            maintenance_message = f"Scheduled maintenance: {start_time.strftime('%B %d, %Y at %I:%M %p')}"
-            if end_time:
-                maintenance_message += f" until {end_time.strftime('%B %d, %Y at %I:%M %p')}"
-            maintenance_message += ". Please save your work and expect temporary service interruption."
-            
-            NotificationService.send_notification(
+            # Send maintenance notification using the helper
+            NotificationHelpers.notify_system_maintenance(
                 title="System Maintenance Notification",
-                message=maintenance_message,
-                notification_type=NotificationType.ADMIN_MAINTENANCE,
-                target_roles=[NotificationTarget.ALL_ROLES],
-                channel=channel,
-                is_urgent=is_urgent,
-                email_context={
-                    'maintenance_type': "Scheduled",
-                    'start_time': start_time,
-                    'end_time': end_time
-                }
+                message=message,
+                is_urgent=is_urgent
             )
 
             return Response(
