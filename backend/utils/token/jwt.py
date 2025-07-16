@@ -59,7 +59,7 @@ class TokenUtil:
      @staticmethod# Decode the refresh token to payload
      def decode_refresh_token(token):
           try:
-               payload = jwt.decode(token, config('REFRESH_SECREt', default='refresh_secret'), algorithms=config('ENCRYPTION_ALGORITHM', default='HS256'))
+               payload = jwt.decode(token, config('REFRESH_SECRET', default='refresh_secret'), algorithms=config('ENCRYPTION_ALGORITHM', default='HS256'))
                # return payload['user_id']
                return payload
           except jwt.ExpiredSignatureError:
