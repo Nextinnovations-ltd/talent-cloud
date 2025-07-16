@@ -2,8 +2,14 @@ import json
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
-from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer, JobSeekerSkillSerializer, SpokenLanguageSerializer
+from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer
 from apps.users.models import Address, TalentCloudUser
+
+# Constants
+class OnboardingConstants:
+    MINIMUM_SKILLS_REQUIRED = 5
+    VALID_STEPS = [1, 2, 3, 4]
+    DEFAULT_PROFILE_IMAGE = "https://images.unsplash.com/5/unsplash-kitsune-4.jpg"
 
 class JobSeekerService:
      @staticmethod
@@ -42,45 +48,67 @@ class JobSeekerService:
      
      @staticmethod
      def get_onboarding_data(user, step):
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
-
-          job_seeker_occupation = getattr(job_seeker, 'occupation', None)
+          JobSeekerService._validate_step_number(step)
+          
+          job_seeker = JobSeekerService._validate_job_seeker(user)
+          
+          occupation = JobSeekerService._get_or_create_occupation(job_seeker)
           
           if step == 1:
-               return {
-                    'message': "Step 1 data retrieved successfully.",
-                    'data': {
-                         'profile_image_url': job_seeker.profile_image_url,
-                         'name': job_seeker.name,
-                         'tagline': job_seeker.tagline,
-                         'experience_level_id': job_seeker_occupation.experience_level_id if job_seeker_occupation else None,
-                         'experience_years': job_seeker_occupation.experience_years if job_seeker_occupation else None,
-                    }
-               }
+               return JobSeekerService._get_step_1_data(job_seeker, occupation)
           elif step == 2:
-               return {
-                    'message': "Step 2 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
-                    'data': {
-                         'specialization_id': job_seeker_occupation.specialization.id
-                    } if job_seeker_occupation else None
-               }
+               return JobSeekerService._get_step_2_data(occupation)
           elif step == 3:
-               return {
-                    'message': "Step 3 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
-                    'data': {
-                         'role_id': job_seeker_occupation.role.id
-                    } if job_seeker_occupation else None
-               }
+               return JobSeekerService._get_step_3_data(occupation)
           elif step == 4:
-               skills = job_seeker_occupation.skills.all() if job_seeker_occupation else []
-               return {
-                    'message': "Step 4 data generated." if skills else "No data existed yet.",
-                    'data': {
-                         'skills': [skill.id for skill in skills]
-                    }  if job_seeker_occupation else None
+               return JobSeekerService._get_step_4_data(occupation)
+     
+     @staticmethod
+     def _get_step_1_data(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
+          """Get step 1 onboarding data (profile basics)"""
+          return {
+               'message': "Step 1 data retrieved successfully.",
+               'data': {
+                    'profile_image_url': job_seeker.profile_image_url,
+                    'name': job_seeker.name,
+                    'tagline': job_seeker.tagline,
+                    'experience_level_id': occupation.experience_level_id if occupation else None,
+                    'experience_years': occupation.experience_years if occupation else None,
                }
-          else:
-               raise ValidationError("Invalid step number.")
+          }
+     
+     @staticmethod
+     def _get_step_2_data(occupation: JobSeekerOccupation):
+          """Get step 2 onboarding data (specialization)"""
+          has_specialization = occupation and occupation.specialization
+          return {
+               'message': "Step 2 data retrieved successfully." if has_specialization else "No data existed yet.",
+               'data': {
+                    'specialization_id': occupation.specialization.id
+               } if has_specialization else None
+          }
+     
+     @staticmethod
+     def _get_step_3_data(occupation: JobSeekerOccupation):
+          """Get step 3 onboarding data (role)"""
+          has_role = occupation and occupation.role
+          return {
+               'message': "Step 3 data retrieved successfully." if has_role else "No data existed yet.",
+               'data': {
+                    'role_id': occupation.role.id
+               } if has_role else None
+          }
+     
+     @staticmethod
+     def _get_step_4_data(occupation: JobSeekerOccupation):
+          """Get step 4 onboarding data (skills)"""
+          skills = occupation.skills.all() if occupation else []
+          return {
+               'message': "Step 4 data retrieved successfully." if skills else "No data existed yet.",
+               'data': {
+                    'skills': [{'id': skill.id, 'title': skill.title} for skill in skills]
+               } if skills else None
+          }
 
      @staticmethod
      def perform_onboarding(user, step, data):
@@ -717,3 +745,25 @@ class JobSeekerService:
                     language_id=language_id,
                     proficiency_level=proficiency_level
                )
+     @staticmethod
+     def _get_or_create_occupation(job_seeker: JobSeeker) -> JobSeekerOccupation:
+          """Get existing occupation or create a new one for the job seeker"""
+          occupation = getattr(job_seeker, 'occupation', None)
+          
+          if not occupation:
+               occupation = JobSeekerOccupation.objects.create(user=job_seeker)
+          return occupation
+     
+     @staticmethod
+     def _validate_job_seeker(user) -> JobSeeker:
+          """Validate and return job seeker, raise error if not found"""
+          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          if not job_seeker:
+               raise ValidationError("User is not a job seeker")
+          return job_seeker
+     
+     @staticmethod
+     def _validate_step_number(step: int):
+          """Validate onboarding step number"""
+          if step not in OnboardingConstants.VALID_STEPS:
+               raise ValidationError("Invalid step number.")
