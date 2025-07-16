@@ -2,7 +2,7 @@ import json
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
-from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer, JobSeekerSkillSerializer, SpokenLanguageSerializer
+from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer
 from apps.users.models import Address, TalentCloudUser
 
 class JobSeekerService:
@@ -46,6 +46,9 @@ class JobSeekerService:
 
           job_seeker_occupation = getattr(job_seeker, 'occupation', None)
           
+          if not job_seeker_occupation:
+               raise ValidationError("No data for the step.")
+          
           if step == 1:
                return {
                     'message': "Step 1 data retrieved successfully.",
@@ -59,17 +62,17 @@ class JobSeekerService:
                }
           elif step == 2:
                return {
-                    'message': "Step 2 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
+                    'message': "Step 2 data retrieved successfully." if job_seeker_occupation.specialization else "No data existed yet.",
                     'data': {
                          'specialization_id': job_seeker_occupation.specialization.id
-                    } if job_seeker_occupation else None
+                    } if job_seeker_occupation.specialization else None
                }
           elif step == 3:
                return {
-                    'message': "Step 3 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
+                    'message': "Step 3 data retrieved successfully." if job_seeker_occupation.role else "No data existed yet.",
                     'data': {
                          'role_id': job_seeker_occupation.role.id
-                    } if job_seeker_occupation else None
+                    } if job_seeker_occupation.role else None
                }
           elif step == 4:
                skills = job_seeker_occupation.skills.all() if job_seeker_occupation else []
@@ -77,7 +80,7 @@ class JobSeekerService:
                     'message': "Step 4 data generated." if skills else "No data existed yet.",
                     'data': {
                          'skills': [skill.id for skill in skills]
-                    }  if job_seeker_occupation else None
+                    }  if skills else None
                }
           else:
                raise ValidationError("Invalid step number.")
