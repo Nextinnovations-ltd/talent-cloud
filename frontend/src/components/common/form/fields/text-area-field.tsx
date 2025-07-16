@@ -57,7 +57,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
             <FormLabel className="  font-semibold text-[16px] text-[#05060F]">
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
-              {required && <span className="ms-1 text-danger-500">*</span>}
+              {required && <span className="ms-1 text-red-500">*</span>}
             </FormLabel>
           )}
           <FormControl>

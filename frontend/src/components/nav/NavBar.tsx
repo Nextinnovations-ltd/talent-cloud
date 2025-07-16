@@ -2,7 +2,6 @@ import { Logo } from "../common/Logo";
 import { NavigationMenuDemo } from "./NavMenu";
 import { SearchBar } from "./SearchBar";
 import { BellIcon } from "lucide-react";
-import { Button } from "../ui/button";
 import { AvatarProfile } from "../common/Avatar";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -58,10 +57,10 @@ export const NavBar = () => {
         />
       )}
       <div className="h-[100px] bg-white  z-[900] fixed top-0  w-full right-0 px-[40px] ">
-        <div className="flex items-center justify-evenly  gap-[30px] h-full ">
+        <div className="flex items-center duration-500 justify-evenly  gap-[30px] h-full ">
           <Logo />
-          <form onSubmit={handleSearch}>
-            {location.pathname === "/" && (
+          <form  onSubmit={handleSearch}>
+            {location.pathname === "/" ? (
               <SearchBar
                 value={input}
                 setValue={setInput}
@@ -71,15 +70,16 @@ export const NavBar = () => {
                 setIsFocused={setSearchFocused}
                 inputRef={searchInputRef}
               />
+            ) : (
+              // Placeholder to maintain layout when search bar is hidden
+              <div style={{ width: 360, height: 40 }} />
             )}
           </form>
           <NavigationMenuDemo />
-          <div className="flex gap-[30px]  items-center justify-center">
+          <div className="flex  gap-[30px]  items-center justify-center">
             <Link to={`organization/detail/1`}>
             <BellIcon />
             </Link>
-           
-           
             <Link to={`user/${routesMap?.mainProfile?.path}`}>
               <AvatarProfile status={true} />
             </Link>

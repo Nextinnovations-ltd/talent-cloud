@@ -221,6 +221,11 @@ export const Certification = () => {
               </div>
               // </motion.div>
             )}
+             {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
+              <div className="text-red-500 text-sm mt-1">
+               - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
+              </div>
+            )}
             {/* </AnimatePresence> */}
 
             <CustomCheckbox

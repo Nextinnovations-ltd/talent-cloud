@@ -62,7 +62,7 @@ const TagInputField: React.FC<TagInputFieldProps> = ({
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleInputKeyDown}
         placeholder={placeholder}
-        className="border outline-1 outline-blue-500 rounded px-3 py-2 w-full"
+        className="border  rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         maxLength={maxLength}
         disabled={value.length >= maxTags}
       />

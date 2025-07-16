@@ -18,7 +18,6 @@ export const UserWorkExperienceSchema = yup.object({
   startDateMonth: yup
     .string()
     .required("Start month is required"),
-
   endDateYear: yup
     .string().when("is_present_work", (is_present_work, schema) => {
       if (!is_present_work[0])
@@ -37,4 +36,15 @@ export const UserWorkExperienceSchema = yup.object({
     .required(''),
 
   description:yup.string().max(250)
-});
+}).test(
+  "end-date-after-start-date",
+  "End date cannot be earlier than start date.",
+  function (value) {
+    const { is_present_work, startDateYear, startDateMonth, endDateYear, endDateMonth } = value || {};
+    if (is_present_work) return true;
+    if (!startDateYear || !startDateMonth || !endDateYear || !endDateMonth) return true;
+    const start = new Date(Number(startDateYear), Number(startDateMonth) - 1);
+    const end = new Date(Number(endDateYear), Number(endDateMonth) - 1);
+    return end >= start;
+  }
+);

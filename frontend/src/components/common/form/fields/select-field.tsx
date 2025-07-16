@@ -26,7 +26,7 @@ interface SelectFieldProps {
   showRequiredLabel?: boolean;
   isDisabled?: boolean;
   error?: boolean;
-  data?: { value: number; label: string }[]; // Explicitly defining data type
+  data?: { value: string | number; label: string }[]; // Explicitly defining data type
   labelName?: string;
   description?: string;
 }

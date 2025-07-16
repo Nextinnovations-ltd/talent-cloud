@@ -74,7 +74,6 @@ export const MultiSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = false,
       className,
       ...props
     },
@@ -133,7 +132,10 @@ export const MultiSelect = React.forwardRef<
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-1 ">
           {selectedValues.slice(0, maxCount).map((value) => {
-            const option = options.find((o) => o.value === value);
+          
+
+            const option = options.find((o) => o.value?.toString() === value?.toString());
+
             return (
               <Badge
                 key={value}
@@ -143,7 +145,7 @@ export const MultiSelect = React.forwardRef<
                 )}
                 style={{ animationDuration: `${animation}s` }}
               >
-                <span className="text-[16px] font-normal">
+                <span className="text-[16px] capitalize font-normal">
                   {option?.label || value}
                 </span>
                 <X
@@ -222,7 +224,7 @@ export const MultiSelect = React.forwardRef<
                         >
                           <CheckIcon className="h-4 w-4" />
                         </div>
-                        <span>{option.label}</span>
+                        <span className=" capitalize">{option.label}</span>
                       </CommandItem>
                     );
                   })}
@@ -231,9 +233,7 @@ export const MultiSelect = React.forwardRef<
             </Command>
           </PopoverContent>
         </Popover>
-        <h3 className="text-[#686C73] text-[14px] mt-[8px]">
-          * Add up to 8 skills, separated by commas or choose from the list.
-        </h3>
+       
       </div>
     );
   }

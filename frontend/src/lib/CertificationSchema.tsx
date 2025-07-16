@@ -15,4 +15,15 @@ export const CertificationYupSchema = yup.object({
   }),
   noExpired: yup.boolean().required(),
   credentialURL: yup.string().required("Credential URL is required"),
-});
+}).test(
+  "end-date-after-start-date",
+  "End date cannot be earlier than start date.",
+  function (value) {
+    const { noExpired, issueYear, issueMonth, expirationYear, expirationMonth } = value || {};
+    if (noExpired) return true;
+    if (!issueYear || !issueMonth || !expirationYear || !expirationMonth) return true;
+    const start = new Date(Number(issueYear), Number(issueMonth) - 1);
+    const end = new Date(Number(expirationYear), Number(expirationMonth) - 1);
+    return end >= start;
+  }
+);

@@ -34,7 +34,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
         return;
       }
 
-      if (onboarding_step && onboarding_step !== 6 && !is_generated_username) {
+      if (onboarding_step && onboarding_step !== 5 && !is_generated_username) {
         navigate(
           `/verify/${routesMap.userWelcome.path}?step=${onboarding_step + 1}`,
           { replace: true }

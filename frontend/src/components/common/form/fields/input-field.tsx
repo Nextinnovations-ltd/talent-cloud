@@ -30,6 +30,7 @@ type DatePickerFieldProps = {
   descriptionText?: string;
   startIcon?: ReactNode;
   lableName?: string;
+  readOnly?:boolean
 };
 
 const  InputField: React.FC<DatePickerFieldProps> = ({
@@ -51,9 +52,17 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
   descriptionText,
   startIcon,
   lableName,
+  readOnly = false
 }) => {
   const form = useFormContext();
   const { t } = useTranslation(languageName);
+
+  // Handler to restrict input to numbers only
+  const handleNumberInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    // Allow only digits and optional decimal point
+    input.value = input.value.replace(/[^\d.]/g, '');
+  };
 
   return (
     <FormField
@@ -78,14 +87,15 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                   fieldHeight,
                   "text-[14px]  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] "
                 )}
+                readOnly={readOnly}
                 startIcon={startIcon}
                 showPasswordIcon={showPasswordIcon}
                 hidePasswordIcon={hidePasswordIcon}
                 placeholder={placeholder}
                 showLetterCount={showLetterCount}
                 maxLength={maxLength}
-                description={description}
-                descriptionText={descriptionText}
+                // Only add onInput if type is number
+                {...(type === 'number' ? { onInput: handleNumberInput } : {})}
                 {...field}
               />
               

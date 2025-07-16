@@ -93,17 +93,10 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
       setIsModalOpen(false);
       const formData = new FormData();
       formData.append("name", values.name);
-      formData.append("country_code", values.countryCode);
-      formData.append("address", values.address);
-      formData.append("phone_number", values.phone);
+      formData.append("tagline", values.tagline);
+      formData.append("experience_level_id", values.level);
+      formData.append("workExperience", values.workExperience);
       formData.append("step", "1");
-
-
-      formData.append(
-        "date_of_birth",
-        `${values.year}-${values.month}-${values.day}`
-      );
-
       // Append image
       if (values.image) {
         formData.append("profile_image", values.image);
@@ -208,8 +201,18 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
                 data={EXPERIENCEDATA}
                 width=" max-w-[672px] mt-[24px]"
               />
-              <SelectField
-                name={"workExperience"}
+               <InputField
+                  fieldName={"workExperience"}
+                  placeholder={"1.5"}
+                  isError={!!form.formState.errors.workExperience}
+                  required={true}
+                  requiredLabel={true}
+                  type={'number'}
+                  languageName={"stepTwo"}
+                  fieldHeight={""}
+                  fieldWidth={""}
+                />
+              {/* <SelectField
                 labelName={'Work Experience'}
                 isRequired={true}
                 error={!!form.formState.errors.workExperience}
@@ -217,7 +220,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
                 placeholder={"eg. Less than 1 year"}
                 data={WORKEXPERIENCE}
                 width=" max-w-[672px] mt-[24px]"
-              />
+              /> */}
 
               {/* <div>
                 <p className="mb-[7px]">{t("phoneNumber")}</p>

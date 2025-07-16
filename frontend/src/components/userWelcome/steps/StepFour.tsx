@@ -7,8 +7,17 @@ import SkillSetSkeleton from "@/components/common/SkillSetSkeleton";
 import { useGetSkillSetsQuery } from "@/services/slices/onBoardingSlice";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
+import LOGO from "@/assets/image 2.svg";
+import confetti from "canvas-confetti";
 
-export const StepFour = ({ goToNextStep }: { goToNextStep: any }) => {
+
+export const StepFour = ({ 
+  isFinished,
+  setFinished,
+ }: {
+    isFinished: boolean;
+    setFinished: React.Dispatch<React.SetStateAction<boolean>>;
+  }) => {
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const { data, isLoading } = useGetSkillSetsQuery();
   const { showNotification } = useToast();
@@ -43,7 +52,27 @@ export const StepFour = ({ goToNextStep }: { goToNextStep: any }) => {
       const res = await executeApiCall(formData);
 
       if (res.success) {
-        goToNextStep();
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight - 150;
+
+        confetti({
+          particleCount: 200,
+          startVelocity: 60,
+          spread: 180,
+          origin: {
+            x: centerX / window.innerWidth,
+            y: centerY / window.innerHeight - 0.2,
+          },
+          gravity: 0.8,
+          decay: 0.9,
+          scalar: 1,
+        });
+
+        setFinished(true);
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 3000);
       } else {
         showNotification({
           message: "Something went wrong. Please try again.",
@@ -58,6 +87,22 @@ export const StepFour = ({ goToNextStep }: { goToNextStep: any }) => {
       });
     }
   };
+
+  if (isFinished)
+    return (
+      <div className="flex flex-col h-[100svh] items-center justify-center">
+        <div>
+          <img className="animate-fade" src={LOGO} alt="logo" />
+        </div>
+        <h3 className="font-semibold text-center text-[28px] mt-[25px]">
+          Congratulations
+          <br />
+          <span className="text-[24px] text-[#8C8C8C]">
+            Welcome to Talent Cloud
+          </span>
+        </h3>
+      </div>
+    );
 
   return (
     <div className="flex flex-col items-center justify-center">

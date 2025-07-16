@@ -2,6 +2,16 @@ export type OptionsItems = {
     id: number;
     name: string;
   };
+
+  export type SkillsItems = {
+    id: number;
+    title: string;
+  };
+
+  export type ExperienceItems = {
+      id: number;
+      level: string;
+  }
   
   export type CountryListOptionsResponse = {
     status: boolean;
@@ -29,3 +39,15 @@ export type RolesListsOptionsResopnse = {
   data:OptionsItems[]
 }
 
+export type SkillListsOptionsResponse = {
+  status:boolean;
+  message:string;
+  data:SkillsItems[]
+}
+
+
+export type ExperiencesOptionsResponse = {
+  status:boolean;
+  message:string;
+  data:ExperienceItems
+}

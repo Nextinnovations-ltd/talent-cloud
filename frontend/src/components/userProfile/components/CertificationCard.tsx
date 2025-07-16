@@ -64,7 +64,7 @@ export const CertificationCard = ({
            
             {isEdit && (
                 <div className="absolute top-2 right-2 flex gap-2 z-10">
-                    <button onClick={handleEdit} className="p-1 w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#0389FF]  shadow hover:bg-gray-100 hover:bg-[#0389FF]/80 hover:scale-105" title="Edit">
+                    <button onClick={handleEdit} className="p-1 w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#0389FF]  shadow  hover:bg-[#0389FF]/80 hover:scale-105" title="Edit">
                         <SvgEdit size={16} color={'#ffffff'} />
                     </button>
                     <button onClick={() => setOpen(true)} className="p-1 w-[35px] h-[35px] bg-[#F23030] rounded-full shadow hover:bg-[#F23030]/80 hover:scale-105" title="Delete">
@@ -102,7 +102,7 @@ export const CertificationCard = ({
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1 w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#10B981]/40 shadow hover:bg-[#10B981]/80 hover:scale-105"
+                            className="w-[55px] h-[40px]  flex items-center justify-center rounded-full bg-[#10B981]/40 shadow hover:bg-[#10B981]/80 hover:scale-105"
                             title="View Certificate"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m3-3h5m0 0v5m0-5L10 14"/></svg>

@@ -57,7 +57,7 @@ const resources = {
   },
 };
 
-const defaultLanguage = usePreferenceState.getState().selectedLanguage || "mm";
+const defaultLanguage = usePreferenceState.getState().selectedLanguage || "en";
 
 i18next.use(initReactI18next).init({
   resources: resources,

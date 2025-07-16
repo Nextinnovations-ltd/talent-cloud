@@ -141,7 +141,7 @@ export const extendedAuthSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: credentials,
         headers: {
-          "Content-Type": "multipart/form-data", // Manually adding the content-type
+          "Content-Type": "multipart/form-data", 
         },
       }),
     }),

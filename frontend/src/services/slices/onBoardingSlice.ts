@@ -68,7 +68,7 @@ export const extendedOnBoardingSlice = apiSlice.injectEndpoints({
       query: () => "/experience-levels/",
     }),
     getSpecializationsByIndustryId: builder.query<SpecializationByIndustryResponse, number>({
-      query: (id) => `/roles/by-industry/${id}`,
+       query:(id)=>`/roles/by-specialization/${id}/`
     }),
   }),
 });

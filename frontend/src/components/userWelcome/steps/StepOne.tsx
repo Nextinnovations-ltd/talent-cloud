@@ -6,17 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import useToast from "@/hooks/use-toast";
-// import confetti from "canvas-confetti";
+
 
 export const StepOne = ({ goToNextStep }: { goToNextStep: any }) => {
-  const { showNotification } = useToast();
 
   const handleNextStep = () => {
-    showNotification({
-      message: "Step 1 successed!",
-      type: "success",
-    });
+    
 
     // confetti({
     //   particleCount: 100,

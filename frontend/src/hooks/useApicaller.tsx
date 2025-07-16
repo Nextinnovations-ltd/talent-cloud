@@ -8,7 +8,9 @@ export const useApiCaller = (apiMutation: any) => {
   const executeApiCall = useCallback(
     async (payload: Record<string, any>) => {
       try {
-        const response = await callApi(payload).unwrap();
+
+        const response = await callApi(payload);
+
         showNotification({
           message: response?.message,
           type: "success",

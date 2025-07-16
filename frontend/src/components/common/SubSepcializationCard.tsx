@@ -19,7 +19,7 @@ export const SubSepcializationCard = ({
         !active && "border-[#CBD5E1] bg-[#ffffff] "
       )}
     >
-      <p>{name}</p>
+      <p className=" capitalize">{name}</p>
     </div>
   );
 };

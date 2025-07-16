@@ -136,24 +136,13 @@ interface CertificaitonsResponse {
   data: CertificationsCredentialsWithId[];
 }
 
-interface Skill {
-  id: number;
-  title: string;
-}
+
+
 interface ApplyJobArg {
   jobId: number;
   credentials: Record<string, unknown>; // or a more specific type if known
 }
 
-interface JobSeekerSkillsData {
-  skills: Skill[];
-}
-
-interface JobSeekerSkillsResponse {
-  status: boolean;
-  message: string;
-  data: JobSeekerSkillsData;
-}
 
 interface JobSeekerEducationCredentials {
   degree: string;
@@ -189,7 +178,7 @@ interface ProjectsCredentialsWithId extends ProjectCredentials {
   id: number; // or string, if your ID is a UUID
 }
 
-interface ProjdctsWithIdResponse {
+export interface ProjdctsWithIdResponse {
   status: boolean;
   messages: string;
   data: ProjectsCredentialsWithId
@@ -226,6 +215,21 @@ export interface VideoIntroductionCredentials {
   video_url:string
 }
 
+
+
+
+//skill
+
+interface Skill {
+  id: number;
+  title: string;
+}
+
+interface JobSeekerSkillsResponse {
+  status: boolean;
+  message: string;
+  data: Skill[];
+}
 
 export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -275,6 +279,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     }),
     getExperienceById: builder.query<WorkExperience, unknown>({
       query: (id) => `/experiences/${id}/`,
+      providesTags: ['JobList'],
     }),
 
     addJobSeekerSkills: builder.mutation<unknown, void>({
@@ -290,13 +295,6 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     getSocialLink: builder.query<UseSocialProfileResponse, void>({
       query: () => "/jobseeker/social/",
     }),
-
-    getJobSeekerSkills: builder.query<JobSeekerSkillsResponse, void>({
-      query: () => "/jobseeker/skill/selection-options/",
-    }),
-    getJobSeekerUserSkills: builder?.query<JobSeekerSkillsResponse, void>({
-      query: () => "/jobseeker/skill/"
-    }),
     getCertifications: builder.query<CertificaitonsResponse, void>({
       query: () => "/certifications/",
       providesTags: ['CertificationList'],
@@ -311,6 +309,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     }),
     getCerificationById: builder.query<CertificationsCredentials, unknown>({
       query: (id) => `/certifications/${id}/`,
+      providesTags: ['CertificationList'],
     }),
     deleteCertificationById: builder.mutation<unknown, number | string>({
       query: (id) => ({
@@ -342,7 +341,8 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     getEducationById: builder.query<unknown, number | string>({
       query: (id) => ({
         url: `/educations/${id}/`
-      })
+      }),
+      providesTags: ['EducationsList'],
     }),
     deleteEducationById: builder.mutation<unknown, number | string>({
       query: (id) => ({
@@ -367,7 +367,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `/jobseeker/projects/${id}/`
       }),
-
+      providesTags: ['selectprojectsList']
     }),
     deleteSelectedProjects: builder.mutation<unknown, number | string>({
       query: (id) => ({
@@ -394,6 +394,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     }),
     getVideoIntroduction:builder.query<getVideoResponse , void>({
       query: () => '/jobseeker/video-introduction/',
+      providesTags: ['videoIntroductionList'],
     }),
     addVideoIndroduction:builder.mutation<getVideoResponse,VideoIntroductionCredentials>({
       query: (credentials) => ({
@@ -401,9 +402,12 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: JSON.stringify(credentials),
       }),
-    })
-
-
+      invalidatesTags: ['videoIntroductionList']
+    }),
+    //skill
+    getJobSeekerUserSkills: builder.query<JobSeekerSkillsResponse, void>({
+      query: () => "/jobseeker/skill/",
+    }),
   }),
 });
 
@@ -415,7 +419,6 @@ export const {
   useGetExperiencesQuery,
   useAddExperienceProfileMutation,
   useAddJobSeekerSkillsMutation,
-  useGetJobSeekerSkillsQuery,
   useGetJobSeekerUserSkillsQuery,
   useGetExperienceByIdQuery,
   useUpdateExperienceProfileMutation,
@@ -436,5 +439,6 @@ export const {
   useDeleteSelectedProjectsMutation,
   useUpdateSelectedProjectsMutation,
   useGetJobSeekerSkillsOptionsQuery,
-  useAddVideoIndroductionMutation
+  useAddVideoIndroductionMutation,
+  useGetVideoIntroductionQuery,
 } = extendedJobSeekerSlice;

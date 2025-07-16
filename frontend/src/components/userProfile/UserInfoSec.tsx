@@ -106,6 +106,7 @@ export const UserInfoSec = () => {
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
     const [isSkillEdit, setIsSkillEdit] = useState(false);
+    const [isVideoIntroductionEdit,setIsVideoIntroductionEdit] = useState(false);
 
 
 
@@ -149,7 +150,7 @@ export const UserInfoSec = () => {
             >
 
                 {/* <FocusCards cards={cards} /> */}
-                <JobSeekerSkillSection isSkillEdit={isSkillEdit} setIsSkillEdit={setIsSkillEdit}/>
+                <JobSeekerSkillSection  />
 
                 <div id="projects-section">
                     <SelectedProjectsSection
@@ -163,7 +164,10 @@ export const UserInfoSec = () => {
                 {/* Rest of the content with similar motion wrappers */}
 
                 <div id="videos-section">
-                    <VideoIntroductionSection />
+                    <VideoIntroductionSection 
+                    isVideoIntroductionEdit={isVideoIntroductionEdit}
+                    setIsVideoIntroductionEdit={setIsVideoIntroductionEdit}
+                    />
                 </div>
 
                 {/* Continue with the same pattern for other sections */}
