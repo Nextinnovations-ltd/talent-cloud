@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class OAuthService:
      @staticmethod
-     def perform_oauth_process_and_generate_redirect_url(token_url, payload=None, headers=None, isPost=True):
+     def perform_oauth_process_and_generate_redirect_url(token_url, payload=None, headers=None, isPost=True, provider=None):
           """
           Common OAuth processing logic
           
@@ -20,6 +20,7 @@ class OAuthService:
                payload: Request payload
                headers: Request headers
                isPost: Whether to use POST or GET request
+               provider: OAuth provider name ('facebook', 'google', 'linkedin')
                
           Returns:
                str: Redirect URL with access token
@@ -43,24 +44,43 @@ class OAuthService:
                     logger.error(f"OAuth error: {token_data.get('error_description', token_data['error'])}")
                     raise ValidationError(f"OAuth authentication failed: {token_data.get('error_description', 'Unknown error')}")
 
-               token = token_data["id_token"] if isPost else token_data["access_token"]
-
-               decoded_user_info = TokenUtil.decode_oauth_access_token(token)
-               
-               email = decoded_user_info.get("email")
+               # Additional handler for facebook
+               if provider == 'facebook':
+                    access_token = token_data.get("access_token")
+                    
+                    if not access_token:
+                         raise ValidationError("No access token received from Facebook")
+                    
+                    # Fetch user info from Facebook Graph API
+                    user_info_url = f'https://graph.facebook.com/{settings.FACEBOOK_API_VERSION}/me'
+                    
+                    params = {
+                         'fields': 'id,name,email',
+                         'access_token': access_token,
+                    }
+                    
+                    user_response = requests.get(user_info_url, params=params, timeout=30)
+                    user_response.raise_for_status()
+                    user_info = user_response.json()
+                    
+                    email = user_info.get("email")
+               else:
+                    # Google and LinkedIn provide id_token with user info
+                    token = token_data["id_token"] if isPost else token_data["access_token"]
+                    decoded_user_info = TokenUtil.decode_oauth_access_token(token)
+                    email = decoded_user_info.get("email")
                
                if not email:
                     raise ValidationError("Email not provided by OAuth provider")
                
                if not TalentCloudUser.objects.filter(email=email).exists():
                     user = TalentCloudUser.objects.create_user_with_role(email=email, password=None, is_verified=True)
-                    logger.info(f"Created new user via OAuth: {email}")
+                    logger.info(f"Created new user via {provider} OAuth: {email}")
                else:
                     user = TalentCloudUser.objects.get(email=email)
-                    logger.info(f"Existing user logged in via OAuth: {email}")
+                    logger.info(f"Existing user logged in via {provider} OAuth: {email}")
                
                access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 5)
-
                frontend_url = settings.OAUTH_REDIRECT_URL
                
                return f"{frontend_url}?token={access_token}"
@@ -99,7 +119,7 @@ class GoogleOAuthService:
           }
           
           # Exchange code with access token and decode the token for user information
-          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload)
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, provider='google')
           
           return redirect_url
           
@@ -132,7 +152,7 @@ class LinkedinOAuthService:
           headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
           # Exchange code with access token and decode the token for user information
-          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, headers)
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, headers, provider='linkedin')
           
           return redirect_url
 
@@ -151,57 +171,10 @@ class FacebookOAuthService:
           if not auth_code:
                raise ValidationError("Authorization code is required")
                
+          # Facebook uses a different approach - we get access_token directly, not id_token
           token_url = f"https://graph.facebook.com/{settings.FACEBOOK_API_VERSION}/oauth/access_token?client_id={settings.FACEBOOK_CLIENT_ID}&redirect_uri={settings.FACEBOOK_REDIRECT_URI}&client_secret={settings.FACEBOOK_CLIENT_SECRET}&code={auth_code}"
           
-          try:
-               # region Perform facebook authentication and get access token
-               token_response = requests.get(token_url, timeout=30)
-               token_response.raise_for_status()
-               
-               token_data = token_response.json()
-               if "error" in token_data:
-                    logger.error(f"Facebook OAuth error: {token_data.get('error_description', token_data['error'])}")
-                    raise ValidationError(f"Facebook authentication failed: {token_data.get('error_description', 'Unknown error')}")
-                    
-               token = token_data.get('access_token')
-               if not token:
-                    raise ValidationError("No access token received from Facebook")
-               # endregion Perform facebook authentication and get access token
-               
-               # region Get Authenticated user information
-               user_info_url = f'https://graph.facebook.com/{settings.FACEBOOK_API_VERSION}/me'
-               
-               params = {
-                    'fields': 'id,name,email',
-                    'access_token': token,
-               }
-               
-               # Get authenticated user information
-               response = requests.get(user_info_url, params=params, timeout=30)
-               response.raise_for_status()
-               user_info = response.json()
-               # endregion Get Authenticated user information
-
-               email = user_info.get("email")
-               if not email:
-                    raise ValidationError("Email not provided by Facebook")
-
-               if not TalentCloudUser.objects.filter(email=email).exists():
-                    user = TalentCloudUser.objects.create_user_with_role(email=email, password=None, is_verified=True)
-                    logger.info(f"Created new user via Facebook OAuth: {email}")
-               else:
-                    user = TalentCloudUser.objects.get(email=email)
-                    logger.info(f"Existing user logged in via Facebook OAuth: {email}")
-               
-               access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 5)
-
-               frontend_url = settings.OAUTH_REDIRECT_URL
-               
-               return f"{frontend_url}?token={access_token}"
-               
-          except requests.RequestException as e:
-               logger.error(f"Facebook OAuth request failed: {str(e)}")
-               raise ValidationError("Facebook service temporarily unavailable")
-          except Exception as e:
-               logger.error(f"Facebook OAuth process failed: {str(e)}")
-               raise ValidationError("Facebook authentication failed")
+          # Use the common OAuth service method with isPost=False to get access_token
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload=None, headers=None, isPost=False, provider='facebook')
+          
+          return redirect_url
