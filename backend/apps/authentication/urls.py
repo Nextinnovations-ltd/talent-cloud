@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
-from .views import CompanyAdminLoginAPIView, CompanyAdminRegisterAPIView, SuperAdminLoginAPIView, SuperAdminRegisterAPIView, AuthenticationViewSet, SuperAdminVerifyLoginAPIView, VerifyTokenAPIView, GoogleAuthAPIView, LinkedinAuthAPIView, FacebookAuthAPIView, OAuthVerifyTokenAPIView, RefreshTokenAPIView, UserInfoAPIView
+from .views import CompanyAdminLoginAPIView, CompanyAdminRegisterAPIView, SuperAdminLoginAPIView, SuperAdminRegisterAPIView, AuthenticationViewSet, SuperAdminVerifyLoginAPIView, VerifyTokenAPIView, GoogleAuthAPIView, LinkedinAuthAPIView, FacebookAuthAPIView, OAuthVerifyTokenAPIView, RefreshTokenAPIView, UserInfoAPIView, OAuthStateGenerationAPIView
 
 router = SimpleRouter()
 router.register(r'auth', AuthenticationViewSet, basename='login')
@@ -13,6 +13,7 @@ urlpatterns=[
     path('auth/admin/register/', SuperAdminRegisterAPIView.as_view(), name='admin-register'),
     path('auth/verify-token/', VerifyTokenAPIView.as_view(), name='verify-token'),
     path('auth/me/', UserInfoAPIView.as_view(), name = 'me'),
+    path('auth/oauth/generate-state/', OAuthStateGenerationAPIView.as_view(), name="generate-oauth-state"),
     path('auth/accounts/google/', GoogleAuthAPIView.as_view(), name="google-auth-callback"),
     path('auth/accounts/linkedin/', LinkedinAuthAPIView.as_view(), name="linkedin-auth-callback"),
     path('auth/accounts/facebook/', FacebookAuthAPIView.as_view(), name="facebook-auth-callback"),

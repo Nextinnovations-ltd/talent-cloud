@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from apps.users.models import TalentCloudUser
 from utils.token.jwt import TokenUtil
+from utils.oauth.validation import OAuthValidator
 import logging
 
 logger = logging.getLogger(__name__)
@@ -104,14 +105,14 @@ class GoogleOAuthService:
           Returns:
                str: Redirect URL with access token
           """
-          if not auth_code:
-               raise ValidationError("Authorization code is required")
+          # Validate authorization code (additional validation in service layer)
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, 'google')
                
           # Exchange auth code for access token and user info
           token_url = "https://oauth2.googleapis.com/token"
           
           payload = {
-               "code": auth_code,
+               "code": validated_auth_code,
                "client_id": settings.GOOGLE_CLIENT_ID,
                "client_secret": settings.GOOGLE_CLIENT_SECRET,
                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
@@ -135,14 +136,14 @@ class LinkedinOAuthService:
           Returns:
                str: Redirect URL with access token
           """
-          if not auth_code:
-               raise ValidationError("Authorization code is required")
+          # Validate authorization code (additional validation in service layer)
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, 'linkedin')
                
           # Exchange auth code for access token and user info
           token_url = "https://www.linkedin.com/oauth/v2/accessToken"
           
           payload = {
-               "code": auth_code,
+               "code": validated_auth_code,
                "client_id": settings.LINKEDIN_CLIENT_ID,
                "client_secret": settings.LINKEDIN_CLIENT_SECRET,
                "redirect_uri": settings.LINKEDIN_REDIRECT_URI,
@@ -168,11 +169,11 @@ class FacebookOAuthService:
           Returns:
                str: Redirect URL with access token
           """
-          if not auth_code:
-               raise ValidationError("Authorization code is required")
+          # Validate authorization code (additional validation in service layer)
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, 'facebook')
                
           # Facebook uses a different approach - we get access_token directly, not id_token
-          token_url = f"https://graph.facebook.com/{settings.FACEBOOK_API_VERSION}/oauth/access_token?client_id={settings.FACEBOOK_CLIENT_ID}&redirect_uri={settings.FACEBOOK_REDIRECT_URI}&client_secret={settings.FACEBOOK_CLIENT_SECRET}&code={auth_code}"
+          token_url = f"https://graph.facebook.com/{settings.FACEBOOK_API_VERSION}/oauth/access_token?client_id={settings.FACEBOOK_CLIENT_ID}&redirect_uri={settings.FACEBOOK_REDIRECT_URI}&client_secret={settings.FACEBOOK_CLIENT_SECRET}&code={validated_auth_code}"
           
           # Use the common OAuth service method with isPost=False to get access_token
           redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload=None, headers=None, isPost=False, provider='facebook')
