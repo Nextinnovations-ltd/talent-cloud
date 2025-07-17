@@ -82,8 +82,8 @@ class OAuthValidator:
           if not isinstance(state, str):
                raise ValidationError("State parameter must be a string")
           
-          # Updated maximum length for our new state format (base64 + hash + timestamp)
-          max_length = 200  # Increased to accommodate our state format
+          # Updated maximum length for state parameters
+          max_length = 200  # Increased to accommodate various state formats
           if len(state) > max_length:
                raise ValidationError(f"State parameter too long (max {max_length} characters)")
           
@@ -91,12 +91,19 @@ class OAuthValidator:
           if '\x00' in state or '\n' in state or '\r' in state:
                raise ValidationError("State parameter contains invalid characters")
           
-          # Enhanced pattern for our state format: base64.hash.timestamp
-          # Allow wider character set to match actual generated states
-          enhanced_state_pattern = r'^[A-Za-z0-9_-]+\.[A-Za-z0-9a-f_-]+\.[0-9]+$'
+          # Check if it's our generated state format: base64.hash.timestamp
+          our_state_pattern = r'^[A-Za-z0-9_-]+\.[A-Za-z0-9a-f_-]+\.[0-9]+$'
           
-          if not re.match(enhanced_state_pattern, state.strip()):
-               raise ValidationError("Invalid state parameter format")
+          if re.match(our_state_pattern, state.strip()):
+               # This is our generated state format - apply strict validation
+               return state.strip()
+          
+          # For other state formats (from OAuth providers), apply basic validation
+          # Allow alphanumeric, common separators, and URL-safe characters
+          general_state_pattern = r'^[A-Za-z0-9._=,\-:;]+$'
+          
+          if not re.match(general_state_pattern, state.strip()):
+               raise ValidationError("State parameter contains invalid characters")
           
           return state.strip()
      

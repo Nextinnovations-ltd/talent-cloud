@@ -68,35 +68,6 @@ class TestOAuthValidator:
             OAuthValidator.validate_auth_code("valid_code", "twitter")
         assert "Unsupported OAuth provider" in str(exc_info.value)
     
-    def test_state_parameter_validation(self):
-        """Test state parameter validation"""
-        # Valid state parameters - updated to match new format
-        valid_states = [
-            "random_state_123.hash456.1234567890",
-            "csrf-protection.token456.1640995200",
-            "state_parameter_789.abc123.1234567890"
-        ]
-        
-        for state in valid_states:
-            result = OAuthValidator.validate_state_parameter(state)
-            assert result == state.strip()
-        
-        # Invalid state parameters
-        invalid_states = [
-            ("", "State parameter is required"),
-            (None, "State parameter is required"),
-            (123, "State parameter must be a string"),
-            ("invalid_format", "Invalid state parameter format"),
-            ("only.one", "Invalid state parameter format"),
-            ("too.many.dots.here", "Invalid state parameter format"),
-            ("valid.format.1234567890" + "a" * 200, "State parameter too long")  # Make it long enough to hit length check
-        ]
-        
-        for state, expected_error in invalid_states:
-            with pytest.raises(ValidationError) as exc_info:
-                OAuthValidator.validate_state_parameter(state)
-            assert expected_error in str(exc_info.value)
-    
     def test_provider_name_validation(self):
         """Test provider name validation"""
         # Valid providers

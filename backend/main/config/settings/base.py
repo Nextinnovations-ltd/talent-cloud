@@ -93,6 +93,18 @@ ASGI_APPLICATION = 'main.config.asgi.application'
 
 WSGI_APPLICATION = 'main.config.wsgi.application'
 
+# Cache Configuration (Required for rate limiting)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'oauth-rate-limiting',
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,
+        }
+    }
+}
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 CHANNEL_LAYERS = {
