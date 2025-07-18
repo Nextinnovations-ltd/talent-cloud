@@ -72,7 +72,6 @@ class CompanyAdminRegisterAPIView(views.APIView):
         
         return Response(CustomResponse.success('Company admin user has been created successfully.', { 'token': token }), status=status.HTTP_201_CREATED)
 
-
 @extend_schema(tags=["Authentication-Superadmin"])
 class SuperAdminLoginAPIView(views.APIView):
     def post(self, request):
