@@ -213,6 +213,8 @@ class JobApplicationStatusUpdateSerializer(ModelSerializer):
 # region Bookmarked Job Serializers
 
 class BookmarkedJobSerializer(ModelSerializer):
+     job_post = JobPostListSerializer()
+     
      class Meta:
           model = BookmarkedJob
           fields = ['id', 'job_post', 'created_at']
