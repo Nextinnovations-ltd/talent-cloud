@@ -7,9 +7,9 @@ import ApplyJobFilters from "@/components/jobApply/ApplyJobFilters";
 import ApplyJobHero from "@/components/jobApply/ApplyJobHero";
 import { useGetJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { useSearchParams } from "react-router-dom";
-import EMPTY from '@/assets/EmptyState.png'
 import { motion, AnimatePresence } from "framer-motion";
 import useJobSearchStore from "@/state/zustand/job-search";
+import CommonError from "@/components/CommonError/CommonError";
 
 export const Home: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -134,7 +134,7 @@ export const Home: React.FC = () => {
   return (
     <div>
       <ApplyJobFilters onFiltersChange={handleFiltersChange} />
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute top-[-30px] right-4 z-10">
           <span
             className="cursor-pointer p-2 rounded-full bg-white shadow-lg hover:scale-110 hover:bg-blue-100 transition flex items-center justify-center w-10 h-10"
@@ -154,7 +154,7 @@ export const Home: React.FC = () => {
             )}
           </span>
         </div>
-        <AnimatePresence>
+         <AnimatePresence>
           {showHero && (
             <motion.div
               key="hero"
@@ -166,8 +166,8 @@ export const Home: React.FC = () => {
               <ApplyJobHero />
             </motion.div>
           )}
-        </AnimatePresence>
-      </div>
+        </AnimatePresence> 
+      </div> */}
       <div className="container mx-auto mb-[50px] items-center p-4 flex justify-between">
         <h3>{data?.data.count || 0} job opportunities waiting.</h3>
         <PostUploadedCombo />
@@ -185,16 +185,7 @@ export const Home: React.FC = () => {
                 <ApplyJobCardSkeleton key={index} />
               ))
             : allJobs.length === 0 && !isLoading ? (
-                <motion.div
-                  className="col-span-full flex flex-col items-center justify-center text-center text-gray-500 py-8"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <img src={EMPTY} width={240}/>
-                  <h3 className="text-[28px] text-black font-semibold mt-[10px] mb-[15px]">No Jobs</h3>
-                  <p>Try adjusting your search to find what you are looking for</p>
-                </motion.div>
+                <CommonError/>
               ) : (
                 allJobs.map((job) => (
                   <ApplyJobCard

@@ -74,7 +74,7 @@ import { Link, useParams } from "react-router-dom"
         </Link>
         <div className="max-w-[600px]   pb-[50px] pt-[50px]  ml-[25%]">
         <h3 className="text-[24px] mb-[24px] font-semibold">{jobDetails?.title }</h3>
-         <JobInfoGrid job={!jobDetails} /> 
+         <JobInfoGrid job={jobDetails} /> 
         <SkillsSection skills={jobDetails?.skills || []} />
       <Link to={`/?jobId=${jobDetails.id}`}>
         <h3 className=" underline text-[#0481EF] text-[18px]">View Full Job Description </h3>

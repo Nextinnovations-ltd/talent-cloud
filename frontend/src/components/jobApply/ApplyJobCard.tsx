@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { formatDistanceToNow } from 'date-fns';
 import NEWIMAGE from '@/assets/New.png';
 import BOOKMARK from '@/assets/Bookmark.svg'
@@ -43,6 +43,7 @@ interface ApplyJobCardProps {
 
 const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = false }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
     if (isSelected && cardRef.current) {
@@ -64,7 +65,23 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
       job?.is_new &&   <img width={64} className="absolute top-[-15px] left-[-2px]" height={48} src={NEWIMAGE} />
     }
       <div className="flex justify-between items-start">
-        <img width={64} height={64} className="mb-[14px] rounded-full" src={job?.company_image_url} />
+        <div style={{ position: 'relative', width: 64, height: 64,marginBottom:14 }}>
+          {!isImageLoaded && (
+            <div
+              className="mb-[14px] rounded-full bg-gray-200 animate-pulse"
+              style={{ width: 64, height: 64 }}
+            />
+          )}
+          <img
+            width={64}
+            height={64}
+            className="mb-[14px] rounded-full"
+            src={job?.company_image_url}
+            style={{ display: isImageLoaded ? 'block' : 'none', position: 'absolute', top: 0, left: 0 }}
+            onLoad={() => setIsImageLoaded(true)}
+            alt="Company Logo"
+          />
+        </div>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>

@@ -18,7 +18,7 @@ export function NavigationMenuDemo() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to="/docs">
+          <Link to="/">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Find Jobs
             </NavigationMenuLink>
