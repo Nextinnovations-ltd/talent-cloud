@@ -293,7 +293,7 @@ class GoogleAuthAPIView(views.APIView):
                 except ValidationError as e:
                     logger.warning(f"Google OAuth CSRF protection failed: {str(e)} from IP: {ip_address}")
                     return Response(
-                        CustomResponse.error(f"CSRF protection failed: {str(e)}"), 
+                        CustomResponse.error(f"CSRF protection failed.", {str(e)}), 
                         status=status.HTTP_400_BAD_REQUEST
                     )
             else:

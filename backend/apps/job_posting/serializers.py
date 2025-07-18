@@ -183,6 +183,8 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
           return JobPostDisplayMixin.get_is_applied(self, obj)     
 
 class JobApplicationSerializer(ModelSerializer):
+     job_post = JobPostListSerializer()
+     
      class Meta:
           model = JobApplication
           fields = ['id', 'job_post', 'job_seeker', 'status', 'cover_letter', 'application_resume_url', 'created_at']
