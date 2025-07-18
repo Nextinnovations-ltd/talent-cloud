@@ -93,6 +93,14 @@ const routesMap: RoutesMap = {
   specialSkills:{
    path:"specialSkills",
    name:"specialSkills"
+  },
+  appliedJobs:{
+   path:"applied-jobs",
+   name:"appliedJobs"
+  },
+  savedJobs:{
+    path:"saved-jobs",
+    name:"savedJobs"
   }
 };
 

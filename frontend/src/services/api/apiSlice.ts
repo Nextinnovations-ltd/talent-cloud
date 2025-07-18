@@ -44,8 +44,6 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
   const status = (result.error as FetchBaseQueryError)?.status;
 
   // Detailed logging for debugging
-  console.log('baseQueryWithReauth error:', result.error);
-  console.log('baseQueryWithReauth status:', status);
 
   if (status === 401 || status === 403) {
     removeTokenFromSessionStorage();

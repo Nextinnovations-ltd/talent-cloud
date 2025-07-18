@@ -135,7 +135,7 @@ export const extendedAuthSlice = apiSlice.injectEndpoints({
         body: JSON.stringify(credentials),
       }),
     }),
-    onBoarding: builder.mutation<null, null>({
+    onBoarding: builder.mutation<unknown, null>({
       query: (credentials) => ({
         url: "/onboarding/",
         method: "POST",

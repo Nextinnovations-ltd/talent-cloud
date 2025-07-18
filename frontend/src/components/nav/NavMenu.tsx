@@ -10,6 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Link } from "react-router-dom";
+import routesMap from "@/constants/routesMap";
 
 
 export function NavigationMenuDemo() {
@@ -24,14 +25,14 @@ export function NavigationMenuDemo() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link to="/docs">
+          <Link to={`/user/${routesMap?.appliedJobs.path}`}>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Profile
+            Applied Jobs
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link to="/docs">
+          <Link to={`/user/${routesMap?.savedJobs.path}`}>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Saved Jobs
             </NavigationMenuLink>

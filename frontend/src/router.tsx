@@ -31,6 +31,8 @@ import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
 import SelectedProject from "./pages/profile/subPages/SelectedProject";
 import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
+import AppliedJobs from "./pages/appliedJobs";
+import SavedJobs from "./pages/savedJobs";
 
 
 export const router = createBrowserRouter([
@@ -52,13 +54,20 @@ export const router = createBrowserRouter([
             index: true,
             element: <Home />,
           },
-         
           {
             path: "/user",
             children: [
               {
                 path: routesMap.mainProfile.path,
                 element: <MainUserProfile />
+              },
+              {
+                path: routesMap.appliedJobs.path,
+                element: <AppliedJobs />
+              },
+              {
+                path: routesMap.savedJobs.path,
+                element: <SavedJobs />
               },
               {
                 path: 'job_apply/:id',

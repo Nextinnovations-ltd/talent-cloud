@@ -1,5 +1,6 @@
 import { WorkExperience } from "@/types/job-seeker-types";
 import apiSlice from "../api/apiSlice";
+import { Job } from "@/types/job-apply";
 
 interface JobSeekerCredentials {
   profile_image_url?: string;
@@ -54,9 +55,6 @@ interface OptionsItemType {
   id: number;
   name: string;
 }
-
-
-
 
 export interface UseJobSeekerProfileResponse {
   status: boolean;
@@ -230,6 +228,15 @@ interface JobSeekerSkillsResponse {
   message: string;
   data: Skill[];
 }
+
+
+// appplied jobs
+interface JobSeekerAppliedResponse {
+  status:boolean;
+  meessage:string;
+  data:Job[]
+}
+
 
 export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -408,6 +415,11 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     getJobSeekerUserSkills: builder.query<JobSeekerSkillsResponse, void>({
       query: () => "/jobseeker/skill/",
     }),
+
+    //applied jobs
+    getJobSeekerAppliedJobs: builder.query<JobSeekerAppliedResponse,void>({
+      query:()=>'/my-applications/',
+    })
   }),
 });
 
@@ -441,4 +453,5 @@ export const {
   useGetJobSeekerSkillsOptionsQuery,
   useAddVideoIndroductionMutation,
   useGetVideoIntroductionQuery,
+  useGetJobSeekerAppliedJobsQuery
 } = extendedJobSeekerSlice;

@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback } from "react";
 import useToast from "./use-toast";
+
 
 export const useApiCaller = (apiMutation: any) => {
   const [callApi, { isLoading, isError }] = apiMutation();
@@ -11,8 +13,10 @@ export const useApiCaller = (apiMutation: any) => {
 
         const response = await callApi(payload);
 
+        console.log(response)
+
         showNotification({
-          message: response?.message,
+          message: response?.message || response?.data?.message,
           type: "success",
         });
 
@@ -27,7 +31,7 @@ export const useApiCaller = (apiMutation: any) => {
         return { success: false, error: error?.data || error };
       }
     },
-    [callApi]
+    [callApi, showNotification]
   );
 
   return { executeApiCall, isLoading, isError };

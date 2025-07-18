@@ -27,6 +27,8 @@ type RoutesMap = {
   selectedProjects:Route;
   videoIntroduction:Route;
   specialSkills:Route;
+  appliedJobs:Route;
+  savedJobs:Route;
 };
 
 export default RoutesMap;

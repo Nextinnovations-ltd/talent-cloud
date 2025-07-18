@@ -101,14 +101,12 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
       }),
       providesTags: ['JobList'],
       keepUnusedDataFor: 0,
-      refetchOnMountOrArgChange: true,
     }),
 
     getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
     query: (id) => `/job-posts/${id}/`,
       providesTags: ['JobList'],
       keepUnusedDataFor: 0,
-      refetchOnMountOrArgChange: true,
     }),
 
     bookMarkedJob: builder.mutation<BookmarkedJobResponse, number>({

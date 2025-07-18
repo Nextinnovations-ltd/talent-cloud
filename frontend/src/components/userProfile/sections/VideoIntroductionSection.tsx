@@ -37,6 +37,8 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
         navigate('/user/edit/video-introduction?mode=edit')
     }
 
+
+
     return (
         <>
             <Title
@@ -47,7 +49,7 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
                 showAddButton={!data?.data?.video_url}
             />
 
-            {(!data?.data || data.data.video_url === '') ? (
+        {(!data?.data || !data.data.video_url ) ? (
                 <EmptyData
                     image={<img src={EMPTYVIDEO} alt="Video Introduction" style={{ width: '100%', height: '100%', objectFit: 'cover',opacity:0.8 }} />}
                     title="Video Introduction"
