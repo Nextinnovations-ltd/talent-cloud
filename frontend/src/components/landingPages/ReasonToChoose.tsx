@@ -8,7 +8,7 @@ import icon4 from '../../assets/JobPortal/Frame 36110.svg'
 const ReasonToChoose = () => {
     return (
         <div className="bg-[#F9FAFB] mt-[96px]">
-      <div className='max-w-[1240px] mx-auto h-screen pt-[83px] pb-[61px] '>
+      <div className='max-w-[1240px] mx-auto pt-[83px] pb-[61px] '>
           <h1 className='text-[40px] leading-[57px] font-[600] mb-[81px]'>WHY CHOOSE TALENT CLOUD ?</h1>
           <div className="flex gap-[100px] justify-center ">
               <div className="pt-[28px]">

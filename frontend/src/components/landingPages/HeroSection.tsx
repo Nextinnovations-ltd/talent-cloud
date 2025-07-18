@@ -15,155 +15,349 @@ import  CheckCircle from '@/assets/check-circle.svg'
 
 
 const HeroSection = () => {
-    const wordsToDisplay = [
-        'Facebook', 'Instagram', 'Twitter', 'LinkedIn',
-        'Github', 'Behance', 'Email', 'Discord'
-      ];
-      
-      
-        const containerRef = useRef(null);
-        const matterContainerRef = useRef(null);
-        const p5Ref = useRef(null);
-        const initializedRef = useRef(false);
-      
-      
-       useEffect(() => {
-          if (!containerRef.current || !matterContainerRef.current) return;
-      
-          let engine, runner, mouseConstraint;
-          let words = [];
-          let isTabActive = true;
-      
-          const sketch = (p) => {
-            let width = 413;
-            let height = 312;
-      
-            p.setup = () => {
-              const canvas = p.createCanvas(width, height);
-              canvas.parent(matterContainerRef.current);
-              canvas.canvas.style.boxShadow = '0px 1px 3px 0px rgba(166, 175, 195, 0.40)';
-              canvas.canvas.style.borderRadius = '8px';
-              canvas.canvas.style.backgroundColor = '#ffffff';
-      
-              initPhysics();
-              createWords();
-            };
-      
-            function initPhysics() {
-              engine = Matter.Engine.create({ render: { visible: false } });
-              runner = Matter.Runner.create();
-      
-              Matter.Runner.run(runner, engine);
-      
-              const opts = { isStatic: true, render: { visible: false } };
-              Matter.World.add(engine.world, [
-                Matter.Bodies.rectangle(width / 2, height - 10, width, 20, opts),
-                Matter.Bodies.rectangle(width / 2, 10, width, 20, opts),
-                Matter.Bodies.rectangle(0, height / 2, 20, height, opts),
-                Matter.Bodies.rectangle(width, height / 2, 20, height, opts),
-              ]);
-      
-              const mouse = Matter.Mouse.create(matterContainerRef.current);
-              mouseConstraint = Matter.MouseConstraint.create(engine, {
-                mouse,
-                constraint: {
-                  stiffness: 0.2,
-                  render: { visible: false },
+  const wordsToDisplay = [
+    'Frontend Developer', 'Python Developer', 'UI UX Designer', 
+    'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
+  ];
+
+  const containerRef = useRef(null);
+  const matterContainerRef = useRef(null);
+  const p5Ref = useRef(null);
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!containerRef.current || !matterContainerRef.current) return;
+
+    let engine, runner, mouseConstraint;
+    let words = [];
+    let isTabActive = true;
+    let width = 413;
+    let height = 312;
+    let isDragging = false;
+
+    const initializedRefLocal = initializedRef;
+
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = `
+      .matter-cursor {
+        cursor: url("") 12 12, auto;
+      }
+      .matter-cursor.grab {
+        cursor: url("") 12 12, grab;
+      }
+      .matter-cursor.grabbing {
+        cursor: url("") 12 12, grabbing;
+      }
+    `;
+    document.head.appendChild(styleElement);
+
+    const handleMouseLeave = () => {
+      matterContainerRef.current.classList.remove('grab', 'grabbing');
+    };
+
+    const handleMouseEnter = () => {
+      if (!isDragging) {
+        matterContainerRef.current.classList.add('grab');
+        matterContainerRef.current.classList.remove('grabbing');
+      }
+    };
+
+    function handleVisibilityChange() {
+      isTabActive = !document.hidden;
+      if (!isTabActive) {
+        Matter.Runner.stop(runner);
+      } else {
+        Matter.Runner.run(runner, engine);
+      }
+    }
+
+    function startPhysics() {
+      if (initializedRefLocal.current) return;
+      initializedRefLocal.current = true;
+
+      const sketch = (p) => {
+        p.setup = () => {
+          const canvas = p.createCanvas(width, height);
+          canvas.parent(matterContainerRef.current);
+          canvas.canvas.style.boxShadow = '0px 1px 3px 0px rgba(166, 175, 195, 0.40)';
+          canvas.canvas.style.borderRadius = '12px';
+          canvas.canvas.style.backgroundColor = '#ffffff';
+          matterContainerRef.current.classList.add('matter-cursor', 'grab');
+
+          initPhysics();
+          createWords();
+        };
+
+        function initPhysics() {
+          engine = Matter.Engine.create({ 
+            render: { visible: false },
+            gravity: { x: 0, y: 0.5 },
+            enableSleeping: true,
+            positionIterations: 6,
+            velocityIterations: 4,
+            constraintIterations: 6,
+            timing: { timeScale: 1.2 }
+          });
+
+          runner = Matter.Runner.create({ delta: 1000 / 60, isFixed: true });
+          Matter.Runner.run(runner, engine);
+
+          const boundaryOptions = { 
+            isStatic: true, 
+            render: { visible: false },
+            restitution: 0.7,
+            friction: 0.05,
+            frictionStatic: 0.1
+          };
+
+          const thickness = 25;
+          const boundaryGroup = Matter.Body.nextGroup(true);
+
+          Matter.World.add(engine.world, [
+            Matter.Bodies.rectangle(width / 2, height + thickness/2, width + thickness*2, thickness, {
+              ...boundaryOptions,
+              collisionFilter: { group: boundaryGroup }
+            }),
+            Matter.Bodies.rectangle(width / 2, -thickness/2, width + thickness*2, thickness, {
+              ...boundaryOptions,
+              collisionFilter: { group: boundaryGroup }
+            }),
+            Matter.Bodies.rectangle(-thickness/2, height / 2, thickness, height + thickness*2, {
+              ...boundaryOptions,
+              collisionFilter: { group: boundaryGroup }
+            }),
+            Matter.Bodies.rectangle(width + thickness/2, height / 2, thickness, height + thickness*2, {
+              ...boundaryOptions,
+              collisionFilter: { group: boundaryGroup }
+            })
+          ]);
+
+          const mouse = Matter.Mouse.create(matterContainerRef.current);
+          mouseConstraint = Matter.MouseConstraint.create(engine, {
+            mouse,
+            constraint: {
+              stiffness: 0.7,
+              damping: 0.6,
+              angularStiffness: 0.8,
+              render: { visible: false }
+            }
+          });
+
+          Matter.Events.on(mouseConstraint, "mousedown", function(event) {
+            if (event.source.body) {
+              isDragging = true;
+              matterContainerRef.current.classList.remove('grab');
+              matterContainerRef.current.classList.add('grabbing');
+            }
+          });
+
+          Matter.Events.on(mouseConstraint, "mouseup", function() {
+            isDragging = false;
+            matterContainerRef.current.classList.remove('grabbing');
+            matterContainerRef.current.classList.add('grab');
+          });
+
+          Matter.Events.on(mouseConstraint, "enddrag", function() {
+            isDragging = false;
+            matterContainerRef.current.classList.remove('grabbing');
+            matterContainerRef.current.classList.add('grab');
+          });
+
+          Matter.Events.on(mouseConstraint, "afterUpdate", function() {
+            if (mouseConstraint.body) {
+              const body = mouseConstraint.body;
+              const halfWidth = body.bounds.max.x - body.bounds.min.x;
+              const halfHeight = body.bounds.max.y - body.bounds.min.y;
+
+              const newX = Math.max(halfWidth/2, Math.min(width - halfWidth/2, body.position.x));
+              const newY = Math.max(halfHeight/2, Math.min(height - halfHeight/2, body.position.y));
+
+              if (newX !== body.position.x || newY !== body.position.y) {
+                Matter.Body.setPosition(body, { x: newX, y: newY });
+                Matter.Body.setVelocity(body, { 
+                  x: body.velocity.x * 0.7, 
+                  y: body.velocity.y * 0.7 
+                });
+              }
+            }
+          });
+
+          Matter.World.add(engine.world, mouseConstraint);
+
+          Matter.Events.on(engine, 'beforeUpdate', function() {
+            const bodies = Matter.Composite.allBodies(engine.world);
+            const correctionFactor = 0.3;
+
+            for (let i = 0; i < bodies.length; i++) {
+              const body = bodies[i];
+              if (body.isStatic || body.isSleeping) continue;
+
+              const halfWidth = (body.bounds.max.x - body.bounds.min.x) / 2;
+              const halfHeight = (body.bounds.max.y - body.bounds.min.y) / 2;
+
+              const correction = {
+                x: Math.max(0, halfWidth - body.position.x) - 
+                   Math.max(0, body.position.x - (width - halfWidth)),
+                y: Math.max(0, halfHeight - body.position.y) - 
+                   Math.max(0, body.position.y - (height - halfHeight))
+              };
+
+              if (correction.x !== 0 || correction.y !== 0) {
+                Matter.Body.setPosition(body, {
+                  x: body.position.x + correction.x * correctionFactor,
+                  y: body.position.y + correction.y * correctionFactor
+                });
+
+                if (correction.x !== 0) {
+                  Matter.Body.setVelocity(body, {
+                    x: body.velocity.x * 0.8,
+                    y: body.velocity.y
+                  });
+                }
+                if (correction.y !== 0) {
+                  Matter.Body.setVelocity(body, {
+                    x: body.velocity.x,
+                    y: body.velocity.y * 0.8
+                  });
+                }
+              }
+            }
+          });
+
+          matterContainerRef.current.addEventListener('mouseleave', handleMouseLeave);
+          matterContainerRef.current.addEventListener('mouseenter', handleMouseEnter);
+          document.addEventListener("visibilitychange", handleVisibilityChange);
+        }
+
+        function createWords() {
+          const paddingX = 80;
+          const paddingY = 40;
+
+          words = wordsToDisplay.map(w =>
+            new Word(
+              p.random(paddingX, width - paddingX),
+              p.random(paddingY, height / 2),
+              w
+            )
+          );
+        }
+
+        class Word {
+          constructor(x, y, txt) {
+            const w = 142;
+            const h = 30;
+            this.txt = txt;
+            this.w = w;
+            this.h = h;
+
+            this.isSpecial = [
+              'Frontend Developer', 
+              'Python Developer', 
+              'UI UX Designer'
+            ].includes(txt);
+
+            this.body = Matter.Bodies.rectangle(
+              x, y, w, h,
+              {
+                friction: 0.1,
+                frictionStatic: 0.2,
+                restitution: 0.5,
+                density: 0.015,
+                chamfer: { radius: 6 },
+                collisionFilter: {
+                  group: 0,
+                  category: 0x0001,
+                  mask: 0xFFFFFFFF
                 },
-              })
-      
-              Matter.World.add(engine.world, mouseConstraint);
-      
-              // Visibility change handler
-              document.addEventListener("visibilitychange", handleVisibilityChange);
-            }
-      
-           
-      
-            function createWords() {
-              const paddingX = 80;
-              const paddingY = 40;
-      
-              words = wordsToDisplay.map(w =>
-                new Word(
-                  p.random(paddingX, width - paddingX),
-                  p.random(paddingY, height / 2),
-                  w
-                )
-              );
-            }
-      
-            class Word {
-              constructor(x, y, txt) {
-                const w = 142;
-                const h = 30;
-                this.txt = txt;
-                this.w = w;
-                this.h = h;
-                this.body = Matter.Bodies.rectangle(
-                  x, y, w, h,
-                  {
-                    friction: 0.3,
-                    restitution: 0.9,
-                    density: 0.01,
-                    chamfer: { radius: 6 }
-                  }
-                );
-                Matter.World.add(engine.world, this.body);
+                sleepThreshold: 60,
+                slop: 0.05
               }
-      
-              show() {
-                const { x, y } = this.body.position;
-                p.push();
-                p.translate(x, y);
-                p.rotate(this.body.angle);
-                p.rectMode(p.CENTER);
-                p.noFill();
-                p.stroke('#037DE8');
-                p.strokeWeight(1.5);
-                p.rect(0, 0, this.w, this.h, 6);
-                p.noStroke();
-                p.fill('#000000');
-                p.textSize(12);
-                p.textAlign(p.CENTER, p.CENTER);
-                p.text(this.txt, 0, 0);
-                p.pop();
-              }
-            }
-      
-            p.draw = () => {
-              if (!isTabActive) return;
-      
-              p.clear();
-              p.background('#ffffff');
-              Matter.Engine.update(engine);
-              for (const w of words) {
-                w.show();
-              }
-            };
-          };
-      
-          p5Ref.current = new p5(sketch);
-          function handleVisibilityChange() {
-            isTabActive = !document.hidden;
-      
-            if (!isTabActive) {
-              Matter.Runner.stop(runner);
-            } else {
-              Matter.Runner.run(runner, engine);
-            }
+            );
+            Matter.World.add(engine.world, this.body);
           }
-          return () => {
-            // Cleanup
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-            if (runner) Matter.Runner.stop(runner);
-            if (engine && engine.world) {
-              Matter.World.clear(engine.world);
-              Matter.Engine.clear(engine);
+
+          show() {
+            const { x, y } = this.body.position;
+            p.push();
+            p.translate(x, y);
+            p.rotate(this.body.angle);
+            p.rectMode(p.CENTER);
+
+            if (this.isSpecial) {
+              p.noStroke();
+              p.fill('#000000');
+              p.rect(0, 0, this.w, this.h, 16);
+              p.fill('#ffffff');
+            } else {
+              p.noFill();
+              p.stroke('#037DE8');
+              p.strokeWeight(1.5);
+              p.rect(0, 0, this.w, this.h, 16);
+              p.noStroke();
+              p.fill('#000000');
             }
-            p5Ref.current?.remove();
-          };
-        }, []);
+
+            p.textSize(12);
+            p.textAlign(p.CENTER, p.CENTER);
+            p.text(this.txt, 0, 0);
+            p.pop();
+          }
+        }
+
+        p.draw = () => {
+          if (!isTabActive) return;
+
+          p.clear();
+          p.background('#ffffff');
+
+          p.push();
+          p.fill('#000');
+          p.textSize(20);
+          p.textStyle(p.NORMAL);
+          p.textFont('Poppins');
+          p.textAlign(p.LEFT, p.TOP);
+          p.text('Popular Positions', 50, 30);
+          p.pop();
+
+          Matter.Engine.update(engine);
+          for (const w of words) {
+            w.show();
+          }
+        };
+      };
+
+      p5Ref.current = new p5(sketch);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          startPhysics();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (matterContainerRef.current) {
+        matterContainerRef.current.removeEventListener('mouseleave', handleMouseLeave);
+        matterContainerRef.current.removeEventListener('mouseenter', handleMouseEnter);
+      }
+      if (runner) Matter.Runner.stop(runner);
+      if (engine && engine.world) {
+        Matter.World.clear(engine.world);
+        Matter.Engine.clear(engine);
+      }
+      p5Ref.current?.remove();
+      document.head.removeChild(styleElement);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
       <div>
           <div className="h-[600px] relative bg-[linear-gradient(to_bottom,_#75d1ffe3_90%,_#F7F7F7_100%)]">
@@ -192,9 +386,21 @@ const HeroSection = () => {
                     <li><Link to="">About us</Link></li>
                     <li><Link to="">Blog</Link></li>
                   </ul>
-                  <Button className="bg-[#0481EF] hover:opacity-75 text-white rounded-[12px] p-[10px] w-[110px] h-[38px]">
-                    Sign up
+                  <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
+                    <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+                      Sign up
+                    </span>
+                    <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+                      Sign up
+                    </span>
                   </Button>
+
+
+
+
+
+
+
                 </nav>
                 <div className="pt-[66px] relative z-10">
                   <h1 className="text-black text-[64px] font-[700] leading-[87px]">
@@ -204,10 +410,28 @@ const HeroSection = () => {
                     <span className="text-[#0389FF]">Talent Cloud</span> takes care of hiring, HR, and compliance—creating a smooth experience for <span className="text-[#0389FF]">employers</span> and a supportive environment for <span className="text-[#0389FF]">employees.</span>
                   </p>
                   <div className="flex justify-center mt-[80px]">
-                    <Button className="bg-[#0389FF] hover:opacity-75 rounded-[26px] p-[10px] w-[205px] h-[58px] text-[20px] font-[600] text-white flex items-center gap-[10px]">
-                      Explore Jobs
-                      <img src={exploreArrow} alt="→" />
+                  <Button className="relative bg-[#0389FF] rounded-[26px] p-[10px] w-[205px] h-[58px] overflow-hidden group hover:border-b-[6px] hover:border-l-[6px] hover:border-black  transition-all duration-300 ease-in-out"> 
+                      <span className="block text-white text-[20px] font-[600] relative z-10 translate-y-0 group-hover:-translate-y-[60px] transition-transform duration-300">
+                        Explore Jobs
+                      </span>
+                      <span className="block text-white text-[20px] font-[600] absolute top-full right-[20px] w-full z-0 group-hover:-translate-y-[43px] transition-transform duration-300">
+                        Explore Jobs
+                      </span>
+                      <img
+                        src={exploreArrow}
+                        alt="→"
+                        className="ml-[10px] relative z-10 transition-transform duration-300 group-hover:translate-x-1"
+                      />
                     </Button>
+
+
+
+
+
+
+
+
+
                   </div>
                 </div>
                 <div className="cloud">

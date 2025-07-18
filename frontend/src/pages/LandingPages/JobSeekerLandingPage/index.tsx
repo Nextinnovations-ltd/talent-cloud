@@ -5,6 +5,8 @@ import React from "react";
 
 import './index.css';
 import EorSection from "@/components/landingPages/EorSection";
+import SuccessStory from "@/components/landingPages/SuccessStory";
+import FAQ from "@/components/landingPages/FAQ";
 const JobSeekerLandingPage = () => {
   
   return (
@@ -12,7 +14,10 @@ const JobSeekerLandingPage = () => {
       <HeroSection/>
       <ReasonToChoose />
       <SeeMore />
-      <EorSection/>
+      <EorSection />
+
+      <SuccessStory />
+      <FAQ/>
 </div>
   );
 };
