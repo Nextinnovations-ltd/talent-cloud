@@ -430,7 +430,7 @@ class BookmarkJobView(APIView):
                return Response(CustomResponse.error("Job is already bookmarked."), status=status.HTTP_400_BAD_REQUEST)
 
           bookmarked_job = BookmarkedJob.objects.create(job_post=job_post, job_seeker=job_seeker)
-          serializer = BookmarkedJobSerializer(bookmarked_job)
+          serializer = BookmarkedJobSerializer(bookmarked_job, context={'request': request})
           
           return Response(CustomResponse.success("Bookmarked the job.", serializer.data), status=status.HTTP_201_CREATED)
 
