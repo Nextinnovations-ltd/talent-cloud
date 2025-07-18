@@ -2,7 +2,6 @@ from django.db import models
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
 from apps.users.models import TalentCloudUser
 from services.models import TimeStampModel
-from django.utils import timezone
 
 class JobType(models.TextChoices):
      FULL_TIME = 'full_time', 'Full Time'
@@ -48,9 +47,24 @@ class JobPostQuerySet(models.QuerySet):
           return self.filter(job_post_status=StatusChoices.EXPIRED)
 
      def auto_expired(self):
-          """Optional: Automatically detect expired jobs by date (even if status isn't updated)."""
-          today = timezone.now().date()
-          return self.filter(last_application_date__lt=today, job_post_status=StatusChoices.ACTIVE)
+          """Get jobs that are automatically expired by date (even if status isn't updated)."""
+          from datetime import date
+          today = date.today()
+          return self.filter(
+               models.Q(last_application_date__lt=today) | 
+               models.Q(job_post_status=StatusChoices.EXPIRED)
+          )
+     
+     def effectively_active(self):
+          """Get jobs that are effectively active (can receive applications)."""
+          from datetime import date
+          today = date.today()
+          return self.filter(
+               job_post_status=StatusChoices.ACTIVE,
+               is_accepting_applications=True
+          ).exclude(
+               last_application_date__lt=today
+          )
 
 class JobPostManager(models.Manager):
      def get_queryset(self):
@@ -70,6 +84,9 @@ class JobPostManager(models.Manager):
 
      def auto_expired(self):
           return self.get_queryset().auto_expired()
+     
+     def effectively_active(self):
+          return self.get_queryset().effectively_active()
 
 
 # Job Post
@@ -119,6 +136,47 @@ class JobPost(TimeStampModel):
      job_post_status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.ACTIVE, blank=True)
      
      objects = JobPostManager()
+
+     def is_expired(self):
+          """
+          Check if the job post is expired based on:
+          1. Manual status (job_post_status = 'expired')
+          2. Automatic expiration (last_application_date has passed)
+          """
+          from datetime import date
+          
+          # Check manual expiration status
+          if self.job_post_status == StatusChoices.EXPIRED:
+               return True
+          
+          # Check automatic expiration based on last application date
+          if self.last_application_date:
+               today = date.today()
+               if self.last_application_date < today:
+                    return True
+          
+          return False
+
+     def is_effectively_active(self):
+          """
+          Check if the job post is effectively active (can receive applications)
+          """
+          return (
+               self.job_post_status == StatusChoices.ACTIVE and
+               self.is_accepting_applications and
+               not self.is_expired()
+          )
+
+     def get_effective_status(self):
+          """
+          Get the effective status of the job post considering both manual and automatic expiration
+          """
+          if self.is_expired():
+               return StatusChoices.EXPIRED
+          return self.job_post_status
+
+     def __str__(self):
+          return f"{self.title} - {self.get_effective_status()}"
 
 # End Job Post
 

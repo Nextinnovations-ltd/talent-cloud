@@ -4,8 +4,12 @@ Test script for the new notification template system
 Run with: python manage.py shell < test_notification_templates.py
 """
 
-import os
+import os, sys
 import django
+
+backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, backend_dir)
+
 
 # Setup Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'main.config.settings.development')
