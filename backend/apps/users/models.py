@@ -86,17 +86,17 @@ class CustomUserManager(BaseUserManager):
             print(f"{role_name} Role does not exist. Creating {role_name} Role")
             role, created = Role.objects.get_or_create(name=role_name)
         
-        # Generate unique password with prefix for register user
-        auto_generated_password = generate_unique_username()
-        
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('role', role)
-        extra_fields.setdefault('username', auto_generated_password)
         
         # Check if Superuser and change the flag value for superuser
         if role_name == ROLES.SUPERADMIN:
             extra_fields.setdefault('is_superuser', True)
-            
+        else:
+            # Generate unique password with prefix for register user
+            auto_generated_password = generate_unique_username()
+            extra_fields.setdefault('username', auto_generated_password)
+                        
         with transaction.atomic():
             from apps.job_seekers.models import JobSeeker
             

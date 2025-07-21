@@ -103,15 +103,19 @@ class SuperAdminLoginAPIView(views.APIView):
 class SuperAdminRegisterAPIView(views.APIView):
     def post(self, request):
         data = request.data
+        username = data.get('username', None)
         email = data.get('email', None)
         password = data.get('password', None)
         role = ROLES.SUPERADMIN
+        
+        if not username:
+            raise ValidationError("Username is required.")
         
         if TalentCloudUser.objects.filter(email=email).exists():
             raise ValidationError("Talent cloud user with this email already exists.")
         
         # Create super admin user and response verify token 
-        token = AuthenticationService.register_user_with_role(email, password, role)
+        token = AuthenticationService.register_ni_super_user(username, email, password)
         
         return Response(CustomResponse.success('Super admin user has been created successfully.', { 'token': token }), status=status.HTTP_201_CREATED)
 
