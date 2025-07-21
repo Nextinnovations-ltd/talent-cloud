@@ -8,7 +8,7 @@ export const useFormattedExperience = () => {
     if (!data?.data) return []; 
 
     return data.data.map((item: { id: number; level: string }) => ({
-      value: item.id,
+      value: item.id?.toString(),
       label: item.level,
     }));
   }, [data]);

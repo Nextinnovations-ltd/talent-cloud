@@ -14,7 +14,6 @@ import { socialLinkFields } from "@/lib/formData.tsx/UserProfile";
 import { useFormattedCountryList } from "@/lib/dropData.tsx/ReturnCountryListOptions";
 import { useFormattedCityList } from "@/lib/dropData.tsx/ReturnCityListOptions";
 import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/ReturnRoleOptionsBySpecialization";
-import { useEffect, useRef } from "react";
 
 
 export const UserProfileForm = ({
@@ -37,28 +36,8 @@ export const UserProfileForm = ({
   const { data: CITYDATA, isLoading: CITYLoading } = useFormattedCityList(selectedCountryId);
   const { data: ROLEDATA, isLoading: ROLELoading } = useFormattedRolesBySpecializationList(selectedSpecializationId);
 
-  // Track previous values to avoid clearing on initial mount
-  const prevCountry = useRef(selectedCountryId);
-  const prevSpecialization = useRef(selectedSpecializationId);
-
-  // Clear city when country changes
-  useEffect(() => {
-    if (prevCountry.current !== undefined && prevCountry.current !== selectedCountryId) {
-      form.setValue("city", '');
-    }
-    prevCountry.current = selectedCountryId;
-  }, [selectedCountryId, form]);
-
-  // Clear role when specialization changes
-  useEffect(() => {
-    if (prevSpecialization.current !== undefined && prevSpecialization.current !== selectedSpecializationId) {
-      form.setValue("role", '');
-    }
-    prevSpecialization.current = selectedSpecializationId;
-  }, [selectedSpecializationId, form]);
 
  
-
   const fieldHeight = "h-12";
   const fieldWidth = "max-w-[672px]";
 

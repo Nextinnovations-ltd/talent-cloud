@@ -7,7 +7,7 @@ export const UserProfileSchema = yup.object({
     tagline: yup.string().max(60).required("Tagline is required"),
     role: yup.string().required(),
     specializations:yup.number().required('Specialization specialize is required'),
-    experience_level: yup.number().required("Experience level is required"),
+    experience_level: yup.string().required("Experience level is required"),
     experience_years: yup.number().required("Experience years is required"),
     bio: yup.string().max(250).optional(),
     email: yup.string().required("Email is required"),

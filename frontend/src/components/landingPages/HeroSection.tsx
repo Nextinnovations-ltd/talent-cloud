@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import exploreArrow from "@/assets/JobPortal/Group 2292.svg";
@@ -14,11 +14,14 @@ import p5 from 'p5';
 import  CheckCircle from '@/assets/check-circle.svg'
 
 
+
 const HeroSection = () => {
     const wordsToDisplay = [
         'Facebook', 'Instagram', 'Twitter', 'LinkedIn',
         'Github', 'Behance', 'Email', 'Discord'
       ];
+
+      const navigate = useNavigate();
       
       
         const containerRef = useRef(null);
@@ -192,7 +195,7 @@ const HeroSection = () => {
                     <li><Link to="">About us</Link></li>
                     <li><Link to="">Blog</Link></li>
                   </ul>
-                  <Button className="bg-[#0481EF] hover:opacity-75 text-white rounded-[12px] p-[10px] w-[110px] h-[38px]">
+                  <Button onClick={()=> navigate('/auth/login')} className="bg-[#0481EF] hover:opacity-75 text-white rounded-[12px] p-[10px] w-[110px] h-[38px]">
                     Sign up
                   </Button>
                 </nav>
