@@ -12,6 +12,7 @@ from enum import Enum
 from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
+from apps.ws_channel.serializers import NotificationListSerializer
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
@@ -474,6 +475,20 @@ class NotificationService:
         return queryset.count()
     
     @staticmethod
+    def get_total_count(user_id: int, channel: Optional[NotificationChannel] = None) -> int:
+        """Get count of notifications for a user, optionally filtered by channel"""
+        queryset = Notification.objects.filter(user_id=user_id)
+        
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        return queryset.count()
+    
+    @staticmethod
+    def get_in_app_notification_count(user_id: int) -> int:
+        """Get count of in-app (websocket) notifications for a user"""
+        return NotificationService.get_total_count(user_id, NotificationChannel.WEBSOCKET)
+    
+    @staticmethod
     def get_unread_in_app_count(user_id: int) -> int:
         """Get count of unread in-app (websocket) notifications for a user"""
         return NotificationService.get_unread_count(user_id, NotificationChannel.WEBSOCKET)
@@ -505,7 +520,11 @@ class NotificationService:
         if channel:
             queryset = queryset.filter(channel=channel.value)
         
-        return queryset.order_by('-created_at')[offset:offset+limit]
+        queryset = queryset.order_by('-created_at')[offset:offset+limit]
+        
+        serializer = NotificationListSerializer(queryset, many=True)
+        
+        return serializer.data
     
     @staticmethod
     def get_user_in_app_notifications(

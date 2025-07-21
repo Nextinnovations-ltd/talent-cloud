@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
-from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, JobPostView
+from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, JobPostView, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.job_posting.serializers import (
     BookmarkedJobSerializer,
@@ -142,8 +142,9 @@ class MatchedJobPostAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
      serializer_class = JobPostListSerializer
-     filter_backends = [DjangoFilterBackend]
+     filter_backends = [DjangoFilterBackend, SearchFilter]
      filterset_class = JobPostFilter
+     search_fields = [ 'title', 'description', 'location' ] 
      
      def get_queryset(self):
           jobseeker = JobSeeker.objects.prefetch_related(
@@ -168,12 +169,15 @@ class MatchedJobPostAPIView(CustomListAPIView):
           queryset = queryset.filter(user_match_q)
 
           # Filter 3 last_application_date must be today or in the future, OR be null
+          job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
+          queryset = queryset.filter(job_status_filter_q)
+
           today = date.today()
           date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
           queryset = queryset.filter(date_filter_q)
 
           # Filter 4 (Optional Default): Only show jobs with positions available
-          # queryset = queryset.filter(number_of_positions__gt=0)
+          queryset = queryset.filter(number_of_positions__gt=0)
 
           queryset = queryset.distinct()
 
