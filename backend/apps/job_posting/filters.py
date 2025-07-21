@@ -14,6 +14,7 @@ class JobPostFilter(django_filters.FilterSet):
      work_type = django_filters.ChoiceFilter(choices=WorkType.choices)
      project_duration = django_filters.ChoiceFilter(choices=ProjectDurationType.choices)
      salary_rate = django_filters.CharFilter(method='filter_salary_range')
+     experience_year = django_filters.CharFilter(method='filter_experience_year')
      list_by_any_time = django_filters.CharFilter(method='filter_posted_time')
 
      class Meta:
@@ -43,6 +44,21 @@ class JobPostFilter(django_filters.FilterSet):
                     salary_mode='range',
                     salary_max__gte=min_salary,
                     salary_min__lte=max_salary
+               )
+          )
+          
+     def filter_experience_year(self, queryset, name, value):
+          print(f"Filtering experience year with value: {value}")
+          try:
+               min_year, max_year = map(float, value.split('-'))
+          except Exception as e:
+               print(f"Experience year parsing error: {e}")
+               return queryset.none()
+
+          return queryset.filter(
+               Q(
+                    experience_years__gte=min_year,
+                    experience_years__lte=max_year
                )
           )
 

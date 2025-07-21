@@ -79,13 +79,15 @@ class NotificationListAPIView(APIView):
         # Only count unread in-app notifications
         unread_count = NotificationService.get_unread_in_app_count(request.user.id)
         
-        serializer = NotificationListSerializer(notifications, many=True)
+        # Only count total in-app notifications
+        notification_counts = NotificationService.get_in_app_notification_count(request.user.id)
         
         return Response(
             CustomResponse.success(
                 "Notifications retrieved successfully.",
                 {
-                    'notifications': serializer.data,
+                    'notifications': notifications,
+                    'total_count': notification_counts,
                     'unread_count': unread_count,
                 }
             ),
