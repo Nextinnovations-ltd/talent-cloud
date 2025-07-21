@@ -12,7 +12,7 @@ from enum import Enum
 from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
-from backend.apps.ws_channel.serializers import NotificationListSerializer
+from apps.ws_channel.serializers import NotificationListSerializer
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
