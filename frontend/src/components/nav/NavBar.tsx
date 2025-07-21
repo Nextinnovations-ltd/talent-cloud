@@ -1,12 +1,11 @@
 import { Logo } from "../common/Logo";
 import { NavigationMenuDemo } from "./NavMenu";
 import { SearchBar } from "./SearchBar";
-import { BellIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import useJobSearchStore from "@/state/zustand/job-search";
 import { useLocation } from "react-router-dom";
 import { UserProfile } from "./UserProfile";
+import NotificationDropDown from "../notifications/notificationDropDown";
 
 export const NavBar = () => {
   const { searchQuery, setSearchQuery } = useJobSearchStore();
@@ -76,9 +75,7 @@ export const NavBar = () => {
           </form>
           <NavigationMenuDemo />
           <div className="flex -2  gap-[30px]  items-center justify-center">
-            <Link to={`organization/detail/1`} >
-            <BellIcon />
-            </Link>
+            <NotificationDropDown/>
            <UserProfile/>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
+import { useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
 
 
 export const MainLayout = () => {
@@ -12,6 +13,7 @@ export const MainLayout = () => {
   const [_messages, setMessages] = useState<string[]>([]);
   const token = useSelector((state: any) => state.auth.token); // Get token from Redux state
   const { showNotification } = useToast();
+  const { refetch } = useGetUnReadNotificationsCountQuery();
 
   useEffect(() => {
     if (!token) return;
@@ -33,10 +35,16 @@ export const MainLayout = () => {
       if (data.type === 'notification') {
         setMessages((prev) => [...prev, data.message]);
 
+        console.log(data?.message)
+
+
         showNotification({
           message: data.message,
           type: "success",
         });
+        
+        // Refetch unread notifications count
+        refetch();
         
         // Show browser notification if permission is grantedp\
         if (Notification.permission === 'granted') {

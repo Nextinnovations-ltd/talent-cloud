@@ -4,10 +4,8 @@ import { ApplyJobSideBar } from "@/components/jobApply/ApplyJobSideBar";
 import ApplyJobCardSkeleton from "@/components/jobApply/ApplyJobSkeleton";
 import { PostUploadedCombo } from "@/components/jobApply/PostUploadedCombo";
 import ApplyJobFilters from "@/components/jobApply/ApplyJobFilters";
-import ApplyJobHero from "@/components/jobApply/ApplyJobHero";
 import { useGetJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import useJobSearchStore from "@/state/zustand/job-search";
 import CommonError from "@/components/CommonError/CommonError";
 
@@ -18,7 +16,6 @@ export const Home: React.FC = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const { searchQuery } = useJobSearchStore();
-  const [showHero, setShowHero] = useState(true);
 
   const [filters, setFilters] = useState({
     job_type: searchParams.get('job_type') || '',

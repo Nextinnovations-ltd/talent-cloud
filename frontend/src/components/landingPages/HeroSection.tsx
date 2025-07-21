@@ -9,7 +9,7 @@ import cloud2 from "@/assets/JobPortal/cloud2.png";
 import cloud3 from "@/assets/JobPortal/cloud3.png";
 import cloud4 from "@/assets/JobPortal/cloud4.png";
 import cloud5 from "@/assets/JobPortal/cloud5.png";
- import Matter from 'matter-js';
+import Matter from 'matter-js';
 import p5 from 'p5'; 
 import  CheckCircle from '@/assets/check-circle.svg'
 

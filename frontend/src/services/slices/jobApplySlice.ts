@@ -101,6 +101,7 @@ export type JobSeekerAppliedResponse = {
   cover_letter: string;
   application_resume_url: string;
   created_at: string;
+  is_expired: boolean,
 };
 
 
