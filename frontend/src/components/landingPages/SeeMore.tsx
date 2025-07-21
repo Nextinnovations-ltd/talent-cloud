@@ -3,15 +3,15 @@ import arrowIncrease from '../../assets/JobPortal/streamline_graph-arrow-increas
 const SeeMore = () => {
     const [showmore, setShowMore] = useState(false);  
   return (
-      <div className='bg-[#F7F7F7]'>
-          <div className="max-w-[1240px] mx-auto flex justify-between items-start pt-[119px] pb-[36px] bg-[#F7F7F7] ">
-              <div className="max-w-[772px] ">
+      <div className='bg-[#F7F7F7] pr-[20px] pl-[20px]'>
+          <div className="max-w-[1240px] mx-auto flex lg:flex-row flex-col justify-between items-start pt-[119px] pb-[36px] bg-[#F7F7F7] gap-[64px]">
+              <div className="md:max-w-[772px] max-w-full">
             
-                  <h1 className='text-[32px]  leading-[48px] font-[500] text-[#0481EF]'>
+                  <h1 className='text-[16px] md:text-[32px] leading-[35px]  md:leading-[48px] font-[500] text-[#0481EF]'>
                   Talent Cloud — Your Myanmar EOR partner for hiring top developers and designers, no local entity needed.
                   </h1>
                   
-                  <p className="text-[20px]  leading-[39px] font-[500] text-[#403E3E] mt-[40px] mb-[25px]">
+                  <p className="text-[12px] md:text-[20px] leading-[27px] md:leading-[39px] font-[500] text-[#403E3E] mt-[20px] md:mt-[40px] mb-[25px]">
                   Talent Cloud is a trusted Employer of Record (EOR) platform in Myanmar, designed to help global companies hire top IT professionals.
   
                   <span
@@ -25,7 +25,7 @@ const SeeMore = () => {
 
  
                 <button
-                  className="relative bg-black rounded-[16px] w-[140px] h-[47px] text-white text-[16px] font-[500] leading-[39px] overflow-hidden group"
+                  className="relative bg-black rounded-[16px] w-[124px] md:w-[140px] md:h-[47px] h-[40px] text-white text-[12px] md:text-[16px] font-[500] leading-[14px] md:leading-[39px] overflow-hidden group"
                   onClick={() => setShowMore(!showmore)}
                 >
                   {/* Top text (current state) */}
@@ -40,7 +40,7 @@ const SeeMore = () => {
                 </button>
 
               </div>
-              <div className="flex flex-col justify-between gap-[90px]">
+              <div className="hidden md:flex flex-col justify-between gap-[90px]">
                   <div className="flex flex-col justify-center gap-4 items-center">
                       <div className="flex gap-2 justify-center items-start">
                           <h1 className='text-[40px] font-[500] leading-[28px]'>+100 </h1>

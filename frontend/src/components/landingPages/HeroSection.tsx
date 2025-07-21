@@ -31,7 +31,8 @@ const HeroSection = () => {
     let engine, runner, mouseConstraint;
     let words = [];
     let isTabActive = true;
-    let width = 413;
+    let width = window.innerWidth <= 768 ? window.innerWidth - 60 : 413;
+
     let height = 312;
     let isDragging = false;
 
@@ -360,7 +361,7 @@ const HeroSection = () => {
 
   return (
       <div>
-          <div className="h-[600px] relative bg-[linear-gradient(to_bottom,_#75d1ffe3_90%,_#F7F7F7_100%)]">
+          <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ffe3_90%,_#F7F7F7_100%)]">
             <div className="max-w-[1240px] mx-auto ">
             <div className="">
                 <nav className="flex justify-between items-center pt-[25px] relative z-10">
@@ -402,25 +403,25 @@ const HeroSection = () => {
 
 
                 </nav>
-                <div className="pt-[66px] relative z-10">
-                  <h1 className="text-black text-[64px] font-[700] leading-[87px]">
+                <div className="pt-[66px] relative z-10 pl-[20px] pr-[20px]">
+                  <h1 className="text-black text-[32px] md:text-[64px] font-[700] leading-[46px] md:leading-[87px]">
                     Myanmar Talent<br />Global Impact
                   </h1>
-                  <p className="mt-[35px] text-[#575757] max-w-[783px]">
+                  <p className="md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
                     <span className="text-[#0389FF]">Talent Cloud</span> takes care of hiring, HR, and compliance—creating a smooth experience for <span className="text-[#0389FF]">employers</span> and a supportive environment for <span className="text-[#0389FF]">employees.</span>
                   </p>
-                  <div className="flex justify-center mt-[80px]">
-                  <Button className="relative bg-[#0389FF] rounded-[26px] p-[10px] w-[205px] h-[58px] overflow-hidden group hover:border-b-[6px] hover:border-l-[6px] hover:border-black  transition-all duration-300 ease-in-out"> 
-                      <span className="block text-white text-[20px] font-[600] relative z-10 translate-y-0 group-hover:-translate-y-[60px] transition-transform duration-300">
+                  <div className="flex justify-center md:mt-[80px] mt-[40px]">
+                  <Button className="relative bg-[#0389FF] rounded-[26px] p-[10px] md:w-[205px] md:h-[58px] w-[149px] h-[48px] overflow-hidden group hover:border-b-[6px] border-b-[6px] hover:border-l-[6px] border-l-[6px] hover:border-black border-[#0389FF] transition-all duration-300 ease-in-out"> 
+                      <span className="block text-white md:text-[20px] text-[14px] font-[600] relative z-10 translate-y-0 group-hover:-translate-y-[60px] transition-transform duration-300">
                         Explore Jobs
                       </span>
-                      <span className="block text-white text-[20px] font-[600] absolute top-full right-[20px] w-full z-0 group-hover:-translate-y-[43px] transition-transform duration-300">
+                      <span className="block text-white md:text-[20px] text-[14px] font-[600] absolute top-full right-[20px] w-full z-0 md:group-hover:-translate-y-[43px] group-hover:-translate-y-[30px] transition-transform duration-300">
                         Explore Jobs
                       </span>
                       <img
                         src={exploreArrow}
                         alt="→"
-                        className="ml-[10px] relative z-10 transition-transform duration-300 group-hover:translate-x-1"
+                        className="ml-[10px] relative z-10 transition-transform duration-300 group-hover:translate-x-1 w-[24px] h-[24px] md:w-[32px] md:h-[32px]"
                       />
                     </Button>
 
@@ -434,7 +435,7 @@ const HeroSection = () => {
 
                   </div>
                 </div>
-                <div className="cloud">
+                <div className="cloud hidden md:block">
                   <img src={cloud1} alt="" style={{ "--i": 1 }} />
                   <img src={cloud2} alt="" style={{ "--i": 2 }} />
                   <img src={cloud3} alt="" style={{ "--i": 3 }} />
@@ -446,25 +447,25 @@ const HeroSection = () => {
      
             </div>
            </div>
-           <div className="flex justify-center items-center gap-[25px]  max-w-[1240px] m-auto pt-[86px]">
+           <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px] m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
               <section className="canvas-section h-full " ref={containerRef}>
               <div id="matter-container" ref={matterContainerRef} />
                 </section>
-                <div className="flex flex-col gap-[26px] w-[399px]">
-                <div className=" h-[143px] bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className=" text-[#0481EF] text-[32px] leading-[31px]">200+
+                <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
+                <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+                    <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
                  </h1>
-                  <p className="text-black text-[16px]  leading-[31px]"> IT Professional</p>
+                  <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
                 </div>
-                <div className=" h-[143px] bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className="text-black  text-[32px]  leading-[31px]">100%
+                <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+                    <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
                  </h1>
-                  <p className=" text-[#0481EF] text-[16px]  leading-[31px]"> The EOR service is already in operation.</p>
+                  <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
                 </div>
         
                </div>
-                <div className="w-[409px]
-                h-[313px]  bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] gap-[32px]
+                <div className="md:w-[409px] w-[100%]
+                h-[313px]  bg-white rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]
         ">
          
                   <div className="flex gap-[24px] items-center">

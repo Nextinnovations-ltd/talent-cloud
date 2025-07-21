@@ -47,7 +47,7 @@ const slides = [
   },
 ];
 
-const SLIDE_DURATION = 4000; // 4 seconds
+const SLIDE_DURATION = 8000; // 4 seconds
 const PROGRESS_INTERVAL = 40; // Not needed anymore since we're using requestAnimationFrame
 
 const EorSection = () => {
@@ -91,19 +91,19 @@ const EorSection = () => {
   return (
     <div className="bg-white">
       <div className="max-w-[1271px] mx-auto pt-[38px] pb-[71px]">
-        <h1 className="text-[32px] font-[600] leading-[56px] text-right mb-[30px]">
+        <h1 className="text-[16px] md:text-[32px] font-[600] leading-[14px] md:leading-[56px] text-right md:mb-[30px] mb-[38px]">
           WHAT WE OFFER?
         </h1>
 
         {/* Progress Timeline */}
-        <div className="w-[548px] h-2 bg-[#D9D9D9] rounded-full overflow-hidden mb-[30px]">
+        <div className="w-[548px] h-2 bg-[#D9D9D9] rounded-full overflow-hidden mb-[30px] hidden md:block">
           <div
             className="h-full bg-[#0481EF] rounded-full"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
 
-        <div className="flex justify-center gap-[110px]">
+        <div className="flex justify-center gap-[110px] ">
           <div className="w-full max-w-full relative">
             {slides.map((slide, index) => (
               <div
@@ -112,21 +112,21 @@ const EorSection = () => {
                   index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
                 }`}
               >
-                <div className="flex flex-row gap-[110px] p-4">
+                <div className="flex gap-4  md:gap-[110px] p-4 lg:flex-row flex-col">
                   {/* Text */}
-                  <div className="max-w-[714px] flex flex-col gap-8">
-                    <h1 className="text-[#0481EF] text-[36px] font-[600] leading-[34px]">
+                  <div className="max-w-[714px] flex flex-col gap-2">
+                    <h1 className="text-[#0481EF] text-[14px] md:text-[36px] font-[600] leading-[14px] md:leading-[34px]">
                       {slide.title}
                     </h1>
-                    <p className="text-[#575757] text-[32px] font-[500] leading-[43px]">
+                    <p className="text-[#575757] text-[10px] md:text-[32px] font-[500] leading-[26px] md:leading-[43px]">
                       {slide.text}
                     </p>
                   </div>
                   {/* Image */}
-                  <div>
+                  <div className='flex justify-end '>
                     <img
                       src={slide.image}
-                      className="w-[447px] h-[375px] object-cover rounded-[12px]"
+                      className="w-[129px] h-[92px] md:w-[447px] md:h-[375px] object-cover rounded-[12px]"
                     />
                   </div>
                 </div>
@@ -134,16 +134,16 @@ const EorSection = () => {
             ))}
 
             {/* Navigation Buttons */}
-            <div className="flex gap-8 mt-[313px] relative z-20">
+            <div className="flex gap-8 mt-[208px] md:mt-[80vh] lg:mt-[313px] relative z-20">
               <button
                 onClick={scrollPrev}
-                className="w-[62px] h-[62px] flex justify-center items-center rounded-full border border-transparent hover:bg-[#F7F7F7] transition"
+                className="w-[32px] md:w-[62px] h-[32px] md:h-[62px] flex justify-center items-center rounded-full border border-solid  hover:bg-[#F7F7F7] transition border-[#F7F7F7]"
               >
                 <img src={previousBtn} alt="Previous" />
               </button>
               <button
                 onClick={scrollNext}
-                className="w-[62px] h-[62px] flex justify-center items-center rounded-full border border-transparent hover:bg-[#F7F7F7] transition"
+                className="w-[32px] md:w-[62px] h-[32px] md:h-[62px] flex justify-center items-center rounded-full border  hover:bg-[#F7F7F7] transition border-[#F7F7F7]"
               >
                 <img src={nextBtn} alt="Next" />
               </button>

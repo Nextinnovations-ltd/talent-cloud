@@ -7,14 +7,14 @@ import icon3 from '../../assets/JobPortal/Frame 36109.svg'
 import icon4 from '../../assets/JobPortal/Frame 36110.svg'
 const ReasonToChoose = () => {
     return (
-        <div className="bg-[#F9FAFB] mt-[96px]">
-      <div className='max-w-[1240px] mx-auto pt-[83px] pb-[61px] '>
-          <h1 className='text-[40px] leading-[57px] font-[600] mb-[81px]'>WHY CHOOSE TALENT CLOUD ?</h1>
-          <div className="flex gap-[100px] justify-center ">
-              <div className="pt-[28px]">
-                  <img src={ teamwork} className='mb-[30px] ml-[49px]'/>
-                  <p className='mb-[17px]'>The EOR service is already in operation.</p>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="373" height="41" viewBox="0 0 373 41" fill="none">
+        <div className="bg-[#F9FAFB] md:mt-[96px] mt-[31px] pl-[20px] pr-[20px] ">
+      <div className='max-w-[1240px] mx-auto md:pt-[83px] pt-[26px] pb-[61px] '>
+          <h1 className='md:text-[40px] text-[16px] leading-[57px] font-[600] md:mb-[81px] mb-[35px]'>WHY CHOOSE TALENT CLOUD ?</h1>
+          <div className="flex md:flex-row flex-col-reverse gap-[46px] md:gap-[100px] justify-center items-center flex-wrap lg:flex-nowrap">
+              <div className="pt-[28px] w-full flex flex-col justify-center items-center">
+                  <img src={ teamwork} className='md:mb-[30px] mb-[43px] md:ml-[49px] '/>
+                  <p className='md:mb-[17px] mb-[8px]'>The EOR service is already in operation.</p>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="373" height="41" viewBox="0 0 373 41" fill="none" className='sm:w-full md:w-[373px]'>
                             <motion.path
                             viewport={{ once: true }} 
                               initial={{ pathLength: 0 }}
@@ -29,26 +29,26 @@ const ReasonToChoose = () => {
                
                         </svg>
                     </div>
-                    <div className="grid grid-cols-2 gap-[73px]">
+                    <div className="grid md:grid-cols-2 grid-cols-[300px] md:gap-[73px] gap-[30px] ">
                         <div className="flex flex-col gap-[8px]">
-                            <img src={icon1} alt="" className='w-[52px] h-[50px]'/>
-                            <h1 className='text-[20px] leading-[48px] font-[600]'>Hire Without a Local Entity</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] text-[16px]'>No local entity needed—we act as your legal employer for a smooth, compliant hiring process.</p>
+                            <img src={icon1} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
+                            <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Hire Without a Local Entity</h1>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>No local entity needed—we act as your legal employer for a smooth, compliant hiring process.</p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
-                            <img src={icon3} alt="" className='w-[52px] h-[50px]'/>
-                            <h1 className='text-[20px] leading-[48px] font-[600]'>Specialized in IT Talent</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] text-[16px]'>We find and manage top tech and creative talent to build your remote team with ease.</p>
+                            <img src={icon3} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
+                            <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Specialized in IT Talent</h1>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We find and manage top tech and creative talent to build your remote team with ease.</p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
-                            <img src={icon2} alt="" className='w-[52px] h-[50px]'/>
-                            <h1 className='text-[20px] leading-[48px] font-[600]'>Full HR & Payroll Compliance</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] text-[16px]'>We manage salaries, benefits, and ensure full compliance with Myanmar labor laws—so you can hire with confidence.</p>
+                            <img src={icon2} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
+                            <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Full HR & Payroll Compliance</h1>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We manage salaries, benefits, and ensure full compliance with Myanmar labor laws—so you can hire with confidence.</p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
-                            <img src={icon4} alt="" className='w-[52px] h-[50px]'/>
-                            <h1 className='text-[20px] leading-[48px] font-[600]'>Workplace & Equipment Support</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] text-[16px]'>We provide the tools your remote hire needs—from laptops to internet—for a smooth setup.</p>
+                            <img src={icon4} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
+                            <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600] lg:text-nowrap'>Workplace & Equipment Support</h1>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We provide the tools your remote hire needs—from laptops to internet—for a smooth setup.</p>
                         </div>
 
                     </div>
