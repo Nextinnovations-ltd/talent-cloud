@@ -4,7 +4,6 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils import timezone
 from django.db import transaction
-from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
 from apps.users.models import TalentCloudUser
 from apps.authentication.models import UserInvitation
@@ -146,10 +145,6 @@ class InvitationService:
           # Validate invitation
           invitation = InvitationService.validate_invitation_token(token)
           
-          # Check if email matches
-          if invitation.email != user_data.get('email'):
-               raise ValueError("Email does not match invitation")
-          
           try:
                # Create user based on invitation type
                if invitation.invitation_type == UserInvitation.InvitationType.NI_ADMIN:
@@ -181,7 +176,7 @@ class InvitationService:
           user = TalentCloudUser.objects.create_superuser(
                email=invitation.email,
                password=user_data['password'],
-               username=user_data.get('username', ''),
+               username=user_data.get['username'],
                is_verified=True,
           )
           
@@ -197,6 +192,7 @@ class InvitationService:
                password=user_data['password'],
                company=invitation.target_company,
                is_verified=True,
+               username=user_data['username']
           )
           
           return user
@@ -245,10 +241,6 @@ class InvitationService:
                     channel=NotificationChannel.BOTH,
                     title="Welcome to TalentCloud!",
                     message=f"Your {invitation.get_invitation_type_display()} account has been created successfully.",
-                    metadata={
-                         'invitation_type': invitation.invitation_type,
-                         'company': invitation.target_company.name if invitation.target_company else None
-                    }
                )
           except Exception as e:
                logger.error(f"Failed to send welcome notification to {user.email}: {str(e)}")

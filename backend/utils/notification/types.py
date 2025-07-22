@@ -2,6 +2,7 @@ from enum import Enum
 
 class NotificationType(str, Enum):
      GENERIC = "generic"
+     ACCOUNT_CREATED = "account_created"
      JOB_POSTED = "job_posted"
      JOB_APPLIED = "job_applied"
      APPLICATION_STATUS_UPDATE = "application_status_update"
