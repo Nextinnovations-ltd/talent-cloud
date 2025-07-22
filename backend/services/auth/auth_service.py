@@ -32,9 +32,21 @@ class AuthenticationService:
           return user
      
      @staticmethod
-     def register_user_with_role(email, password, role):
+     def register_user_with_role(email, password, role, **kwargs):
           with transaction.atomic():
-               user = TalentCloudUser.objects.create_user_with_role(email=email, password=password, role_name = role)
+               user = TalentCloudUser.objects.create_user_with_role(email=email, password=password, role_name = role, **kwargs)
+
+               # Create verification code, token, and send mail to verify the user as active user
+               verify_token = AuthEmailService.verify_user_registration(user.email)
+
+               return verify_token
+          
+          return None
+     
+     @staticmethod
+     def register_ni_super_user(username, email, password):
+          with transaction.atomic():
+               user = TalentCloudUser.objects.create_superuser(username=username, email=email, password=password)
 
                # Create verification code, token, and send mail to verify the user as active user
                verify_token = AuthEmailService.verify_user_registration(user.email)

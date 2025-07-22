@@ -1,10 +1,8 @@
-from apps.job_posting.serializers import JobPostSerializer, JobPostDetailSerializer
+from apps.job_posting.serializers import JobPostSerializer
 from apps.job_posting.models import JobPost, JobPostView
 from apps.job_seekers.models import JobSeeker
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from services.notification.notification_service import NotificationHelpers
-from utils.notification.types import NotificationChannel
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,7 +17,7 @@ class JobService():
           # Send notifications about the new job posting
           try:
                NotificationHelpers.notify_job_posted(
-                    job_post, 
+                    job_post,
                     user.company if hasattr(user, 'company') else None
                )
                logger.info(f"Job posting notifications sent for job: {job_post.title}")
@@ -41,7 +39,7 @@ class JobService():
           if job_seeker:
                # Create or get the view record
                JobPostView.objects.get_or_create(job_post=job_post, job_seeker=job_seeker)
-          
+
           return job_post
 
      @staticmethod

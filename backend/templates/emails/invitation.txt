@@ -1,0 +1,26 @@
+<!-- filepath: /home/khant-hmue/Projects/Next Innovations/tc/backend/templates/emails/invitation.txt -->
+You're Invited to TalentCloud!
+
+Hello,
+
+{{ invited_by }} has invited you to join {{ company_name }} as a {{ invitation.get_invitation_type_display }} on TalentCloud.
+
+{% if invitation.target_company %}
+You've been invited to manage {{ invitation.target_company.name }}'s job postings and applications.
+{% else %}
+You've been invited to help manage the TalentCloud platform.
+{% endif %}
+
+To complete your registration, please visit:
+{{ registration_url }}
+
+IMPORTANT: This invitation will expire on {{ expires_at|date:"F d, Y \a\t g:i A" }}.
+
+If you have any questions, please contact {{ invited_by }}.
+
+Best regards,
+The TalentCloud Team
+
+---
+This is an automated message. Please do not reply to this email.
+© 2024 Next Innovations. All rights reserved.
