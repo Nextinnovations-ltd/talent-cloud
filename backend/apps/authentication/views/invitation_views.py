@@ -164,24 +164,14 @@ class RegisterAdminUserAPIView(APIView):
           try:
                token = request.data.get('token')
                user_data = {
-                    'email': request.data.get('email'),
                     'password': request.data.get('password'),
                     'username': request.data.get('username', '')
                }
                
                # Validate required fields
-               if not token or not user_data['email'] or not user_data['password']:
+               if not token or not user_data['username'] or not user_data['password']:
                     return Response(
-                         CustomResponse.error("Token, email, and password are required"),
-                         status=status.HTTP_400_BAD_REQUEST
-                    )
-               
-               # Validate email format
-               try:
-                    validate_email(user_data['email'])
-               except DjangoValidationError:
-                    return Response(
-                         CustomResponse.error("Invalid email format"),
+                         CustomResponse.error("Token, username, and password are required"),
                          status=status.HTTP_400_BAD_REQUEST
                     )
                
