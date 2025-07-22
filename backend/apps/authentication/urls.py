@@ -7,7 +7,6 @@ from apps.authentication.views.invitation_views import (
     RegisterAdminUserAPIView,
     MyInvitationsAPIView,
     RevokeInvitationAPIView,
-    ResendInvitationAPIView,
     InvitationStatisticsAPIView
 )
 from apps.authentication.views.auth_view import (
@@ -52,7 +51,6 @@ urlpatterns=[
     path('invitations/register/', RegisterAdminUserAPIView.as_view(), name='register_admin_user'),
     path('invitations/my-invitations/', MyInvitationsAPIView.as_view(), name='list_my_invitations'),
     path('invitations/<int:invitation_id>/revoke/', RevokeInvitationAPIView.as_view(), name='revoke_invitation'),
-    path('invitations/<int:invitation_id>/resend/', ResendInvitationAPIView.as_view(), name='resend_invitation'),
     path('invitations/statistics/', InvitationStatisticsAPIView.as_view(), name='get_invitation_statistics'),
 ]
 

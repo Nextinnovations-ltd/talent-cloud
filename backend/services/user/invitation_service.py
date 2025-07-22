@@ -1,11 +1,17 @@
+from datetime import timedelta
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils import timezone
-from apps.users.models import Role, ROLES, TalentCloudUser
+from django.db import transaction
+from django.db.models import Q
+from rest_framework.exceptions import PermissionDenied
+from apps.users.models import TalentCloudUser
 from apps.authentication.models import UserInvitation
+from backend.apps.authentication.serializers import InvitationSerializer
 from services.notification.notification_service import NotificationService
 from utils.notification.types import NotificationType, NotificationChannel
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,37 +29,41 @@ class InvitationService:
                existing_invitation = UserInvitation.objects.filter(
                     email=email,
                     invitation_type=UserInvitation.InvitationType.NI_ADMIN,
-                    status=UserInvitation.InvitationStatus.PENDING
+                    invitation_status=UserInvitation.InvitationStatus.PENDING
                ).first()
                
-               if existing_invitation:
-                    if existing_invitation.is_valid():
-                         raise ValueError(f"Valid invitation already exists for {email}")
-                    else:
-                         # Mark expired invitation as expired
-                         existing_invitation.mark_as_expired()
+               with transaction.atomic():
+                    if existing_invitation:
+                         if existing_invitation.is_valid():
+                              raise ValueError(f"Valid invitation already exists for {email}")
+                         else:
+                              # Mark expired invitation as expired
+                              existing_invitation.mark_as_expired()
+                    
+                    # Create new invitation
+                    invitation = UserInvitation.objects.create(
+                         email=email,
+                         invitation_type=UserInvitation.InvitationType.NI_ADMIN,
+                         token=UserInvitation.generate_token(),
+                         invited_by=invited_by,
+                         target_company=invited_by.company,
+                         expires_at=UserInvitation.get_default_expiry()
+                    )
                
-               # Create new invitation
-               invitation = UserInvitation.objects.create(
-                    email=email,
-                    invitation_type=UserInvitation.InvitationType.NI_ADMIN,
-                    token=UserInvitation.generate_token(),
-                    invited_by=invited_by,
-                    target_company=invited_by.company,
-                    expires_at=UserInvitation.get_default_expiry()
-               )
-               
-               # Send invitation email
-               InvitationService._send_invitation_email(invitation)
+               try:
+                    # Send invitation email
+                    InvitationService._send_invitation_email(invitation)
+               except Exception as e:     
+                    logger.error(f"Invitation created but email failed for {email}: {str(e)}")
+                    # Don't rollback the invitation creation if email fails
                
                # Log the invitation
                logger.info(f"NI admin invitation created for {email} by {invited_by.email}")
                
                return {
                     'message': 'Admin invitation email has sent to the user.',
-                    'data': invitation
+                    'data': InvitationSerializer(invitation).data
                }
-               
           except Exception as e:
                logger.error(f"Failed to create NI admin invitation for {email}: {str(e)}")
                raise
@@ -69,32 +79,40 @@ class InvitationService:
                     email=email,
                     invitation_type=UserInvitation.InvitationType.COMPANY_ADMIN,
                     target_company=invited_by.company,
-                    status=UserInvitation.InvitationStatus.PENDING
+                    invitation_status=UserInvitation.InvitationStatus.PENDING
                ).first()
                
-               if existing_invitation:
-                    if existing_invitation.is_valid():
-                         raise ValueError(f"Valid company admin invitation already exists for {email}")
-                    else:
-                         existing_invitation.mark_as_expired()
+               with transaction.atomic():
+                    if existing_invitation:
+                         if existing_invitation.is_valid():
+                              raise ValueError(f"Valid company admin invitation already exists for {email}")
+                         else:
+                              existing_invitation.mark_as_expired()
+                    
+                    # Create new invitation
+                    invitation = UserInvitation.objects.create(
+                         email=email,
+                         invitation_type=UserInvitation.InvitationType.COMPANY_ADMIN,
+                         token=UserInvitation.generate_token(),
+                         invited_by=invited_by,
+                         target_company=invited_by.company,
+                         expires_at=UserInvitation.get_default_expiry()
+                    )
                
-               # Create new invitation
-               invitation = UserInvitation.objects.create(
-                    email=email,
-                    invitation_type=UserInvitation.InvitationType.COMPANY_ADMIN,
-                    token=UserInvitation.generate_token(),
-                    invited_by=invited_by,
-                    target_company=invited_by.company,
-                    expires_at=UserInvitation.get_default_expiry()
-               )
-               
-               # Send invitation email
-               InvitationService._send_invitation_email(invitation)
+               try:
+                    # Send invitation email
+                    InvitationService._send_invitation_email(invitation)
+               except Exception as e:     
+                    logger.error(f"Invitation created but email failed for {email}: {str(e)}")
+                    # Don't rollback the invitation creation if email fail               
                
                # Log the invitation
                logger.info(f"Company admin invitation created for {email} at {invited_by.company.name} by {invited_by.email}")
                
-               return invitation
+               return {
+                    'message': 'Company admin invitation email has sent to the user.',
+                    'data': InvitationSerializer(invitation).data
+               }
                
           except Exception as e:
                logger.error(f"Failed to create company admin invitation for {email}: {str(e)}")
@@ -241,31 +259,99 @@ class InvitationService:
           """Get pending invitations sent by user"""
           return UserInvitation.objects.filter(
                invited_by=user,
-               status=UserInvitation.InvitationStatus.PENDING
-          ).select_related('invited_role', 'target_company')
+               invitation_status=UserInvitation.InvitationStatus.PENDING
+          ).select_related('target_company')
      
      @staticmethod
      def revoke_invitation(invitation_id, user):
           """Revoke an invitation"""
           invitation = UserInvitation.objects.get(
                id=invitation_id,
-               invited_by=user,
-               status=UserInvitation.InvitationStatus.PENDING
+               invitation_status=UserInvitation.InvitationStatus.PENDING
           )
+          
+          if not InvitationService._can_manage_invitation(user, invitation):
+            raise PermissionDenied("You don't have permission to revoke this invitation")
+       
           invitation.revoke()
+          
           logger.info(f"Invitation {invitation_id} revoked by {user.email}")
+          
           return invitation
      
      @staticmethod
      def cleanup_expired_invitations():
           """Cleanup expired invitations (for cron job)"""
           expired_invitations = UserInvitation.objects.filter(
-               status=UserInvitation.InvitationStatus.PENDING,
+               invitation_status=UserInvitation.InvitationStatus.PENDING,
                expires_at__lte=timezone.now()
           )
           
           count = expired_invitations.count()
-          expired_invitations.update(status=UserInvitation.InvitationStatus.EXPIRED)
+          expired_invitations.update(invitation_status=UserInvitation.InvitationStatus.EXPIRED)
           
           logger.info(f"Marked {count} invitations as expired")
           return count
+     
+     
+     @staticmethod
+     def get_invitation_statistics(user):
+          """
+          Get statistics about invitations sent by current user
+          """
+          try:
+               # Get base queryset based on user permissions
+               invitations = UserInvitation.objects.filter(invited_by=user)
+               
+               # Calculate statistics
+               stats = {
+                    'total_invitations': invitations.count(),
+                    'pending_invitations': invitations.filter(
+                         invitation_status=UserInvitation.InvitationStatus.PENDING
+                    ).count(),
+                    'accepted_invitations': invitations.filter(
+                         invitation_status=UserInvitation.InvitationStatus.ACCEPTED
+                    ).count(),
+                    'expired_invitations': invitations.filter(
+                         invitation_status=UserInvitation.InvitationStatus.EXPIRED
+                    ).count(),
+                    'revoked_invitations': invitations.filter(
+                         invitation_status=UserInvitation.InvitationStatus.REVOKED
+                    ).count(),
+               }
+               
+               # Recent activity (last 30 days)
+               thirty_days_ago = timezone.now() - timedelta(days=30)
+               stats['recent_invitations'] = invitations.filter(
+                    created_at__gte=thirty_days_ago
+               ).count()
+               stats['recent_accepted'] = invitations.filter(
+                    invitation_status=UserInvitation.InvitationStatus.ACCEPTED,
+                    accepted_at__gte=thirty_days_ago
+               ).count()
+               
+               # Valid invitations (pending and not expired)
+               stats['valid_invitations'] = invitations.filter(
+                    invitation_status=UserInvitation.InvitationStatus.PENDING,
+                    expires_at__gt=timezone.now()
+               ).count()
+               
+               logger.info(f"Statistics retrieved for user {user.email}")
+               
+               return {
+                    'message': 'Invitation statistics retrieved successfully',
+                    'data': stats
+               }
+               
+          except Exception as e:
+               logger.error(f"Failed to get invitation statistics for {user.email}: {str(e)}")
+               raise
+     
+     @staticmethod
+     def _can_manage_invitation(user: TalentCloudUser, invitation: UserInvitation):
+          """Check if user can manage this invitation"""
+          # User can manage their own invitations
+          if invitation.invited_by == user:
+               return True
+          
+          return user.company == invitation.invited_by.company

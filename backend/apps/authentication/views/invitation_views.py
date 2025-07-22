@@ -3,15 +3,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
-from django.shortcuts import get_object_or_404
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError as DjangoValidationError
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudAdminPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
+from core.middleware.permission import IsInvitationOwnerOrSameCompany, TalentCloudAdminOrSuperAdminPermission, TalentCloudAdminPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
 import logging
 from apps.authentication.models import UserInvitation
-from apps.users.models import ROLES
-from apps.companies.models import Company
 from services.user.invitation_service import InvitationService
 from utils.response import CustomResponse
 
@@ -44,20 +41,15 @@ class SendNIAdminInvitationAPIView(APIView):
                     )
                
                # Create invitation
-               invitation = InvitationService.create_ni_admin_invitation(
+               response = InvitationService.create_ni_admin_invitation(
                     email=email,
                     invited_by=request.user
                )
                
                return Response(
                     CustomResponse.success(
-                    "NI admin invitation sent successfully",
-                         {
-                              'invitation_id': invitation.id,
-                              'email': invitation.email,
-                              'expires_at': invitation.expires_at,
-                              'registration_url': invitation.get_registration_url()
-                         }
+                         message=response['message'],
+                         data=response['data']
                     ),
                     status=status.HTTP_201_CREATED
                )
@@ -79,22 +71,16 @@ class SendCompanyAdminInvitationAPIView(APIView):
      """Send invitation to register as company admin user"""
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudAdminPermission]
-     
+
      def post(self, request):
           """Send invitation for company admin registration"""
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
-          
           try:
                email = request.data.get('email')
-               company_id = request.data.get('company_id')
-               role_name = request.data.get('role', ROLES.ADMIN)
-               additional_data = request.data.get('additional_data', {})
                
                # Validate required fields
-               if not email or not company_id:
+               if not email:
                     return Response(
-                         CustomResponse.error("Email and company_id are required"),
+                         CustomResponse.error("Email is required"),
                          status=status.HTTP_400_BAD_REQUEST
                     )
                
@@ -107,34 +93,16 @@ class SendCompanyAdminInvitationAPIView(APIView):
                          status=status.HTTP_400_BAD_REQUEST
                     )
                
-               # Get company
-               company = get_object_or_404(Company, id=company_id)
-               
-               # Permission check
-               if not request.user.is_superuser:
-                    # Company admin can only invite for their own company
-                    if not hasattr(request.user, 'company') or request.user.company != company:
-                         return Response(
-                         CustomResponse.error("You can only send invitations for your company"),
-                         status=status.HTTP_403_FORBIDDEN
-                         )
-               
                # Create invitation
-               invitation = InvitationService.create_company_admin_invitation(
+               response = InvitationService.create_company_admin_invitation(
                     email=email,
                     invited_by=request.user
                )
                
                return Response(
                     CustomResponse.success(
-                         "Company admin invitation sent successfully",
-                         {
-                              'invitation_id': invitation.id,
-                              'email': invitation.email,
-                              'company': company.name,
-                              'expires_at': invitation.expires_at,
-                              'registration_url': invitation.get_registration_url()
-                         }
+                         message=response['message'],
+                         data=response['data']
                     ),
                     status=status.HTTP_201_CREATED
                )
@@ -169,7 +137,7 @@ class ValidateInvitationTokenAPIView(APIView):
                               'invitation_type': invitation.invitation_type,
                               'company': invitation.target_company.name if invitation.target_company else None,
                               'expires_at': invitation.expires_at,
-                              'invited_by': invitation.invited_by.get_full_name() or invitation.invited_by.email
+                              'invited_by': invitation.invited_by.name or invitation.invited_by.email
                          }
                     )
                )
@@ -255,13 +223,10 @@ class RegisterAdminUserAPIView(APIView):
 class MyInvitationsAPIView(APIView):
      """List invitations sent by current user"""
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
      
      def get(self, request):
           """List invitations sent by current user with filtering and pagination"""
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
-          
           try: 
                invitations = InvitationService.get_pending_invitations(
                     user=request.user
@@ -283,8 +248,8 @@ class MyInvitationsAPIView(APIView):
                
                return Response(
                     CustomResponse.success(
-                         "Invitations retrieved successfully",
-                         {'invitations': invitation_data}
+                         message="Invitations retrieved successfully",
+                         data={'invitations': invitation_data}
                     )
                )
                
@@ -325,7 +290,7 @@ class MyInvitationsAPIView(APIView):
 class RevokeInvitationAPIView(APIView):
      """Revoke a pending invitation"""
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
      
      def delete(self, request, invitation_id):
           """Revoke a pending invitation"""
@@ -356,47 +321,13 @@ class RevokeInvitationAPIView(APIView):
                )
 
 @extend_schema(tags=["Admin Invitations"])
-class ResendInvitationAPIView(APIView):
-     """Resend an existing invitation"""
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-     
-     def post(self, request, invitation_id):
-          """Resend an existing invitation (creates new token with extended expiry)"""
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
-          
-          try:
-               response = InvitationService.resend_invitation(invitation_id, request.user)
-               
-               return Response(
-                    CustomResponse.success(response['message'], response['data']),
-                    status=status.HTTP_200_OK
-               )
-               
-          except ValueError as e:
-               return Response(
-                    CustomResponse.error(str(e)),
-                    status=status.HTTP_400_BAD_REQUEST
-               )
-          except Exception as e:
-               logger.error(f"Error resending invitation {invitation_id}: {str(e)}")
-               return Response(
-                    CustomResponse.error("Failed to resend invitation"),
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-               )
-
-@extend_schema(tags=["Admin Invitations"])
 class InvitationStatisticsAPIView(APIView):
      """Get statistics about invitations sent by current user"""
      authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
      
      def get(self, request):
           """Get statistics about invitations sent by current user"""
-          if not request.user or not request.user.is_authenticated:
-               raise ValidationError("User not authenticated")
-          
           try:
                response = InvitationService.get_invitation_statistics(request.user)
                

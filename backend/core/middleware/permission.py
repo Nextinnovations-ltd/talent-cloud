@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from apps.authentication.models import UserInvitation
 from core.constants.constants import ROLES
 
 class TalentCloudSuperAdminPermission(BasePermission):
@@ -151,3 +152,31 @@ class IsCompanyAdminOrSuperadminForApplication(BasePermission):
         user = request.user
 
         return user.is_authenticated and user.role and user.role.name in [ROLES.ADMIN, ROLES.SUPERADMIN] and user.company == obj.job_post.posted_by.company
+    
+
+# Invitations
+class IsInvitationOwnerOrSameCompany(BasePermission):
+    """
+    Custom permission to only allow users to access invitations they sent
+    or invitations within their company (for company admins)
+    """
+    allowed_roles = [ROLES.ADMIN, ROLES.SUPERADMIN]
+
+    def has_permission(self, request, view):
+        user_role = str(getattr(request.user, 'role', None))
+
+        if user_role in self.allowed_roles:
+            return True
+        
+        return False
+    
+    def has_object_permission(self, request, view, obj: UserInvitation):        
+        user = request.user
+        
+        # User can access invitations they sent
+        if obj.invited_by == user:
+            return True
+        
+        return user.is_authenticated and user.role and user.role.name in [ROLES.ADMIN, ROLES.SUPERADMIN] and user.company == obj.invited_by.company
+        
+        
