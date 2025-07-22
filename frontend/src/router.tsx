@@ -33,9 +33,14 @@ import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
 import AppliedJobs from "./pages/appliedJobs";
 import SavedJobs from "./pages/savedJobs";
+import Index from "./components/superAdmin";
 
 
 export const router = createBrowserRouter([
+  {
+    path: "/test-design",
+    element: <Index/>
+  },
   {
    path:"/jobseeker/lp",
    element:<JobSeekerLandingPage/>
