@@ -11,6 +11,7 @@ from .notification_views import (
     NotificationDetailAPIView,
     NotificationByChannelAPIView,
     NotificationMarkAllReadAPIView,
+    NotificationMarkAsReadByIDAPIView,
     NotificationUnreadCountAPIView,
     TestAPIView
 )
@@ -32,6 +33,7 @@ __all__ = [
     'NotificationDetailAPIView',
     'NotificationByChannelAPIView',
     'NotificationMarkAllReadAPIView',
+    'NotificationMarkAsReadByIDAPIView',
     'NotificationUnreadCountAPIView',
     'TestAPIView',
     

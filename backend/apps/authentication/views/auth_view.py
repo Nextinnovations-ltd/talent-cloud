@@ -11,16 +11,15 @@ from services.auth.auth_service import AuthenticationService
 from services.auth.token_service import TokenService
 from services.auth.user_info_service import UserInfoService
 from services.user.email_service import AuthEmailService
-from .serializers import UserSerializer, LoginSerializer, RegisterSerializer, ForgetPasswordSerializer, ResetPasswordSerializer, VerifyRegistrationSerializer
+from ..serializers import UserSerializer, LoginSerializer, RegisterSerializer, ForgetPasswordSerializer, ResetPasswordSerializer, VerifyRegistrationSerializer
 from services.auth.oauth_service import FacebookOAuthService, GoogleOAuthService, LinkedinOAuthService
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserDynamicPermission
 from utils.response import CustomResponse
 from utils.oauth.validation import OAuthValidator
-from utils.oauth.rate_limiting import oauth_rate_limited, RateLimitMetrics
+from utils.oauth.rate_limiting import oauth_rate_limited
 from utils.oauth.csrf_protection import OAuthStateManager
 from drf_spectacular.utils import extend_schema
-from django_ratelimit.exceptions import Ratelimited
 import logging
 
 logger = logging.getLogger(__name__)

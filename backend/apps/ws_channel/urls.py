@@ -10,6 +10,7 @@ from .views import (
     NotificationDetailAPIView,
     NotificationByChannelAPIView,
     NotificationMarkAllReadAPIView,
+    NotificationMarkAsReadByIDAPIView,
     NotificationUnreadCountAPIView,
     TestAPIView,
     
@@ -24,6 +25,7 @@ urlpatterns = [
     path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
     path('notifications/<int:notification_id>/', NotificationDetailAPIView.as_view(), name='notification-detail'),
     path('notifications/mark-all-read/', NotificationMarkAllReadAPIView.as_view(), name='notification-mark-all-read'),
+    path('notifications/mark-as-read/<int:notification_id>', NotificationMarkAsReadByIDAPIView.as_view(), name='notification-mark-as-read-by-id'),
     path('notifications/unread-count/', NotificationUnreadCountAPIView.as_view(), name='notification-unread-count'),
     path('notifications/channel/<str:channel>/', NotificationByChannelAPIView.as_view(), name='notification-list-by-channel'),
     
