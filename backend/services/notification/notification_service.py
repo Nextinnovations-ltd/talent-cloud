@@ -6,8 +6,7 @@ with support for multiple channels (email, websocket, push) and dynamic configur
 
 This is the main notification service that should be used throughout the application.
 """
-
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any
 from enum import Enum
 from django.db import transaction
 from apps.users.models import TalentCloudUser
@@ -467,6 +466,11 @@ class NotificationService:
         return Notification.objects.filter(user_id=user_id, is_read=False).update(is_read=True)
     
     @staticmethod
+    def mark_notification_as_read(notification_id: int) -> int:
+        """Mark notification as read by notification ID"""
+        return Notification.objects.filter(id=notification_id, is_read=False).update(is_read=True)
+    
+    @staticmethod
     def get_unread_count(user_id: int, channel: Optional[NotificationChannel] = None) -> int:
         """Get count of unread notifications for a user, optionally filtered by channel"""
         queryset = Notification.objects.filter(user_id=user_id, is_read=False)
@@ -561,7 +565,7 @@ class NotificationHelpers:
         
         return NotificationService.send_notification_with_template(
             notification_type=NotificationType.ADMIN_JOB_POSTING,
-            target_roles=[NotificationTarget.ADMIN, NotificationTarget.SUPERADMIN],
+            target_roles=[NotificationTarget.SUPERADMIN],
             template_context=context
         )
     

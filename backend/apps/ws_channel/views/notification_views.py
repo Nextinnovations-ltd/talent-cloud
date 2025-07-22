@@ -26,6 +26,7 @@ class TestAPIView(APIView):
             ),
             status=status.HTTP_200_OK
         )
+
 @extend_schema(tags=["Notifications"])
 class NotificationListAPIView(APIView):
     """
@@ -250,7 +251,33 @@ class NotificationMarkAllReadAPIView(APIView):
             ),
             status=status.HTTP_200_OK
         )
-
+        
+@extend_schema(tags=["Notifications"])
+class NotificationMarkAsReadByIDAPIView(APIView):
+    """
+    Mark all notifications as read for authenticated user
+    """
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [TalentCloudUserPermission]
+    
+    @extend_schema(
+        summary="Mark a single notification as read by its ID",
+        description="Mark unread notification as read by ID",
+        responses={
+            200: "Successfully marked as read",
+            401: "Unauthorized"
+        }
+    )
+    def post(self, request, notification_id):
+        """Mark notification as read by ID"""
+        NotificationService.mark_as_read(notification_id, request.user.id)
+        
+        return Response(
+            CustomResponse.success(
+                f"Successfully marked notification as read.",
+            ),
+            status=status.HTTP_200_OK
+        )
 
 @extend_schema(tags=["Notifications"])
 class NotificationUnreadCountAPIView(APIView):
