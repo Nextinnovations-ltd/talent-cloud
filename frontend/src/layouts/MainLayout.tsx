@@ -32,25 +32,28 @@ export const MainLayout = () => {
 
     socketRef.current.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
+      
       if (data.type === 'notification') {
         setMessages((prev) => [...prev, data.message]);
 
-        console.log(data?.message)
-
-
+        console.log(data?.message);
+        
+        // Show notification toast
         showNotification({
           message: data.message,
           type: "success",
         });
         
-        // Refetch unread notifications count
-        refetch();
+        // Add a small delay before refetching to ensure backend update is complete
+        setTimeout(() => {
+          refetch();
+        }, 500);
         
-        // Show browser notification if permission is grantedp\
+        // Show browser notification if permission is granted
         if (Notification.permission === 'granted') {
           new Notification('Talent Cloud', {
             body: data.message,
-             icon: './talent_logo.svg'
+            icon: './talent_logo.svg'
           });
         }
       }

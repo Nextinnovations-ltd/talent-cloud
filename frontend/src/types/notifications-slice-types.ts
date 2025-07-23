@@ -15,6 +15,7 @@ export type Notification = {
     data: {
       notifications: Notification[];
       unread_count: number;
+      total_count:number
     };
   };
   

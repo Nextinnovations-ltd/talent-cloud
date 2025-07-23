@@ -101,6 +101,10 @@ const routesMap: RoutesMap = {
   savedJobs:{
     path:"saved-jobs",
     name:"savedJobs"
+  },
+  expiredJobDetails:{
+    path:"expiredJobDetails/:id",
+    name:"expiredJobDetails"
   }
 };
 

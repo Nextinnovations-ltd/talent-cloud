@@ -29,6 +29,7 @@ type RoutesMap = {
   specialSkills:Route;
   appliedJobs:Route;
   savedJobs:Route;
+  expiredJobDetails:Route
 };
 
 export default RoutesMap;

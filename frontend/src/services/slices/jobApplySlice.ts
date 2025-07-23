@@ -123,7 +123,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getJobApplyCard: builder.query<JobApplyCardResponse, JobApplyCardParams>({
       query: (params) => ({
-        url: '/job-posts/search/',
+        url: '/job-posts/matched/',
         params: {
           page: params.page,
           job_type: params.job_type,

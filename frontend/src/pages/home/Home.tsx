@@ -85,13 +85,6 @@ export const Home: React.FC = () => {
     setSearchParams(params);
   };
 
-  useEffect(()=>{
-    console.log("-------")
-    console.log(selectedJob)
-    console.log("-------")
-
-  },[selectedJob])
-
 
   const handleFiltersChange = (newFilters: Partial<typeof filters>) => {
     const updatedFilters = { ...filters, ...newFilters };

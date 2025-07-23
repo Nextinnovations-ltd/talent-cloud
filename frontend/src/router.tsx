@@ -34,6 +34,9 @@ import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
 import AppliedJobs from "./pages/appliedJobs";
 import SavedJobs from "./pages/savedJobs";
 import Index from "./components/superAdmin";
+import ExpiredJobsDetail from "./pages/expiredJobsDetail/expiredJobsDetail";
+import adminRoutesMap from "./constants/adminRoutesMap";
+import AdminLogin from "./pages/authentication/adminAuthentication/login/Login";
 
 
 export const router = createBrowserRouter([
@@ -73,6 +76,10 @@ export const router = createBrowserRouter([
               {
                 path: routesMap.savedJobs.path,
                 element: <SavedJobs />
+              },
+              {
+                path: routesMap.expiredJobDetails.path,
+                element: <ExpiredJobsDetail />
               },
               {
                 path: 'job_apply/:id',
@@ -198,6 +205,16 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path:"/admin/auth",
+    element:<AuthLayout/>,
+    children:[
+      {
+        path:adminRoutesMap.login.path,
+        element:<AdminLogin/>
+      }
+    ]
   },
   {
     path: "/oauth/callback",
