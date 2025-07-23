@@ -160,6 +160,19 @@ class JobPostListSerializer(serializers.ModelSerializer):
      
      def get_effective_status(self, obj):
           return obj.get_effective_status()
+     
+class JobPostListDiscoverySerializer(serializers.ModelSerializer):
+     jobs = JobPostListSerializer()
+     discovery_type = serializers.CharField()
+     profile_completion = serializers.CharField()
+     
+     class Meta:
+          model = JobPost
+          fields = [
+               'jobs',
+               'discovery_type',
+               'profile_completion'
+          ]
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()

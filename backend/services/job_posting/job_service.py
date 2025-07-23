@@ -1,7 +1,10 @@
+from datetime import date
 from apps.job_posting.serializers import JobPostSerializer
-from apps.job_posting.models import JobPost, JobPostView
-from apps.job_seekers.models import JobSeeker
+from apps.job_posting.models import JobPost, JobPostView, StatusChoices
+from apps.job_seekers.models import JobSeeker, JobSeekerOccupation
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from services.job_seeker.profile_score_service import ProfileScoreService
 from services.notification.notification_service import NotificationHelpers
 import logging
 
@@ -42,6 +45,71 @@ class JobService():
 
           return job_post
 
+     @staticmethod
+     def get_matched_jobs_queryset(occupation: JobSeekerOccupation):
+          """Get jobs matching user's occupation"""
+          skill_ids = occupation.skills.values_list('id', flat=True)
+          specialization_id = occupation.specialization_id
+          role_id = occupation.role_id
+          
+          # Build matching query
+          user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id) | Q(role_id=role_id)
+          
+          queryset = JobPost.objects.active().filter(
+               user_match_q,
+               is_accepting_applications=True,
+               job_post_status=StatusChoices.ACTIVE
+          )
+          
+          # Date filtering
+          today = date.today()
+          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+          queryset = queryset.filter(date_filter_q, number_of_positions__gt=0)
+          
+          return queryset.distinct().order_by('-created_at').select_related(
+               'role', 'experience_level', 'posted_by'
+          )
+     
+     @staticmethod
+     def get_popular_jobs_queryset():
+          """Get popular jobs for new users"""
+          from django.db.models import Count, F
+          
+          return JobPost.objects.active().filter(
+               is_accepting_applications=True,
+               job_post_status=StatusChoices.ACTIVE
+          ).annotate(
+               application_count=Count('jobapplication'),
+               popularity_score=F('view_count') + F('application_count') * 3
+          ).filter(
+               number_of_positions__gt=0
+          ).order_by('-popularity_score', '-created_at').select_related(
+               'role', 'experience_level', 'posted_by'
+          )
+     
+     def get_newest_jobs_queryset():
+          """Get newest jobs as fallback"""
+          today = date.today()
+          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+          
+          return JobPost.objects.active().filter(
+               is_accepting_applications=True,
+               job_post_status=StatusChoices.ACTIVE,
+               number_of_positions__gt=0
+          ).filter(date_filter_q).order_by('-created_at').select_related(
+               'role', 'experience_level', 'posted_by'
+          )
+
+     @staticmethod
+     def get_filter_completion_score(user):
+          """Calculate job filter completion score"""
+          completion_score = 0
+          total_score = 100
+          
+          completion_score = ProfileScoreService.calculate_job_filter_profile_score(user)
+          
+          return min(completion_score, total_score)
+     
      @staticmethod
      def update_job_post(job_post_instance, data, partial=False):
           serializer = JobPostSerializer(job_post_instance, data=data, partial=partial)

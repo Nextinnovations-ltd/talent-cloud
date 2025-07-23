@@ -20,6 +20,7 @@ from apps.job_posting.serializers import (
     JobPostSerializer,
 )
 from apps.job_seekers.models import JobSeeker
+from services.job_seeker.profile_score_service import ProfileScoreService
 from services.job_posting.job_service import JobService
 from rest_framework.exceptions import ValidationError
 from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
@@ -136,6 +137,126 @@ class NewestJobPostAPIView(CustomListAPIView):
      serializer_class = JobPostListSerializer
 
      success_message = "Successfully fetched latest job posts."
+
+@extend_schema(tags=["Job Post"])
+class JobDiscoveryAPIView(CustomListAPIView):
+     """Smart job discovery that adapts to user profile completeness"""
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+     filter_backends = [DjangoFilterBackend, SearchFilter]
+     filterset_class = JobPostFilter
+     search_fields = ['title', 'description', 'location']
+     
+     def get_queryset(self):
+          """Return jobs based on user profile completeness and preferences"""
+          user = self.request.user
+          
+          # Step 1: Check if user has a JobSeeker profile
+          try:
+               jobseeker = JobSeeker.objects.prefetch_related(
+                    'occupation__skills', 'occupation__specialization'
+               ).get(user=user.jobseeker)
+          except (JobSeeker.DoesNotExist, AttributeError):
+               # New user - show popular/newest jobs
+               return JobService.get_popular_jobs_queryset()
+          
+          # Step 2: Check if user has occupation data
+          occupation = getattr(jobseeker, 'occupation', None)
+          
+          if not occupation:
+               # User exists but no occupation - show newest jobs with message
+               return JobService.get_newest_jobs_queryset()
+          
+          # Step 3: Try to get matched jobs
+          matched_jobs = JobService.get_matched_jobs_queryset(occupation)
+          
+          # Step 4: Fallback if no matches found
+          if not matched_jobs.exists():
+               profile_completion = JobService.get_filter_completion_score(user)
+               if profile_completion < 70:  # Less than 70% complete
+                    return JobService.get_popular_jobs_queryset()
+               else:
+                    return JobService.get_newest_jobs_queryset()
+          
+          return matched_jobs
+     
+     def list(self, request, *args, **kwargs):
+          """Override list to add metadata about job discovery"""
+          response = super().list(request, *args, **kwargs)
+         
+          original_data = response.data.get('data', {})
+          
+          # Add discovery metadata
+          discovery_info = self._get_discovery_info(request.user)
+          
+          enhanced_data = {
+               'discovery_type': discovery_info['type'],
+               'profile_completion': discovery_info.get('profile_completion', 0),
+               'suggestions': discovery_info.get('suggestions', []),
+          }
+          
+          # Merge with original data
+          if isinstance(original_data, dict) and 'results' in original_data:
+               # Paginated response
+               enhanced_data.update(original_data)
+          else:
+               # Non-paginated response
+               enhanced_data['results'] = original_data
+          
+          # Return new response with enhanced data
+          return Response(
+               CustomResponse.success(
+                    discovery_info['message'],
+                    enhanced_data
+               )
+          )
+     
+     def _get_discovery_info(self, user):
+          """Get information about how jobs were discovered"""
+          try:
+               jobseeker = user.jobseeker
+               
+               if not hasattr(jobseeker, 'occupation') or not jobseeker.occupation:
+                    return {
+                         'type': 'newest',
+                         'message': 'Complete your profile to see personalized job recommendations. Here are the latest opportunities:',
+                         'suggestions': ['Set up your occupation and skills', 'Add your specialization', 'Complete your profile']
+                    }
+               
+               occupation = jobseeker.occupation
+               profile_completion = JobService.get_filter_completion_score(user)
+               
+               # Check if we found matches
+               matched_jobs = JobService.get_matched_jobs_queryset(occupation)
+               
+               if matched_jobs.exists():
+                    return {
+                         'type': 'matched',
+                         'message': f'Found {matched_jobs.count()} jobs matching your profile',
+                         'profile_completion': profile_completion
+                    }
+               elif profile_completion < 70:
+                    return {
+                         'type': 'popular',
+                         'message': 'Complete your profile for better job matches. Here are popular opportunities:',
+                         'profile_completion': profile_completion,
+                         'suggestions': ['Add more skills', 'Update your specialization', 'Complete your bio']
+                    }
+               else:
+                    return {
+                         'type': 'newest',
+                         'message': 'No perfect matches found yet. Here are the latest opportunities:',
+                         'profile_completion': profile_completion,
+                         'suggestions': ['Try expanding your skill preferences', 'Consider remote opportunities']
+                    }
+                    
+          except (JobSeeker.DoesNotExist, AttributeError):
+               return {
+                    'type': 'popular',
+                    'message': 'Welcome! Here are some popular job opportunities to get you started:',
+                    'suggestions': ['Create your job seeker profile', 'Set up your skills and preferences']
+               }
 
 @extend_schema(tags=["Job Post"])
 class MatchedJobPostAPIView(CustomListAPIView):
