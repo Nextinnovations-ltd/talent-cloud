@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
-import { useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
+import { useGetJobSeekerNotificationsQuery, useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
 
 
 export const MainLayout = () => {
@@ -14,6 +14,7 @@ export const MainLayout = () => {
   const token = useSelector((state: any) => state.auth.token); // Get token from Redux state
   const { showNotification } = useToast();
   const { refetch } = useGetUnReadNotificationsCountQuery();
+  const { refetch:RefetchIsRead } = useGetJobSeekerNotificationsQuery({ limit:10, offset:0 });
 
   useEffect(() => {
     if (!token) return;
@@ -47,6 +48,7 @@ export const MainLayout = () => {
         // Add a small delay before refetching to ensure backend update is complete
         setTimeout(() => {
           refetch();
+          RefetchIsRead()
         }, 500);
         
         // Show browser notification if permission is granted

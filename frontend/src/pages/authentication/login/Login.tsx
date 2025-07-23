@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoginForm } from "@/components/authentication/login/LoginForm";
 import { AuthFormFrame } from "@/components/common/form/AuthFormFrame";
 import { useApiCaller } from "@/hooks/useApicaller";

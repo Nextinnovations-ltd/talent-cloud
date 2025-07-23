@@ -40,21 +40,34 @@ const NotificationDropDown = () => {
         }
     };
 
+    const handleMarkAsRead = (id: number) => {
+        setNotifications(prev =>
+            prev.map(notification =>
+                notification.id === id ? { ...notification, is_read: true } : notification
+            )
+        );
+    };
+
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger className="ring-0 outline-none">
-                <NotiBadge   />
+                <NotiBadge />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[350px] p-[16px] mt-[5px]">
-                <NotificationHeader onClose={() => setOpen(false)} />
+                <NotificationHeader  />
                 <div className="border-t border-slate-200 my-3"></div>
                 <ScrollArea className="h-[300px]">
                     {notifications.map((data, index) => (
-                        <NotificationListItems data={data} key={index} Readed={data?.is_read} unRead={!data?.is_read} />
+                        <NotificationListItems 
+                            key={index}
+                            data={data}
+                            limit={LIMIT}
+                            offset={offset}
+                            onMarkAsRead={handleMarkAsRead} />
                     ))}
                     {hasMore && (
                         <div className="flex justify-center py-2 px-2">
-                            <Button 
+                            <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={handleLoadMore}
@@ -69,7 +82,7 @@ const NotificationDropDown = () => {
                                 ) : (
                                     <div className="flex items-center justify-center space-x-2">
                                         <span>Show More</span>
-                                        <ChevronDown size={18}/>
+                                        <ChevronDown size={18} />
                                     </div>
                                 )}
                             </Button>

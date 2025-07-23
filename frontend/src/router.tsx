@@ -37,6 +37,10 @@ import Index from "./components/superAdmin";
 import ExpiredJobsDetail from "./pages/expiredJobsDetail/expiredJobsDetail";
 import adminRoutesMap from "./constants/adminRoutesMap";
 import AdminLogin from "./pages/authentication/adminAuthentication/login/Login";
+import AdminLayout from "./layouts/AdminLayout";
+import VerifyRoleAndToken from "./components/common/VerifyRoleAndToken";
+import AnalyticalPage from "./pages/admin/Analytical/analyticalPage";
+
 
 
 export const router = createBrowserRouter([
@@ -51,8 +55,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
    element: <MainLayout />,
-
-
     children: [
       {
         path: "/",
@@ -151,6 +153,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: `/${routesMap.verify.path}`,
     element: <AuthLayout />,
@@ -206,6 +209,24 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path:"/admin",
+    element: <AdminLayout/>,
+    children:[
+      {
+        path:'dashboard',
+        element:<VerifyRoleAndToken shouldSkip={true}/>,
+        children:[
+          {
+            index:true,
+            element:<AnalyticalPage/>
+          }
+        ]
+
+      },
+    ]
+  },
+
   {
     path:"/admin/auth",
     element:<AuthLayout/>,

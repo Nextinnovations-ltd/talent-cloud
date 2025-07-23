@@ -2,7 +2,6 @@
 import { useCallback } from "react";
 import useToast from "./use-toast";
 
-
 export const useApiCaller = (apiMutation: any) => {
   const [callApi, { isLoading, isError }] = apiMutation();
   const { showNotification } = useToast();
@@ -10,24 +9,39 @@ export const useApiCaller = (apiMutation: any) => {
   const executeApiCall = useCallback(
     async (payload: Record<string, any>) => {
       try {
-
         const response = await callApi(payload);
 
-        console.log(response)
 
-        showNotification({
-          message: response?.message || response?.data?.message,
-          type: "success",
-        });
+        const message =
+          response?.message || response?.data?.message || response?.error?.data.message|| "Operation completed";
+
+        const status = response?.data?.status || response?.error?.status;
 
 
-        return { success: true, data: response };
+        if (response?.status || response?.data?.status) {
+          showNotification({
+            message,
+            type: "success",
+          });
+        } else {
+          showNotification({
+            message,
+            type: "danger",
+          });
+        }
+
+        return { success: status, data: response };
       } catch (error: any) {
+        const message =
+          error?.data?.message || error?.message || "Something went wrong";
+
         console.error("API Call Error:", error);
+
         showNotification({
-          message: error?.data?.message,
+          message,
           type: "danger",
         });
+
         return { success: false, error: error?.data || error };
       }
     },

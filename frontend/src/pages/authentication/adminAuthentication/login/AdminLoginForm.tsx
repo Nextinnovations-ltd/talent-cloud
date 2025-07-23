@@ -6,19 +6,42 @@ import { fields } from "@/lib/formData.tsx/LoginFieldData";
 import InputField from "@/components/common/form/fields/input-field";
 import { cn } from "@/lib/utils";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
+import { useApiCaller } from "@/hooks/useApicaller";
+import { useAdminLoginMutation } from "@/services/slices/adminAuthSlice";
+import { useNavigate } from "react-router-dom";
 
 const fieldHeight = "h-12 ";
 const filedWidth = "w-full";
 
 const AdminLoginForm = () => {
 
+    const { executeApiCall, isLoading } = useApiCaller(useAdminLoginMutation);
+    const navigate = useNavigate();
+
+
     const form = useForm({
         resolver: yupResolver(loginSchema),
     });
 
 
-    const onSubmitHandler = () => {
+    const onSubmitHandler = async (data: { email: string; password: string; }) => {
+        try {
+            const payload = {
+                email: data?.email,
+                password: data?.password
+            }
 
+         const response =    await executeApiCall(payload)
+
+         console.log(response)
+
+         if(response.success){
+           navigate('/admin')
+         }
+
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -27,6 +50,7 @@ const AdminLoginForm = () => {
                 onSubmit={form.handleSubmit(onSubmitHandler)}
                 className="space-y-6 my-4 mx-auto  w-[500px]"
             >
+                <h3 className="text-[26px] font-semibold">Login</h3>
                 {fields.map((field) => (
                     <InputField
                         key={field.fieldName}
@@ -44,7 +68,7 @@ const AdminLoginForm = () => {
                         fieldWidth={filedWidth}
                     />
                 ))}
-                <PrimaryButton title="Login" loading={false} isButtonDisabled={false}/>
+                <PrimaryButton title="Login" loading={isLoading} isButtonDisabled={isLoading} />
             </form>
         </Form>
     )
