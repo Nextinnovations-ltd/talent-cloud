@@ -38,6 +38,18 @@ class CompanySerializer(serializers.ModelSerializer):
           instance.save()
           
           return instance
+
+class CompanyListSerializer(serializers.ModelSerializer):
+     """
+     Serializer for the Company list.
+     """
+     class Meta:
+          model = Company
+          fields = [
+               'id', 'name', 'slug', 'image_url', 'description', 
+               'industry', 'tagline', 'is_verified', 'size'
+          ]
+          read_only_fields = ['id', 'slug']
           
 class CompanyDetailSerializer(serializers.ModelSerializer):
      """

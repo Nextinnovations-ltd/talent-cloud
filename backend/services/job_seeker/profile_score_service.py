@@ -227,7 +227,7 @@ class ProfileScoreService:
      
      @staticmethod
      def _validate_social_link(job_seeker: JobSeeker):
-          return True if job_seeker.social_links else False
+          return True if hasattr(job_seeker, 'social_links') else False
                
      @staticmethod
      def _validate_specialization(occupation: JobSeekerOccupation):

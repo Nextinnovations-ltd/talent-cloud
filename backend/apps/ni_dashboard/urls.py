@@ -1,5 +1,6 @@
 from rest_framework.urls import path
 from apps.ni_dashboard.views import (
+    CompanyListAPIView,
     JobSeekerRoleStatisticsAPIView,
     NIApplicantListAPIView, 
     JobSeekerStatisticsAPIView, 
@@ -18,6 +19,7 @@ urlpatterns = [
     path('dashboard/ni/statistics', JobSeekerStatisticsAPIView.as_view(), name='job_seeker_statistics'),
     path('dashboard/ni/statistics/role/', JobSeekerRoleStatisticsAPIView.as_view(), name='job_seeker_role_statistics'),
     path('dashboard/ni/applicants/', NIApplicantListAPIView.as_view(), name='job_seeker_list'),
+    path('dashboard/ni/companies/', CompanyListAPIView.as_view(), name='company_list'),
     path('dashboard/ni/job-posts/all/', AllJobPostListAPIView.as_view(), name='ni-all-job-post-list'),
     path('dashboard/ni/job-posts/active/', ActiveJobPostListAPIView.as_view(), name='ni-active-job-post-list'),
     path('dashboard/ni/job-posts/draft/', DraftJobPostListAPIView.as_view(), name='ni-draft-job-post-list'),

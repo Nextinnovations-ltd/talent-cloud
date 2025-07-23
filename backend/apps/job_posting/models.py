@@ -175,6 +175,18 @@ class JobPost(TimeStampModel):
                return StatusChoices.EXPIRED
           return self.job_post_status
 
+     @property
+     def get_company_name(self):
+          """
+          Get the company name of the posted job
+          """
+          posted_by = self.posted_by
+          
+          if not posted_by:
+               return None
+          
+          return posted_by.company.name if posted_by.company else None
+
      def __str__(self):
           return f"{self.title} - {self.get_effective_status()}"
 
