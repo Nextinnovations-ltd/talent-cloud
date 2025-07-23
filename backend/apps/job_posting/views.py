@@ -128,17 +128,6 @@ class JobPostListAPIView(CustomListAPIView):
      success_message = "Successfully fetched all job posts."
 
 @extend_schema(tags=["Job Post"])
-class NewestJobPostAPIView(CustomListAPIView):
-     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
-        .order_by('-created_at')\
-        .select_related('role', 'experience_level', 'posted_by')
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserDynamicPermission]
-     serializer_class = JobPostListSerializer
-
-     success_message = "Successfully fetched latest job posts."
-
-@extend_schema(tags=["Job Post"])
 class JobDiscoveryAPIView(CustomListAPIView):
      """Smart job discovery that adapts to user profile completeness"""
      authentication_classes = [TokenAuthentication]
@@ -174,7 +163,7 @@ class JobDiscoveryAPIView(CustomListAPIView):
           # Step 4: Fallback if no matches found
           if not matched_jobs.exists():
                profile_completion = JobService.get_filter_completion_score(user)
-               if profile_completion < 70:  # Less than 70% complete
+               if profile_completion < 60:  # Less than 60% complete
                     return JobService.get_popular_jobs_queryset()
                else:
                     return JobService.get_newest_jobs_queryset()
@@ -192,7 +181,7 @@ class JobDiscoveryAPIView(CustomListAPIView):
           
           enhanced_data = {
                'discovery_type': discovery_info['type'],
-               'profile_completion': discovery_info.get('profile_completion', 0),
+               'setup_completion': discovery_info.get('filter_setup_completion', 0),
                'suggestions': discovery_info.get('suggestions', []),
           }
           
@@ -227,27 +216,27 @@ class JobDiscoveryAPIView(CustomListAPIView):
                occupation = jobseeker.occupation
                profile_completion = JobService.get_filter_completion_score(user)
                
-               # Check if we found matches
+               # Check if matched jobs found
                matched_jobs = JobService.get_matched_jobs_queryset(occupation)
                
                if matched_jobs.exists():
                     return {
                          'type': 'matched',
-                         'message': f'Found {matched_jobs.count()} jobs matching your profile',
-                         'profile_completion': profile_completion
+                         'message': f'Found jobs matching your profile',
+                         'filter_setup_completion': profile_completion
                     }
-               elif profile_completion < 70:
+               elif profile_completion < 60:
                     return {
                          'type': 'popular',
                          'message': 'Complete your profile for better job matches. Here are popular opportunities:',
-                         'profile_completion': profile_completion,
-                         'suggestions': ['Add more skills', 'Update your specialization', 'Complete your bio']
+                         'filter_setup_completion': profile_completion,
+                         'suggestions': ['Add more skills', 'Update your specialization', 'Add your occupation role']
                     }
                else:
                     return {
                          'type': 'newest',
                          'message': 'No perfect matches found yet. Here are the latest opportunities:',
-                         'profile_completion': profile_completion,
+                         'filter_setup_completion': profile_completion,
                          'suggestions': ['Try expanding your skill preferences', 'Consider remote opportunities']
                     }
                     
@@ -255,60 +244,8 @@ class JobDiscoveryAPIView(CustomListAPIView):
                return {
                     'type': 'popular',
                     'message': 'Welcome! Here are some popular job opportunities to get you started:',
-                    'suggestions': ['Create your job seeker profile', 'Set up your skills and preferences']
+                    'suggestions': ['Update your job seeker profile', 'Set up your skills and preferences']
                }
-
-@extend_schema(tags=["Job Post"])
-class MatchedJobPostAPIView(CustomListAPIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserDynamicPermission]
-     serializer_class = JobPostListSerializer
-     filter_backends = [DjangoFilterBackend, SearchFilter]
-     filterset_class = JobPostFilter
-     search_fields = [ 'title', 'description', 'location' ] 
-     
-     def get_queryset(self):
-          jobseeker = JobSeeker.objects.prefetch_related(
-               'occupation__skills', 'occupation__specialization'
-          ).get(user=self.request.user.jobseeker)
-
-          occupation = getattr(jobseeker, 'occupation', None)
-            
-          if not occupation:
-               raise NotFound("No occupation found for the user. Cannot find matched jobs.")
-
-          skill_ids = occupation.skills.values_list('id', flat=True)
-          specialization_id = occupation.specialization_id
-
-          # Q object for filtering by user profile match (skills OR specialization)
-          user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id)
-
-          # Filter 1: Must be accepting applications
-          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
-
-          # Filter 2: Must match user's profile
-          queryset = queryset.filter(user_match_q)
-
-          # Filter 3 last_application_date must be today or in the future, OR be null
-          job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
-          queryset = queryset.filter(job_status_filter_q)
-
-          today = date.today()
-          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-          queryset = queryset.filter(date_filter_q)
-
-          # Filter 4 (Optional Default): Only show jobs with positions available
-          queryset = queryset.filter(number_of_positions__gt=0)
-
-          queryset = queryset.distinct()
-
-          # Apply ordering and prefetches
-          queryset = queryset.order_by('-created_at')
-          queryset = queryset.select_related(
-               'role', 'experience_level', 'posted_by'
-          )
-
-          return queryset
 
 @extend_schema(tags=["Job Post"])
 class JobSearchListAPIView(CustomListAPIView):
@@ -340,6 +277,94 @@ class JobSearchListAPIView(CustomListAPIView):
           )
 
           return queryset
+
+@extend_schema(tags=["Job Post"])
+class NewestJobPostAPIView(CustomListAPIView):
+     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
+        .order_by('-created_at')\
+        .select_related('role', 'experience_level', 'posted_by')
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+
+     success_message = "Successfully fetched latest job posts."
+
+@extend_schema(tags=["Job Post"])
+class MatchedJobPostAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+     filter_backends = [DjangoFilterBackend, SearchFilter]
+     filterset_class = JobPostFilter
+     search_fields = [ 'title', 'description', 'location' ] 
+     
+     def get_queryset(self):
+          try:
+               jobseeker = JobSeeker.objects.prefetch_related(
+                    'occupation__skills', 'occupation__specialization'
+               ).get(user=self.request.user.jobseeker)
+
+               occupation = getattr(jobseeker, 'occupation', None)
+               
+               if not occupation:
+                    return JobPost.objects.none()
+
+               skill_ids = occupation.skills.values_list('id', flat=True)
+               specialization_id = occupation.specialization_id
+
+               # Q object for filtering by user profile match (skills OR specialization)
+               user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id)
+
+               # Filter 1: Must be accepting applications
+               queryset = JobPost.objects.active().filter(is_accepting_applications=True)
+
+               # Filter 2: Must match user's profile
+               queryset = queryset.filter(user_match_q)
+
+               # Filter 3 last_application_date must be today or in the future, OR be null
+               job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
+               queryset = queryset.filter(job_status_filter_q)
+
+               today = date.today()
+               date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+               queryset = queryset.filter(date_filter_q)
+
+               # Filter 4 (Optional Default): Only show jobs with positions available
+               queryset = queryset.filter(number_of_positions__gt=0)
+
+               queryset = queryset.distinct()
+
+               # Apply ordering and prefetches
+               queryset = queryset.order_by('-created_at')
+               queryset = queryset.select_related(
+                    'role', 'experience_level', 'posted_by'
+               )
+
+               return queryset
+          except (JobSeeker.DoesNotExist, AttributeError):
+               # Return empty queryset instead of raising exception
+               return JobPost.objects.none()
+
+     def list(self, request, *args, **kwargs):
+          """Override list to add metadata about matched job discovery"""
+          response = super().list(request, *args, **kwargs)
+         
+          original_data = response.data.get('data', {})
+          
+          # Merge with original data
+          if original_data.get('count', 0) > 0:
+               
+               message = "Successfully fetchd all matched jobs."
+          else:
+               message = "No matched jobs found for you. Please update your profile."
+          
+          # Return new response with enhanced data
+          return Response(
+               CustomResponse.success(
+                    message,
+                    original_data
+               )
+          )
      
 @extend_schema(tags=["Company Job Post"])
 class CompanyJobListView(CustomListAPIView):
