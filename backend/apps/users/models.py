@@ -246,6 +246,23 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     @property
     def has_company(self):
         return self.company is not None
+    
+    @property
+    def get_address(self):
+        address = self.address
+        
+        if not address:
+            return None
+        
+        parts = []
+        
+        if address.city:
+            parts.append(address.city.name)
+        
+        if address.country:
+            parts.append(address.country.name)
+        
+        return ', '.join(parts) if parts else None
 
 class Token(TimeStampModel):
     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE) 

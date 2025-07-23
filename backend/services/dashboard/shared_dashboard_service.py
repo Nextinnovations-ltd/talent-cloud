@@ -1,5 +1,6 @@
 from apps.job_posting.models import JobApplication, JobPost, StatusChoices
 from django.db.models import Sum
+from apps.job_seekers.models import JobSeekerSpecialization
 
 class SharedDashboardService:
      @staticmethod
@@ -56,7 +57,8 @@ class SharedDashboardService:
                     'phone_number': f"{user.country_code}{user.phone_number}" if user.country_code is not None and user.phone_number is not None else None,
                     'email': user.email,
                     'role': role.name,
-                    'applied_date': application.created_at,
+                    'is_open_to_work': job_seeker.is_open_to_work,
+                    'address': user.get_address,
                     'profile_image_url': user.profile_image_url,
                })
           
@@ -79,18 +81,7 @@ class SharedDashboardService:
           result = []
           
           for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date,
-               })
+               result.append(SharedDashboardService.build_job_post_response(job_post))
           
           return {
                'message': 'Succefully generated job posts by most recent order.',
@@ -111,18 +102,7 @@ class SharedDashboardService:
           result = []
           
           for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date,
-               })
+               result.append(SharedDashboardService.build_job_post_response(job_post))
           
           return {
                'message': 'Succefully generated active job posts by most recent order.',
@@ -143,18 +123,7 @@ class SharedDashboardService:
           result = []
           
           for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date
-               })
+               result.append(SharedDashboardService.build_job_post_response(job_post))
           
           return {
                'message': 'Succefully generated draft job posts by most recent order.',
@@ -175,22 +144,27 @@ class SharedDashboardService:
           result = []
           
           for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date
-               })
+               result.append(SharedDashboardService.build_job_post_response(job_post))
           
           return {
                'message': 'Succefully generated expired job posts by most recent order.',
                'data': result
+          }
+          
+     @staticmethod
+     def build_job_post_response(job_post: JobPost):
+          specialization: JobSeekerSpecialization = getattr(job_post, 'specialization', None)
+          
+          return {
+               'id': job_post.pk,
+               'title': job_post.title,
+               'company': job_post.get_company_name,
+               'specialization_name': specialization.name if specialization else None,
+               'job_post_status': job_post.job_post_status,
+               'applicant_count': job_post.applicant_count,
+               'view_count': job_post.view_count,
+               'posted_date': job_post.created_at,
+               'deadline_date': job_post.last_application_date,
           }
      
      @staticmethod

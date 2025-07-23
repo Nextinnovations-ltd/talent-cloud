@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
+from apps.companies.serializers import CompanyListSerializer
+from backend.utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
@@ -21,6 +23,18 @@ class NIAdminListAPIView(APIView):
           result = DashboardService.get_ni_admin_list()
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Company"])
+class CompanyListAPIView(CustomListAPIView):
+     """
+     API view to list all companies.
+     Handles GET request.
+     """
+     success_message = "Fetched companies list successfully"
+     queryset = Company.objects.all()
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = CompanyListSerializer
 
 @extend_schema(tags=["NI Dashboard"])
 class JobSeekerStatisticsAPIView(APIView):
