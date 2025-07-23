@@ -1,4 +1,4 @@
-from apps.job_seekers.models import JobSeeker
+from apps.job_seekers.models import JobSeeker, JobSeekerOccupation
 from services.job_seeker.job_seeker_service import JobSeekerService
 
 class ProfileScoreService:
@@ -137,6 +137,35 @@ class ProfileScoreService:
           return completion_percentage
      
      @staticmethod
+     def calculate_job_filter_profile_score(user):
+          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          
+          weights = {
+               "skills": 30,
+               "specialization": 35,
+               "role": 35
+          }
+          
+          completion_percentage = 0
+          
+          occupation = ProfileScoreService._get_job_seeker_occupation(job_seeker)
+          
+          if not occupation:
+               return completion_percentage
+          
+          # Skill
+          if ProfileScoreService._validate_skill(job_seeker):
+               completion_percentage += weights["skills"]
+          
+          if ProfileScoreService._validate_specialization(occupation):
+               completion_percentage += weights["specialization"]
+          
+          if ProfileScoreService._validate_role(occupation):
+               completion_percentage += weights["role"]
+          
+          return completion_percentage
+
+     @staticmethod
      def _get_job_seeker_occupation(job_seeker: JobSeeker):
           return getattr(job_seeker, 'occupation', None)
      
@@ -198,6 +227,11 @@ class ProfileScoreService:
      
      @staticmethod
      def _validate_social_link(job_seeker: JobSeeker):
-          return True if job_seeker.sociallinks.exists() else False
+          return True if job_seeker.social_links else False
                
-
+     @staticmethod
+     def _validate_specialization(occupation: JobSeekerOccupation):
+          return True if occupation.specialization else False
+     
+     def _validate_role(occupation: JobSeekerOccupation):
+          return True if occupation.role else False

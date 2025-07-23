@@ -31,7 +31,7 @@ class CompanyAdminLoginAPIView(views.APIView):
         email = data.get('email', None)
         password = data.get('password', None)
         
-        if not email and not password:
+        if not email or not password:
             raise ValidationError("Invalid email or password!")
         
         with transaction.atomic():
@@ -78,7 +78,7 @@ class SuperAdminLoginAPIView(views.APIView):
         email = data.get('email', None)
         password = data.get('password', None)
         
-        if not email and not password:
+        if not email or not password:
             raise ValidationError("Invalid email or password!")
         
         with transaction.atomic():

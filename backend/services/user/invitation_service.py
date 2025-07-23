@@ -7,7 +7,7 @@ from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
 from apps.users.models import TalentCloudUser
 from apps.authentication.models import UserInvitation
-from backend.apps.authentication.serializers import InvitationSerializer
+from apps.authentication.serializers import InvitationSerializer
 from services.notification.notification_service import NotificationService
 from utils.notification.types import NotificationType, NotificationChannel
 
