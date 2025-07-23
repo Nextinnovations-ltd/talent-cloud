@@ -1,6 +1,6 @@
 from apps.job_posting.models import JobApplication, JobPost, StatusChoices
-from django.db.models import Sum
 from apps.job_seekers.models import JobSeekerSpecialization
+from django.db.models import Sum
 
 class SharedDashboardService:
      @staticmethod
@@ -69,20 +69,8 @@ class SharedDashboardService:
      
      @staticmethod
      def get_company_job_posts_by_latest_order(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               result.append(SharedDashboardService.build_job_post_response(job_post))
-          
+          result = SharedDashboardService.get_job_post_list_by_status(company)
+
           return {
                'message': 'Succefully generated job posts by most recent order.',
                'data': result
@@ -90,20 +78,8 @@ class SharedDashboardService:
      
      @staticmethod
      def get_active_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.active().filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               result.append(SharedDashboardService.build_job_post_response(job_post))
-          
+          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.ACTIVE)
+
           return {
                'message': 'Succefully generated active job posts by most recent order.',
                'data': result
@@ -111,20 +87,8 @@ class SharedDashboardService:
      
      @staticmethod
      def get_draft_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.draft().filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               result.append(SharedDashboardService.build_job_post_response(job_post))
-          
+          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.DRAFT)
+
           return {
                'message': 'Succefully generated draft job posts by most recent order.',
                'data': result
@@ -132,24 +96,45 @@ class SharedDashboardService:
           
      @staticmethod
      def get_expired_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.expired().filter(
+          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.EXPIRED)
+
+          return {
+               'message': 'Succefully generated expired job posts by most recent order.',
+               'data': result
+          }
+     
+     @staticmethod
+     def get_job_post_list_by_status(company, status = None):
+          """Generate Job Post Queryset by job post status parameter
+          """
+          queryset = SharedDashboardService.get_job_post_queryset(company)
+          
+          if status == StatusChoices.ACTIVE:
+               queryset = queryset.active()
+          elif status == StatusChoices.DRAFT:
+               queryset = queryset.draft()
+          elif status == StatusChoices.EXPIRED:
+               queryset = queryset.expired()
+          else:
+               queryset = queryset
+          
+          result = []
+          
+          for job_post in queryset:
+               result.append(SharedDashboardService.build_job_post_response(job_post))
+          
+          return result
+          
+          
+     @staticmethod
+     def get_job_post_queryset(company):
+          return JobPost.objects.filter(
                posted_by__company=company
           ).select_related(
                'specialization'
           ).only(
                'specialization__name'
           ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               result.append(SharedDashboardService.build_job_post_response(job_post))
-          
-          return {
-               'message': 'Succefully generated expired job posts by most recent order.',
-               'data': result
-          }
           
      @staticmethod
      def build_job_post_response(job_post: JobPost):

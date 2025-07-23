@@ -5,7 +5,7 @@ from rest_framework.exceptions import NotFound
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
-from backend.utils.view.custom_api_views import CustomListAPIView
+from utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
