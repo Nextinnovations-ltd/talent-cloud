@@ -40,6 +40,10 @@ import AdminLogin from "./pages/authentication/adminAuthentication/login/Login";
 import AdminLayout from "./layouts/AdminLayout";
 import VerifyRoleAndToken from "./components/common/VerifyRoleAndToken";
 import AnalyticalPage from "./pages/admin/Analytical/analyticalPage";
+import Candidates from "./pages/admin/Candidates/Candidates";
+import AllJobs from "./pages/admin/AllJobs/AllJobs";
+import ActiveJobs from "./pages/admin/ActiveJobs/ActiveJobs";
+import ExpiredJobs from "./pages/admin/ExpiredJobs/ExpiredJobs";
 
 
 
@@ -220,6 +224,22 @@ export const router = createBrowserRouter([
           {
             index:true,
             element:<AnalyticalPage/>
+          },
+          {
+            path:adminRoutesMap?.candiates.path,
+            element:<Candidates/>
+          },
+          {
+            path:adminRoutesMap?.allJobs.path,
+            element:<AllJobs/>
+          },
+          {
+            path:adminRoutesMap?.activeJobs.path,
+            element:<ActiveJobs/>
+          },
+          {
+            path:adminRoutesMap?.expiredJobs.path,
+            element:<ExpiredJobs/>
           }
         ]
 

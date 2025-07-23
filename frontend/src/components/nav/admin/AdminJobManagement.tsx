@@ -4,7 +4,7 @@ import { AlignCenterHorizontal, Briefcase, FileClock, Plus } from 'lucide-react'
 
  const AdminJobManagement = () => {
 
-    const isActive = false;
+  const isActive = false;
   return (
     <div className='mt-[48px]'>
     <div
@@ -18,9 +18,9 @@ import { AlignCenterHorizontal, Briefcase, FileClock, Plus } from 'lucide-react'
     <Plus/>
   </div>
   <div className="mt-[24px] flex flex-col gap-[16px]">
-  <AdminMenuItems icon={<Briefcase/>} text="All Jobs"/>
-  <AdminMenuItems icon={<AlignCenterHorizontal/>} text="Active Jobs"/>
-  <AdminMenuItems icon={<FileClock/>} text="Expired Jobs"/>
+  <AdminMenuItems  targetPath="/admin/dashboard/allJobs" icon={<Briefcase/>} text="All Jobs"/>
+  <AdminMenuItems  targetPath="/admin/dashboard/activeJobs" icon={<AlignCenterHorizontal/>} text="Active Jobs"/>
+  <AdminMenuItems  targetPath="/admin/dashboard/expiredJobs" icon={<FileClock/>} text="Expired Jobs"/>
   </div>
 </div>
   )

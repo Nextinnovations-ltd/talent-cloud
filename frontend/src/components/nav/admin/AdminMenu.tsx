@@ -1,7 +1,12 @@
 import AdminMenuItems from "@/components/common/Admin/AdminMenuItems";
 import { LayoutDashboard, Users } from "lucide-react";
 
+
+
 const AdminMenu = () => {
+
+
+
     return (
         <div className='mt-[48px]'>
             <div
@@ -10,10 +15,20 @@ const AdminMenu = () => {
                 <p className='font-semibold text-[12px] text-[#575757]'>Menu</p>
 
             </div>
-          <div className="mt-[16px] flex flex-col gap-[16px]">
-          <AdminMenuItems icon={<LayoutDashboard/>} text="Dashboard"/>
-          <AdminMenuItems icon={<Users/>} text="Candidates"/>
-          </div>
+            <div className="mt-[16px] flex flex-col gap-[16px]">
+                <AdminMenuItems
+                    targetPath="/admin/dashboard"
+                    icon={<LayoutDashboard />}
+                    text="Dashboard"
+                    exactMatch
+                />
+                <AdminMenuItems
+                    targetPath="/admin/dashboard/candidates"
+                    icon={<Users />}
+                    text="Candidates"
+                />
+
+            </div>
         </div>
     )
 }
