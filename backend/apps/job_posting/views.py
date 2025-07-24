@@ -300,47 +300,47 @@ class MatchedJobPostAPIView(CustomListAPIView):
      
      def get_queryset(self):
           try:
-               jobseeker = JobSeeker.objects.prefetch_related(
-                    'occupation__skills', 'occupation__specialization'
-               ).get(user=self.request.user.jobseeker)
-
+               jobseeker = self.request.user.jobseeker
                occupation = getattr(jobseeker, 'occupation', None)
                
                if not occupation:
                     return JobPost.objects.none()
-
-               skill_ids = occupation.skills.values_list('id', flat=True)
-               specialization_id = occupation.specialization_id
-
-               # Q object for filtering by user profile match (skills OR specialization)
-               user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id)
-
-               # Filter 1: Must be accepting applications
-               queryset = JobPost.objects.active().filter(is_accepting_applications=True)
-
-               # Filter 2: Must match user's profile
-               queryset = queryset.filter(user_match_q)
-
-               # Filter 3 last_application_date must be today or in the future, OR be null
-               job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
-               queryset = queryset.filter(job_status_filter_q)
-
-               today = date.today()
-               date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-               queryset = queryset.filter(date_filter_q)
-
-               # Filter 4 (Optional Default): Only show jobs with positions available
-               queryset = queryset.filter(number_of_positions__gt=0)
-
-               queryset = queryset.distinct()
-
-               # Apply ordering and prefetches
-               queryset = queryset.order_by('-created_at')
-               queryset = queryset.select_related(
-                    'role', 'experience_level', 'posted_by'
+               
+               queryset = JobPost.objects.active().filter(
+                    is_accepting_applications=True,
+                    job_post_status=StatusChoices.ACTIVE,
+                    number_of_positions__gt=0
                )
 
-               return queryset
+               today = date.today()
+               queryset = queryset.filter(
+                    Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+               )
+               
+               user_match_q = Q()
+               
+               # Build matching query
+               skill_ids = list(occupation.skills.values_list('id', flat=True))
+               
+               if skill_ids:
+                    user_match_q |= Q(skills__id__in=skill_ids)
+
+               if occupation.specialization_id:
+                    user_match_q |= Q(specialization_id=occupation.specialization_id)
+
+               if occupation.role_id:
+                    user_match_q |= Q(role_id=occupation.role_id)
+               
+               # Filter 2: Must match user's profile
+               if user_match_q:
+                    queryset = queryset.filter(user_match_q)
+               else:
+                    # Return empty queryset because there's no profile data to match against
+                    return JobPost.objects.none()
+               
+               return queryset.distinct().order_by('-created_at').select_related(
+                    'role', 'experience_level', 'posted_by'
+               )
           except (JobSeeker.DoesNotExist, AttributeError):
                # Return empty queryset instead of raising exception
                return JobPost.objects.none()
