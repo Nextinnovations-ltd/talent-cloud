@@ -65,6 +65,9 @@ class JobPostQuerySet(models.QuerySet):
           ).exclude(
                last_application_date__lt=today
           )
+     
+     def company_jobs(self, company):
+          return self.filter(posted_by__company=company)
 
 class JobPostManager(models.Manager):
      def get_queryset(self):
@@ -87,7 +90,9 @@ class JobPostManager(models.Manager):
      
      def effectively_active(self):
           return self.get_queryset().effectively_active()
-
+     
+     def company_jobs(self, company):
+          return self.get_queryset().company_jobs(company)
 
 # Job Post
 class JobPost(TimeStampModel):

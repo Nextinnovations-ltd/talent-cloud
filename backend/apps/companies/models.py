@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from services.models import TimeStampModel
 from django.utils.text import slugify
@@ -139,6 +140,26 @@ class Company(TimeStampModel):
                     counter += 1
 
           super().save(*args, **kwargs)
+     
+     @property
+     def job_posts(self):
+          """All job posts for this company"""
+          from apps.job_posting.models import JobPost
+          return JobPost.objects.company_jobs(self)
+     
+     @property
+     def get_opening_jobs(self):
+          """
+          Get all active and opening jobs from company
+          """
+          from apps.job_posting.models import StatusChoices
+          
+          return self.job_posts.filter(
+               job_post_status=StatusChoices.ACTIVE,
+               is_accepting_applications=True
+          ).exclude(
+               models.Q(last_application_date__lt=date.today())
+          )
 
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)
