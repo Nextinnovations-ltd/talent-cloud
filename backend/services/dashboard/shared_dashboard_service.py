@@ -67,64 +67,56 @@ class SharedDashboardService:
                'data': result
           }
      
-     @staticmethod
-     def get_company_job_posts_by_latest_order(company):
-          result = SharedDashboardService.get_job_post_list_by_status(company)
+     # @staticmethod
+     # def get_company_job_posts_by_latest_order(company):
+     #      result = SharedDashboardService.get_job_post_list_by_status(company)
 
-          return {
-               'message': 'Succefully generated job posts by most recent order.',
-               'data': result
-          }
+     #      return {
+     #           'message': 'Succefully generated job posts by most recent order.',
+     #           'data': result
+     #      }
      
-     @staticmethod
-     def get_active_job_posts(company):
-          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.ACTIVE)
+     # @staticmethod
+     # def get_active_job_posts(company):
+     #      result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.ACTIVE)
 
-          return {
-               'message': 'Succefully generated active job posts by most recent order.',
-               'data': result
-          }
+     #      return {
+     #           'message': 'Succefully generated active job posts by most recent order.',
+     #           'data': result
+     #      }
      
-     @staticmethod
-     def get_draft_job_posts(company):
-          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.DRAFT)
+     # @staticmethod
+     # def get_draft_job_posts(company):
+     #      result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.DRAFT)
 
-          return {
-               'message': 'Succefully generated draft job posts by most recent order.',
-               'data': result
-          }
+     #      return {
+     #           'message': 'Succefully generated draft job posts by most recent order.',
+     #           'data': result
+     #      }
           
-     @staticmethod
-     def get_expired_job_posts(company):
-          result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.EXPIRED)
+     # @staticmethod
+     # def get_expired_job_posts(company):
+     #      result = SharedDashboardService.get_job_post_list_by_status(company, StatusChoices.EXPIRED)
 
-          return {
-               'message': 'Succefully generated expired job posts by most recent order.',
-               'data': result
-          }
+     #      return {
+     #           'message': 'Succefully generated expired job posts by most recent order.',
+     #           'data': result
+     #      }
      
      @staticmethod
-     def get_job_post_list_by_status(company, status = None):
+     def get_job_post_queryset_by_status(company, status = None):
           """Generate Job Post Queryset by job post status parameter
           """
           queryset = SharedDashboardService.get_job_post_queryset(company)
           
           if status == StatusChoices.ACTIVE:
-               queryset = queryset.active()
+               return queryset.active()
           elif status == StatusChoices.DRAFT:
-               queryset = queryset.draft()
+               return queryset.draft()
           elif status == StatusChoices.EXPIRED:
-               queryset = queryset.expired()
+               return queryset.expired()
           else:
-               queryset = queryset
-          
-          result = []
-          
-          for job_post in queryset:
-               result.append(SharedDashboardService.build_job_post_response(job_post))
-          
-          return result
-          
+               return queryset
           
      @staticmethod
      def get_job_post_queryset(company):

@@ -14,7 +14,7 @@ from services.user.email_service import AuthEmailService
 from ..serializers import UserSerializer, LoginSerializer, RegisterSerializer, ForgetPasswordSerializer, ResetPasswordSerializer, VerifyRegistrationSerializer
 from services.auth.oauth_service import FacebookOAuthService, GoogleOAuthService, LinkedinOAuthService
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudUserDynamicPermission
+from core.middleware.permission import TalentCloudAllPermission, TalentCloudUserDynamicPermission
 from utils.response import CustomResponse
 from utils.oauth.validation import OAuthValidator
 from utils.oauth.rate_limiting import oauth_rate_limited
@@ -452,7 +452,7 @@ class FacebookAuthAPIView(views.APIView):
 @extend_schema(tags=["Authentication-Job Seeker"])
 class UserInfoAPIView(views.APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserDynamicPermission]
+    permission_classes = [TalentCloudAllPermission]
 
     def get(self, request):
         response_data = UserInfoService.get_user_profile_info(request.user)
