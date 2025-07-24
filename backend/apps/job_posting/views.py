@@ -137,9 +137,21 @@ class JobDiscoveryAPIView(CustomListAPIView):
      filterset_class = JobPostFilter
      search_fields = ['title', 'description', 'location']
      
+     def has_filters(self, params):
+          return any(
+               key in params
+               for key in [
+                    'search', 'job_type', 'work_type', 'experience_level',
+                    'experience_year', 'salary_rate', 'company_size', 'specialization',
+                    'role', 'location', 'list_by_any_time', 'project_duration'
+               ]
+          )
+     
      def get_queryset(self):
           """Return jobs based on user profile completeness and preferences"""
           user = self.request.user
+
+          has_filters = self.has_filters(self.request.query_params)
           
           # Step 1: Check if user has a JobSeeker profile
           try:
@@ -148,27 +160,31 @@ class JobDiscoveryAPIView(CustomListAPIView):
                ).get(user=user.jobseeker)
           except (JobSeeker.DoesNotExist, AttributeError):
                # New user - show popular/newest jobs
-               return JobService.get_popular_jobs_queryset()
+               return JobService.get_popular_jobs_queryset() if not has_filters else JobPost.objects.none()
           
           # Step 2: Check if user has occupation data
           occupation = getattr(jobseeker, 'occupation', None)
           
           if not occupation:
                # User exists but no occupation - show newest jobs with message
-               return JobService.get_newest_jobs_queryset()
+               return JobService.get_newest_jobs_queryset() if not has_filters else JobPost.objects.none()
           
           # Step 3: Try to get matched jobs
           matched_jobs = JobService.get_matched_jobs_queryset(occupation)
           
-          # Step 4: Fallback if no matches found
-          if not matched_jobs.exists():
-               profile_completion = JobService.get_filter_completion_score(user)
-               if profile_completion < 60:  # Less than 60% complete
-                    return JobService.get_popular_jobs_queryset()
-               else:
-                    return JobService.get_newest_jobs_queryset()
+          if matched_jobs.exists():
+               return matched_jobs
+
+          if has_filters:
+               return JobPost.objects.none()
           
-          return matched_jobs
+          # Step 4: Fallback if no matches found
+          profile_completion = JobService.get_filter_completion_score(user)
+          
+          if profile_completion < 60:  # Less than 60% complete
+               return JobService.get_popular_jobs_queryset()
+          
+          return JobService.get_newest_jobs_queryset()
      
      def list(self, request, *args, **kwargs):
           """Override list to add metadata about job discovery"""
@@ -176,14 +192,23 @@ class JobDiscoveryAPIView(CustomListAPIView):
          
           original_data = response.data.get('data', {})
           
-          # Add discovery metadata
-          discovery_info = self._get_discovery_info(request.user)
+          has_filters = self.has_filters(request.query_params)
           
-          enhanced_data = {
-               'discovery_type': discovery_info['type'],
-               'setup_completion': discovery_info.get('filter_setup_completion', 0),
-               'suggestions': discovery_info.get('suggestions', []),
-          }
+          # Add discovery metadata
+          discovery_info = self._get_discovery_info(request.user, has_filters)
+          
+          enhanced_data = {}
+          
+          if has_filters:
+               enhanced_data = {
+                    'discovery_type': discovery_info['type']
+               }
+          else:
+               enhanced_data = {
+                    'discovery_type': discovery_info['type'],
+                    'setup_completion': discovery_info.get('filter_setup_completion', 0),
+                    'suggestions': discovery_info.get('suggestions', []),
+               }
           
           # Merge with original data
           if isinstance(original_data, dict) and 'results' in original_data:
@@ -201,9 +226,15 @@ class JobDiscoveryAPIView(CustomListAPIView):
                )
           )
      
-     def _get_discovery_info(self, user):
+     def _get_discovery_info(self, user, has_filters=False):
           """Get information about how jobs were discovered"""
           try:
+               if has_filters:
+                    return {
+                         'type': 'filtered',
+                         'message': 'Fetched filtered job posts.'
+                    }
+               
                jobseeker = user.jobseeker
                
                if not hasattr(jobseeker, 'occupation') or not jobseeker.occupation:
