@@ -52,19 +52,26 @@ class JobService():
           specialization_id = occupation.specialization_id
           role_id = occupation.role_id
           
+          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
+          
           # Build matching query
           user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id) | Q(role_id=role_id)
           
-          queryset = JobPost.objects.active().filter(
-               user_match_q,
-               is_accepting_applications=True,
-               job_post_status=StatusChoices.ACTIVE
-          )
+          # Filter 2: Must match user's profile
+          queryset = queryset.filter(user_match_q)
+          
+          # Filter 3 last_application_date must be today or in the future, OR be null
+          job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
+          queryset = queryset.filter(job_status_filter_q)
+
           
           # Date filtering
           today = date.today()
           date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-          queryset = queryset.filter(date_filter_q, number_of_positions__gt=0)
+          
+          queryset = queryset.filter(date_filter_q)
+          
+          queryset = queryset.filter(number_of_positions__gt=0)
           
           return queryset.distinct().order_by('-created_at').select_related(
                'role', 'experience_level', 'posted_by'
