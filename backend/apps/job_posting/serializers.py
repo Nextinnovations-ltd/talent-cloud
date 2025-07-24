@@ -112,6 +112,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'location',
                'experience_level',
                'experience_years',
+               'role',
+               'specialization',
                'skills',
                'job_type',
                'work_type',

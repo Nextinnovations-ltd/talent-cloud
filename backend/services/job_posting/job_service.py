@@ -48,30 +48,37 @@ class JobService():
      @staticmethod
      def get_matched_jobs_queryset(occupation: JobSeekerOccupation):
           """Get jobs matching user's occupation"""
-          skill_ids = occupation.skills.values_list('id', flat=True)
-          specialization_id = occupation.specialization_id
-          role_id = occupation.role_id
+          queryset = JobPost.objects.active().filter(
+               is_accepting_applications=True,
+               job_post_status=StatusChoices.ACTIVE,
+               number_of_positions__gt=0
+          )
+
+          today = date.today()
+          queryset = queryset.filter(
+               Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+          )
           
-          queryset = JobPost.objects.active().filter(is_accepting_applications=True)
+          user_match_q = Q()
           
           # Build matching query
-          user_match_q = Q(skills__id__in=skill_ids) | Q(specialization_id=specialization_id) | Q(role_id=role_id)
+          skill_ids = list(occupation.skills.values_list('id', flat=True))
+          
+          if skill_ids:
+               user_match_q |= Q(skills__id__in=skill_ids)
+
+          if occupation.specialization_id:
+               user_match_q |= Q(specialization_id=occupation.specialization_id)
+
+          if occupation.role_id:
+               user_match_q |= Q(role_id=occupation.role_id)
           
           # Filter 2: Must match user's profile
-          queryset = queryset.filter(user_match_q)
-          
-          # Filter 3 last_application_date must be today or in the future, OR be null
-          job_status_filter_q = Q(job_post_status=StatusChoices.ACTIVE)
-          queryset = queryset.filter(job_status_filter_q)
-
-          
-          # Date filtering
-          today = date.today()
-          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-          
-          queryset = queryset.filter(date_filter_q)
-          
-          queryset = queryset.filter(number_of_positions__gt=0)
+          if user_match_q:
+               queryset = queryset.filter(user_match_q)
+          else:
+               # Return empty queryset because there's no profile data to match against
+               return JobPost.objects.none()
           
           return queryset.distinct().order_by('-created_at').select_related(
                'role', 'experience_level', 'posted_by'
@@ -80,14 +87,13 @@ class JobService():
      @staticmethod
      def get_popular_jobs_queryset():
           """Get popular jobs for new users"""
-          from django.db.models import Count, F
+          from django.db.models import F
           
           return JobPost.objects.active().filter(
                is_accepting_applications=True,
                job_post_status=StatusChoices.ACTIVE
           ).annotate(
-               application_count=Count('jobapplication'),
-               popularity_score=F('view_count') + F('application_count') * 3
+               popularity_score=F('view_count') + F('applicant_count') * 3
           ).filter(
                number_of_positions__gt=0
           ).order_by('-popularity_score', '-created_at').select_related(
