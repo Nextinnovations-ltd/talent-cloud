@@ -9,17 +9,7 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
   const location = useLocation();
   const navigate = useNavigate();
 
-  const {
-    data: AdminInfo,
-    error,
-    isSuccess,
-  } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
-
   
-  console.log("--------------")
-  console.log(AdminInfo,isSuccess,hasToken,error)
-  console.log("--------------")
-
 
     if(shouldSkip) {
         return <Outlet/>

@@ -20,6 +20,10 @@ const adminRoutesMap = {
     expiredJobs:{
         path:'expiredJobs',
         name:'ExpiredJobs'
+    },
+    createNewJob:{
+        path:'createNewJob',
+        name:'CreateNewJob'
     }
 }
 
