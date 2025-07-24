@@ -209,6 +209,11 @@ const authSlice = createSlice({
           state.isGeneratedName = action.payload.data.is_generated_username;
           // state.isGeneratedName = action.payload.data
 
+          console.log("asdfasfasfafsaf")
+          console.log(action?.payload)
+          console.log("asdfasfasfafsaf")
+
+
           // Handle token storage based on keepMeLoggedIn flag
           if (state.keepMeLoggedIn) {
             setTokenToLocalStorage(action.payload.data.token);
@@ -219,7 +224,7 @@ const authSlice = createSlice({
             removeTokensFromLocalStorage();
           }
         }
-      }
+      }, 
     );
   },
 });

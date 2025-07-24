@@ -24,7 +24,7 @@ const AdminMenuItems = ({
     <div
       onClick={() => navigate(targetPath)}
       className={`px-[20px] h-[38px] duration-500 cursor-pointer font-semibold flex items-center justify-start gap-[24px] hover:bg-[#3699F069] rounded-[6px] hover:text-[#0481EF] ${
-        isActive ? 'bg-[#3699F069] text-[#0481EF]' : 'text-[#575757]'
+        isActive ? 'bg-[#3699F069]/25 text-[#0481EF]' : 'text-[#575757]'
       }`}
       role="button"
       aria-current={isActive ? "page" : undefined}

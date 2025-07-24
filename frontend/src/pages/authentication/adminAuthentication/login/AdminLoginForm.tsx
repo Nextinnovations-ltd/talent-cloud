@@ -7,8 +7,9 @@ import InputField from "@/components/common/form/fields/input-field";
 import { cn } from "@/lib/utils";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { useApiCaller } from "@/hooks/useApicaller";
-import { useAdminLoginMutation } from "@/services/slices/adminAuthSlice";
 import { useNavigate } from "react-router-dom";
+import { useAdminLoginMutation } from "@/services/slices/adminAuthSlice";
+
 
 const fieldHeight = "h-12 ";
 const filedWidth = "w-full";
@@ -17,7 +18,6 @@ const AdminLoginForm = () => {
 
     const { executeApiCall, isLoading } = useApiCaller(useAdminLoginMutation);
     const navigate = useNavigate();
-
 
     const form = useForm({
         resolver: yupResolver(loginSchema),
@@ -31,14 +31,15 @@ const AdminLoginForm = () => {
                 password: data?.password
             }
 
-         const response =    await executeApiCall(payload)
+         const response = await executeApiCall(payload)
 
-         console.log(response)
 
-         if(response.success){
-           navigate('/admin')
+         if (response?.data?.data?.data?.token) {
+            navigate('/admin/dashboard')
          }
 
+
+     
         } catch (err) {
             console.log(err)
         }

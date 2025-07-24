@@ -4,7 +4,7 @@ import EyeIcon from '@/assets/SuperAdmin/eye.svg';
 
 const RecentJobCard = () => {
     return (
-        <div className='w-[568px] px-[24px] py-[18px] rounded-xl border border-bg-hr'>
+        <div className='w-full px-[24px] py-[18px] rounded-xl border border-bg-hr'>
             <div className='flex justify-between items-center'>
                 <div className='space-y-[12px]'>
                     <h2 className='text-[16px] text-[#000] font-semibold'>Backend Developer</h2>

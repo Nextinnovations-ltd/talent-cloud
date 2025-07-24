@@ -3,7 +3,7 @@ import Calendar from '@/assets/SuperAdmin/calendar.svg'
 
 const RecentApplicant = () => {
     return (
-        <div className='w-[521px] px-[24px] py-[36px] border border-bg-hr rounded-xl'>
+        <div className='w-full px-[24px] py-[36px] border border-bg-hr rounded-xl'>
             <div className='flex justify-between items-center'>
                 <div className='flex gap-[7px] items-center'>
                     <img src={Profile} className='rounded-full w-[48px] h-[48px]' alt="" />

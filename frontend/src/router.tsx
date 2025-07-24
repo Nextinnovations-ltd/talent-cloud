@@ -219,7 +219,7 @@ export const router = createBrowserRouter([
     children:[
       {
         path:'dashboard',
-        element:<VerifyRoleAndToken shouldSkip={true}/>,
+        element:<VerifyRoleAndToken shouldSkip={false}/>,
         children:[
           {
             index:true,
