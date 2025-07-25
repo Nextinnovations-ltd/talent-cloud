@@ -17,6 +17,14 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     refetch,
   } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
 
+
+  const role =  userInfo?.data?.role
+  
+
+  //role must be user
+  console.log(role)
+
+
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
       navigate(`/auth/${routesMap.login.path}`, {
@@ -25,12 +33,15 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
       });
     }
     if (isSuccess) {
-      const { is_generated_username, onboarding_step } = userInfo?.data || {};
+      const { is_generated_username, onboarding_step, role } = userInfo?.data || {};
+
+      if (role === "superadmin") {
+        navigate("/", { replace: true });
+        return;
+      }
 
       if (is_generated_username) {
-       // navigate("/verify");
-       navigate("/verify");
-
+        navigate("/verify");
         return;
       }
 
@@ -41,15 +52,12 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
         );
       }
 
-      if(onboarding_step === 6){
-        navigate('/')
+      if (onboarding_step === 6) {
+        navigate("/");
       }
-
     }
 
-
     refetch();
-
   }, [isLoadingUserInfo]);
 
   if (shouldSkip) {

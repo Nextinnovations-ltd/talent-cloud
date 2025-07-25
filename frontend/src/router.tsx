@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <VerifyToken shouldSkip={false} />,
+        element: <VerifyToken shouldSkip={true} />,
         children: [
           {
             index: true,

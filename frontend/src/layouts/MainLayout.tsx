@@ -79,13 +79,13 @@ export const MainLayout = () => {
 
   return (
     <>
-      <ProtectRoute>
+      {/* <ProtectRoute> */}
         <NavBar />
         <div className="mt-[100px]">
           <Outlet />
         </div>
         {/* <Footer /> */}
-      </ProtectRoute>
+      {/* </ProtectRoute> */}
     </>
   );
 };

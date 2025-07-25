@@ -1,6 +1,6 @@
 import AdminCreateJobItems from '@/components/common/Admin/AdminCreateJobItems';
 import AdminMenuItems from '@/components/common/Admin/AdminMenuItems';
-import { AlignCenterHorizontal, Briefcase, FileClock, Plus } from 'lucide-react';
+import { AlignCenterHorizontal, Briefcase, FileClock } from 'lucide-react';
 
 
  const AdminJobManagement = () => {

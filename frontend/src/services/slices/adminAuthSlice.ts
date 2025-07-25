@@ -8,6 +8,7 @@ import {
   setTokenToLocalStorage,
   setRefreshTokenToLocalStorage,
   removeTokenFromSessionStorage,
+  removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
 
 // Define the shape of the initial state
@@ -65,13 +66,19 @@ const adminAuthSlice = createSlice({
       extendedAdminAuthSlice.endpoints?.adminLogin.matchFulfilled,
       (state, action: PayloadAction<LoginResponse>) => {
 
-        console.log("3er3434")
-        console.log(action?.payload)
-        console.log("3er3434")
+        console.log("kdkdk")
+        console.log(action.payload.data.token)
+        console.log("kdkdk")
+
+
+
 
 
         if (action.payload.data.token) {
           state.token = action.payload.data.token;
+          removeTokensFromLocalStorage()
+          removeTokenFromSessionStorage();
+
           // For admin, always store in localStorage. Adjust if you have a keepMeLoggedIn flag for admin.
           setTokenToLocalStorage(action.payload.data.token);
           setRefreshTokenToLocalStorage(action.payload.data.token);
