@@ -1,8 +1,17 @@
 from apps.job_posting.models import JobApplication, JobPost, StatusChoices
 from apps.job_seekers.models import JobSeekerSpecialization
+from rest_framework.exceptions import NotFound
 from django.db.models import Sum
 
 class SharedDashboardService:
+     @staticmethod
+     def get_company(user):
+          company = getattr(user, 'company', None)
+          
+          if not company:
+               raise NotFound("Company doesn't exist for the user.")
+          return company
+     
      @staticmethod
      def get_company_applicant_count(company):
           # Get all applicants from all job posts
@@ -25,7 +34,7 @@ class SharedDashboardService:
           )['total_views'] or 0
      
      @staticmethod
-     def get_company_applicants_by_latest_order(company):
+     def get_company_applicants(company, is_recent=False):
           # Get all applicants from all job posts
           applications = JobApplication.objects.filter(
                job_post__posted_by__company=company
@@ -43,6 +52,9 @@ class SharedDashboardService:
                'job_seeker__user__profile_image_url',
                'job_seeker__occupation__role__name'
           ).order_by('-created_at')
+          
+          if is_recent:
+               applications[:4]
           
           result = []
           
@@ -117,6 +129,14 @@ class SharedDashboardService:
                return queryset.expired()
           else:
                return queryset
+          
+     @staticmethod
+     def get_recent_job_post_queryset(company):
+          """Generate Recent Job Post Queryset
+          """
+          queryset = SharedDashboardService.get_job_post_queryset(company)
+          
+          return queryset[:4]
           
      @staticmethod
      def get_job_post_queryset(company):
