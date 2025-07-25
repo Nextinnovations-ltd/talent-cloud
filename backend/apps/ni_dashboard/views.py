@@ -44,10 +44,7 @@ class JobSeekerStatisticsAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          try:
-               company = request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
+          company = SharedDashboardService.get_company(self.request.user)
 
           result = DashboardService.get_job_seeker_statistics(company)
           
@@ -59,11 +56,6 @@ class JobSeekerRoleStatisticsAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          try:
-               company = request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
-
           result = DashboardService.get_job_seeker_statistics_by_occupation_role()
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
@@ -74,12 +66,9 @@ class NIApplicantListAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          try:
-               company = request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
-          
-          result = SharedDashboardService.get_company_applicants_by_latest_order(company)
+          company = SharedDashboardService.get_company(self.request.user)
+
+          result = SharedDashboardService.get_company_applicants(company)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
@@ -103,10 +92,7 @@ class AllJobPostListAPIView(CustomListAPIView):
      serializer_class = JobPostDashboardSerializer
      
      def get_queryset(self):
-          try:
-               company = self.request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
+          company = SharedDashboardService.get_company(self.request.user)
                
           queryset = SharedDashboardService.get_job_post_queryset_by_status(company)
           
@@ -119,10 +105,7 @@ class ActiveJobPostListAPIView(CustomListAPIView):
      serializer_class = JobPostDashboardSerializer
      
      def get_queryset(self):
-          try:
-               company = self.request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
+          company = SharedDashboardService.get_company(self.request.user)
                
           queryset = SharedDashboardService.get_job_post_queryset_by_status(company, StatusChoices.ACTIVE)
           
@@ -135,10 +118,7 @@ class DraftJobPostListAPIView(CustomListAPIView):
      serializer_class = JobPostDashboardSerializer
      
      def get_queryset(self):
-          try:
-               company = self.request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
+          company = SharedDashboardService.get_company(self.request.user)
                
           queryset = SharedDashboardService.get_job_post_queryset_by_status(company, StatusChoices.DRAFT)
           
@@ -151,14 +131,35 @@ class ExpiredJobPostListAPIView(CustomListAPIView):
      serializer_class = JobPostDashboardSerializer
      
      def get_queryset(self):
-          try:
-               company = self.request.user.company
-          except:
-               raise NotFound("Company didn't exists for the user.")
+          company = SharedDashboardService.get_company(self.request.user)
                
           queryset = SharedDashboardService.get_job_post_queryset_by_status(company, StatusChoices.EXPIRED)
           
           return queryset
+
+class RecentJobListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = JobPostDashboardSerializer
+     
+     def get_queryset(self):
+          company = SharedDashboardService.get_company(self.request.user)
+               
+          queryset = SharedDashboardService.get_recent_job_post_queryset(company)
+          
+          return queryset
+
+@extend_schema(tags=["NI Dashboard"])
+class RecentApplicantListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          company = SharedDashboardService.get_company(self.request.user)
+
+          result = SharedDashboardService.get_company_applicants(company, is_recent=True)
+          
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
 # region Company Approval Process
 
