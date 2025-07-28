@@ -4,10 +4,11 @@ from rest_framework import status
 from django.http import Http404
 from rest_framework.permissions import AllowAny
 from apps.companies.serializers import CompanySerializer, IndustrySerializer, CompanyWithJobsSerializer
+from apps.users.models import TalentCloudUser
 from .models import Company, Industry
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudAllPermission, TalentCloudSuperAdminPermission
+from core.middleware.permission import TalentCloudAdminOrSuperAdminPermission, TalentCloudAllPermission, TalentCloudSuperAdminPermission
 from drf_spectacular.utils import extend_schema
 import logging
 
@@ -26,6 +27,28 @@ class IndustryListAPIView(views.APIView):
           serializer = IndustrySerializer(industries, many=True)
           
           return Response(serializer.data)
+
+class RelatedCompanyInfoAPIView(views.APIView):
+     """
+     API view to create a new company.
+     Handles POST (create) request.
+     """
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission]
+
+     def get(self, request):
+          """
+          Get authenticated user's company info.
+          """
+          user:TalentCloudUser = request.user
+          
+          if hasattr(user, 'company'):
+               return Response(CustomResponse.success('Successfully retrived related company information.', {
+                    "name": user.company.name,
+                    "image_url": user.company.image_url
+               }), status=status.HTTP_200_OK)
+          
+          return Response(CustomResponse.error('Related company not found.'), status=status.HTTP_404_NOT_FOUND)
 
 @extend_schema(tags=["Company"])
 class CompanyCreateAPIView(views.APIView):
@@ -69,7 +92,6 @@ class UnauthenticatedCompanyCreateAPIView(views.APIView):
                # Send notification to superadmins about new company registration
                try:
                     from services.notification.notification_service import NotificationHelpers
-                    from utils.notification.types import NotificationChannel
                     
                     NotificationHelpers.notify_company_registration(company)
                     logger.info(f"Company registration notification sent for: {company.name}")
