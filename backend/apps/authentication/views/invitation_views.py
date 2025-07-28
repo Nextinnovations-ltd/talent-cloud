@@ -1,12 +1,11 @@
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError as DjangoValidationError
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import IsInvitationOwnerOrSameCompany, TalentCloudAdminOrSuperAdminPermission, TalentCloudAdminPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
+from core.middleware.permission import TalentCloudAdminOrSuperAdminPermission, TalentCloudAdminPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
 import logging
 from apps.authentication.models import UserInvitation
 from services.user.invitation_service import InvitationService

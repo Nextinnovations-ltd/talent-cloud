@@ -119,6 +119,8 @@ class AuthenticationService:
           if not TalentCloudUser.objects.filter(email=email).exists():
                raise ValueError("Talent cloud user with this email does not exist.")
 
+          user = TalentCloudUser.objects.get(email=email)
+          
           reset_request = PasswordReset.objects.active().filter(email=email).first()
           is_expired_reset_request = False
 
@@ -133,8 +135,8 @@ class AuthenticationService:
                     else:
                          reset_token = PasswordService.create_password_reset(email)
 
-                    AuthEmailService.send_password_reset_email(email, reset_token)
-                    
+                    # AuthEmailService.send_password_reset_email(email, reset_token)
+                    AuthEmailService.send_password_reset_email_with_template(user, reset_token)
                     return reset_token
           elif reset_request and not is_expired_reset_request:
                raise ValueError("Password reset request already sent.")
