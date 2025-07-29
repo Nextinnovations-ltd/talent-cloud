@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import { ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -28,6 +29,7 @@ type DatePickerFieldProps = {
   description?: boolean;
   descriptionText?: string;
   lableName?: string;
+  labelSize?:string
 };
 
 const TextAreaField: React.FC<DatePickerFieldProps> = ({
@@ -42,6 +44,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
   isError,
   showLetterCount, // New prop to show/hide letter count
   maxLength,
+  labelSize,
   lableName,
 }) => {
   const form = useFormContext();
@@ -54,7 +57,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={fieldWidth}>
           {requiredLabel && (
-            <FormLabel className="  font-semibold text-[16px] text-[#05060F]">
+            <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}

@@ -35,7 +35,8 @@ const AdminLoginForm = () => {
 
 
          if (response?.data?.data?.data?.token) {
-            navigate('/admin/dashboard')
+        
+          navigate('/admin/dashboard',{replace:true})
          }
 
 

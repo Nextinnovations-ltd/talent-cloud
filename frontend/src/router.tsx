@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <VerifyToken shouldSkip={true} />,
+        element: <VerifyToken shouldSkip={false} />,
         children: [
           {
             index: true,
@@ -104,8 +104,6 @@ export const router = createBrowserRouter([
                 element: <OrganizationDetail />
               },
             ]
-
-
           },
           {
             path: "/user/edit",
@@ -216,11 +214,11 @@ export const router = createBrowserRouter([
   },
   {
     path:"/admin",
-    element: <AdminLayout/>,
+    element:<VerifyRoleAndToken shouldSkip={false}/>,
     children:[
       {
         path:'dashboard',
-        element:<VerifyRoleAndToken shouldSkip={false}/>,
+        element:<AdminLayout/>,
         children:[
           {
             index:true,

@@ -1,4 +1,4 @@
-const SUPERADMIN = "superAdmin";
+const SUPERADMIN = "superadmin";
 const USER = "user";
 
 const ROLES = {

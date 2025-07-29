@@ -126,9 +126,6 @@ export const ProfileUser = () => {
       const response = await executeApiCall(formattedValues);
 
 
-
-
-
       if (response?.data?.data) {
         const profileUser = response.data.data?.data;
         form.reset({
@@ -168,8 +165,6 @@ export const ProfileUser = () => {
       <PageInitialLoading />
     );
   }
-
-
 
   return (
     <div className="mb-[120px]">

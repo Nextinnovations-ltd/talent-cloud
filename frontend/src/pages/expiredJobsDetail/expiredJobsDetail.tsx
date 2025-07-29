@@ -30,7 +30,7 @@ const ExpiredJobsDetail = () => {
     if (isLoading) {
         return (
             <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded sticky top-[190px] h-[100svh] self-start">
-                <div className="mb-6 flex items-center fixed left-[50px] top-[130px] gap-[48px]">
+                <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]">
                     <BackButton handleBack={() => navigate('/')} />
                 </div>
                 <ScrollArea className="p-[30px] relative">
@@ -65,11 +65,11 @@ const ExpiredJobsDetail = () => {
 
     return (
         <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded sticky top-[190px] h-[100svh] self-start">
-          <div className="mb-6 flex items-center fixed left-[50px] top-[130px] gap-[48px]"><BackButton handleBack={() => navigate('/')} /></div>
+          <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"><BackButton handleBack={() => navigate('/')} /></div>
             <ScrollArea className="p-[30px] relative">
               
-                <h3 className="text-[24px] mb-[8px] font-semibold">{jobDetails?.title || ""}</h3>
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded px-4 py-2 mb-6">
+                <h3 className="text-[24px] mb-[15px] font-semibold">{jobDetails?.title || ""}</h3>
+                <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 rounded px-4 py-2 mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2.25m0 3.75h.01m-6.938 4.242a9 9 0 1112.856 0A8.963 8.963 0 0112 21a8.963 8.963 0 01-6.928-3.008z" /></svg>
                     <span>This job posting has expired and is no longer accepting applications.</span>
                 </div>

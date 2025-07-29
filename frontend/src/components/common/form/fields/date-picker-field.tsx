@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import Datepicker from "../../datePicker";
+import clsx from "clsx";
 
 type DatePickerFieldProps = {
   fieldName: string;
@@ -16,6 +17,10 @@ type DatePickerFieldProps = {
   requiredLabel?: boolean;
   fieldWidth: string;
   disabled?: boolean;
+  placeholder?:string;
+  labelName?:string;
+  fieldStyle?:string;
+  labelStyle?:string;
 };
 
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
@@ -24,6 +29,10 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   fieldHeight,
   requiredLabel = true,
   disabled = false,
+  placeholder = 'Date of Birth',
+  labelName= 'Birthday',
+  fieldStyle = '',
+  labelStyle= ''
 }) => {
   const form = useFormContext();
   const [open, setOpen] = useState(false);
@@ -33,22 +42,23 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
       control={form.control}
       name={fieldName}
       render={({ field }) => (
-        <FormItem className={"flex flex-col "}>
+        <FormItem className={clsx("flex flex-col ",fieldStyle)}>
           {requiredLabel && (
-            <FormLabel className="font-semibold text-[16px]   poppins-semibold ">
-              Birthday
-              {required && <span className="ms-1 text-danger-500">*</span>}
+            <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F] ',labelStyle)}>
+              {
+                labelName ? labelName : 'Birthday'
+              }
+              {required && <span className="ms-1 text-red-500">*</span>}
             </FormLabel>
           )}
           <FormControl className="border-2">
             <Datepicker
               height={`${fieldHeight}`}
-              buttonClassNames="w-[672px]"
               same={disabled}
               field={field}
               open={open}
               setOpen={setOpen}
-              placeholder={"Date of Birth"}
+              placeholder={placeholder}
               onSelect={(value) => {
                 form.setValue(fieldName, value!);
                 setOpen(false);

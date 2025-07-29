@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import { ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -30,7 +31,8 @@ type DatePickerFieldProps = {
   descriptionText?: string;
   startIcon?: ReactNode;
   lableName?: string;
-  readOnly?:boolean
+  readOnly?:boolean;
+  labelSize?:string
 };
 
 const  InputField: React.FC<DatePickerFieldProps> = ({
@@ -52,7 +54,8 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
   descriptionText,
   startIcon,
   lableName,
-  readOnly = false
+  readOnly = false,
+  labelSize
 }) => {
   const form = useFormContext();
   const { t } = useTranslation(languageName);
@@ -69,9 +72,9 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       control={form.control}
       name={fieldName}
       render={({ field }) => (
-        <FormItem className={fieldWidth}>
+        <FormItem className={clsx(fieldWidth,'translate-y-[-4px]')}>
           {requiredLabel && (
-            <FormLabel className=" font-semibold text-[16px] text-[#05060F]">
+            <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}
@@ -84,8 +87,11 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                 disabled={disabled}
                 isError={isError}
                 className={cn(
-                  fieldHeight,
-                  "text-[14px]  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] "
+                 
+                  "text-[14px] mt-2  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
+                  
+                  fieldHeight
+
                 )}
                 readOnly={readOnly}
                 startIcon={startIcon}

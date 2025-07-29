@@ -47,10 +47,6 @@ export const UserWorkExperienceForm = ({
   } = form;
 
 
-  console.log("kdkkddk" + jobId)
-  console.log(errors)
-  console.log("kdkkddk" + jobId)
-
 
   // const getFieldName = (fieldName: any) => `${fieldName}_${jobId}`;
 

@@ -4,6 +4,7 @@ import { useGetUserInfoQuery } from "@/services/api/userSlice";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
+import ROLES from "@/constants/authorizations";
 
 export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
   const { hasToken, isTokenVerifying } = useVerifyToken(shouldSkip);
@@ -35,8 +36,8 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     if (isSuccess) {
       const { is_generated_username, onboarding_step, role } = userInfo?.data || {};
 
-      if (role === "superadmin") {
-        navigate("/", { replace: true });
+      if (role === ROLES.SUPERADMIN) {
+        navigate("/admin/dashboard", { replace: true });
         return;
       }
 
@@ -58,7 +59,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     }
 
     refetch();
-  }, [isLoadingUserInfo]);
+  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, refetch, userInfo?.data]);
 
   if (shouldSkip) {
     return <Outlet />;
