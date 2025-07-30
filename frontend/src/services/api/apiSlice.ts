@@ -1,21 +1,19 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError, FetchArgs, BaseQueryApi } from "@reduxjs/toolkit/query/react";
 import { LocalUrl } from "./apiurls";
 import {
+  getTokenFromLocalStorage,
+  getTokenFromSessionStorage,
   removeTokenFromSessionStorage,
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
-import useGlobalModal from "@/state/zustand/global-modal";
 
-interface RootState {
-  auth: {
-    token: string | null;
-  };
-}
+
+
 
 const baseQuery = fetchBaseQuery({
   baseUrl: LocalUrl,
   credentials: "include",
-  prepareHeaders: (headers, api) => {
+  prepareHeaders: (headers) => {
     if (headers.has("Content-Type")) {
       const contentType = headers.get("Content-Type");
 
@@ -28,10 +26,11 @@ const baseQuery = fetchBaseQuery({
       headers.set("Content-Type", "application/json");
     }
 
-    const state = api.getState() as RootState;
-    const token = state.auth.token;
 
-    if (token) {
+    const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
+
+
+  if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
     return headers;
@@ -44,15 +43,11 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
   const status = (result.error as FetchBaseQueryError)?.status;
 
   // Detailed logging for debugging
-  console.log('baseQueryWithReauth error:', result.error);
-  console.log('baseQueryWithReauth status:', status);
 
   if (status === 401 || status === 403) {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
-    console.log(status)
-    // Directly trigger Zustand store and modal
-    useGlobalModal.getState().openModal("Session expired. Please login again.");
+    window.location.href = "/auth/login";
   }
 
   return result;
@@ -61,7 +56,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['JobList', 'CertificationList','EducationsList','selectprojectsList'],
+  tagTypes: ['JobList', 'CertificationList', 'EducationsList', 'selectprojectsList', 'videoIntroductionList', 'appliedJobs', 'bookmarked', 'NotificationList'],
   endpoints: () => ({}),
 });
 

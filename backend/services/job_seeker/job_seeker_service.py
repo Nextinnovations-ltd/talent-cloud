@@ -1,9 +1,16 @@
 import json
 from django.db import transaction
+from django.core import exceptions as django_exceptions
 from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
-from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer, JobSeekerSkillSerializer, SpokenLanguageSerializer
+from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer
 from apps.users.models import Address, TalentCloudUser
+
+# Constants
+class OnboardingConstants:
+    MINIMUM_SKILLS_REQUIRED = 5
+    VALID_STEPS = [1, 2, 3, 4]
+    DEFAULT_PROFILE_IMAGE = "https://images.unsplash.com/5/unsplash-kitsune-4.jpg"
 
 class JobSeekerService:
      @staticmethod
@@ -42,160 +49,184 @@ class JobSeekerService:
      
      @staticmethod
      def get_onboarding_data(user, step):
-          job_seeker = JobSeekerService.get_job_seeker_user(user)
-
-          job_seeker_occupation = getattr(job_seeker, 'occupation', None)
+          JobSeekerService._validate_step_number(step)
+          
+          job_seeker = JobSeekerService._validate_job_seeker(user)
+          
+          occupation = JobSeekerService._get_or_create_occupation(job_seeker)
           
           if step == 1:
-               return {
-                    'message': "Step 1 data retrieved successfully.",
-                    'data': {
-                         'profile_image_url': job_seeker.profile_image_url,
-                         'name': job_seeker.name,
-                         'tagline': job_seeker.tagline,
-                         'experience_level_id': job_seeker_occupation.experience_level_id if job_seeker_occupation else None,
-                         'experience_years': job_seeker_occupation.experience_years if job_seeker_occupation else None,
-                    }
-               }
+               return JobSeekerService._get_step_1_data(job_seeker, occupation)
           elif step == 2:
-               return {
-                    'message': "Step 2 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
-                    'data': {
-                         'specialization_id': job_seeker_occupation.specialization.id
-                    } if job_seeker_occupation else None
-               }
+               return JobSeekerService._get_step_2_data(occupation)
           elif step == 3:
-               return {
-                    'message': "Step 3 data retrieved successfully." if job_seeker_occupation else "No data existed yet.",
-                    'data': {
-                         'role_id': job_seeker_occupation.role.id
-                    } if job_seeker_occupation else None
-               }
+               return JobSeekerService._get_step_3_data(occupation)
           elif step == 4:
-               skills = job_seeker_occupation.skills.all() if job_seeker_occupation else []
-               return {
-                    'message': "Step 4 data generated." if skills else "No data existed yet.",
-                    'data': {
-                         'skills': [skill.id for skill in skills]
-                    }  if job_seeker_occupation else None
+               return JobSeekerService._get_step_4_data(occupation)
+     
+     @staticmethod
+     def _get_step_1_data(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
+          """Get step 1 onboarding data (profile basics)"""
+          return {
+               'message': "Step 1 data retrieved successfully.",
+               'data': {
+                    'profile_image_url': job_seeker.profile_image_url,
+                    'name': job_seeker.name,
+                    'tagline': job_seeker.tagline,
+                    'experience_level_id': occupation.experience_level_id if occupation else None,
+                    'experience_years': occupation.experience_years if occupation else None,
                }
-          else:
-               raise ValidationError("Invalid step number.")
+          }
+     
+     @staticmethod
+     def _get_step_2_data(occupation: JobSeekerOccupation):
+          """Get step 2 onboarding data (specialization)"""
+          has_specialization = occupation and occupation.specialization
+          return {
+               'message': "Step 2 data retrieved successfully." if has_specialization else "No data existed yet.",
+               'data': {
+                    'specialization_id': occupation.specialization.id
+               } if has_specialization else None
+          }
+     
+     @staticmethod
+     def _get_step_3_data(occupation: JobSeekerOccupation):
+          """Get step 3 onboarding data (role)"""
+          has_role = occupation and occupation.role
+          return {
+               'message': "Step 3 data retrieved successfully." if has_role else "No data existed yet.",
+               'data': {
+                    'role_id': occupation.role.id
+               } if has_role else None
+          }
+     
+     @staticmethod
+     def _get_step_4_data(occupation: JobSeekerOccupation):
+          """Get step 4 onboarding data (skills)"""
+          skills = occupation.skills.all() if occupation else []
+          return {
+               'message': "Step 4 data retrieved successfully." if skills else "No data existed yet.",
+               'data': {
+                    'skills': [{'id': skill.id, 'title': skill.title} for skill in skills]
+               } if skills else None
+          }
 
      @staticmethod
      def perform_onboarding(user, step, data):
+          """
+          Perform onboarding steps for job seekers with validation
+          """
           if step == 0:
+               # If step is 0, get current step from job seeker
+               job_seeker = JobSeekerService._validate_job_seeker(user)
                step = job_seeker.onboarding_step
                
-          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
+          # Validate step number
+          JobSeekerService._validate_step_number(step)
           
-          job_seeker_occupation: JobSeekerOccupation = getattr(job_seeker, 'occupation', None)
+          # Get validated job seeker and occupation
+          job_seeker = JobSeekerService._validate_job_seeker(user)
+          occupation = JobSeekerService._get_or_create_occupation(job_seeker)
           
+          # Validate input data for the current step
+          JobSeekerService._validate_onboarding_data(step, data, occupation)
+          
+          # Execute the appropriate step
           if step == 1:
-               name = data.get('name', None)
-               tagline = data.get('tagline', None)
-               experience_level_id = data.get('experience_level_id', None)
-               experience_years = data.get('experience_years', None)
-               # profile_image = request.FILES.get('profile_image', None)
-
-               # Perform Image Upload
-               profile_image_url = "https://images.unsplash.com/5/unsplash-kitsune-4.jpg"
-               
-               with transaction.atomic():
-                    job_seeker.profile_image_url = profile_image_url
-                    job_seeker.name = name
-                    job_seeker.tagline = tagline
-                    
-                    if job_seeker_occupation:
-                         job_seeker_occupation.experience_level_id = experience_level_id
-                         job_seeker_occupation.experience_years = experience_years
-                         job_seeker_occupation.save()
-                    else:
-                         JobSeekerOccupation.objects.create(
-                              user = job_seeker,
-                              experience_level_id = experience_level_id,
-                              experience_years = experience_years
-                         )
-                       
-                    job_seeker.onboarding_step = 2
-                    
-                    job_seeker.save()
-               
-                    return {
-                         'message': "Step 1 succeed."
-                    }
+               return JobSeekerService._perform_step_1(job_seeker, occupation, data)
           elif step == 2:
-               specialization_id = data.get('specialization_id', None)
-               
-               if not specialization_id:
-                    raise ValidationError("Specialization can't be empty.")
-
-               with transaction.atomic():
-                    # Check user already have occupation
-                    if job_seeker_occupation:
-                         job_seeker_occupation.specialization_id = specialization_id
-                         job_seeker_occupation.save()
-                    else:
-                         JobSeekerOccupation.objects.create(
-                              user = job_seeker,
-                              specialization_id = specialization_id
-                         )
-                    
-                    job_seeker.onboarding_step = 3
-                    
-                    job_seeker.save()
-               
-                    return {
-                         'message': "Step 2 succeed."
-                    }
+               return JobSeekerService._perform_step_2(job_seeker, occupation, data)
           elif step == 3:
-               role_id = data.get('role_id', None)
-               
-               if not role_id:
-                    raise ValidationError("Role can't be empty.")
-               
-               with transaction.atomic():
-                    if job_seeker_occupation:
-                         job_seeker_occupation.role_id = role_id
-                         job_seeker_occupation.save()
-                    else:
-                         JobSeekerOccupation.objects.create(
-                              user = job_seeker,
-                              role_id = role_id
-                         )
-
-                    job_seeker.onboarding_step = 4
-                    
-                    job_seeker.save()
-                    
-                    return {
-                         'message': "Step 3 succeed."
-                    }
+               return JobSeekerService._perform_step_3(job_seeker, occupation, data)
           elif step == 4:
-               # Convert to list from formdata string
-               skill_id_list = json.loads(data.get('skill_id_list', []))
+               return JobSeekerService._perform_step_4(job_seeker, occupation, data)
+     
+     @staticmethod
+     def _perform_step_1(job_seeker: JobSeeker, occupation: JobSeekerOccupation, data: dict):
+          """Perform onboarding step 1: Basic profile information"""
+          name = data.get('name', None)
+          tagline = data.get('tagline', None)
+          experience_level_id = data.get('experience_level_id', None)
+          experience_years = data.get('experience_years', None)
+          
+          with transaction.atomic():
+               # Update job seeker profile
+               job_seeker.profile_image_url = OnboardingConstants.DEFAULT_PROFILE_IMAGE
+               job_seeker.name = name
+               job_seeker.tagline = tagline
+               job_seeker.onboarding_step = 2
                
-               if len(skill_id_list) < 5:
-                    raise ValidationError("Choose minimum 5 skillsets.")
+               # Update occupation
+               occupation.experience_level_id = experience_level_id
+               occupation.experience_years = experience_years
                
-               with transaction.atomic():                    
-                    if not job_seeker_occupation:
-                         job_seeker_occupation = JobSeekerOccupation.objects.create(
-                              user = job_seeker
-                         )
+               # Save with error handling
+               JobSeekerService._safe_model_save(job_seeker, "Job seeker profile")
+               JobSeekerService._safe_model_save(occupation, "Occupation")
+               
+          return {'message': "Step 1 completed successfully."}
+     
+     @staticmethod
+     def _perform_step_2(job_seeker: JobSeeker, occupation: JobSeekerOccupation, data: dict):
+          """Perform onboarding step 2: Specialization selection"""
+          specialization_id = data.get('specialization_id', None)
+          
+          with transaction.atomic():
+               # Clear role if specialization changes
+               if occupation.specialization_id != specialization_id:
+                    occupation.role = None
                     
-                    job_seeker_occupation.skills.add(*skill_id_list)
-                    job_seeker_occupation.save()
-                         
-                    job_seeker.onboarding_step = 5
-                    
-                    job_seeker.save()
-                    
-                    return {
-                         'message': "Step 4 succeed."
-                    }
-          else:
-               raise ValidationError("Invalid step number.")
+               occupation.specialization_id = specialization_id
+               job_seeker.onboarding_step = 3
+               
+               # Save with error handling
+               JobSeekerService._safe_model_save(occupation, "Occupation specialization")
+               JobSeekerService._safe_model_save(job_seeker, "Job seeker progress")
+               
+          return {'message': "Step 2 completed successfully."}
+     
+     @staticmethod
+     def _perform_step_3(job_seeker: JobSeeker, occupation: JobSeekerOccupation, data: dict):
+          """Perform onboarding step 3: Role selection"""
+          role_id = data.get('role_id', None)
+          
+          with transaction.atomic():
+               # Validate role belongs to current specialization
+               JobSeekerService._validate_role_specialization_match(role_id, occupation.specialization_id)
+               
+               occupation.role_id = role_id
+               job_seeker.onboarding_step = 4
+               
+               # Save with error handling
+               JobSeekerService._safe_model_save(occupation, "Occupation role")
+               JobSeekerService._safe_model_save(job_seeker, "Job seeker progress")
+               
+          return {'message': "Step 3 completed successfully."}
+     
+     @staticmethod
+     def _perform_step_4(job_seeker: JobSeeker, occupation: JobSeekerOccupation, data: dict):
+          """Perform onboarding step 4: Skills selection"""
+          skill_id_list = json.loads(data.get('skill_id_list', '[]')) if isinstance(data.get('skill_id_list'), str) else data.get('skill_id_list', [])
+          
+          with transaction.atomic():
+               # Clear existing skills and add new ones
+               occupation.skills.clear()
+               if skill_id_list:
+                    occupation.skills.add(*skill_id_list)
+               
+               job_seeker.onboarding_step = 5  # Onboarding complete
+               
+               # Save with error handling
+               JobSeekerService._safe_model_save(occupation, "Occupation skills")
+               JobSeekerService._safe_model_save(job_seeker, "Job seeker progress")
+               
+          return {
+               'message': "Onboarding completed successfully.",
+               'data': {
+                    'skills_added': len(skill_id_list),
+                    'onboarding_complete': True
+               }
+          }
 
      @staticmethod
      def get_job_seeker_profile_section_options():
@@ -254,11 +285,7 @@ class JobSeekerService:
                     city_id = address_data.get("city_id", None)
                     address_field = address_data.get("address", None)
                     
-                    # Try to get existing address using OneToOneField
-                    try:
-                         address = job_seeker.address
-                    except Address.DoesNotExist:
-                         address = None
+                    address = job_seeker.address
                     
                     if not address:
                          address = Address.objects.create(
@@ -276,6 +303,7 @@ class JobSeekerService:
                job_seeker.save()
 
                # Occupation Create, Update
+               specialization_id = data.get("specialization_id", None)
                role_id = data.get("role_id", None)
                experience_level_id = data.get("experience_level_id", None)
                experience_years = data.get("experience_years", None)
@@ -287,8 +315,39 @@ class JobSeekerService:
                          user = job_seeker
                     )
                
-               if role_id:
-                    occupation.role_id = role_id
+               # Handle specialization and role updates
+               if specialization_id or role_id:
+                    # If updating specialization, clear role if it doesn't match the new specialization
+                    if specialization_id:
+                         occupation.specialization_id = specialization_id
+                         # If role is provided, validate it belongs to the new specialization
+                         if role_id:
+                              try:
+                                   from apps.job_seekers.models import JobSeekerRole
+                                   role = JobSeekerRole.objects.get(id=role_id)
+                                   if role.specialization_id != specialization_id:
+                                        raise ValidationError(f"Selected role does not belong to the selected specialization.")
+                                   occupation.role_id = role_id
+                              except JobSeekerRole.DoesNotExist:
+                                   raise ValidationError("Invalid role selected.")
+                         else:
+                              # Clear role if only specialization is updated
+                              occupation.role = None
+                    
+                    # If only role is updated (no specialization change)
+                    elif role_id and not specialization_id:
+                         try:
+                              from apps.job_seekers.models import JobSeekerRole
+                              role = JobSeekerRole.objects.get(id=role_id)
+                              # Ensure the current specialization matches the role's specialization
+                              if occupation.specialization and role.specialization != occupation.specialization:
+                                   raise ValidationError("Selected role does not belong to specialization. Please update specialization first.")
+                              occupation.role_id = role_id
+                              # If no current specialization, set it from the role
+                              if not occupation.specialization:
+                                   occupation.specialization = role.specialization
+                         except JobSeekerRole.DoesNotExist:
+                              raise ValidationError("Invalid role selected.")
                
                if experience_level_id:
                     occupation.experience_level_id = experience_level_id
@@ -336,6 +395,10 @@ class JobSeekerService:
                'name': job_seeker.name,
                'username': job_seeker.username,
                'email': job_seeker.email,
+               'specialization': {
+                    'id': occupation.specialization.id,
+                    'name': occupation.specialization.name,
+               } if occupation and occupation.specialization else None,
                'role': {
                     'id': occupation.role.id,
                     'name': occupation.role.name,
@@ -393,30 +456,17 @@ class JobSeekerService:
                     "video_url": job_seeker.video_url
                }
           }
-     
-     @staticmethod
-     def get_skill_options():
-          skills = JobSeekerSkill.objects.all()
 
-          return {
-               'message': "Successfully fetched job seeker skills options.",
-               'data': {
-                    'skills': JobSeekerSkillSerializer(skills, many=True).data
-               }
-          }
-     
      @staticmethod
      def get_job_seeker_skills(user):
-          jobseeker = JobSeekerService.get_job_seeker_user(user)
-
+          """Get job seeker skills with proper error handling"""
+          jobseeker = JobSeekerService._validate_job_seeker(user)
           jobseeker_occupation = getattr(jobseeker, 'occupation', None)
 
           if not jobseeker_occupation:
                return {
-                    'message': "No occupation data existed yet.",
-                    'data': {
-                         'skills': []
-                    }     
+                    'message': "No occupation data exists yet.",
+                    'data': []
                }
 
           jobseeker_skills = (
@@ -427,48 +477,92 @@ class JobSeekerService:
 
           return {
                'message': "Successfully fetched job seeker skills.",
-               'data': {
-                    'skills': jobseeker_skills
-               }     
+               'data': jobseeker_skills 
           }
      
      @staticmethod
      def perform_job_seeker_skills_update(user, data):
-          jobseeker = JobSeekerService.get_job_seeker_user(user)
-
-          if not jobseeker:
-               raise ValidationError("User is not a job seeker")
-
-          jobseeker_occupation = getattr(jobseeker, 'occupation', None)
+          """Update job seeker skills with enhanced validation and error handling"""
+          jobseeker = JobSeekerService._validate_job_seeker(user)
+          jobseeker_occupation = JobSeekerService._get_or_create_occupation(jobseeker)
 
           with transaction.atomic():
-               # Create or update the JobSeekerOccupation
-               if not jobseeker_occupation:
-                    jobseeker_occupation = JobSeekerOccupation.objects.create(
-                         user=jobseeker
-                    )
+               # Handle skills - can be either IDs or new skill names
+               skill_data = data.get("skill_list", [])
+               skill_ids = []
+               created_skills = []
 
-               # Set ManyToManyField for skills
-               skill_id_list = data.get("skill_list", [])
-               jobseeker_occupation.skills.add(*skill_id_list)
+               for skill_item in skill_data:
+                    if isinstance(skill_item, dict):
+                         # If it's a dict, check for 'id' or 'title'
+                         if 'id' in skill_item and skill_item['id']:
+                              # Existing skill by ID
+                              try:
+                                   skill = JobSeekerSkill.objects.get(id=skill_item['id'])
+                                   skill_ids.append(skill.id)
+                              except JobSeekerSkill.DoesNotExist:
+                                   raise ValidationError(f"Skill with ID {skill_item['id']} does not exist")
+                         elif 'title' in skill_item and skill_item['title']:
+                              # New skill by title
+                              skill_title = skill_item['title'].strip()
+                              if skill_title:
+                                   # Check if skill already exists (case-insensitive)
+                                   existing_skill = JobSeekerSkill.objects.filter(
+                                        title__iexact=skill_title
+                                   ).first()
+                                   
+                                   if existing_skill:
+                                        skill_ids.append(existing_skill.id)
+                                   else:
+                                        # Create new skill
+                                        new_skill = JobSeekerSkill.objects.create(title=skill_title)
+                                        skill_ids.append(new_skill.id)
+                                        created_skills.append({
+                                             'id': new_skill.id,
+                                             'title': new_skill.title
+                                        })
+                         else:
+                              raise ValidationError("Each skill must have either 'id' or 'title'")
+                    elif isinstance(skill_item, (int, str)):
+                         # If it's a simple ID (backward compatibility)
+                         try:
+                              skill_id = int(skill_item)
+                              skill = JobSeekerSkill.objects.get(id=skill_id)
+                              skill_ids.append(skill.id)
+                         except (ValueError, JobSeekerSkill.DoesNotExist):
+                              # If it's not a valid ID, treat it as a title
+                              skill_title = str(skill_item).strip()
+                              if skill_title:
+                                   existing_skill = JobSeekerSkill.objects.filter(
+                                        title__iexact=skill_title
+                                   ).first()
+                                   
+                                   if existing_skill:
+                                        skill_ids.append(existing_skill.id)
+                                   else:
+                                        new_skill = JobSeekerSkill.objects.create(title=skill_title)
+                                        skill_ids.append(new_skill.id)
+                                        created_skills.append({
+                                             'id': new_skill.id,
+                                             'title': new_skill.title
+                                        })
+                    else:
+                         raise ValidationError("Invalid skill data format")
 
-               jobseeker_occupation.save()
+               # Clear existing skills and set new ones
+               jobseeker_occupation.skills.clear()
+               if skill_ids:
+                    jobseeker_occupation.skills.add(*skill_ids)
+
+               # Save with error handling
+               JobSeekerService._safe_model_save(jobseeker_occupation, "Job seeker skills")
 
           return {
                'message': "Successfully updated job seeker skills.",
                'data': {
-                    'skills': skill_id_list
-               }
-          }
-     
-     @staticmethod
-     def get_language_options():
-          languages = SpokenLanguage.objects.all()
-
-          return {
-               'message': "Successfully generated all language options.",
-               'data': {
-                    'languages': SpokenLanguageSerializer(languages, many=True).data
+                    'skill_ids': skill_ids,
+                    'created_skills': created_skills,
+                    'total_skills': len(skill_ids)
                }
           }
      
@@ -492,9 +586,7 @@ class JobSeekerService:
      
           return {
                'message': "Successfully generated user occupation",
-               'data': {
-                    'language_list': languages
-               }
+               'data': languages
           }
      
      @staticmethod
@@ -598,21 +690,22 @@ class JobSeekerService:
           
      @staticmethod
      def _get_extracted_address(job_seeker: JobSeeker):
-          try:
-               address = job_seeker.address
-               return {
-                    'city': {
-                         'id': address.city.id,
-                         'name': address.city.name,
-                    } if address.city else None,
-                    'country': {
-                         'id': address.country.id,
-                         'name': address.country.name,
-                    } if address.country else None,
-                    'address': address.address
-               }
-          except Address.DoesNotExist:
+          address: Address = job_seeker.address
+          
+          if not address:
                return None
+          
+          return {
+               'city': {
+                    'id': address.city.id,
+                    'name': address.city.name,
+               } if address.city else None,
+               'country': {
+                    'id': address.country.id,
+                    'name': address.country.name,
+               } if address.country else None,
+               'address': address.address
+          }
           
      @staticmethod
      def _update_single_language(job_seeker, language_id, proficiency_level):
@@ -631,3 +724,85 @@ class JobSeekerService:
                     language_id=language_id,
                     proficiency_level=proficiency_level
                )
+     @staticmethod
+     def _get_or_create_occupation(job_seeker: JobSeeker) -> JobSeekerOccupation:
+          """Get existing occupation or create a new one for the job seeker"""
+          occupation = getattr(job_seeker, 'occupation', None)
+          
+          if not occupation:
+               occupation = JobSeekerOccupation.objects.create(user=job_seeker)
+          
+          return occupation
+     
+     @staticmethod
+     def _validate_job_seeker(user) -> JobSeeker:
+          """Validate and return job seeker, raise error if not found"""
+          job_seeker = JobSeekerService.get_job_seeker_user(user)
+          
+          if not job_seeker:
+               raise ValidationError("User is not a job seeker")
+          
+          return job_seeker
+     
+     @staticmethod
+     def _validate_step_number(step: int):
+          """Validate onboarding step number"""
+          if step not in OnboardingConstants.VALID_STEPS:
+               raise ValidationError("Invalid step number.")
+     
+     @staticmethod
+     def _validate_role_specialization_match(role_id: int, specialization_id: int):
+          """Validate that role belongs to the given specialization"""
+          if not specialization_id:
+               raise ValidationError("Please select a specialization first before choosing a role.")
+               
+          try:
+               from apps.job_seekers.models import JobSeekerRole
+               role = JobSeekerRole.objects.get(id=role_id)
+               if role.specialization_id != specialization_id:
+                    raise ValidationError("Selected role does not belong to the current specialization.")
+          except JobSeekerRole.DoesNotExist:
+               raise ValidationError("Invalid role selected.")
+     
+     @staticmethod
+     def _safe_model_save(model_instance, error_context: str = ""):
+          """
+          Safely save a model instance, converting Django ValidationError to DRF ValidationError if exists
+          """
+          try:
+               model_instance.save()
+          except django_exceptions.ValidationError as e:
+               # Convert Django model validation error to DRF validation error
+               error_message = str(e.messages[0]) if hasattr(e, 'messages') and e.messages else str(e)
+               if error_context:
+                    error_message = f"{error_context}: {error_message}"
+               raise ValidationError(error_message)
+     
+     @staticmethod
+     def _validate_onboarding_data(step: int, data: dict, occupation: JobSeekerOccupation = None):
+          """
+          Validate onboarding data based on step
+          """
+          if step == 1:
+               required_fields = ['name', 'experience_level_id', 'experience_years']
+               
+               for field in required_fields:
+                    if not data.get(field):
+                         raise ValidationError(f"{field.replace('_', ' ').title()} is required.")
+          
+          elif step == 2:
+               if not data.get('specialization_id'):
+                    raise ValidationError("Specialization can't be empty.")
+          
+          elif step == 3:
+               if not data.get('role_id'):
+                    raise ValidationError("Role can't be empty.")
+               
+               if not occupation or not occupation.specialization_id:
+                    raise ValidationError("Please complete specialization selection first.")
+          
+          elif step == 4:
+               skill_list = json.loads(data.get('skill_id_list', '[]')) if isinstance(data.get('skill_id_list'), str) else data.get('skill_id_list', [])
+               
+               if len(skill_list) < OnboardingConstants.MINIMUM_SKILLS_REQUIRED:
+                    raise ValidationError(f"Choose minimum {OnboardingConstants.MINIMUM_SKILLS_REQUIRED} skillsets.")

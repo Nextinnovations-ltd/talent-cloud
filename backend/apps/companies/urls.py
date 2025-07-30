@@ -5,12 +5,14 @@ from .views import (
     CompanyListAPIView,
     CompanyDetailAPIView,
     IndustryListAPIView,
+    RelatedCompanyInfoAPIView,
     UnauthenticatedCompanyCreateAPIView,
 )
 
 urlpatterns = [
     path('industries/', IndustryListAPIView.as_view(), name='industry-list'),
     path('company/register/', UnauthenticatedCompanyCreateAPIView.as_view(), name='company-register-unauthenticated'),
+    path('related-company-info/', RelatedCompanyInfoAPIView.as_view(), name='related-company-info'),
     path('company/', CompanyCreateAPIView.as_view(), name='company-create'),
     path('company/list/', CompanyListAPIView.as_view(), name='company-list'),
     path('company/<slug:slug>/approve/', CompanyApprovalAPIView.as_view(), name='company-approval-by-admin'),

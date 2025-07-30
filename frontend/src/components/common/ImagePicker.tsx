@@ -1,4 +1,5 @@
 import { SVGProfile } from "@/constants/svgs";
+import DefaultImage from '@/assets/Login/DefaultImg.png';
 import { useState,useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/button";
@@ -101,7 +102,13 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
     }`}
   />
 ) : (
-  <SVGProfile />
+  type === "circle" ?  <SVGProfile /> :  <img
+  src={DefaultImage}
+  width={110}
+  height={110}
+  alt="Uploaded"
+  className={`object-contain w-full h-full opacity-50`}
+/>
 )}
 </div>
       <div className="flex ">

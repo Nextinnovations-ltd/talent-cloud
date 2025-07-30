@@ -49,7 +49,7 @@ const CertificationSection = ({
                 title={"Certifications"}
                 isEdit={isCertificationEdit}
                 onpressAdd={() => navigate(`/user/edit/certifications`)}
-                onEditToggle={() => setIsCertificationEdit((prev) => !prev)}
+                onEditToggle={CERTIIFICATIONS?.data && CERTIIFICATIONS?.data.length> 0 ? () => setIsCertificationEdit((prev) => !prev) : undefined}
             />
 
             {(!CERTIIFICATIONS?.data || CERTIIFICATIONS.data.length === 0) && (

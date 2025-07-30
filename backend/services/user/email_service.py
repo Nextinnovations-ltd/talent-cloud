@@ -1,7 +1,15 @@
 from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 from apps.companies.models import VerifyRegisteredCompany
 from apps.users.models import VerifyLoggedInUser, VerifyRegisteredUser
+from apps.job_seekers.models import JobSeeker
 from utils.token.jwt import TokenUtil
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AuthEmailService:
      @staticmethod
@@ -17,7 +25,8 @@ class AuthEmailService:
           
           # Send Mail to user
           from utils.user.custom_mail_types import send_verification_email
-          send_verification_email(email, token, verification_code)
+          # send_verification_email(email, token, verification_code)
+          AuthEmailService.send_verify_registration_email_with_template(email, verification_code, token)
           
           return token
      
@@ -44,6 +53,68 @@ class AuthEmailService:
 
           from utils.user.custom_mail_types import send_password_reset_email
           send_password_reset_email(email, reset_url)
+
+     @staticmethod
+     def send_password_reset_email_with_template(user: JobSeeker, reset_token):
+          """Send password reset email"""
+          try:
+               subject = f"Password Reset Request"
+               
+               context = {
+                    'name': user.username,
+                    'reset_link': f"{settings.FRONTEND_BASE_URL}/auth/reset-password?token={reset_token}"
+               }
+               
+               # Render email templates
+               html_message = render_to_string('emails/reset-password.html', context)
+               # text_message = render_to_string('emails/invitation.txt', context)
+               
+               # Send email
+               send_mail(
+                    subject=subject,
+                    message="",
+                    html_message=html_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False
+               )
+               
+               logger.info(f"Invitation email sent to {user.email}")
+               
+          except Exception as e:
+               logger.error(f"Failed to send invitation email to {user.email}: {str(e)}")
+               raise
+          
+     @staticmethod
+     def send_verify_registration_email_with_template(email, verification_code, verification_token):
+          """Send user verification email"""
+          try:
+               subject = f"Verify Registration"
+               
+               context = {
+                    'verification_code': verification_code,
+                    'verification_link': f"{settings.FRONTEND_BASE_URL}/auth/verifyemail?token={verification_token}"
+               }
+               
+               # Render email templates
+               html_message = render_to_string('emails/verify-registration.html', context)
+               # text_message = render_to_string('emails/invitation.txt', context)
+               
+               # Send email
+               send_mail(
+                    subject=subject,
+                    message="",
+                    html_message=html_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False
+               )
+               
+               logger.info(f"Invitation email sent to {email}")
+               
+          except Exception as e:
+               logger.error(f"Failed to send invitation email to {email}: {str(e)}")
+               raise
 
      @staticmethod
      def send_password_reset_success_email(email):

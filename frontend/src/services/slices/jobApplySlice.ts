@@ -83,12 +83,47 @@ interface ApplyJobArg {
   credentials: Record<string, unknown>; // or a more specific type if known
 }
 
+
+// appplied jobs
+
+
+export type JobApplicationResponse = {
+  status: boolean;
+  message: string;
+  data: JobSeekerAppliedResponse[];
+};
+
+export type JobSeekerAppliedResponse = {
+  id: number;
+  job_post: Job[];
+  job_seeker: number;
+  status: string;
+  cover_letter: string;
+  application_resume_url: string;
+  created_at: string;
+  is_expired: boolean,
+};
+
+
+// bookmarked jobs
+export type JobSeekerBookMarkedJobsResponse = {
+  status: boolean;
+  message: string;
+  data: JobSeekerBookMarkedJobsDataResponse[];
+}
+
+export type JobSeekerBookMarkedJobsDataResponse = {
+  id: number;
+  job_post: Job[];
+};
+
+
 // API Slice
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getJobApplyCard: builder.query<JobApplyCardResponse, JobApplyCardParams>({
       query: (params) => ({
-        url: '/job-posts/search/',
+        url: '/job-posts/discover/',
         params: {
           page: params.page,
           job_type: params.job_type,
@@ -101,14 +136,12 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
       }),
       providesTags: ['JobList'],
       keepUnusedDataFor: 0,
-      refetchOnMountOrArgChange: true,
     }),
 
     getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
     query: (id) => `/job-posts/${id}/`,
-      providesTags: ['JobList'],
+      providesTags: ['JobList','bookmarked'],
       keepUnusedDataFor: 0,
-      refetchOnMountOrArgChange: true,
     }),
 
     bookMarkedJob: builder.mutation<BookmarkedJobResponse, number>({
@@ -116,7 +149,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
         url: `/job-posts/${jobId}/bookmark/`,
         method: "POST",
       }),
-      invalidatesTags: ['JobList'],
+      invalidatesTags: ['JobList','appliedJobs','bookmarked'],
     }),
 
     deleteBookMarkedJob: builder.mutation<BookmarkedJobResponse, number>({
@@ -124,7 +157,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
         url: `/my-bookmarks/${jobId}/`,
         method: "DELETE",
       }),
-      invalidatesTags: ['JobList'],
+      invalidatesTags: ['JobList','bookmarked','appliedJobs'],
     }),
 
     applyJob: builder.mutation<unknown, ApplyJobArg>({
@@ -133,9 +166,19 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ['JobList'],
+      invalidatesTags: ['JobList','appliedJobs'],
     }),
+     //applied jobs
+     getJobSeekerAppliedJobs: builder.query<JobApplicationResponse,void>({
+      query:()=>'/my-applications/',
+      providesTags: ['appliedJobs']
+    }),
+    getJobSeekerBookMarkedJobs:builder.query<JobSeekerBookMarkedJobsResponse,void>({
+      query:()=>'/my-bookmarks/',
+      providesTags: ['bookmarked']
+    })
   }),
+  
 });
 
 // Export hooks
@@ -145,4 +188,6 @@ export const {
   useBookMarkedJobMutation,
   useApplyJobMutation,
   useDeleteBookMarkedJobMutation,
+  useGetJobSeekerAppliedJobsQuery,
+  useGetJobSeekerBookMarkedJobsQuery
 } = extendedJobApplySlice;

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice';
 import StarBorder from '../common/StarBorder';
+import { LoadingSpinner } from '../common/LoadingSpinner';
 
 // Animation variants
 const containerVariants = {
@@ -81,21 +82,7 @@ export const UserProfile = () => {
   // Skeleton/placeholder for loading state
   if (isProfileLoading) {
     return (
-      <div className="flex flex-col items-center mt-[80px]">
-        <div className="animate-pulse w-[164px] h-[164px] rounded-full bg-gray-200 mb-6" />
-        <div className="h-10 w-1/3 bg-gray-200 rounded mb-4 animate-pulse" />
-        <div className="h-6 w-1/4 bg-gray-200 rounded mb-2 animate-pulse" />
-        <div className="flex gap-4 mt-6">
-          <div className="w-32 h-12 bg-gray-200 rounded animate-pulse" />
-          <div className="w-32 h-12 bg-gray-200 rounded animate-pulse" />
-        </div>
-        <div className="flex gap-6 mt-10 w-full max-w-[1104px] justify-center">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex flex-col items-center w-40 h-24 bg-gray-100 rounded-lg animate-pulse" />
-          ))}
-        </div>
-        <div className="h-8 w-2/3 bg-gray-200 rounded mt-10 animate-pulse" />
-      </div>
+    <></>
     );
   }
 
@@ -171,7 +158,7 @@ export const UserProfile = () => {
           className='gap-[14px] mt-[30px] flex justify-center items-center z-30'
           variants={itemVariants}
         >
-          <IconPreviewButton />
+          {/* <IconPreviewButton /> */}
           <IconButton />
         </motion.div>
       </motion.div>

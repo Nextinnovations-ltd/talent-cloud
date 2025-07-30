@@ -65,7 +65,7 @@ export const EducationCard = ({ hasSchoolLogo = false, isEdit = false, id, insti
             {isEdit && (
                 <div className="absolute top-2 right-2 flex gap-2 z-10">
                     {/* Replace with your actual edit/delete icons as needed */}
-                    <button onClick={() => navigate(`/user/edit/education?id=${id}`)} className="p-1 w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#0389FF]  shadow hover:bg-gray-100 hover:bg-[#0389FF]/80 hover:scale-105" title="Edit">
+                    <button onClick={() => navigate(`/user/edit/education?id=${id}`)} className="p-1 w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#0389FF]  shadow  hover:bg-[#0389FF]/80 hover:scale-105" title="Edit">
                         <SvgEdit size={16} color={'#ffffff'} />
                     </button>
                     <button onClick={() => setOpen(true)} className="p-1 w-[35px] h-[35px] bg-[#F23030] rounded-full shadow hover:bg-[#F23030]/80 hover:scale-105" title="Delete">

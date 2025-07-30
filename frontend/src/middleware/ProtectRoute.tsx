@@ -18,8 +18,7 @@ export const ProtectRoute = ({ children }: { children: React.ReactNode }) => {
         navigate(`/auth/${routesMap.login.path}`, {
           state: { from: location.pathname },
         });
-      } else {
-      }
+      } 
     };
 
     checkAuthentication();

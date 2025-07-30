@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -26,9 +27,10 @@ interface SelectFieldProps {
   showRequiredLabel?: boolean;
   isDisabled?: boolean;
   error?: boolean;
-  data?: { value: string; label: string }[]; // Explicitly defining data type
+  data?: { value: string | number; label: string }[]; // Explicitly defining data type
   labelName?: string;
   description?: string;
+  labelStyle?:string;
 }
 
 export const SelectField: React.FC<SelectFieldProps> = ({
@@ -43,19 +45,21 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   data = [],
   labelName,
   description,
+  labelStyle
 }) => {
   const form = useFormContext();
-
 
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => {
+
+       console.log(field?.value)
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
-              <FormLabel className="font-semibold text-[16px] text-[#05060F]">
+              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelStyle)}>
                 {labelName}
                 {isRequired && <span className="ms-1 text-red-500">*</span>}
               </FormLabel>
@@ -64,14 +68,14 @@ export const SelectField: React.FC<SelectFieldProps> = ({
               <div>
                 <Select
                   onValueChange={field.onChange}
-                  value={`${field.value}`}
+                  value={field.value?.toString()}
                   disabled={isDisabled}
                 >
                   <SelectTrigger
                     {...field}
                     className={cn(
                       height,
-                      field.value === undefined?
+                      field.value === "" || field.value === undefined ?
                       "text-slate-300" : "text-black",
                       error &&
                       "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
@@ -81,7 +85,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                   </SelectTrigger>
                   <SelectContent className="h-[200px] p-2">
                     {data.map((item) => (
-                      <SelectItem value={item.value}>{item.label}</SelectItem>
+                      <SelectItem value={item.value?.toString()}>{item.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

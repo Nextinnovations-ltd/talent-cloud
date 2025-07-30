@@ -1,199 +1,185 @@
+"""
+Streamlined Notification Service for TalentCloud Platform
+
+This service provides a clean, simple, and unified approach to sending notifications
+with support for multiple channels (email, websocket, push) and dynamic configuration.
+
+This is the main notification service that should be used throughout the application.
+"""
+from typing import List, Optional, Dict, Any
+from enum import Enum
 from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
+from apps.ws_channel.serializers import NotificationListSerializer
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import logging
-from typing import List, Optional, Union, Any
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 class NotificationTarget(str, Enum):
     """Define who should receive notifications"""
     SUPERADMIN = "superadmin"
-    ADMIN = "admin"
+    ADMIN = "admin" 
     USER = "user"
     ALL_ROLES = "all_roles"
 
 class NotificationService:
-    """Enhanced service for managing notifications with dynamic role-based targeting"""
+    """
+    Unified notification service that handles all notification types and channels
+    """
     
     @staticmethod
-    def get_users_by_roles(target_roles: List[NotificationTarget], company_id: Optional[int] = None):
+    def get_users_by_roles(target_roles: List[NotificationTarget], company_id: Optional[int] = None) -> List[TalentCloudUser]:
         """
         Get users based on roles and company context
         
         Args:
             target_roles: List of roles to target
             company_id: Specific company ID for admin users (None for all companies)
+            
+        Returns:
+            List of TalentCloudUser objects
         """
-        users = []
+        users = set()  # Use set to avoid duplicates
         
         for role in target_roles:
             if role == NotificationTarget.SUPERADMIN:
-                # Get all superadmin users (they belong to NI company)
                 superadmins = TalentCloudUser.objects.filter(
                     role__name=ROLES.SUPERADMIN, 
                     is_active=True
                 )
-                users.extend(superadmins)
+                users.update(superadmins)
                 
             elif role == NotificationTarget.ADMIN:
-                # Get admin users
-                admin_filter = {
-                    'role__name': ROLES.ADMIN,
-                    'is_active': True
-                }
-                
-                # If company_id is specified, get admins from that company only
+                admin_filter = {'role__name': ROLES.ADMIN, 'is_active': True}
                 if company_id:
                     admin_filter['company_id'] = company_id
-                
+                    
                 admins = TalentCloudUser.objects.filter(**admin_filter)
-                users.extend(admins)
+                users.update(admins)
                 
             elif role == NotificationTarget.USER:
-                # Get regular users (job seekers)
-                user_filter = {
-                    'role__name': ROLES.USER,
-                    'is_active': True
-                }
-                
-                regular_users = TalentCloudUser.objects.filter(**user_filter)
-                users.extend(regular_users)
+                regular_users = TalentCloudUser.objects.filter(
+                    role__name=ROLES.USER,
+                    is_active=True
+                )
+                users.update(regular_users)
                 
             elif role == NotificationTarget.ALL_ROLES:
-                # Get all active users regardless of role
                 all_users = TalentCloudUser.objects.filter(is_active=True)
-                users.extend(all_users)
+                users.update(all_users)
         
-        # Remove duplicates
-        return list(set(users))
+        return list(users)
     
     @staticmethod
-    def create_notification_by_roles(
-        target_roles: List[NotificationTarget],
+    def send_notification(
         title: str,
         message: str,
         notification_type: NotificationType,
+        target_roles: Optional[List[NotificationTarget]] = None,
+        target_users: Optional[List[TalentCloudUser]] = None,
+        target_emails: Optional[List[str]] = None,
+        company_id: Optional[int] = None,
         destination_url: Optional[str] = None,
         channel: NotificationChannel = NotificationChannel.BOTH,
-        company_id: Optional[int] = None,
-        specific_users: Optional[List[Any]] = None
-    ):
+        email_template: Optional[str] = None,
+        email_context: Optional[Dict[str, Any]] = None,
+        is_urgent: bool = False
+    ) -> List[Notification]:
         """
-        Create notifications for users based on roles
+        Universal method to send notifications to users
         
         Args:
+            title: Notification title
+            message: Notification message
+            notification_type: Type of notification
             target_roles: List of roles to target
-            title: Notification title
-            message: Notification message
-            notification_type: Type of notification
-            destination_url: URL to redirect when clicked
-            channel: Delivery channel
+            target_users: Specific users to target
+            target_emails: Specific emails to target
             company_id: Company context for admin users
-            specific_users: Additional specific users to include
-        """
-        target_users = []
-        
-        # Get users by roles
-        if target_roles:
-            target_users.extend(NotificationService.get_users_by_roles(target_roles, company_id))
-        
-        # Add specific users if provided
-        if specific_users:
-            target_users.extend(specific_users)
-        
-        # Remove duplicates
-        target_users = list(set(target_users))
-        
-        return NotificationService.create_notification(
-            users=target_users,
-            title=title,
-            message=message,
-            destination_url=destination_url,
-            notification_type=notification_type,
-            channel=channel
-        )
-    
-    @staticmethod
-    def create_notification(
-        user_id=None,
-        users=None,
-        title="Notification",
-        message="",
-        destination_url=None,
-        notification_type=NotificationType.GENERIC,
-        channel=NotificationChannel.BOTH
-    ):
-        """
-        Create notification(s) for user(s)
-        
-        Args:
-            user_id: Single user ID
-            users: List of user objects or IDs
-            title: Notification title
-            message: Notification message
             destination_url: URL to redirect when clicked
-            notification_type: Type of notification
-            channel: Delivery channel (email, websocket, both)
+            channel: Delivery channel(s)
+            email_template: Custom email template name
+            email_context: Additional context for email template
+            is_urgent: Whether this is an urgent notification
+            
+        Returns:
+            List of created Notification objects
         """
+        # Collect all target users
+        all_target_users = set()
+        
+        # Add users by roles
+        if target_roles:
+            role_users = NotificationService.get_users_by_roles(target_roles, company_id)
+            all_target_users.update(role_users)
+        
+        # Add specific users
+        if target_users:
+            all_target_users.update(target_users)
+        
+        # Add users by email
+        if target_emails:
+            email_users = TalentCloudUser.objects.filter(email__in=target_emails, is_active=True)
+            all_target_users.update(email_users)
+        
+        target_users_list = list(all_target_users)
+        
+        if not target_users_list:
+            logger.warning("No target users found for notification")
+            return []
+        
         notifications = []
         
         try:
             with transaction.atomic():
-                # Determine target users
-                target_users = []
+                # Determine which channels to use
+                channels_to_use = []
+                if channel == NotificationChannel.BOTH:
+                    channels_to_use = [NotificationChannel.WEBSOCKET, NotificationChannel.EMAIL]
+                else:
+                    channels_to_use = [channel]
                 
-                if user_id:
-                    try:
-                        user = TalentCloudUser.objects.get(id=user_id)
-                        target_users = [user]
-                    except TalentCloudUser.DoesNotExist:
-                        logger.error(f"User with ID {user_id} not found")
-                        return []
-                
-                elif users:
-                    # Handle list of users or user IDs
-                    for user in users:
-                        if isinstance(user, int):
-                            try:
-                                user_obj = TalentCloudUser.objects.get(id=user)
-                                target_users.append(user_obj)
-                            except TalentCloudUser.DoesNotExist:
-                                logger.error(f"User with ID {user} not found")
-                        else:
-                            target_users.append(user)
-                
-                # Create notifications
-                for user in target_users:
-                    notification = Notification.objects.create(
-                        user=user,
-                        title=title,
-                        message=message,
-                        destination_url=destination_url,
-                        notification_type=notification_type.value
-                    )
-                    notifications.append(notification)
-                    
-                    # Send real-time notification
-                    if channel in [NotificationChannel.WEBSOCKET, NotificationChannel.BOTH]:
-                        NotificationService._send_websocket_notification(user, notification)
-                    
-                    # Send email notification
-                    if channel in [NotificationChannel.EMAIL, NotificationChannel.BOTH]:
-                        NotificationService._send_email_notification(user, notification)
-        
+                # Create notifications for each channel
+                for user in target_users_list:
+                    for notification_channel in channels_to_use:
+                        notification = Notification.objects.create(
+                            user=user,
+                            title=title,
+                            message=message,
+                            destination_url=destination_url,
+                            notification_type=notification_type.value,
+                            channel=notification_channel.value
+                        )
+                        notifications.append(notification)
+                        
+                        # Send via the specific channel
+                        if notification_channel == NotificationChannel.WEBSOCKET:
+                            NotificationService._send_websocket_notification(user, notification)
+                        elif notification_channel == NotificationChannel.EMAIL:
+                            NotificationService._send_email_notification(
+                                user, 
+                                notification, 
+                                email_template, 
+                                email_context,
+                                is_urgent
+                            )
+                        elif notification_channel == NotificationChannel.PUSH:
+                            NotificationService._send_push_notification(user, notification, is_urgent)
+                        
+            logger.info(f"Sent {len(notifications)} notifications across {len(channels_to_use)} channels: {title}")
+            
         except Exception as e:
-            logger.error(f"Error creating notifications: {str(e)}")
+            logger.error(f"Error sending notifications: {str(e)}")
             
         return notifications
     
     @staticmethod
-    def _send_websocket_notification(user, notification):
+    def _send_websocket_notification(user: TalentCloudUser, notification: Notification):
         """Send real-time notification via WebSocket"""
         try:
             channel_layer = get_channel_layer()
@@ -215,16 +201,255 @@ class NotificationService:
             async_to_sync(channel_layer.group_send)(group_name, notification_data)
             
         except Exception as e:
-            logger.error(f"Error sending WebSocket notification: {str(e)}")
+            logger.error(f"Error sending WebSocket notification to user {user.id}: {str(e)}")
     
     @staticmethod
-    def _send_email_notification(user, notification):
-        """Send email notification (implement based on your email service)"""
-        # TODO: Implement email sending logic
-        logger.info(f"Email notification sent to {user.email}: {notification.title}")
+    def _send_email_notification(
+        user: TalentCloudUser, 
+        notification: Notification, 
+        email_template: Optional[str] = None,
+        email_context: Optional[Dict[str, Any]] = None,
+        is_urgent: bool = False
+    ):
+        """Send email notification"""
+        try:
+            from services.notification.email_service import EmailService
+            
+            # Prepare email context
+            context = {
+                'user': user,
+                'title': notification.title,
+                'message': notification.message,
+                'destination_url': notification.destination_url,
+                'notification_id': notification.id,
+                'is_urgent': is_urgent,
+                **(email_context or {})
+            }
+            
+            # Determine email template
+            template = email_template or EmailService.get_template_for_notification_type(
+                NotificationType(notification.notification_type)
+            )
+            
+            # Send email
+            EmailService.send_email(
+                recipient_email=user.email,
+                subject=notification.title,
+                template=template,
+                context=context,
+                is_urgent=is_urgent
+            )
+            
+        except Exception as e:
+            logger.error(f"Error sending email notification to {user.email}: {str(e)}")
     
     @staticmethod
-    def mark_as_read(notification_id, user_id):
+    def _send_email_notification_with_template(
+        user: TalentCloudUser, 
+        notification: Notification,
+        email_template_name: Optional[str] = None,
+        email_subject: Optional[str] = None,
+        email_context: Optional[Dict[str, Any]] = None,
+        is_urgent: bool = False
+    ):
+        """Send email notification using template from database"""
+        try:
+            from services.notification.email_service import EmailService
+            
+            # Use provided template or fall back to default
+            template = email_template_name or EmailService.get_template_for_notification_type(
+                NotificationType(notification.notification_type)
+            )
+            
+            # Use provided subject or notification title
+            subject = email_subject or notification.title
+            
+            # Prepare email context
+            context = {
+                'user': user,
+                'title': notification.title,
+                'message': notification.message,
+                'destination_url': notification.destination_url,
+                'notification_id': notification.id,
+                'is_urgent': is_urgent,
+                **(email_context or {})
+            }
+            
+            # Send email
+            EmailService.send_email(
+                recipient_email=user.email,
+                subject=subject,
+                template=template,
+                context=context,
+                is_urgent=is_urgent
+            )
+            
+        except Exception as e:
+            logger.error(f"Error sending templated email notification to {user.email}: {str(e)}")
+
+    @staticmethod
+    def _send_push_notification(
+        user: TalentCloudUser, 
+        notification: Notification, 
+        is_urgent: bool = False
+    ):
+        """Send push notification (placeholder for future implementation)"""
+        try:
+            # TODO: Implement push notification service
+            # This could integrate with Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNS)
+            logger.info(f"Push notification placeholder for user {user.email}: {notification.title}")
+            
+            # Future implementation might look like:
+            # from services.notification.push_service import PushService
+            # PushService.send_notification(
+            #     user_token=user.push_notification_token,
+            #     title=notification.title,
+            #     message=notification.message,
+            #     data={'notification_id': notification.id, 'destination_url': notification.destination_url},
+            #     is_urgent=is_urgent
+            # )
+            
+        except Exception as e:
+            logger.error(f"Error sending push notification to user {user.id}: {str(e)}")
+
+    @staticmethod
+    def send_notification_with_template(
+        notification_type: NotificationType,
+        target_roles: Optional[List[NotificationTarget]] = None,
+        target_users: Optional[List[TalentCloudUser]] = None,
+        target_emails: Optional[List[str]] = None,
+        company_id: Optional[int] = None,
+        channel: NotificationChannel = NotificationChannel.BOTH,
+        template_context: Optional[Dict[str, Any]] = None,
+        override_title: Optional[str] = None,
+        override_message: Optional[str] = None,
+        override_destination_url: Optional[str] = None,
+        override_is_urgent: Optional[bool] = None
+    ) -> List[Notification]:
+        """
+        Send notifications using database templates
+        
+        Args:
+            notification_type: Type of notification
+            target_roles: List of roles to target
+            target_users: Specific users to target
+            target_emails: Specific emails to target
+            company_id: Company context for admin users
+            channel: Delivery channel(s)
+            template_context: Context variables for template rendering
+            override_title: Override template title
+            override_message: Override template message
+            override_destination_url: Override template destination URL
+            override_is_urgent: Override template urgency setting
+            
+        Returns:
+            List of created Notification objects
+        """
+        from apps.ws_channel.models import NotificationTemplate
+        
+        # Collect all target users
+        all_target_users = set()
+        
+        # Add users by roles
+        if target_roles:
+            role_users = NotificationService.get_users_by_roles(target_roles, company_id)
+            all_target_users.update(role_users)
+        
+        # Add specific users
+        if target_users:
+            all_target_users.update(target_users)
+        
+        # Add users by email
+        if target_emails:
+            email_users = TalentCloudUser.objects.filter(email__in=target_emails, is_active=True)
+            all_target_users.update(email_users)
+        
+        target_users_list = list(all_target_users)
+        
+        if not target_users_list:
+            logger.warning("No target users found for notification")
+            return []
+        
+        notifications = []
+        template_context = template_context or {}
+        
+        try:
+            with transaction.atomic():
+                # Determine which channels to use
+                channels_to_use = []
+                if channel == NotificationChannel.BOTH:
+                    channels_to_use = [NotificationChannel.WEBSOCKET, NotificationChannel.EMAIL]
+                else:
+                    channels_to_use = [channel]
+                
+                for user in target_users_list:
+                    # Enhance context with user data
+                    enhanced_context = {
+                        'user_name': user.get_full_name() or user.email,
+                        'user_email': user.email,
+                        'platform_name': 'TalentCloud',
+                        **template_context
+                    }
+                    
+                    for notification_channel in channels_to_use:
+                        # Get template for this channel
+                        template = NotificationTemplate.get_template(
+                            notification_type, notification_channel
+                        )
+                        
+                        # Determine title, message, and destination URL
+                        if template:
+                            title = override_title or template.render_title(enhanced_context)
+                            message = override_message or template.render_message(enhanced_context)
+                            destination_url = override_destination_url or template.render_destination_url(enhanced_context)
+                            is_urgent = override_is_urgent if override_is_urgent is not None else template.is_urgent_by_default
+                        else:
+                            # Fallback if no template found
+                            title = override_title or f"{notification_type.name} Notification"
+                            message = override_message or "You have a new notification."
+                            destination_url = override_destination_url
+                            is_urgent = override_is_urgent or False
+                        
+                        # Create notification for this specific channel
+                        notification = Notification.objects.create(
+                            user=user,
+                            title=title,
+                            message=message,
+                            destination_url=destination_url,
+                            notification_type=notification_type.value,
+                            channel=notification_channel.value
+                        )
+                        notifications.append(notification)
+                        
+                        # Send via the specific channel
+                        if notification_channel == NotificationChannel.WEBSOCKET:
+                            NotificationService._send_websocket_notification(user, notification)
+                        elif notification_channel == NotificationChannel.EMAIL:
+                            # Use email template if available
+                            email_template_name = template.email_template_name if template else None
+                            email_subject = template.render_subject(enhanced_context) if template else title
+                            
+                            NotificationService._send_email_notification_with_template(
+                                user, 
+                                notification,
+                                email_template_name,
+                                email_subject,
+                                enhanced_context,
+                                is_urgent
+                            )
+                        elif notification_channel == NotificationChannel.PUSH:
+                            NotificationService._send_push_notification(user, notification, is_urgent)
+                        
+            logger.info(f"Sent {len(notifications)} templated notifications across {len(channels_to_use)} channels: {title}")
+            
+        except Exception as e:
+            logger.error(f"Error sending templated notifications: {str(e)}")
+            
+        return notifications
+
+    # Utility methods for common notification operations
+    @staticmethod
+    def mark_as_read(notification_id: int, user_id: int) -> Optional[Notification]:
         """Mark notification as read"""
         try:
             notification = Notification.objects.get(id=notification_id, user_id=user_id)
@@ -236,18 +461,44 @@ class NotificationService:
             return None
     
     @staticmethod
-    def mark_all_as_read(user_id):
+    def mark_all_as_read(user_id: int) -> int:
         """Mark all notifications as read for a user"""
-        count = Notification.objects.filter(user_id=user_id, is_read=False).update(is_read=True)
-        return count
+        return Notification.objects.filter(user_id=user_id, is_read=False).update(is_read=True)
     
     @staticmethod
-    def get_unread_count(user_id):
-        """Get count of unread notifications for a user"""
-        return Notification.objects.filter(user_id=user_id, is_read=False).count()
+    def mark_notification_as_read(notification_id: int) -> int:
+        """Mark notification as read by notification ID"""
+        return Notification.objects.filter(id=notification_id, is_read=False).update(is_read=True)
     
     @staticmethod
-    def delete_notification(notification_id, user_id):
+    def get_unread_count(user_id: int, channel: Optional[NotificationChannel] = None) -> int:
+        """Get count of unread notifications for a user, optionally filtered by channel"""
+        queryset = Notification.objects.filter(user_id=user_id, is_read=False)
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        return queryset.count()
+    
+    @staticmethod
+    def get_total_count(user_id: int, channel: Optional[NotificationChannel] = None) -> int:
+        """Get count of notifications for a user, optionally filtered by channel"""
+        queryset = Notification.objects.filter(user_id=user_id)
+        
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        return queryset.count()
+    
+    @staticmethod
+    def get_in_app_notification_count(user_id: int) -> int:
+        """Get count of in-app (websocket) notifications for a user"""
+        return NotificationService.get_total_count(user_id, NotificationChannel.WEBSOCKET)
+    
+    @staticmethod
+    def get_unread_in_app_count(user_id: int) -> int:
+        """Get count of unread in-app (websocket) notifications for a user"""
+        return NotificationService.get_unread_count(user_id, NotificationChannel.WEBSOCKET)
+    
+    @staticmethod
+    def delete_notification(notification_id: int, user_id: int) -> bool:
         """Delete a notification"""
         try:
             notification = Notification.objects.get(id=notification_id, user_id=user_id)
@@ -257,264 +508,166 @@ class NotificationService:
             return False
     
     @staticmethod
-    def get_user_notifications(user_id, limit=20, offset=0, unread_only=False):
-        """Get notifications for a user with pagination"""
+    def get_user_notifications(
+        user_id: int, 
+        limit: int = 20, 
+        offset: int = 0, 
+        unread_only: bool = False,
+        channel: Optional[NotificationChannel] = None
+    ):
+        """Get notifications for a user with pagination, optionally filtered by channel"""
         queryset = Notification.objects.filter(user_id=user_id)
         
         if unread_only:
             queryset = queryset.filter(is_read=False)
         
-        return queryset.order_by('-created_at')[offset:offset+limit]
-
-
-# Dynamic Action-Based Notification Service
-class ActionBasedNotificationService:
-    """Service for handling specific actions with predefined role targeting"""
-    
-    # Define notification configurations for different actions
-    NOTIFICATION_CONFIGS = {
-        'company_registration': {
-            'target_roles': [NotificationTarget.SUPERADMIN],
-            'title': 'New Company Registration',
-            'type': NotificationType.ADMIN_COMPANY_REGISTRATION,
-            'destination_template': '/admin/companies/{company_id}/verify'
-        },
-        'job_posted_by_outside_company': {
-            'target_roles': [NotificationTarget.ADMIN, NotificationTarget.SUPERADMIN],
-            'title': 'New Job Posted',
-            'type': NotificationType.JOB_POSTED,
-            'destination_template': '/jobs/{job_id}'
-        },
-        'job_application_received': {
-            'target_roles': [NotificationTarget.ADMIN],
-            'title': 'New Job Application',
-            'type': NotificationType.JOB_APPLIED,
-            'destination_template': '/company/applications/{job_id}',
-            'company_specific': True
-        },
-        'company_status_changed': {
-            'target_roles': [NotificationTarget.ADMIN],
-            'title': 'Company Status Update',
-            'type': NotificationType.COMPANY_APPROVED,
-            'destination_template': '/company/dashboard',
-            'company_specific': True
-        },
-        'job_post_approval_status': {
-            'target_roles': [NotificationTarget.ADMIN],
-            'title': 'Job Post Status Update',
-            'type': NotificationType.JOB_POSTED,
-            'destination_template': '/company/jobs/{job_id}',
-            'company_specific': True
-        },
-        'system_maintenance': {
-            'target_roles': [NotificationTarget.ALL_ROLES],
-            'title': 'System Maintenance',
-            'type': NotificationType.ADMIN_SYSTEM_ALERT,
-            'destination_template': '/maintenance'
-        },
-        'platform_activity_summary': {
-            'target_roles': [NotificationTarget.SUPERADMIN],
-            'title': 'Platform Activity Summary',
-            'type': NotificationType.ADMIN_PLATFORM_ACTIVITY,
-            'destination_template': '/admin/analytics'
-        },
-        'user_violation_report': {
-            'target_roles': [NotificationTarget.SUPERADMIN],
-            'title': 'User Violation Report',
-            'type': NotificationType.ADMIN_VIOLATION_REPORT,
-            'destination_template': '/admin/violations/{user_id}'
-        },
-        'content_moderation_required': {
-            'target_roles': [NotificationTarget.SUPERADMIN],
-            'title': 'Content Moderation Required',
-            'type': NotificationType.ADMIN_CONTENT_MODERATION,
-            'destination_template': '/admin/moderation/{content_type}/{content_id}'
-        },
-        'high_volume_job_posting': {
-            'target_roles': [NotificationTarget.SUPERADMIN],
-            'title': 'High Volume Job Posting Alert',
-            'type': NotificationType.ADMIN_JOB_POSTING,
-            'destination_template': '/admin/companies/{company_id}/job-posts'
-        }
-    }
+        if channel:
+            queryset = queryset.filter(channel=channel.value)
+        
+        queryset = queryset.order_by('-created_at')[offset:offset+limit]
+        
+        serializer = NotificationListSerializer(queryset, many=True)
+        
+        return serializer.data
     
     @staticmethod
-    def send_notification(action: str, message: str, **kwargs):
-        """
-        Send notification based on predefined action configuration
+    def get_user_in_app_notifications(
+        user_id: int, 
+        limit: int = 20, 
+        offset: int = 0, 
+        unread_only: bool = False
+    ):
+        """Get in-app (websocket) notifications for a user - this is what should be shown in the user feed"""
+        return NotificationService.get_user_notifications(
+            user_id=user_id,
+            limit=limit,
+            offset=offset,
+            unread_only=unread_only,
+            channel=NotificationChannel.WEBSOCKET
+        )
+
+
+# Convenience methods for common notification scenarios
+class NotificationHelpers:
+    """
+    Helper methods for sending common types of notifications using database templates
+    """
+    
+    @staticmethod
+    def notify_job_posted(job, company):
+        """Notify admins when a new job is posted"""
+        context = {
+            'job_title': job.title,
+            'job_id': job.id,
+            'company_name': company.company_name,
+            'job_description': getattr(job, 'description', ''),
+        }
         
-        Args:
-            action: Action key from NOTIFICATION_CONFIGS
-            message: Custom message for the notification
-            **kwargs: Additional parameters for URL formatting and context
-        """
-        if action not in ActionBasedNotificationService.NOTIFICATION_CONFIGS:
-            logger.error(f"Unknown action: {action}")
-            return []
-        
-        config = ActionBasedNotificationService.NOTIFICATION_CONFIGS[action]
-        
-        # Format destination URL
-        destination_url = config['destination_template']
-        if destination_url and kwargs:
-            try:
-                destination_url = destination_url.format(**kwargs)
-            except KeyError as e:
-                logger.warning(f"Missing parameter for URL formatting: {e}")
-        
-        # Determine company context
-        company_id = None
-        
-        if config.get('company_specific', False):
-            company_id = kwargs.get('company_id')
-        
-        return NotificationService.create_notification_by_roles(
-            target_roles=config['target_roles'],
-            title=config['title'],
-            message=message,
-            notification_type=config['type'],
-            destination_url=destination_url,
-            company_id=company_id
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.ADMIN_JOB_POSTING,
+            target_roles=[NotificationTarget.SUPERADMIN],
+            template_context=context
         )
     
     @staticmethod
-    def update_notification_config(action: str, config: dict):
-        """Update notification configuration for an action"""
-        ActionBasedNotificationService.NOTIFICATION_CONFIGS[action] = config
-    
-    @staticmethod
-    def get_notification_config(action: str):
-        """Get notification configuration for an action"""
-        return ActionBasedNotificationService.NOTIFICATION_CONFIGS.get(action)
-    
-    @staticmethod
-    def add_custom_action(action: str, target_roles: List[NotificationTarget], 
-                         title: str, notification_type: NotificationType, 
-                         destination_template: str = None, company_specific: bool = False):
-        """
-        Add a custom notification action configuration
-        
-        Args:
-            action: Unique action identifier
-            target_roles: List of roles to target
-            title: Notification title
-            notification_type: Type of notification
-            destination_template: URL template with placeholders
-            company_specific: Whether this is company-specific
-        """
-        ActionBasedNotificationService.NOTIFICATION_CONFIGS[action] = {
-            'target_roles': target_roles,
-            'title': title,
-            'type': notification_type,
-            'destination_template': destination_template,
-            'company_specific': company_specific
+    def notify_job_application(job, applicant, company):
+        """Notify company admins when someone applies for a job"""
+        context = {
+            'job_title': job.title,
+            'job_id': job.id,
+            'applicant_name': applicant.get_full_name(),
+            'applicant_email': applicant.email,
+            'company_name': company.company_name,
         }
-
-
-# Company Notification
-class CompanyNotificationService:
-    """Service for company-related notifications"""
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.JOB_APPLIED,
+            target_roles=[NotificationTarget.ADMIN],
+            company_id=company.id,
+            template_context=context
+        )
     
     @staticmethod
     def notify_company_registration(company):
-        """Notify superadmins about new company registration"""
-        return ActionBasedNotificationService.send_notification(
-            action='company_registration',
-            message=f"A new company '{company.name}' has been registered and requires verification.",
-            company_id=company.id
+        """Notify superadmins when a new company registers"""
+        context = {
+            'company_name': company.company_name,
+            'company_id': company.id,
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.ADMIN_COMPANY_REGISTRATION,
+            target_roles=[NotificationTarget.SUPERADMIN],
+            template_context=context
         )
     
     @staticmethod
-    def notify_company_status_changed(company, status):
-        """Notify company admins about status change"""
-        return ActionBasedNotificationService.send_notification(
-            action='company_status_changed',
-            message=f"Your company '{company.name}' has been {status}.",
-            company_id=company.id
+    def notify_company_approved(company, admin_users):
+        """Notify company admins when their company is approved"""
+        context = {
+            'company_name': company.company_name,
+            'company_id': company.id,
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.COMPANY_APPROVED,
+            target_users=admin_users,
+            template_context=context
+        )
+    
+    @staticmethod
+    def notify_system_maintenance(title, message, affected_users=None, is_urgent=False):
+        """Send system maintenance notifications"""
+        context = {
+            'maintenance_info': message,
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.ADMIN_MAINTENANCE,
+            target_roles=[NotificationTarget.ALL_ROLES] if not affected_users else None,
+            target_users=affected_users,
+            channel=NotificationChannel.BOTH,
+            template_context=context,
+            override_title=title,
+            override_message=message,
+            override_is_urgent=is_urgent
         )
 
-# Job Notification
-class JobNotificationService:
-    """Service for job-related notifications"""
-    
-    @staticmethod
-    def notify_job_posted_by_outside_company(job_post):
-        """Notify admins and superadmins about new job posting"""
-        return ActionBasedNotificationService.send_notification(
-            action='job_posted_by_outside_company',
-            message=f"A new job '{job_post.title}' has been posted by {job_post.company.name}.",
-            job_id=job_post.id
-        )
-    
-    @staticmethod
-    def notify_job_application_received(job_post, applicant):
-        """Notify company admins about job application"""
-        return ActionBasedNotificationService.send_notification(
-            action='job_application_received',
-            message=f"{applicant.name or applicant.username} applied for '{job_post.title}'",
-            job_id=job_post.id,
-            company_id=job_post.company.id
-        )
-    
-    @staticmethod
-    def notify_job_post_approval_status(job_post, status):
-        """Notify company admins about job post approval status"""
-        return ActionBasedNotificationService.send_notification(
-            action='job_post_approval_status',
-            message=f"Your job post '{job_post.title}' has been {status}.",
-            job_id=job_post.id,
-            company_id=job_post.company.id
-        )
-    
-    @staticmethod
-    def notify_high_volume_job_posting(company, job_count):
-        """Notify superadmins about high volume job posting"""
-        return ActionBasedNotificationService.send_notification(
-            action='high_volume_job_posting',
-            message=f"Company '{company.name}' has posted {job_count} jobs recently. Please review for policy compliance.",
-            company_id=company.id
-        )
 
-# System Notification
-class SystemNotificationService:
-    """Service for system-wide notifications"""
-    
-    @staticmethod
-    def notify_system_maintenance(maintenance_type, scheduled_time):
-        """Notify all users about system maintenance"""
-        return ActionBasedNotificationService.send_notification(
-            action='system_maintenance',
-            message=f"{maintenance_type} maintenance scheduled for {scheduled_time}. Please save your work."
-        )
-    
-    @staticmethod
-    def notify_platform_activity_summary(metrics):
-        """Notify superadmins about platform activity"""
-        message = f"Platform Activity Summary: {metrics.get('new_users', 0)} new users, {metrics.get('new_companies', 0)} new companies, {metrics.get('new_jobs', 0)} new job posts."
-        return ActionBasedNotificationService.send_notification(
-            action='platform_activity_summary',
-            message=message
-        )
+# Legacy compatibility methods for backward compatibility
+def send_notification_to_roles(title: str, message: str, notification_type: NotificationType, target_roles: List[NotificationTarget], company_id: Optional[int] = None, destination_url: Optional[str] = None, channel: NotificationChannel = NotificationChannel.BOTH):
+    """Legacy compatibility method"""
+    logger.warning("Using legacy send_notification_to_roles. Use NotificationService.send_notification instead.")
+    return NotificationService.send_notification(
+        title=title,
+        message=message,
+        notification_type=notification_type,
+        target_roles=target_roles,
+        company_id=company_id,
+        destination_url=destination_url,
+        channel=channel
+    )
 
-# Admin Notification
-class AdminNotificationService:
-    """Service for admin-specific notifications"""
-    
-    @staticmethod
-    def notify_user_violation_report(reported_user, reporter, violation_type):
-        """Notify superadmins about user violation"""
-        return ActionBasedNotificationService.send_notification(
-            action='user_violation_report',
-            message=f"User '{reported_user.email}' has been reported for {violation_type} by '{reporter.email}'",
-            user_id=reported_user.id
-        )
-    
-    @staticmethod
-    def notify_content_moderation_required(content_type, content_id, reason):
-        """Notify superadmins about content moderation"""
-        return ActionBasedNotificationService.send_notification(
-            action='content_moderation_required',
-            message=f"{content_type} (ID: {content_id}) has been flagged for review. Reason: {reason}",
-            content_type=content_type,
-            content_id=content_id
-        )
+def send_notification_to_users(title: str, message: str, notification_type: NotificationType, target_users: List[TalentCloudUser], destination_url: Optional[str] = None, channel: NotificationChannel = NotificationChannel.BOTH):
+    """Legacy compatibility method"""
+    logger.warning("Using legacy send_notification_to_users. Use NotificationService.send_notification instead.")
+    return NotificationService.send_notification(
+        title=title,
+        message=message,
+        notification_type=notification_type,
+        target_users=target_users,
+        destination_url=destination_url,
+        channel=channel
+    )
+
+def send_notification_to_emails(title: str, message: str, notification_type: NotificationType, target_emails: List[str], destination_url: Optional[str] = None, channel: NotificationChannel = NotificationChannel.BOTH):
+    """Legacy compatibility method"""
+    logger.warning("Using legacy send_notification_to_emails. Use NotificationService.send_notification instead.")
+    return NotificationService.send_notification(
+        title=title,
+        message=message,
+        notification_type=notification_type,
+        target_emails=target_emails,
+        destination_url=destination_url,
+        channel=channel
+    )

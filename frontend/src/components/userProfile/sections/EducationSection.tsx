@@ -19,6 +19,8 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
     const { data} = useGetEducationsQuery();
     const navigate = useNavigate();
 
+    const EDUCATIONDATA = data?.data;
+
 
     return (
         <>
@@ -26,7 +28,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
                 title={"Education"}
                 onpressAdd={() => navigate('/user/edit/education')}
                 isEdit={isEducationEdit}
-                onEditToggle={() => setIsEducationEdit((prev) => !prev)}
+                onEditToggle={EDUCATIONDATA && EDUCATIONDATA?.length>0 ?() => setIsEducationEdit((prev) => !prev): undefined}
             />
 
             {(!data?.data || data.data.length === 0) && (

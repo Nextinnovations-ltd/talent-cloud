@@ -1,0 +1,34 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}New Job Posted - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>🎯 New Job Opportunity Available!</h2>
+
+<p>Hello {{ user.first_name|default:"Job Seeker" }},</p>
+
+<p>A new job opportunity has been posted on {{ platform_name }} that might interest you:</p>
+
+<div class="info-box">
+    <h3>{{ job_post.title }}</h3>
+    <p><strong>Company:</strong> {{ company.name }}</p>
+    {% if job_post.location %}
+    <p><strong>Location:</strong> {{ job_post.location }}</p>
+    {% endif %}
+    {% if job_post.salary_min and job_post.salary_max %}
+    <p><strong>Salary:</strong> ${{ job_post.salary_min }} - ${{ job_post.salary_max }}</p>
+    {% endif %}
+    <p><strong>Posted:</strong> {{ job_post.created_at|date:"F d, Y" }}</p>
+</div>
+
+<p>{{ job_description }}</p>
+
+<p style="text-align: center;">
+    <a href="{{ job_url }}" class="button">View Job Details</a>
+</p>
+
+<p>Don't let this opportunity pass you by! Apply now if this position matches your skills and interests.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

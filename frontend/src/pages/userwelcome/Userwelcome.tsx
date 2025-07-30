@@ -6,7 +6,6 @@ import { StepOne } from "@/components/userWelcome/steps/StepOne";
 import { StepTwo } from "@/components/userWelcome/steps/StepTwo";
 import { StepThree } from "@/components/userWelcome/steps/StepThree";
 import { StepFour } from "@/components/userWelcome/steps/StepFour";
-import { StepFive } from "@/components/userWelcome/steps/StepFive";
 import { SpecializationSkillSet } from "@/components/userWelcome/steps/SpecializationSkillSet";
 
 interface StepWizardRef {
@@ -61,13 +60,17 @@ export const Userwelcome = () => {
           id={specializationId}
           goToNextStep={goToNextStep}
         />
-        <StepFour goToNextStep={goToNextStep} />
-        <StepFive
-          isFinished={isFinished}
-          setFinished={setFinished}
-          goToNextStep={goToNextStep}
-        />
+        <StepFour  isFinished={isFinished}
+          setFinished={setFinished} />
+       
       </StepWizard>
-    </div>
-  );
+    </div>)
+
 };
+
+
+//<StepFive
+//isFinished={isFinished}
+//setFinished={setFinished}
+//goToNextStep={goToNextStep}
+///>

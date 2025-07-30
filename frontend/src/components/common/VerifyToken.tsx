@@ -4,6 +4,7 @@ import { useGetUserInfoQuery } from "@/services/api/userSlice";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
+import ROLES from "@/constants/authorizations";
 
 export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
   const { hasToken, isTokenVerifying } = useVerifyToken(shouldSkip);
@@ -17,6 +18,14 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     refetch,
   } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
 
+
+  const role =  userInfo?.data?.role
+  
+
+  //role must be user
+  console.log(role)
+
+
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
       navigate(`/auth/${routesMap.login.path}`, {
@@ -25,32 +34,32 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
       });
     }
     if (isSuccess) {
-      const { is_generated_username, onboarding_step } = userInfo?.data || {};
+      const { is_generated_username, onboarding_step, role } = userInfo?.data || {};
 
-      if (is_generated_username) {
-       // navigate("/verify");
-       navigate("/verify");
-
+      if (role === ROLES.SUPERADMIN) {
+        navigate("/admin/dashboard", { replace: true });
         return;
       }
 
-      if (onboarding_step && onboarding_step !== 6 && !is_generated_username) {
+      if (is_generated_username) {
+        navigate("/verify");
+        return;
+      }
+
+      if (onboarding_step && onboarding_step !== 5 && !is_generated_username) {
         navigate(
           `/verify/${routesMap.userWelcome.path}?step=${onboarding_step + 1}`,
           { replace: true }
         );
       }
 
-      if(onboarding_step === 6){
-        navigate('/')
+      if (onboarding_step === 6) {
+        navigate("/");
       }
-
     }
 
-
     refetch();
-
-  }, [isLoadingUserInfo]);
+  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, refetch, userInfo?.data]);
 
   if (shouldSkip) {
     return <Outlet />;

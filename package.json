@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "embla-carousel-autoplay": "^8.6.0",
-    "matter-js": "^0.20.0",
-    "p5": "^2.0.3"
-  }
-}

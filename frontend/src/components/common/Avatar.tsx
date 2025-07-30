@@ -2,16 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import DEFAULT from '@/assets/ProfileNoData.png';
 
-export const AvatarProfile = ({ size, status }: { size?: string, status: boolean }) => {
+export const AvatarProfile = ({ size }: { size?: string }) => {
   return (
-    <div className="relative">
+    <div className="relative flex items-center justify-center gap-4">
       <Avatar className={cn(size)}>
         <AvatarImage className="object-cover" src={DEFAULT} /> {/* Use the imported image here */}
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
-      {status && (
-        <div className="w-[12px] h-[12px] border-2 bg-[#50F69C] rounded-full absolute right-0 bottom-0"></div>
-      )}
+     
     </div>
   );
 };

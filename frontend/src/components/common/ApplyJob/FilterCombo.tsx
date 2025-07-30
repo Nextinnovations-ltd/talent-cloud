@@ -57,7 +57,7 @@ export function FilterCombo({ title, data, onFilterChange, filterKey }: FilterCo
           <ChevronDown size={18} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[257px] p-0">
+      <PopoverContent className="w-[257px] z-[999] p-0">
         <Command>
           <CommandInput placeholder="Search..." className="h-9" />
           <CommandList>

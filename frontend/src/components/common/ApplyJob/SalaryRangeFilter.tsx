@@ -64,7 +64,7 @@ export function SalaryRangeFilter({ title, onFilterChange }: SalaryRangeFilterPr
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[257px] p-4">
+      <PopoverContent className="w-[257px] z-[99] p-4">
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Minimum Salary</label>

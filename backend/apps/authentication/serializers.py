@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.users.models import TalentCloudUser, Role, PasswordReset, VerifyRegisteredUser
 from django.contrib.auth import authenticate
+from apps.authentication.models import UserInvitation
 from core.constants.constants import ROLES
 from services.auth.auth_service import AuthenticationService
 
@@ -165,3 +166,8 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
             return token
         except ValueError as e:
             raise serializers.ValidationError(e)
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserInvitation
+        fields= [ 'email', 'token', 'invited_by', 'target_company', 'invitation_status', 'expires_at']

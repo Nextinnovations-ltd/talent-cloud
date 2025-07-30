@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -92,6 +93,18 @@ ASGI_APPLICATION = 'main.config.asgi.application'
 
 WSGI_APPLICATION = 'main.config.wsgi.application'
 
+# Cache Configuration (Required for rate limiting)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'oauth-rate-limiting',
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,
+        }
+    }
+}
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 CHANNEL_LAYERS = {
@@ -138,16 +151,38 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend'
 ]
 
-GOOGLE_CLIENT_ID = '394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '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'
+# OAuth Credentials - MUST be set via environment variables
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
 
-LINKEDIN_CLIENT_ID = '866khyw28sevz8'
-LINKEDIN_CLIENT_SECRET = 'WPL_AP1.m68SvuuDfa1LXupr.+YHjyg=='
+LINKEDIN_CLIENT_ID = config('LINKEDIN_CLIENT_ID', default='')
+LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
 
-FACEBOOK_CLIENT_ID = '1999611343882551'
-FACEBOOK_CLIENT_SECRET = '495a6ed1c1986293eb357350b2ea4f02'
+FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
+FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
-OAUTH_REDIRECT_URL = "http://localhost:5173/oauth/callback"
+# OAuth URLs
+OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://localhost:5173/oauth/callback")
+
+# Provider-specific redirect URIs
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/google")
+LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/linkedin")
+FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
+
+# Facebook API Version
+FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')
+
+# Validate that OAuth credentials are set in production
+if config('DJANGO_ENV', default='development') == 'production':
+    required_oauth_settings = [
+        'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET',
+        'LINKEDIN_CLIENT_ID', 'LINKEDIN_CLIENT_SECRET', 
+        'FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'
+    ]
+    
+    missing_settings = [setting for setting in required_oauth_settings if not config(setting, default='')]
+    if missing_settings:
+        raise Exception(f"Missing required OAuth environment variables: {', '.join(missing_settings)}")
 
 # endregion OAuth Configuration
 

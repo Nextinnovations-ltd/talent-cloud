@@ -32,7 +32,6 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
   const jobDetails = data?.data;
 
-  console.log({jobDetails})
 
   
 

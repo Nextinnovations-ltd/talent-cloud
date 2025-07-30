@@ -9,26 +9,27 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import { useWatch } from "react-hook-form";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
-import TagInputField from "@/components/common/form/fields/tag-input-field";
 import ImagePicker from "@/components/common/ImagePicker";
 import { useState } from "react";
 import { useAddSelectedProjectsMutation, useUpdateSelectedProjectsMutation, useGetSelectedProjectsByIdQuery } from "@/services/slices/jobSeekerSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useToast from "@/hooks/use-toast";
 import { useEffect } from "react";
+import TagInputField from "@/components/common/form/fields/tag-input-field";
+import type { ProjdctsWithIdResponse } from '@/services/slices/jobSeekerSlice';
 
 
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
   return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
-    const year = (startYear + index).toString();
-    return { value: year, label: year };
+    const year = startYear + index;
+    return { value: `${year}`, label: year.toString() };
   });
 };
 const staticYearData = generateYearData();
 
 type SelectedProjectForm = {
   title: string;
-  description?: string;
+  description: string; // <-- make required
   tags?: string[];
   project_url: string;
   project_image_url?: string;
@@ -43,9 +44,6 @@ type SelectedProjectForm = {
 const SelectedProject = () => {
 
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-
-
-
   const [addSelectedProject, { isLoading: isAdding }] = useAddSelectedProjectsMutation();
   const [updateSelectedProject, { isLoading: isUpdating }] = useUpdateSelectedProjectsMutation();
   const [searchParams] = useSearchParams();
@@ -53,6 +51,7 @@ const SelectedProject = () => {
   const { showNotification } = useToast();
   const id = searchParams.get("id");
   const { data: projectData, isLoading: isFetching } = useGetSelectedProjectsByIdQuery(id, { skip: !id });
+
 
 
   const form = useForm<SelectedProjectForm>({
@@ -73,6 +72,7 @@ const SelectedProject = () => {
   })
 
   useEffect(() => {
+
   
       form.reset({
         title: projectData?.data.title || '',
@@ -95,6 +95,7 @@ const SelectedProject = () => {
     name: "is_ongoing",
     defaultValue: false,
   });
+
 
   const onSubmit = async (data: SelectedProjectForm) => {
     const start_date = `${data.startDateYear}-${data.startDateMonth}-01`;
@@ -119,23 +120,27 @@ const SelectedProject = () => {
       } else {
         response = await addSelectedProject(payload);
       }
-      if (response) {
-        // Reset the form with the new data, mimicking WorkExperience
+      // Type assertion for response
+      const res = response as { data?: ProjdctsWithIdResponse };
+      if (res && res.data?.status === true) {
+        const project = res.data.data;
         form.reset({
-          title: response.data?.title || '',
-          description: response.data?.description || '',
-          tags: response.data?.tags || [],
-          project_url: response.data?.project_url || '',
-          project_image_url: response.data?.project_image_url || '',
-          startDateYear: response.data?.start_date ? String(response.data?.start_date).split("-")[0] : '',
-          startDateMonth: response.data?.start_date ? String(response.data?.start_date).split("-")[1] : '',
-          endDateYear: response.data?.is_ongoing ? '' : (response.data?.end_date ? String(response.data?.end_date).split("-")[0] : ''),
-          endDateMonth: response.data?.is_ongoing ? '' : (response.data?.end_date ? String(response.data?.end_date).split("-")[1] : ''),
-          is_ongoing: response.data?.is_ongoing || false,
-          team_size: response.data?.team_size || undefined,
+          title: project?.title || '',
+          description: project?.description || '',
+          tags: project?.tags || [],
+          project_url: project?.project_url || '',
+          project_image_url: project?.project_image_url || '',
+          startDateYear: project?.start_date ? String(project?.start_date).split("-")[0] : '',
+          startDateMonth: project?.start_date ? String(project?.start_date).split("-")[1] : '',
+          endDateYear: project?.is_ongoing ? '' : (project?.end_date ? String(project?.end_date).split("-")[0] : ''),
+          endDateMonth: project?.is_ongoing ? '' : (project?.end_date ? String(project?.end_date).split("-")[1] : ''),
+          is_ongoing: project?.is_ongoing || false,
+          team_size: project?.team_size || undefined,
         });
         showNotification({ message: id ? "Project updated successfully" : "Project added successfully", type: "success" });
         navigate('/user/mainProfile');
+      } else {
+        showNotification({ message: 'Failed to save project', type: "danger" });
       }
     } catch (error) {
       showNotification({ message: 'Failed to save project', type: "danger" });
@@ -214,7 +219,7 @@ const SelectedProject = () => {
                 error={!!form.formState.errors?.startDateMonth}
                 showRequiredLabel
                 labelName=""
-                data={MONTHDATA}
+                data={MONTHDATA.map(m => ({ ...m, value: m.value }))}
                 width="w-[50%] mt-6"
               />
             </div>
@@ -236,9 +241,15 @@ const SelectedProject = () => {
                   error={!!form.formState.errors?.endDateMonth}
                   showRequiredLabel
                   labelName=""
-                  data={MONTHDATA}
+                  data={MONTHDATA.map(m => ({ ...m, value: m.value }))}
                   width="w-[50%] mt-6"
                 />
+              </div>
+            )}
+
+            {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
+              <div className="text-red-500 text-sm mt-1">
+               - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
               </div>
             )}
             <CustomCheckbox
@@ -254,7 +265,7 @@ const SelectedProject = () => {
               fieldName={`description`}
               languageName={""}
               placeholder="Please describe your learning experience."
-              required={false}
+              required={true}
               fieldHeight={"h-[128px]"}
               maxLength={250}
               showLetterCount

@@ -5,6 +5,7 @@ export type UserProfile = {
   email: string;
   tagline: string;
   role: number;
+  specializations:number,
   experience_level: number;
   experience_years: number;
   country_code: string;
@@ -19,6 +20,8 @@ export type UserProfile = {
   portfolio_url?:string;
   github_url?:string;
   facebook_url?:string;
+  country:number,
+  city:number,
 };
 
 export type WorkExperience = {

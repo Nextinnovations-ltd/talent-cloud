@@ -26,19 +26,26 @@ export const ParsingTokenLayout = () => {
       // const isGeneratedUsername = params.get("is_generated_username");
 
       if (token) {
+        console.log({token})
         try {
-          const response: any = await verifyToken({ token }).unwrap();
+          const response = await verifyToken({ token }).unwrap();
 
-          const isGeneratedUsername = response?.is_generated_username;
-          const role = response?.role;
-          const onBoarding = response?.onboarding_step;
+          
+
+          const isGeneratedUsername = response?.data?.is_generated_username;
+          const role = response?.data?.role;
+          const onBoarding = response?.data?.onboarding_step;
+
+          console.log()
+
+          console.log({response})
 
           removeTokenFromSessionStorage();
           removeTokensFromLocalStorage();
 
-          dispatch(setReauthToken(response?.token));
+          dispatch(setReauthToken(response?.data?.token));
 
-          setTokenToLocalStorage(response?.token);
+          setTokenToLocalStorage(response?.data.token);
 
           if (isGeneratedUsername) {
             navigate("/verify");
@@ -62,7 +69,7 @@ export const ParsingTokenLayout = () => {
     };
 
     processToken();
-  }, [location, navigate, verifyToken]);
+  }, [dispatch, location, navigate, verifyToken]);
 
   if (isLoading) return <RedirectLoading />;
 
