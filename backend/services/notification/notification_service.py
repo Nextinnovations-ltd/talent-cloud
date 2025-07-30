@@ -559,7 +559,7 @@ class NotificationHelpers:
         context = {
             'job_title': job.title,
             'job_id': job.id,
-            'company_name': company.company_name,
+            'company_name': company.name,
             'job_description': getattr(job, 'description', ''),
         }
         
