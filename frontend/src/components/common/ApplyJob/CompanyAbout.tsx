@@ -15,6 +15,9 @@ interface CompanyAbout {
 
 
 export const CompanyAbout: React.FC<CompanyAbout> = ({ job }) => (
+
+  
+
   <>
     <div className='mb-[30px] border-2 p-[20px] rounded-[20px] mt-[30px]'>
       <div className='flex  items-center justify-between'>

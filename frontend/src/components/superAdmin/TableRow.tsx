@@ -3,9 +3,9 @@ import Phone from "@/assets/SuperAdmin/phone.svg"
 import Location from "@/assets/SuperAdmin/location.svg"
 import { Checkbox } from "@/components/ui/checkbox"
 
-const TableRow = () => {
+const ApplicantsJobItems = () => {
     return (
-        <tr className='max-w-[1063px] px-[19.5px] py-[43px] flex items-center gap-[62px] border-b border-[#CBD5E1]'>
+        <tr className=' px-[19.5px] py-[43px] flex items-center gap-[62px] border-b border-[#CBD5E1]'>
             <td>
                 <Checkbox className="w-5 h-5 border border-[#CBD5E1] bg-[#FFF]" />
             </td>
@@ -45,4 +45,4 @@ const TableRow = () => {
     );
 }
 
-export default TableRow;
+export default ApplicantsJobItems;

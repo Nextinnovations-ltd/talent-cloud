@@ -6,21 +6,21 @@ import { cn } from "@/lib/utils";
 const JobCardSwitch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> & {
-    value?: boolean;
-    onValueChange?: (checked: boolean) => void;
+    valueCheck?: boolean;
+    onValueCheckChange?: (checked: boolean) => void;
   }
->(({ className, value, onValueChange, ...props }, ref) => {
-  const [checked, setChecked] = React.useState(value ?? false);
+>(({ className, valueCheck, onValueCheckChange, ...props }, ref) => {
+  const [checked, setChecked] = React.useState(valueCheck ?? false);
 
   React.useEffect(() => {
-    if (value !== undefined) {
-      setChecked(value);
+    if (valueCheck !== undefined) {
+      setChecked(valueCheck);
     }
-  }, [value]);
+  }, [valueCheck]);
 
   const handleCheckedChange = (newChecked: boolean) => {
-    if (onValueChange) {
-      onValueChange(newChecked);
+    if (onValueCheckChange) {
+      onValueCheckChange(newChecked);
     } else {
       setChecked(newChecked);
     }
