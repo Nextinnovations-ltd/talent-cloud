@@ -52,6 +52,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
     }
   }, [isSelected]);
 
+
   return (
     <div className="relative w-[400px] mx-auto">
       <div
@@ -116,7 +117,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
             {job.skills.slice(0, 2).map((item, index) => (
               <Badge
                 key={index}
-                className={`border px-[10px] bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] `}
+                className={`border px-[10px] capitalize bg-[#F2F2F2] rounded-[8px] py-[4px] text-[14px] font-normal text-black max-w-[110px] `}
               >
                 <p className="truncate">{item}</p>
               </Badge>

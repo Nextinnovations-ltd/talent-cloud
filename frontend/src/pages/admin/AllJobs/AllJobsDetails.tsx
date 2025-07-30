@@ -1,27 +1,27 @@
-import BackButton from '@/components/common/BackButton';
-import AboutJob from '@/components/common/ApplyJob/AboutJob';
+import AboutJob from "@/components/common/ApplyJob/AboutJob";
+import { JobInfoGrid } from "@/components/common/ApplyJob/JobInfoGrid";
+import { SkillsSection } from "@/components/common/ApplyJob/SkillsSection";
+import BackButton from "@/components/common/BackButton";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useGetOrganizationDetailByAdminQuery } from "@/services/slices/adminSlice";
+import { useGetDetailJobApplyCardQuery } from "@/services/slices/jobApplySlice";
+import { Users } from "lucide-react";
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { CompanyAbout } from '@/components/common/ApplyJob/CompanyAbout';
-import { JobInfoGrid } from '@/components/common/ApplyJob/JobInfoGrid';
-import { SkillsSection } from '@/components/common/ApplyJob/SkillsSection';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useGetDetailJobApplyCardQuery } from '@/services/slices/jobApplySlice';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+const AllJobsDetails = () => {
 
-
-const ExpiredJobsDetail = () => {
-    const { id } = useParams<{ id: string }>();
-    const jobId = id ? Number(id) : undefined;
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const {
         data,
         isLoading,
         error,
-    } = useGetDetailJobApplyCardQuery(jobId!, { skip: !jobId });
+    } = useGetDetailJobApplyCardQuery(id!, { skip: !id });
+    const {data:OrgData} = useGetOrganizationDetailByAdminQuery();
 
-    if (!jobId) {
+
+    if (!id) {
         return <div>Invalid job ID</div>;
     }
 
@@ -61,30 +61,40 @@ const ExpiredJobsDetail = () => {
     }
 
 
-
-
     return (
-        <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded sticky top-[190px] h-[100svh] self-start">
-          <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"><BackButton handleBack={() => navigate('/')} /></div>
-            <ScrollArea className="p-[30px] relative">
-              
-                <h3 className="text-[24px] mb-[15px] font-semibold">{jobDetails?.title || ""}</h3>
-                <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 rounded px-4 py-2 mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2.25m0 3.75h.01m-6.938 4.242a9 9 0 1112.856 0A8.963 8.963 0 0112 21a8.963 8.963 0 01-6.928-3.008z" /></svg>
-                    <span>This job posting has expired and is no longer accepting applications.</span>
+        <div className="mt-10 lg:mt-0  border-2  rounded sticky top-[190px]  self-start">
+            {/* <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"></div> */}
+            <div className="border-2 w-full flex justify-between items-center">
+            <BackButton handleBack={() => navigate('/')} />
+             <nav className="flex items-center ">
+                <div className="flex items-center justify-center gap-[24px]">
+                    <div className="bg-[#F0F9FF] w-[48px] h-[48px] rounded-full flex items-center justify-center">
+                        <Users/>
+                    </div>
+                    <h3>View Applicants </h3>
                 </div>
-                <hr className="mb-6" />
+             </nav>
+            </div>
+            <ScrollArea className="p-[30px] px-[70px] relative">
+
+
+            <h3 className="text-[32px] mb-[20px] font-semibold">{jobDetails?.title || ""}</h3>
+
+            <div className="flex items-center mb-[48px] text-[24px] gap-[16px] text-[#575757]">
+                <img width={67} height={67} className="rounded-full" src={OrgData?.data?.image_url}/>
+                <h3>{OrgData?.data?.name}</h3>
+
+            </div>
+              
                 {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
                 <JobInfoGrid job={jobDetails} />
                 <SkillsSection skills={jobDetails?.skills || []} />
                 <p className="mt-2">{jobDetails?.description}</p>
-                {
-                    jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
-                }
-                 <AboutJob jobTitle={jobDetails?.title || ''} responsibilities={jobDetails?.responsibilities || ''} requirements={jobDetails?.requirements || ''} offer={jobDetails?.offered_benefits || ''} />
+               
+                <AboutJob jobTitle={jobDetails?.title || ''} responsibilities={jobDetails?.responsibilities || ''} requirements={jobDetails?.requirements || ''} offer={jobDetails?.offered_benefits || ''} />
             </ScrollArea>
         </div>
     )
 }
 
-export default ExpiredJobsDetail;
+export default AllJobsDetails;

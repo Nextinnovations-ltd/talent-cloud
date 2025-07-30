@@ -21,7 +21,7 @@ const InfoGrid = () => {
 
     return (
         <>
-        <div className='grid gap-[27px] mt-[72px] mb-[10px] grid-cols-2'>
+        <div className='grid gap-[27px] mt-[48px] mb-[10px] grid-cols-2'>
             <SalaryInfoItem/>
             <InfoItem 
                 icon={LOCATION} 

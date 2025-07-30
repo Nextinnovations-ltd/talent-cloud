@@ -1,10 +1,9 @@
 import { UseFormReturn } from "react-hook-form";
-import { StepTwoFormType } from "../CreateNewJob";
 import { Form } from "@/components/ui/form";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 
 type StepTwoFormProps = {
-    formMethods: UseFormReturn<StepTwoFormType>;
+    formMethods: UseFormReturn;
   };
   
 
@@ -27,7 +26,7 @@ type StepTwoFormProps = {
             fieldHeight={"h-[128px] border-[#6B6B6B] rounded-[12px] mt-3"}
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
-            maxLength={500}
+            maxLength={800}
           />
            <TextAreaField
             disabled={false}
@@ -42,7 +41,7 @@ type StepTwoFormProps = {
             fieldHeight={"h-[128px] border-[#6B6B6B] rounded-[12px] mt-3"}
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
-            maxLength={500}
+            maxLength={800}
           />
            <TextAreaField
             disabled={false}
@@ -57,7 +56,7 @@ type StepTwoFormProps = {
             fieldHeight={"h-[128px] border-[#6B6B6B] rounded-[12px] mt-3"}
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
-            maxLength={500}
+            maxLength={800}
           />
       </form>
 

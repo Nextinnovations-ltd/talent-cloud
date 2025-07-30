@@ -138,7 +138,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 0,
     }),
 
-    getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
+    getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number |  string>({
     query: (id) => `/job-posts/${id}/`,
       providesTags: ['JobList','bookmarked'],
       keepUnusedDataFor: 0,
