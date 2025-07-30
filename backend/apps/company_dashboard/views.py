@@ -37,7 +37,7 @@ class AllJobPostApplicantListAPIView(APIView):
           except:
                raise NotFound("Company didn't exists for the user.")
                
-          result = SharedDashboardService.get_company_applicants(company)
+          result = SharedDashboardService.get_company_applicants_queryset(company)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
