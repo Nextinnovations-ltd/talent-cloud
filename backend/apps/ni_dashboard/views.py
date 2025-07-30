@@ -1,11 +1,12 @@
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.filters import OrderingFilter
 from rest_framework.exceptions import NotFound
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
-from apps.ni_dashboard.serializers import JobPostDashboardSerializer
+from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer
 from apps.job_posting.models import StatusChoices
 from utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
@@ -60,36 +61,61 @@ class JobSeekerRoleStatisticsAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+# region Applicant
+
 @extend_schema(tags=["NI Dashboard"])
-class NIApplicantListAPIView(APIView):
+class NIApplicantListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     
+     def get_queryset(self):
+          company = SharedDashboardService.get_company(self.request.user)
+          
+          queryset = SharedDashboardService.get_company_applicants_queryset(company)
+     
+          return queryset
+
+@extend_schema(tags=["NI Dashboard"])
+class NIJobSpecificApplicantListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     
+     def get_queryset(self):
+          company = SharedDashboardService.get_company(self.request.user)
+
+          job_id = self.kwargs.get("job_id")
+          
+          queryset = SharedDashboardService.get_job_specific_applicants_queryset(company, job_id)
+     
+          return queryset
+
+@extend_schema(tags=["NI Dashboard"])
+class RecentApplicantListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
           company = SharedDashboardService.get_company(self.request.user)
 
-          result = SharedDashboardService.get_company_applicants(company)
+          result = SharedDashboardService.get_company_applicants_queryset(company, is_recent=True)
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
-# @extend_schema(tags=["NI Dashboard"])
-# class NIApplicantDetailAPIView(APIView):
-#      authentication_classes = [TokenAuthentication]
-#      permission_classes = [TalentCloudSuperAdminPermission]
-     
-#      def get(self, request, user_id):
-#           if not user_id:
-#                return Response(CustomResponse.success("User not found with this id."), status=status.HTTP_404_NOT_FOUND)
-          
-#           result = DashboardService.get_job_seeker_detail(user_id)
-          
-#           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+# endregion Applicant
+
+
+# region Job Post Listing
 
 @extend_schema(tags=["NI Dashboard"])
 class AllJobPostListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
+     filter_backends = [OrderingFilter]
+     ordering_fields = ['created_at', 'applicant_count']
+     ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
@@ -103,6 +129,9 @@ class ActiveJobPostListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
+     filter_backends = [OrderingFilter]
+     ordering_fields = ['created_at', 'applicant_count']
+     ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
@@ -116,6 +145,9 @@ class DraftJobPostListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
+     filter_backends = [OrderingFilter]
+     ordering_fields = ['created_at', 'applicant_count']
+     ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
@@ -129,6 +161,9 @@ class ExpiredJobPostListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
+     filter_backends = [OrderingFilter]
+     ordering_fields = ['created_at', 'applicant_count']
+     ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
@@ -149,17 +184,7 @@ class RecentJobListAPIView(CustomListAPIView):
           
           return queryset
 
-@extend_schema(tags=["NI Dashboard"])
-class RecentApplicantListAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudSuperAdminPermission]
-     
-     def get(self, request):
-          company = SharedDashboardService.get_company(self.request.user)
-
-          result = SharedDashboardService.get_company_applicants(company, is_recent=True)
-          
-          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+# endregion Job Post Listing
 
 # region Company Approval Process
 
