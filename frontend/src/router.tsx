@@ -28,6 +28,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
+import EmployeePage from './pages/LandingPages/EmployeePage';
 import SelectedProject from "./pages/profile/subPages/SelectedProject";
 import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
    path:"/jobseeker/lp",
    element:<JobSeekerLandingPage/>
   },
+  {
+    path:"/employee/lp",
+    element:<EmployeePage/>
+   },
   {
     path: "/",
    element: <MainLayout />,

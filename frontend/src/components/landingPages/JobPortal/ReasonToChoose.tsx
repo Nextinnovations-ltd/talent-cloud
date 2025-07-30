@@ -1,10 +1,10 @@
 import React from 'react'
 import {motion} from 'framer-motion'
-import teamwork from '../../assets/JobPortal/yong-group.png'
-import icon1 from '../../assets/JobPortal/Frame 36106.svg'
-import icon2 from '../../assets/JobPortal/Frame 36107.svg'
-import icon3 from '../../assets/JobPortal/Frame 36109.svg'
-import icon4 from '../../assets/JobPortal/Frame 36110.svg'
+import teamwork from '../../../assets/JobPortal/yong-group.png'
+import icon1 from '../../../assets/JobPortal/Frame 36106.svg'
+import icon2 from '../../../assets/JobPortal/Frame 36107.svg'
+import icon3 from '../../../assets/JobPortal/Frame 36109.svg'
+import icon4 from '../../../assets/JobPortal/Frame 36110.svg'
 const ReasonToChoose = () => {
     return (
         <div className="bg-[#F9FAFB] md:mt-[96px] mt-[31px] pl-[20px] pr-[20px] ">
@@ -33,22 +33,22 @@ const ReasonToChoose = () => {
                         <div className="flex flex-col gap-[8px]">
                             <img src={icon1} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
                             <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Hire Without a Local Entity</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>No local entity needed—we act as your legal employer for a smooth, compliant hiring process.</p>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>Our EOR service becomes legal employer, enabling you to hire top talent quickly, compliantly, and cost-effectively.</p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
                             <img src={icon3} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
                             <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Specialized in IT Talent</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We find and manage top tech and creative talent to build your remote team with ease.</p>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We specialize in sourcing, onboarding, and managing elite IT professionals so employers can scale remote team with confidence and speed.</p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
                             <img src={icon2} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
                             <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]'>Full HR & Payroll Compliance</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We manage salaries, benefits, and ensure full compliance with Myanmar labor laws—so you can hire with confidence.</p>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We manage payroll, benefits, tax filings, and ensure complete compliance with Myanmar labor laws—freeing you from legal and enabling worries. </p>
                         </div>
                         <div className="flex flex-col gap-[8px]">
                             <img src={icon4} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
                             <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600] lg:text-nowrap'>Workplace & Equipment Support</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We provide the tools your remote hire needs—from laptops to internet—for a smooth setup.</p>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We provide everything  from workplace with backup generators ,laptops to high-speed internet—ensuring productive work environment.</p>
                         </div>
 
                     </div>

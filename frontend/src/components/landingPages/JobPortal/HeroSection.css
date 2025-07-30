@@ -1,0 +1,31 @@
+.btn_glass_hover {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.btn_glass_hover::before {
+    content: '';
+    background: #0389FF;
+    /* transparent glass effect */
+    border-radius: 0%;
+    width: 100%;
+    height: 66px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+    /* fully behind content */
+}
+
+.btn_glass_hover:hover::before {
+
+    width: 66px;
+    border-radius: 50%;
+}
+
+.btn_glass_hover>* {
+    position: relative;
+    z-index: 1;
+}

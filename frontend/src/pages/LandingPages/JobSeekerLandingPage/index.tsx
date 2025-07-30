@@ -1,21 +1,19 @@
-import HeroSection from "@/components/landingPages/HeroSection";
-import ReasonToChoose from "@/components/landingPages/ReasonToChoose";
-import SeeMore from "@/components/landingPages/SeeMore";
-import React from "react";
+import HeroSection from "@/components/landingPages/JobPortal/HeroSection";
+import ReasonToChoose from "@/components/landingPages/JobPortal/ReasonToChoose";
+import SeeMore from "@/components/landingPages/JobPortal/SeeMore";
 
 import './index.css';
-import EorSection from "@/components/landingPages/EorSection";
-import SuccessStory from "@/components/landingPages/SuccessStory";
-import FAQ from "@/components/landingPages/FAQ";
+import EorSection from "@/components/landingPages/JobPortal/EorSection";
+import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
+import FAQ from "@/components/landingPages/JobPortal/FAQ";
 const JobSeekerLandingPage = () => {
   
   return (
-    <div className="bg-[#F7F7F7] overflow-x-hidden">
+    <div className="bg-[#fff] overflow-x-hidden">
       <HeroSection/>
       <ReasonToChoose />
       <SeeMore />
       <EorSection />
-
       <SuccessStory />
       <FAQ/>
 </div>
