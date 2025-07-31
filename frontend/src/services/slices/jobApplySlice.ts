@@ -162,7 +162,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
 
     applyJob: builder.mutation<unknown, ApplyJobArg>({
       query: ({ jobId, credentials }) => ({
-        url: `/job-posts/${jobId}/applications/`,
+        url: `/job-posts/${jobId}/apply/`,
         method: "POST",
         body: credentials,
       }),

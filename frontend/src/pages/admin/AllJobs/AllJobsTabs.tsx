@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface AllJobTabsProps {
   myJobTotal:number,
-  title:string
+  title?:string
 }
 
  const AllJobsTabs = ({myJobTotal,title = "Jobs"}:AllJobTabsProps) => {

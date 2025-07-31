@@ -5,7 +5,6 @@ import { SkillsSection } from "@/components/common/ApplyJob/SkillsSection";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import AllJobsTabs from "../AllJobs/AllJobsTabs";
 import SortsButtons from "../AllJobs/SortsButtons";
-import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 
 const CandidateApplicantsInfo = () => {
 
@@ -56,13 +55,6 @@ const CandidateApplicantsInfo = () => {
                     <SortsButtons title="Action" />
                 </div>
             </div>
-
-            <ApplicantsJobItems/>
-            <ApplicantsJobItems/>
-            <ApplicantsJobItems/>
-            <ApplicantsJobItems/>
-            <ApplicantsJobItems/>
-
         </div>
     )
 }

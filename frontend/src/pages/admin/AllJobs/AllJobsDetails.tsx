@@ -33,7 +33,7 @@ const AllJobsDetails = () => {
 
     if (isLoading) {
         return (
-            <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded sticky top-[190px] h-[100svh] self-start">
+            <div className=" flex items-center justify-center mx-auto rounded sticky top-[190px] h-[100svh] self-start">
                 <LoadingSpinner />
             </div>
         );

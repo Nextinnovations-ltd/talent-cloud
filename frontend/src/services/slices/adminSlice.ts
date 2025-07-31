@@ -19,8 +19,12 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         }),
         getNIAllJobsByAdmin:builder.query<JobPostResponse,number>({
             query:(id)=> `/dashboard/ni/job-posts/all/?page=${id}`
+        }),
+        getAllApplicants:builder.query<unknown,unknown>({
+            query:(id)=>`/job-posts/${id}/applications/`
         })
+    
     })
 });
 
-export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery } = extendedAdminSlice
+export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery } = extendedAdminSlice

@@ -38,7 +38,7 @@ const AllJobs = () => {
       <p className="text-[#575757] mb-[77px]">Here What happening with yours jobs</p>
 
       <div className="flex items-center mb-[80px] justify-between">
-        <AllJobsTabs myJobTotal={data?.data.count ||  0}  />
+        <AllJobsTabs myJobTotal={data?.data.count || 0}  />
         <div className="flex items-center justify-center pr-[24px] gap-4">
           <SortsButtons title="Applicants" />
           <SortsButtons title="Views" />
