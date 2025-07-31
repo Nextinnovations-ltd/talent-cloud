@@ -1,4 +1,6 @@
 from django.urls import path
+
+from apps.ws_channel.views.notification_views import TestMailNoti
 # Import all views from the organized views package
 from .views import (
     # Chat views
@@ -40,4 +42,6 @@ urlpatterns = [
     
     # Test endpoint (remove in production)
     path('test/', TestAPIView.as_view(), name='test'),
+    path('test-mail/', TestMailNoti.as_view(), name='test-mail'),
+    
 ]

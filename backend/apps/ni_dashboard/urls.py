@@ -24,8 +24,8 @@ urlpatterns = [
     path('dashboard/ni/statistics/role/', JobSeekerRoleStatisticsAPIView.as_view(), name='job_seeker_role_statistics'),
     
     # Applicants
+    path('dashboard/ni/applicants/recent/', RecentApplicantListAPIView.as_view(), name='recent-applicant-list'),
     path('dashboard/ni/applicants/', NIApplicantListAPIView.as_view(), name='applicant-list'),
-    path('dashboard/ni/applicants/recent', RecentApplicantListAPIView.as_view(), name='recent-applicant-list'),
     path('dashboard/ni/job-posts/<int:job_id>/applicants/', NIJobSpecificApplicantListAPIView.as_view(), name='ni-all-job-post-list'),
     
     # Job Posts

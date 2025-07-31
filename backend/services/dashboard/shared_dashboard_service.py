@@ -38,7 +38,7 @@ class SharedDashboardService:
           queryset = SharedDashboardService._get_applicants_queryset(company)
           
           if is_recent:
-               queryset[:4]
+               queryset = queryset[:4]
           
           return queryset
      

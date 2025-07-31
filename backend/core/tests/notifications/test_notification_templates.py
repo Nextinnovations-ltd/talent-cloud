@@ -4,6 +4,7 @@ Test script for the new notification template system
 Run with: python manage.py shell < test_notification_templates.py
 """
 
+from datetime import datetime
 import os, sys
 import django
 
@@ -47,7 +48,7 @@ def test_notification_templates():
           
           if template:
                context = {
-                    'user_name': 'John Doe',
+                    'name': 'John Doe',
                     'maintenance_info': 'System will be down for 2 hours',
                     'platform_name': 'TalentCloud'
                }
@@ -74,9 +75,14 @@ def test_notification_templates():
           notifications = NotificationHelpers.notify_system_maintenance(
                title="Scheduled Maintenance", 
                message="System will be down tonight from 2 AM to 4 AM for maintenance.",
-               is_urgent=True
+               is_urgent=True,
+               maintanence_context={
+                    "start_time": datetime(2024, 8, 1, 9, 0),
+                    "end_time": datetime(2024, 8, 1, 11, 30),
+                    "duration": "2 hours 30 minutes",
+               }
           )
-          print(f"✅ Sent {len(notifications)} templated maintenance notifications")
+          # print(f"✅ Sent {len(notifications)} templated maintenance notifications")
           
      except Exception as e:
           print(f"❌ Error sending templated notifications: {e}")
@@ -92,7 +98,7 @@ def test_notification_templates():
                     target_users=[test_user],
                     channel=NotificationChannel.WEBSOCKET,  # Only websocket for testing
                     template_context={
-                         'user_name': test_user.get_full_name() or test_user.email,
+                         'user_name': test_user.name or test_user.email,
                          'platform_name': 'TalentCloud'
                     }
                )

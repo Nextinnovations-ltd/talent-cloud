@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -403,4 +404,32 @@ class NotificationByChannelAPIView(APIView):
                 }
             ),
             status=status.HTTP_200_OK
+        )
+
+@extend_schema(tags=["Notifications"])
+class TestMailNoti(APIView):
+    """
+    Get test mail notifications
+    """
+    authentication_classes = []
+    permission_classes = []
+    
+    def get(self, request):
+        from services.notification.notification_service import NotificationService, NotificationHelpers
+        from apps.ws_channel.models import NotificationTemplate
+        from backend.utils.notification.types import NotificationTarget
+        from utils.notification.types import NotificationType, NotificationChannel
+
+        context = {
+            'maintenance_info': "Hello maintainence: message",
+            "start_time": datetime(2024, 8, 1, 9, 0),
+            "end_time": datetime(2024, 8, 1, 11, 30),
+            "duration": "2 hours 30 minutes",
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.ADMIN_MAINTENANCE,
+            target_roles=[NotificationTarget.ADMIN],
+            channel=NotificationChannel.EMAIL,
+            template_context=context
         )
