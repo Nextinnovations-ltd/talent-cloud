@@ -92,16 +92,16 @@ class NIJobSpecificApplicantListAPIView(CustomListAPIView):
           return queryset
 
 @extend_schema(tags=["NI Dashboard"])
-class RecentApplicantListAPIView(APIView):
+class RecentApplicantListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     use_pagination = False
      
-     def get(self, request):
+     def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
 
-          result = SharedDashboardService.get_company_applicants_queryset(company, is_recent=True)
-          
-          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+          return SharedDashboardService.get_company_applicants_queryset(company, is_recent=True)
 
 # endregion Applicant
 
