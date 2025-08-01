@@ -8,10 +8,12 @@ This is the main notification service that should be used throughout the applica
 """
 from typing import List, Optional, Dict, Any
 from enum import Enum
+from rest_framework.exceptions import NotFound
 from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
 from apps.ws_channel.serializers import NotificationListSerializer
+from apps.job_posting.models import JobPost
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
@@ -437,7 +439,7 @@ class NotificationService:
         
         if not template:
             NotificationService._send_channel_notifications(
-                user, channel, notification
+                user, channel, notification, email_context=enhanced_context
             )
             return
         
@@ -572,19 +574,32 @@ class NotificationHelpers:
     """
     
     @staticmethod
-    def notify_job_posted(job, company):
+    def notify_job_posted(job: JobPost, user):
         """Notify admins when a new job is posted"""
+        company = user.company if hasattr(user, 'company') else None
+        
+        if not company:
+            raise NotFound("Company associated to user not found.")
+        
         context = {
             'job_title': job.title,
             'job_id': job.id,
+            'job_location': job.location, 
+            'job_salary_min': job.salary_min, 
+            'job_salary_max': job.salary_max, 
+            'job_created_at': job.created_at,
             'company_name': company.name,
+            'posted_by_name': user.name or user.email,
+            'job_url': 'http://localhost:5173',
             'job_description': getattr(job, 'description', ''),
         }
         
         return NotificationService.send_notification_with_template(
             notification_type=NotificationType.ADMIN_JOB_POSTING,
-            target_roles=[NotificationTarget.SUPERADMIN],
-            template_context=context
+            target_roles=[NotificationTarget.SUPERADMIN, NotificationTarget.ADMIN],
+            template_context=context,
+            company_id=company.id,
+            channel=NotificationChannel.EMAIL
         )
     
     @staticmethod
