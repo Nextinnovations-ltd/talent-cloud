@@ -114,7 +114,7 @@ class AllJobPostListAPIView(CustomListAPIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
      filter_backends = [OrderingFilter]
-     ordering_fields = ['created_at', 'applicant_count']
+     ordering_fields = ['created_at', 'applicant_count', 'view_count']
      ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
@@ -130,7 +130,7 @@ class ActiveJobPostListAPIView(CustomListAPIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
      filter_backends = [OrderingFilter]
-     ordering_fields = ['created_at', 'applicant_count']
+     ordering_fields = ['created_at', 'applicant_count', 'view_count']
      ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
@@ -146,7 +146,7 @@ class DraftJobPostListAPIView(CustomListAPIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
      filter_backends = [OrderingFilter]
-     ordering_fields = ['created_at', 'applicant_count']
+     ordering_fields = ['created_at', 'applicant_count', 'view_count']
      ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
@@ -162,7 +162,7 @@ class ExpiredJobPostListAPIView(CustomListAPIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
      filter_backends = [OrderingFilter]
-     ordering_fields = ['created_at', 'applicant_count']
+     ordering_fields = ['created_at', 'applicant_count', 'view_count']
      ordering = ['-created_at']  # default descending order
      
      def get_queryset(self):
@@ -176,6 +176,7 @@ class RecentJobListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = JobPostDashboardSerializer
+     use_pagination = False
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
