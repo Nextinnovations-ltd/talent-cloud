@@ -67,6 +67,7 @@ class SharedDashboardService:
                'job_seeker__occupation__role'
           ).only(
                'created_at',
+               'job_post__id',
                'job_post__posted_by__company',
                'job_seeker__user__id',
                'job_seeker__user__name',

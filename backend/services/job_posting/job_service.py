@@ -21,7 +21,7 @@ class JobService():
           try:
                NotificationHelpers.notify_job_posted(
                     job_post,
-                    user.company if hasattr(user, 'company') else None
+                    user
                )
                logger.info(f"Job posting notifications sent for job: {job_post.title}")
           except Exception as e:
