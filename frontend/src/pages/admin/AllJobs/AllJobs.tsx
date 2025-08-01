@@ -29,9 +29,6 @@ const AllJobs = () => {
 
 
 
-  if (isLoading || isFetching) {
-   
-  }
 
   if (!data?.data?.results?.length) {
     return <div className="py-[44px] w-[calc(100svw-300px)] flex justify-center items-center">No jobs found</div>;

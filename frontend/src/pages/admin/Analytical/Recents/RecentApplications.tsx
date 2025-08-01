@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"; // Optional: for loading st
 
 const RecentApplications = () => {
   const { data, isLoading } = useGetAllRecentApplicantsListQuery();
-  const recentApplicants = data?.data?.results;
+  const recentApplicants = data?.data;
 
   
 
