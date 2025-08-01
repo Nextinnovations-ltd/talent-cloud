@@ -9,7 +9,11 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 const AllJobs = () => {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isFetching } = useGetNIAllJobsByAdminQuery(page);
+  const [sortBy, setSortBy] = useState("-created_at");
+  const { data, isLoading, isFetching } = useGetNIAllJobsByAdminQuery(
+    { page, ordering: sortBy },
+    { skip: !page, refetchOnMountOrArgChange: true }, // Prevents calling API with undefined id,
+  );
 
   const handleNextPage = () => {
     if (data?.data?.next) {
@@ -24,8 +28,9 @@ const AllJobs = () => {
   };
 
 
+
   if (isLoading || isFetching) {
-    return <div className="py-[44px] h-[100svh] w-[calc(100svw-300px)] flex justify-center items-center"><LoadingSpinner/></div>;
+   
   }
 
   if (!data?.data?.results?.length) {
@@ -38,15 +43,24 @@ const AllJobs = () => {
       <p className="text-[#575757] mb-[77px]">Here What happening with yours jobs</p>
 
       <div className="flex items-center mb-[80px] justify-between">
-        <AllJobsTabs myJobTotal={data?.data.count || 0}  />
+        <AllJobsTabs myJobTotal={data?.data.count || 0} />
         <div className="flex items-center justify-center pr-[24px] gap-4">
-          <SortsButtons title="Applicants" />
-          <SortsButtons title="Views" />
-          <SortsButtons title="Date" />
+          <SortsButtons title="Applicants" field="applicant_count"
+            currentSort={sortBy}
+            onToggle={setSortBy} />
+          <SortsButtons title="Views" field="view_count"
+            currentSort={sortBy}
+            onToggle={setSortBy} />
+          <SortsButtons title="Date" field="created_at"
+            currentSort={sortBy}
+            onToggle={setSortBy} />
         </div>
       </div>
 
-      <div className="grid grid-cols-3 pr-[24px] justify-center gap-[30px]">
+      {
+        (isLoading || isFetching) ?  <div className="py-[44px] h-[50svh] w-[calc(100svw-400px)] flex justify-center items-center"><LoadingSpinner /></div>:<>
+        
+        <div className="grid grid-cols-3 pr-[24px] justify-center gap-[30px]">
         {data.data.results.map((job) => (
           <JobCard
             key={job.id}
@@ -62,9 +76,8 @@ const AllJobs = () => {
           />
         ))}
       </div>
-
-      {/* Pagination Controls */}
-      <div className="flex justify-center items-center mt-8 gap-4">
+       {/* Pagination Controls */}
+       <div className="flex justify-center items-center mt-8 gap-4">
         <Button
           variant="outline"
           onClick={handlePrevPage}
@@ -85,6 +98,12 @@ const AllJobs = () => {
           Next
         </Button>
       </div>
+        </>
+      }
+
+      
+
+     
     </div>
   );
 };

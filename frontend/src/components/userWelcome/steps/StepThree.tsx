@@ -59,7 +59,7 @@ export const StepThree = ({
     isLoading: SpecializationLoading,
     isError,
   } = useGetUserTalentsQuery();
-  const { executeApiCall, isLoading: MutationLoading } = useApiCaller(
+  useApiCaller(
     useOnBoardingMutation
   );
 
