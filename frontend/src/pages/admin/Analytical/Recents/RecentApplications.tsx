@@ -7,6 +7,7 @@ const RecentApplications = () => {
   const { data, isLoading } = useGetAllRecentApplicantsListQuery();
   const recentApplicants = data?.data;
 
+
   return (
     <div className="w-1/2 flex flex-col gap-5">
       <RecenTitles title="Recent Applicants" />

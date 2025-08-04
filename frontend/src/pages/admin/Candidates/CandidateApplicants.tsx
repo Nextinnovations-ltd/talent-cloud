@@ -16,6 +16,7 @@ interface Applicant {
   is_open_to_work: boolean;
   address: string | null;
   profile_image_url: string | null;
+  job_post_id:string | null;
 }
 
 const CandidateApplicants = () => {
@@ -33,9 +34,12 @@ const CandidateApplicants = () => {
 
 
 
+
+
+
   return (
     <div className="mt-10">
-      <JobCandidatesInfoHeader side="applicants"/>
+      <JobCandidatesInfoHeader side="applicants" id={id}/>
     
         <CandidateApplicantsInfo sortBy={sortBy} setSortBy={setSortBy} totalApplicants={applicants?.length} />
         {isLoading ? (

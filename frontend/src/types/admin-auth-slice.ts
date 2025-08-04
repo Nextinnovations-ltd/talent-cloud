@@ -13,6 +13,7 @@ export interface JobPost {
   view_count: number;
   posted_date: string; // ISO datetime string
   deadline_date: string; // ISO date string
+  job_post_id:string;
 }
 
 export interface PaginatedData<T> {

@@ -22,7 +22,7 @@ const adminRoutesMap = {
         name:"AllJobsDetails"
     },
     allJobsDetailApplicants:{
-        path:'alljobs/details/applicants/:id',
+        path:'allJobs/details/applicants/:id',
         name:"AllJobsApplicants"
     },
     activeJobs:{

@@ -7,33 +7,39 @@ import SvgTrash from "@/assets/svgs/SvgTrash";
 import { useNavigate } from "react-router-dom";
 
 interface JobCandidatesInfoHeaderProps {
-  side: 'preview' | 'applicants';
+    side: 'preview' | 'applicants';
+    id: string;
 }
 
-const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side }) => {
+const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side, id }) => {
 
     const navigation = useNavigate();
 
-  const handleBack = () => {
-    navigation('/admin/dashboard/allJobs')
-  };
+    const handleBack = () => {
+        navigation('/admin/dashboard/allJobs')
+    };
 
-  return (
-    <div className="w-full mb-[65px] flex gap-[40px] justify-start items-center">
-      <BackButton className="w-[48px] h-[48px]" handleBack={handleBack} />
-      <nav className="flex items-center gap-[48px]">
-        <h3>1 Hour ago</h3>
-        {side === 'preview' && (
-          <AllJobsAction onClick={() => {}} icon={<Users />} label="View Applicants" />
-        )}
-        {side === 'applicants' && (
-          <AllJobsAction onClick={() => {}} icon={<Users />} label="View Preview" />
-        )}
-        <AllJobsAction onClick={() => {}} icon={<SvgPencil />} label="Edit Job Post" />
-        <AllJobsAction onClick={() => {}} icon={<SvgTrash />} label="Delete Post" />
-      </nav>
-    </div>
-  );
+    return (
+        <div className="w-full mb-[65px] flex gap-[40px] justify-start items-center">
+            <BackButton className="w-[48px] h-[48px]" handleBack={handleBack} />
+            <nav className="flex items-center gap-[48px]">
+                <h3>1 Hour ago</h3>
+                {side === 'preview' && (
+                    <AllJobsAction onClick={() => {
+                        navigation(`/admin/dashboard/allJobs/details/applicants/${id}`)
+                    }} icon={<Users />} label="View Applicants" />
+                )}
+                {side === 'applicants' && (
+                    <AllJobsAction onClick={() => {
+
+                        navigation(`/admin/dashboard/allJobs/${id}`)
+                    }} icon={<Users />} label="View Preview" />
+                )}
+                <AllJobsAction onClick={() => { }} icon={<SvgPencil />} label="Edit Job Post" />
+                <AllJobsAction onClick={() => { }} icon={<SvgTrash />} label="Delete Post" />
+            </nav>
+        </div>
+    );
 };
 
 export default JobCandidatesInfoHeader;

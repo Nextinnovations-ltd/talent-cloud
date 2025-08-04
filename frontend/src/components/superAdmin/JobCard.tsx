@@ -81,7 +81,7 @@ const JobCard = ({
       </div>
 
       <div className="flex items-center justify-around mt-[24.5px]">
-        <button onClick={()=>navigate(`/admin/dashboard/alljobs/details/applicants/${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">
+        <button onClick={()=>navigate(`/admin/dashboard/allJobs/details/applicants/${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">
           <Users color="#575757" size={20} />
         </button>
         <button onClick={()=>navigate(`${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">

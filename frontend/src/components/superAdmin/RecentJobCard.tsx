@@ -1,6 +1,8 @@
 import UserIcon from '@/assets/SuperAdmin/users.svg';
 import EyeIcon from '@/assets/SuperAdmin/eye.svg';
 import { JobPost } from '@/types/admin-auth-slice';
+import { useNavigate } from 'react-router-dom';
+
 
 
 interface RecentJobCardProps {
@@ -15,6 +17,7 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
     const date = new Date(isoDate);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+   
     
     // Calculate time differences
     const intervals = {
@@ -44,6 +47,8 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
   const applicantCount = data?.applicant_count ?? 23;
   const viewCount = data?.view_count ?? 1236;
 
+  const navigate = useNavigate();
+
   return (
     <div className='w-full px-[24px] py-[18px] rounded-xl border border-bg-hr'>
       <div className='flex justify-between items-center'>
@@ -70,7 +75,9 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
         </div>
 
         <div className='w-[102px]'>
-          <button className='bg-[#0481EF] w-full py-[4px] text-[12px] font-semibold rounded-md text-[#FFFFFF] shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] hover:shadow-none transition-shadow'>
+          <button
+          onClick={()=>{navigate(`/admin/dashboard/allJobs`)}}
+          className='bg-[#0481EF] w-full py-[4px] text-[12px] font-semibold rounded-md text-[#FFFFFF] shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] hover:shadow-none transition-shadow'>
             View Details
           </button>
         </div>

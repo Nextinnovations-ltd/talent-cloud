@@ -1,22 +1,16 @@
-import SvgPencil from "@/assets/svgs/SvgPencil";
-import SvgTrash from "@/assets/svgs/SvgTrash";
 import AboutJob from "@/components/common/ApplyJob/AboutJob";
 import { JobInfoGrid } from "@/components/common/ApplyJob/JobInfoGrid";
 import { SkillsSection } from "@/components/common/ApplyJob/SkillsSection";
-import BackButton from "@/components/common/BackButton";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetOrganizationDetailByAdminQuery } from "@/services/slices/adminSlice";
 import { useGetDetailJobApplyCardQuery } from "@/services/slices/jobApplySlice";
-import { Users } from "lucide-react";
-import { useNavigate, useParams } from 'react-router-dom';
-import AllJobsAction from "./AllJobsActions";
+import {  useParams } from 'react-router-dom';
 import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
 
 const AllJobsDetails = () => {
 
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const {
         data,
@@ -46,9 +40,9 @@ const AllJobsDetails = () => {
 
 
     return (
-        <div className="mt-10 lg:mt-0 py-[44px]  rounded sticky top-[190px]  self-start">
+        <div className="mt-10">
             {/* <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"></div> */}
-            <JobCandidatesInfoHeader side="preview"/>
+            <JobCandidatesInfoHeader id={id} side="preview"/>
             <ScrollArea className="p-[30px] px-[70px] relative">
 
 

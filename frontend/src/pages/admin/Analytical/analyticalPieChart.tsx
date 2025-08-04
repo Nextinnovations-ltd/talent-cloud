@@ -52,18 +52,32 @@ function AnalyticalPieChart({ data, loading }: { data: JobSeekerCountResponse | 
     const totalJobs = data?.data?.total_job_posts ?? defaultData.total_job_posts
 
     return (
-        <Card className="flex border-none shadow-none p-[24px] flex-col">
+        <Card className="flex border-none shadow-none p-[24px] h-[350px] flex-col">
             <h3 className="text-[20px] font-semibold pl-5 w-full">Job Overview</h3>
             <CardContent className="flex-1 px-0 pb-0">
                 {
-                    loading ? (
-                        <div className="flex gap-[48px] items-center">
-                            <Skeleton className="h-[250px] w-[250px] rounded-full" />
-                            <div className="space-y-4">
-                                <Skeleton className="h-6 w-[150px]" />
-                                <Skeleton className="h-6 w-[180px]" />
-                            </div>
-                        </div>
+ loading ? (
+    <div className="flex gap-[48px] items-center">
+        <div className="aspect-square h-[250px] flex items-center justify-center">
+            <Skeleton className="h-[150px] w-[150px] rounded-full" />
+        </div>
+        <div className="flex flex-col gap-4">
+            <div>
+                <div className="flex items-center gap-3 mb-2">
+                    <Skeleton className="w-2 h-2 rounded-full" />
+                    <Skeleton className="h-4 w-[100px]" />
+                </div>
+                <Skeleton className="h-4 w-[160px] ml-5" />
+            </div>
+            <div>
+                <div className="flex items-center gap-3 mb-2">
+                    <Skeleton className="w-2 h-2 rounded-full" />
+                    <Skeleton className="h-4 w-[100px]" />
+                </div>
+                <Skeleton className="h-4 w-[160px] ml-5" />
+            </div>
+        </div>
+    </div>
                     ) : (
                         <div className="flex gap-[48px] items-center">
                             <ChartContainer
