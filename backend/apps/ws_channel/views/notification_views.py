@@ -13,7 +13,7 @@ from apps.ws_channel.serializers import (
 )
 from services.notification.notification_service import NotificationService, NotificationHelpers
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudUserPermission
+from core.middleware.permission import TalentCloudAllPermission, TalentCloudUserPermission
 from utils.response import CustomResponse
 
 
@@ -29,12 +29,12 @@ class TestAPIView(APIView):
         )
 
 @extend_schema(tags=["Notifications"])
-class NotificationListAPIView(APIView):
+class InAppNotificationListAPIView(APIView):
     """
     List notifications for authenticated user and get unread count
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get user notifications",

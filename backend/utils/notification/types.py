@@ -20,6 +20,19 @@ class NotificationType(str, Enum):
      ADMIN_CONTENT_MODERATION = "admin_content_moderation"
      ADMIN_VIOLATION_REPORT = "admin_violation_report"
      ADMIN_MAINTENANCE = "admin_maintenance"
+     
+     # New Feature to implement
+     APPLICATION_SUBMITTED = "application_submitted"
+     APPLICATION_STATUS_CHANGED = "application_status_changed"
+     NEW_JOB_MATCHES = "new_job_matches"
+     PROFILE_COMPLETION_REMINDER = "profile_completion_reminder"
+     PROFILE_VIEWED = "profile_viewed"
+     INTERVIEW_SCHEDULED = "interview_scheduled"
+     INTERVIEW_REMINDER = "interview_reminder"
+     JOB_EXPIRING_SOON = "job_expiring_soon"
+     WEEKLY_JOB_DIGEST = "weekly_job_digest"
+     SAVED_JOB_UPDATE = "saved_job_update"
+     APPLICATION_DEADLINE_REMINDER = "application_deadline_reminder"
 
 class NotificationChannel(str, Enum):
      EMAIL = "email"

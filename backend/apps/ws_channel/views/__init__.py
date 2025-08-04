@@ -7,7 +7,7 @@ from .chat_views import UserChatListAPIView, ChatRoomInfoAPIView
 
 # Notification views
 from .notification_views import (
-    NotificationListAPIView,
+    InAppNotificationListAPIView,
     NotificationDetailAPIView,
     NotificationByChannelAPIView,
     NotificationMarkAllReadAPIView,
@@ -29,7 +29,7 @@ __all__ = [
     'ChatRoomInfoAPIView',
     
     # Notification views
-    'NotificationListAPIView',
+    'InAppNotificationListAPIView',
     'NotificationDetailAPIView',
     'NotificationByChannelAPIView',
     'NotificationMarkAllReadAPIView',
