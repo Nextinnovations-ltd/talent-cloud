@@ -44,6 +44,42 @@ export interface RelatedInfoResponse {
   };
 }
 
+export type JobPostDetails = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  status: boolean;
+  title: string;
+  specialization: string;
+  role: string;
+  job_type: string;
+  location: string;
+  work_type: string;
+  description: string;
+  responsibilities: string;
+  requirements: string;
+  offered_benefits: string;
+  salary_mode?: string;
+  salary_type: string;
+  salary_min?: string | null;
+  salary_max?: string | null;
+  is_salary_negotiable: boolean;
+  project_duration?: string;
+  skills?: string[];
+  experience_level?: string;
+  experience_years?: string;
+  salary_fixed?: string | null;
+  number_of_positions: number;
+  last_application_date: string;
+};
+
+export interface EditJobDetailResponse {
+  status: boolean;
+  message: string;
+  data: JobPostDetails;
+}
+
+
 export interface Applicant {
   applicant_id: number;
   name: string | null;
@@ -54,6 +90,7 @@ export interface Applicant {
   is_open_to_work: boolean;
   address: string | null;
   profile_image_url: string | null;
+  job_post_id:string | null
 }
 
 export interface ApplicantsApiResponse {

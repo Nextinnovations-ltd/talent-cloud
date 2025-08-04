@@ -20,10 +20,9 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
     };
 
     return (
-        <div className="w-full mb-[65px] flex gap-[40px] justify-start items-center">
+        <div className="w-full mb-[65px] flex gap-[40px] justify-between items-center">
             <BackButton className="w-[48px] h-[48px]" handleBack={handleBack} />
             <nav className="flex items-center gap-[48px]">
-                <h3>1 Hour ago</h3>
                 {side === 'preview' && (
                     <AllJobsAction onClick={() => {
                         navigation(`/admin/dashboard/allJobs/details/applicants/${id}`)
@@ -31,11 +30,12 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
                 )}
                 {side === 'applicants' && (
                     <AllJobsAction onClick={() => {
-
                         navigation(`/admin/dashboard/allJobs/${id}`)
                     }} icon={<Users />} label="View Preview" />
                 )}
-                <AllJobsAction onClick={() => { }} icon={<SvgPencil />} label="Edit Job Post" />
+                <AllJobsAction onClick={() => {
+                     navigation(`/admin/dashboard/allJobs/editJobs/${id}`)
+                }} icon={<SvgPencil />} label="Edit Job Post" />
                 <AllJobsAction onClick={() => { }} icon={<SvgTrash />} label="Delete Post" />
             </nav>
         </div>

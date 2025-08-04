@@ -19,26 +19,13 @@ const CandidateApplicantsInfo = ({ totalApplicants,sortBy,setSortBy }: { totalAp
             <div className="flex items-center mb-[20px] justify-between">
                 <AllJobsTabs myJobTotal={totalApplicants} title="All Applicants" />
                 <div className="flex items-center justify-center pr-[24px] gap-4">
-
-                    <SortsButtons
-                        title="Applicants"
-                        field="applicant_count"
-                        currentSort={sortBy}
-                        onToggle={setSortBy}
-                    />
-                    <SortsButtons
-                        title="View"
-                        field="view_count"
-                        currentSort={sortBy}
-                        onToggle={setSortBy}
-                    />
                     <SortsButtons
                         title="Date"
                         field="created_at"
                         currentSort={sortBy}
                         onToggle={setSortBy}
                     />
-                </div>
+                </div> 
             </div>
         </div>
     )

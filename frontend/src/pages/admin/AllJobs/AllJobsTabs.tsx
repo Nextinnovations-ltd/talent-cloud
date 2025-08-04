@@ -1,22 +1,31 @@
-
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AllJobTabsProps {
-  myJobTotal:number,
-  title?:string
+  myJobTotal: number;
+  title?: string;
 }
 
- const AllJobsTabs = ({myJobTotal,title = "Jobs"}:AllJobTabsProps) => {
+const AllJobsTabs = ({ myJobTotal, title = "Jobs" }: AllJobTabsProps) => {
   return (
-    <Tabs defaultValue="account" className="w-[400px] ">
-    <TabsList className="h-[50px]">
-      <TabsTrigger className=" px-[24px] py-[10px] " value="account">{title}
+    <Tabs defaultValue="account" className="w-[400px]">
+      <TabsList className="h-[50px]">
+        <TabsTrigger className="px-[24px] py-[10px]" value="account">
+          {title}
+          <span className="w-[32px] ml-[8px] h-[32px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">
+            {myJobTotal}
+          </span>
+        </TabsTrigger>
 
-     <span className="w-[32px] ml-[8px] h-[32px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">{myJobTotal}</span>
-
-      </TabsTrigger>
-    </TabsList>
-  </Tabs>)
-}
+        {/* ✅ New tab added below */}
+        <TabsTrigger className="px-[24px] py-[10px]" value="another">
+        Shortlist
+          <span className="w-[32px] ml-[8px] h-[32px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">
+            0
+          </span>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  );
+};
 
 export default AllJobsTabs;

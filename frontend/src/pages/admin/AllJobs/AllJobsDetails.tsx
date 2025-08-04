@@ -5,12 +5,14 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetOrganizationDetailByAdminQuery } from "@/services/slices/adminSlice";
 import { useGetDetailJobApplyCardQuery } from "@/services/slices/jobApplySlice";
-import {  useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
+import { useState } from "react";
 
 const AllJobsDetails = () => {
 
     const { id } = useParams();
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     const {
         data,
@@ -42,14 +44,27 @@ const AllJobsDetails = () => {
     return (
         <div className="mt-10">
             {/* <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"></div> */}
-            <JobCandidatesInfoHeader id={id} side="preview"/>
+            <JobCandidatesInfoHeader id={id} side="preview" />
             <ScrollArea className="p-[30px] px-[70px] relative">
 
 
                 <h3 className="text-[32px] mb-[20px] font-semibold">{jobDetails?.title || ""}</h3>
 
                 <div className="flex items-center mb-[48px] text-[24px] gap-[16px] text-[#575757]">
-                    <img width={67} height={67} className="rounded-full" src={OrgData?.data?.image_url} />
+                    {!isImageLoaded && (
+                        <div
+                            className="mb-[14px] rounded-full bg-gray-200 animate-pulse"
+                            style={{ width: 64, height: 64 }}
+                        />
+                    )}
+                    <img
+                        width={67}
+                        height={67}
+                        className="mb-[14px] rounded-full"
+                        src={OrgData?.data?.image_url}
+                        onLoad={() => setIsImageLoaded(true)}
+                        alt="Company Logo"
+                    />
                     <h3>{OrgData?.data?.name}</h3>
 
                 </div>

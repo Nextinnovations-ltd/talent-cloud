@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 const AdminSideBar = () => {
   
   return (
-    <div className='w-[263px] bg-white border-r-[#F2F2F2] h-[100svh] border flex flex-col fixed left-0 top-0 z-20 bg-white'>
+    <div className='w-[263px]  border-r-[#F2F2F2] h-[100svh] border flex flex-col fixed left-0 top-0 z-20 bg-white'>
       {/* Fixed top section */}
       <div className="pt-[34px]">
         <AdminLogo/>

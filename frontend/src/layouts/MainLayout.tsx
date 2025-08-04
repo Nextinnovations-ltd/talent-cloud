@@ -1,5 +1,4 @@
 import { NavBar } from "@/components/nav/NavBar";
-import ProtectRoute from "@/middleware/ProtectRoute";
 import { Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';

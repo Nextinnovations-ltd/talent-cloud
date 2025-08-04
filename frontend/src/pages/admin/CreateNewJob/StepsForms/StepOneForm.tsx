@@ -6,7 +6,7 @@ import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/Return
 import { JOB_TYPE_DATA, WORK_TYPE_DATA } from "@/constants/workTypeConstants";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { UseFormReturn } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useRef } from 'react';
 import { StepOneFormType } from "../CreateNewJob";
 
 
@@ -19,6 +19,8 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
   const selectedSpecializationId = formMethods.watch("specialization");
   const selectedRole = formMethods.watch("role");
 
+  const firstRender = useRef(true);
+
   const { data: SPECIALIZATIONDATA = [], isLoading: isSpecializationLoading } =
     useFormattedSpecialization();
 
@@ -27,18 +29,22 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
     isLoading: isRoleFetching
   } = useFormattedRolesBySpecializationList(selectedSpecializationId);
 
-  // Clear role when specialization changes
   useEffect(() => {
+    // Skip on first render
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+  
     if (selectedSpecializationId) {
-      // Check if current role exists in the new role data
-      const isValidRole = ROLEDATA.some(role => role.value?.toLocaleString() === selectedRole);
+      const isValidRole = ROLEDATA.some(role => role.value?.toString() === selectedRole);
       if (!isValidRole) {
         formMethods.setValue('role', '');
       }
     } else {
       formMethods.setValue('role', '');
     }
-  }, [selectedSpecializationId, ROLEDATA]);
+  }, [selectedSpecializationId, ROLEDATA, selectedRole, formMethods]);
 
   return (
     <div className="max-w-[700px]">
