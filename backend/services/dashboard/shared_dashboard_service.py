@@ -1,5 +1,6 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from rest_framework.exceptions import NotFound
+from django.db import transaction
 from django.db.models import Sum
 
 class SharedDashboardService:
@@ -50,6 +51,20 @@ class SharedDashboardService:
      def get_shortlisted_applicants_by_specific_job_queryset(company, job_id):
           return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.SHORTLISTED)
      
+     @staticmethod
+     def perform_shortlisting_applicant(company, job_id, applicant_id):
+          with transaction.atomic():
+               try:
+                    application = JobApplication.objects.get(
+                         job_post__id=job_id,
+                         job_seeker__id=applicant_id
+                    )
+                    
+                    application.application_status = ApplicationStatus.SHORTLISTED
+                    application.save()
+               except JobApplication.DoesNotExist:
+                    raise NotFound("Application not found.")
+
      @staticmethod
      def _get_applicants_queryset(company, job_id=None, application_status=None):
           # Get all applicants from all job posts
