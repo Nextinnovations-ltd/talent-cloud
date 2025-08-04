@@ -6,6 +6,7 @@ with support for multiple channels (email, websocket, push) and dynamic configur
 
 This is the main notification service that should be used throughout the application.
 """
+from datetime import timedelta
 from typing import List, Optional, Dict, Any
 from enum import Enum
 from rest_framework.exceptions import NotFound
@@ -18,6 +19,7 @@ from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -599,7 +601,7 @@ class NotificationHelpers:
             target_roles=[NotificationTarget.SUPERADMIN, NotificationTarget.ADMIN],
             template_context=context,
             company_id=company.id,
-            channel=NotificationChannel.EMAIL
+            channel=NotificationChannel.BOTH
         )
     
     @staticmethod
@@ -621,6 +623,186 @@ class NotificationHelpers:
             company_id=company.id,
             template_context=context
         )
+    
+    # region Yet to implement
+    
+    @staticmethod
+    def notify_application_submitted(job, job_seeker, application):
+        """Notify job seeker when their application is submitted successfully"""
+        context = {
+            'job_title': job.title,
+            'job_id': job.id,
+            'company_name': job.company.name,
+            'applied_date': application.created_at,
+            'application_id': application.id,
+            'job_url': f'http://localhost:5173/jobs/{job.id}',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.APPLICATION_SUBMITTED,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+
+    @staticmethod
+    def notify_application_status_changed(application, new_status):
+        """Notify job seeker when application status changes"""
+        context = {
+            'job_title': application.job_post.title,
+            'company_name': application.job_post.company.name,
+            'application_status': new_status,
+            'status_changed_date': timezone.now(),
+            'application_id': application.id,
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.APPLICATION_STATUS_CHANGED,
+            target_users=[application.job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+    @staticmethod
+    def notify_new_job_matches(job_seeker, matched_jobs):
+        """Notify job seeker about new job matches based on their profile"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'matched_jobs_count': len(matched_jobs),
+            'matched_jobs': [
+                {
+                    'title': job.title,
+                    'company': job.company.name,
+                    'location': job.location,
+                    'job_url': f'http://localhost:5173/jobs/{job.id}'
+                } for job in matched_jobs[:5]  # Limit to 5 jobs
+            ],
+            'view_all_url': 'http://localhost:5173/jobs',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.NEW_JOB_MATCHES,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+    
+    @staticmethod
+    def notify_profile_completion_reminder(job_seeker, missing_fields):
+        """Remind job seeker to complete their profile"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'missing_fields': missing_fields,
+            'profile_completion_percentage': job_seeker.get_profile_completion_percentage(),
+            'profile_url': 'http://localhost:5173/profile',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.PROFILE_COMPLETION_REMINDER,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.EMAIL  # Email only for reminders
+        )
+
+    @staticmethod
+    def notify_profile_viewed(job_seeker, company, view_count=1):
+        """Notify job seeker when their profile is viewed by employers"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'company_name': company.name,
+            'view_count': view_count,
+            'profile_url': 'http://localhost:5173/profile',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.PROFILE_VIEWED,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.WEBSOCKET  # In-app only to avoid spam
+        )
+    
+    @staticmethod
+    def notify_interview_scheduled(job_seeker, interview):
+        """Notify job seeker about scheduled interview"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'job_title': interview.application.job_post.title,
+            'company_name': interview.application.job_post.company.name,
+            'interview_date': interview.scheduled_date,
+            'interview_time': interview.scheduled_time,
+            'interview_type': interview.interview_type,
+            'interview_location': interview.location,
+            'interviewer_name': interview.interviewer.name if interview.interviewer else '',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.INTERVIEW_SCHEDULED,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+
+    @staticmethod
+    def notify_interview_reminder(job_seeker, interview, hours_before=24):
+        """Send interview reminder"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'job_title': interview.application.job_post.title,
+            'company_name': interview.application.job_post.company.name,
+            'interview_date': interview.scheduled_date,
+            'interview_time': interview.scheduled_time,
+            'hours_until_interview': hours_before,
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.INTERVIEW_REMINDER,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.BOTH,
+            override_is_urgent=True
+        )
+    
+    @staticmethod
+    def notify_job_expiring_soon(job_seeker, saved_jobs):
+        """Notify about saved jobs expiring soon"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'expiring_jobs': [
+                {
+                    'title': job.title,
+                    'company': job.company.name,
+                    'expires_in_days': (job.deadline - timezone.now().date()).days,
+                    'job_url': f'http://localhost:5173/jobs/{job.id}'
+                } for job in saved_jobs
+            ],
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.JOB_EXPIRING_SOON,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.EMAIL
+        )
+
+    @staticmethod
+    def notify_weekly_job_digest(job_seeker, new_jobs_count, trending_jobs):
+        """Send weekly digest of new jobs"""
+        context = {
+            'job_seeker_name': job_seeker.name,
+            'new_jobs_count': new_jobs_count,
+            'trending_jobs': trending_jobs[:5],
+            'week_start': (timezone.now() - timedelta(days=7)).strftime('%B %d'),
+            'week_end': timezone.now().strftime('%B %d, %Y'),
+            'browse_jobs_url': 'http://localhost:5173/jobs',
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.WEEKLY_JOB_DIGEST,
+            target_users=[job_seeker.user],
+            template_context=context,
+            channel=NotificationChannel.EMAIL
+        )
+
+    # endregion Yet to implement
     
     @staticmethod
     def notify_company_registration(company):
