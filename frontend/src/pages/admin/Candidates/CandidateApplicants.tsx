@@ -1,8 +1,11 @@
 import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 import CandidateApplicantsInfo from "./CandidateApplicantsInfo";
-import { useParams } from "react-router-dom";
 import { useGetAllJobsApplicantsQuery } from "@/services/slices/adminSlice";
 import { useState } from "react";
+import {  useParams } from 'react-router-dom';
+import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
+import { PageInitialLoading } from "@/components/common/PageInitialLoading";
+
 
 interface Applicant {
   applicant_id: number;
@@ -29,27 +32,30 @@ const CandidateApplicants = () => {
 
 
 
+
   return (
-    <div className="py-[44px]">
-      <CandidateApplicantsInfo sortBy={sortBy} setSortBy={setSortBy} totalApplicants={applicants?.length} />
+    <div className="mt-10">
+      <JobCandidatesInfoHeader side="applicants"/>
+    
+        <CandidateApplicantsInfo sortBy={sortBy} setSortBy={setSortBy} totalApplicants={applicants?.length} />
+        {isLoading ? (
+          <p className="text-center mt-10"><PageInitialLoading/></p>
+        ) : applicants.length === 0 ? (
+          <p className="text-center mt-10 text-gray-500">No applicants found.</p>
+        ) : (
+          <table className="w-full table-fixed text-left border-collapse">
+            <tbody>
+              {
+                applicants.map((applicant) => (
+                  <ApplicantsJobItems key={applicant.applicant_id} data={applicant} />
+                ))
+              }
+            </tbody>
+          </table>
 
-      {isLoading ? (
-        <p className="text-center mt-10">Loading applicants...</p>
-      ) : applicants.length === 0 ? (
-        <p className="text-center mt-10 text-gray-500">No applicants found.</p>
-      ) : (
-        <table className="w-full table-fixed text-left border-collapse">
-          <tbody>
-            {
-              applicants.map((applicant) => (
-                <ApplicantsJobItems key={applicant.applicant_id} data={applicant} />
-              ))
-            }
-          </tbody>
-        </table>
 
-
-      )}
+        )}
+      
     </div>
   );
 };

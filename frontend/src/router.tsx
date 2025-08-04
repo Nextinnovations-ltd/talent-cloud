@@ -48,6 +48,7 @@ import ExpiredJobs from "./pages/admin/ExpiredJobs/ExpiredJobs";
 import CreateNewJob from "./pages/admin/CreateNewJob/CreateNewJob";
 import AllJobsDetails from "./pages/admin/AllJobs/AllJobsDetails";
 import CandidateApplicants from "./pages/admin/Candidates/CandidateApplicants";
+import AllJobsDetailsApplications from "./pages/admin/AllJobs/AllJobsDetailsApplications";
 
 
 
@@ -257,6 +258,10 @@ export const router = createBrowserRouter([
           },{
             path:adminRoutesMap?.allJobsDetails?.path,
             element:<AllJobsDetails/>
+          },
+          {
+            path:adminRoutesMap?.allJobsDetailApplicants?.path,
+            element:<CandidateApplicants/>
           }
         ]
 

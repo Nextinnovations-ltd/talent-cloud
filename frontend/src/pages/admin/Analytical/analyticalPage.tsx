@@ -12,7 +12,6 @@ const AnalyticalPage = () => {
       <h3 className="text-[24px] font-semibold">Welcome Back!</h3>
       <p className="text-[#575757]">Here What happening with yours jobs</p>
       <AnalyticalCharts />
-
       <div className="flex gap-5 mt-[38px] ">
         <RecentJobsLists/>
         <RecentApplications/>

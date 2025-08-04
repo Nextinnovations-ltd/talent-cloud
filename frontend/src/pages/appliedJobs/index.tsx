@@ -43,7 +43,7 @@ export const AppliedJobs = () => {
   }
 
   return (
-    <div className="container mx-auto  py-[40px] ">
+    <div className="container mx-auto  py-[50px] ">
       <div className={clsx('flex items-center  gap-[48px]',jobs.length === 0 ? 'mb-[40px]' : 'mb-[100px]')}>
       <BackButton handleBack={handleAction}/><h3 className="text-[24px] font-semibold">Applied Jobs</h3>
       </div>

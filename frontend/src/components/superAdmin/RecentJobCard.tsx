@@ -1,18 +1,10 @@
 import UserIcon from '@/assets/SuperAdmin/users.svg';
 import EyeIcon from '@/assets/SuperAdmin/eye.svg';
+import { JobPost } from '@/types/admin-auth-slice';
 
-interface JobCardData {
-  id?: number;
-  title?: string;
-  specialization_name?: string;
-  company?: string;
-  posted_date?: string; // ISO format like "2025-07-29T04:02:32.664335Z"
-  applicant_count?: number;
-  view_count?: number;
-}
 
 interface RecentJobCardProps {
-  data?: JobCardData;
+  data?: JobPost;
 }
 
 const RecentJobCard = ({ data }: RecentJobCardProps) => {

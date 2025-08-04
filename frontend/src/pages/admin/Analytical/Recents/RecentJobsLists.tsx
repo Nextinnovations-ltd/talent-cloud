@@ -7,12 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
  const RecentJobsLists = () => {
 
   const { data, isLoading } = useGetAllRecentJobsListQuery();
-  const recentApplicants = data?.data?.results;
-
-  console.log(data)
+  const recentApplicants = data?.data;
 
 
-  console.log({recentApplicants})
   
   return (
     <div className="w-1/2 flex flex-col gap-5">

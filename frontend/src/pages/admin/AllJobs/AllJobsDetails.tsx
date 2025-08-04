@@ -11,6 +11,7 @@ import { useGetDetailJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { Users } from "lucide-react";
 import { useNavigate, useParams } from 'react-router-dom';
 import AllJobsAction from "./AllJobsActions";
+import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
 
 const AllJobsDetails = () => {
 
@@ -47,14 +48,7 @@ const AllJobsDetails = () => {
     return (
         <div className="mt-10 lg:mt-0 py-[44px]  rounded sticky top-[190px]  self-start">
             {/* <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"></div> */}
-            <div className=" w-full flex justify-between items-center">
-                <BackButton handleBack={() => navigate('/admin/dashboard/allJobs')} />
-                <nav className="flex items-center gap-5 ">
-                  <AllJobsAction onClick={()=>{navigate(`/admin/dashboard/candidates/applicants/${id}`)}} icon={<Users/>} label="View Applicants"/>
-                  <AllJobsAction onClick={()=>{}} icon={<SvgPencil/>} label="Edit Job Post"/>
-                  <AllJobsAction onClick={()=>{}} icon={<SvgTrash/>} label="Delete Post"/>
-                </nav>
-            </div>
+            <JobCandidatesInfoHeader side="preview"/>
             <ScrollArea className="p-[30px] px-[70px] relative">
 
 

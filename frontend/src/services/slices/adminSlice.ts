@@ -1,9 +1,5 @@
-import { ApplicantsApiResponse, JobPostResponse, RelatedInfoResponse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, JobPostResponse, JobSeekerCountResponse, RecentJobPost, RelatedInfoResponse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
-
-
-
-
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -27,13 +23,17 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             query: (data) =>
               `/dashboard/ni/job-posts/${data?.id}/applicants/?ordering=${data?.ordering}`,
           }),
-         getAllRecentJobsList:builder.query<JobPostResponse,void>({
+        getAllRecentJobsList:builder.query<RecentJobPost,void>({
             query:()=> `/dashboard/ni/job-posts/recent/`
         }),
         getAllRecentApplicantsList:builder.query<ApplicantsApiResponse,void>({
             query:()=>`/dashboard/ni/applicants/recent/`
-        })
+        }),
+        getDashboardAnalytics:builder.query<JobSeekerCountResponse,void>({
+            query:()=> `/dashboard/ni/statistics`
+        }),
+
     })
 });
 
-export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery,useGetAllJobsApplicantsQuery,useGetAllRecentApplicantsListQuery,useGetAllRecentJobsListQuery } = extendedAdminSlice
+export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery,useGetAllJobsApplicantsQuery,useGetAllRecentApplicantsListQuery,useGetAllRecentJobsListQuery,useGetDashboardAnalyticsQuery } = extendedAdminSlice

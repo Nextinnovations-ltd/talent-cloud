@@ -21,6 +21,10 @@ const adminRoutesMap = {
         path:'allJobs/:id',
         name:"AllJobsDetails"
     },
+    allJobsDetailApplicants:{
+        path:'alljobs/details/applicants/:id',
+        name:"AllJobsApplicants"
+    },
     activeJobs:{
         path:'activeJobs',
         name:'ActiveJobs'
