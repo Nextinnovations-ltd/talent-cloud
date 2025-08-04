@@ -6,6 +6,7 @@ from apps.ni_dashboard.views import (
     JobSeekerStatisticsAPIView, 
     NIAdminListAPIView,
     NIJobSpecificApplicantListAPIView,
+    NIJobSpecificShortlistedApplicantListAPIView,
     RecentApplicantListAPIView,
     RecentJobListAPIView, 
     SuperAdminPairingAPIView,
@@ -27,6 +28,7 @@ urlpatterns = [
     path('dashboard/ni/applicants/recent/', RecentApplicantListAPIView.as_view(), name='recent-applicant-list'),
     path('dashboard/ni/applicants/', NIApplicantListAPIView.as_view(), name='applicant-list'),
     path('dashboard/ni/job-posts/<int:job_id>/applicants/', NIJobSpecificApplicantListAPIView.as_view(), name='ni-all-job-post-list'),
+    path('dashboard/ni/job-posts/<int:job_id>/applicants/shortlisted', NIJobSpecificShortlistedApplicantListAPIView.as_view(), name='ni-shortlisted-job-post-list'),
     
     # Job Posts
     path('dashboard/ni/job-posts/all/', AllJobPostListAPIView.as_view(), name='ni-all-job-post-list'),

@@ -217,8 +217,8 @@ class JobApplicationSerializer(ModelSerializer):
      
      class Meta:
           model = JobApplication
-          fields = ['id', 'job_post', 'job_seeker', 'status', 'cover_letter', 'application_resume_url', 'created_at']
-          read_only_fields = ['id', 'job_post', 'job_seeker', 'status', 'created_at']
+          fields = ['id', 'job_post', 'job_seeker', 'application_status', 'cover_letter', 'application_resume_url', 'created_at']
+          read_only_fields = ['id', 'job_post', 'job_seeker', 'application_status', 'created_at']
 
 class JobApplicationCreateSerializer(ModelSerializer):
      class Meta:
@@ -231,9 +231,9 @@ class JobApplicationCreateSerializer(ModelSerializer):
 class JobApplicationStatusUpdateSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
-          fields = ['status']
+          fields = ['application_status']
 
-     def validate_status(self, value):
+     def validate_application_status(self, value):
           valid_statuses = [choice[0] for choice in ApplicationStatus.choices]
           
           if value not in valid_statuses:

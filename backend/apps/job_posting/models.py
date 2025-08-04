@@ -206,9 +206,9 @@ class ApplicationStatus(models.TextChoices):
     UNDER_REVIEW = 'under_review', 'Under Review'
     SHORTLISTED = 'shortlisted', 'Shortlisted'
     INTERVIEW_SCHEDULED = 'interview_scheduled', 'Interview Scheduled'
-    OFFER_EXTENDED = 'offer_extended', 'Offer Extended'
     ACCEPTED = 'accepted', 'Accepted'
     REJECTED = 'rejected', 'Rejected'
+    OFFER_EXTENDED = 'offer_extended', 'Offer Extended'
     WITHDRAWN = 'withdrawn', 'Withdrawn'
 
 class JobApplication(TimeStampModel):
@@ -227,7 +227,7 @@ class JobApplication(TimeStampModel):
           related_name='applications',
           help_text="The job seeker who submitted the application."
      )
-     status = models.CharField(
+     application_status = models.CharField(
           max_length=50,
           choices=ApplicationStatus.choices,
           default=ApplicationStatus.APPLIED,

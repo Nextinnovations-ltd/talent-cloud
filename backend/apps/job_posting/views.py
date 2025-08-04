@@ -558,9 +558,9 @@ class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
      
      def perform_update(self, serializer):
           """Override to add notification for status updates"""
-          old_status = self.get_object().status
+          old_status = self.get_object().application_status
           application = serializer.save()
-          new_status = application.status
+          new_status = application.application_status
           
           # Send notification if status changed
           if old_status != new_status:
@@ -568,19 +568,19 @@ class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
                     from services.notification.notification_service import NotificationService
                     from utils.notification.types import NotificationChannel, NotificationType
                     
-                    NotificationService.send_notification(
-                         title="Application Status Update",
-                         message=f"Your application for '{application.job_post.title}' has been updated to: {new_status}",
-                         notification_type=NotificationType.JOB_APPLIED,  # Could add APPLICATION_STATUS_UPDATE type
-                         target_users=[application.job_seeker.user],
-                         destination_url=f"/my-applications/{application.id}",
-                         channel=NotificationChannel.BOTH,
-                         email_context={
-                              'application': application,
-                              'old_status': old_status,
-                              'new_status': new_status
-                         }
-                    )
+                    # NotificationService.send_notification(
+                    #      title="Application Status Update",
+                    #      message=f"Your application for '{application.job_post.title}' has been updated to: {new_status}",
+                    #      notification_type=NotificationType.JOB_APPLIED,  # Could add APPLICATION_STATUS_UPDATE type
+                    #      target_users=[application.job_seeker.user],
+                    #      destination_url=f"/my-applications/{application.id}",
+                    #      channel=NotificationChannel.BOTH,
+                    #      email_context={
+                    #           'application': application,
+                    #           'old_status': old_status,
+                    #           'new_status': new_status
+                    #      }
+                    # )
                     logger.info(f"Application status update notification sent for application: {application.id}")
                except Exception as e:
                     logger.error(f"Failed to send application status update notification: {str(e)}")
