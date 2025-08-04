@@ -7,12 +7,12 @@ import AnalyticalPieChart from "./analyticalPieChart";
 
 const AnalyticalCharts = () => {
 
-    const { data: dashboardAnalytics,isLoading:isAnalyticsLoading } = useGetDashboardAnalyticsQuery();
+    const { data: dashboardAnalytics, isLoading: isAnalyticsLoading } = useGetDashboardAnalyticsQuery();
 
     return (
         <div className="mt-[66px] flex w-full gap-5">
             <div className="w-[50%]">
-                    <AnalyticalChartsCardsContainer loading={isAnalyticsLoading} data={dashboardAnalytics} />
+                <AnalyticalChartsCardsContainer loading={isAnalyticsLoading} data={dashboardAnalytics} />
                 <div className="border border-[#CBD5E1] rounded-[12px] mt-4">
                     <AnalyticalPieChart loading={isAnalyticsLoading} data={dashboardAnalytics} />
                 </div>
