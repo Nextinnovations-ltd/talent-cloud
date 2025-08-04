@@ -27,6 +27,7 @@ class JobPostDashboardSerializer(serializers.ModelSerializer):
 
 class ApplicantDashboardSerializer(serializers.Serializer):
      applicant_id = serializers.IntegerField(source='job_seeker.user.id')
+     application_status = serializers.CharField()
      job_post_id = serializers.IntegerField(source='job_post.id')
      name = serializers.CharField(source='job_seeker.name')
      phone_number = serializers.SerializerMethodField()

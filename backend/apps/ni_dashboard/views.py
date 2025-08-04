@@ -8,7 +8,7 @@ from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
 from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer
 from apps.job_posting.models import StatusChoices
-from utils.view.custom_api_views import CustomListAPIView
+from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
@@ -106,6 +106,24 @@ class NIJobSpecificShortlistedApplicantListAPIView(CustomListAPIView):
      
           return queryset
 
+@extend_schema(tags=["NI Dashboard"])
+class ApplicantShortListAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     
+     def post(self, request, job_id, applicant_id):
+          company = SharedDashboardService.get_company(self.request.user)
+
+          if not job_id or not applicant_id:
+               return Response(
+                    CustomResponse.error('Job ID and Applicant ID are required.'), 
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+
+          SharedDashboardService.perform_shortlisting_applicant(company, job_id, applicant_id)
+          
+          return Response(CustomResponse.success('Successfully shortlisted the applicant.'), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["NI Dashboard"])
 class RecentApplicantListAPIView(CustomListAPIView):
