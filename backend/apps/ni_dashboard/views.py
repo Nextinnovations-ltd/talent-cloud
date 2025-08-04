@@ -92,6 +92,22 @@ class NIJobSpecificApplicantListAPIView(CustomListAPIView):
           return queryset
 
 @extend_schema(tags=["NI Dashboard"])
+class NIJobSpecificShortlistedApplicantListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     
+     def get_queryset(self):
+          company = SharedDashboardService.get_company(self.request.user)
+
+          job_id = self.kwargs.get("job_id")
+          
+          queryset = SharedDashboardService.get_shortlisted_applicants_by_specific_job_queryset(company, job_id)
+     
+          return queryset
+
+
+@extend_schema(tags=["NI Dashboard"])
 class RecentApplicantListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]

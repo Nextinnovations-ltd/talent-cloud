@@ -478,7 +478,7 @@ class NotificationService:
             return notification
         except Notification.DoesNotExist:
             logger.error(f"Notification {notification_id} not found for user {user_id}")
-            return None
+            raise NotFound("Notification not found.")
     
     @staticmethod
     def mark_all_as_read(user_id: int) -> int:

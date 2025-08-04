@@ -1,4 +1,4 @@
-from apps.job_posting.models import JobApplication, JobPost, StatusChoices
+from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from rest_framework.exceptions import NotFound
 from django.db.models import Sum
 
@@ -47,7 +47,11 @@ class SharedDashboardService:
           return SharedDashboardService._get_applicants_queryset(company, job_id)
           
      @staticmethod
-     def _get_applicants_queryset(company, job_id=None):
+     def get_shortlisted_applicants_by_specific_job_queryset(company, job_id):
+          return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.SHORTLISTED)
+     
+     @staticmethod
+     def _get_applicants_queryset(company, job_id=None, application_status=None):
           # Get all applicants from all job posts
           
           filters = {
@@ -56,6 +60,9 @@ class SharedDashboardService:
           
           if job_id:
                filters['job_post__id'] = job_id
+               
+          if application_status:
+               filters['application_status'] = application_status
                
           return JobApplication.objects.filter(
                **filters

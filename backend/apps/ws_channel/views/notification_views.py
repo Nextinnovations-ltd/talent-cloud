@@ -103,7 +103,7 @@ class NotificationDetailAPIView(APIView):
     Retrieve, update, or delete a specific notification
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     def get_object(self, notification_id, user_id):
         """Get notification ensuring it belongs to the authenticated user"""
@@ -231,7 +231,7 @@ class NotificationMarkAllReadAPIView(APIView):
     Mark all notifications as read for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Mark all notifications as read",
@@ -259,7 +259,7 @@ class NotificationMarkAsReadByIDAPIView(APIView):
     Mark all notifications as read for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Mark a single notification as read by its ID",
@@ -286,7 +286,7 @@ class NotificationUnreadCountAPIView(APIView):
     Get unread notification count for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get unread notification count",
@@ -315,7 +315,7 @@ class NotificationByChannelAPIView(APIView):
     Get notifications filtered by specific channel
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get notifications by channel",
