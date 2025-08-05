@@ -1,6 +1,6 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
-from services.notification.notification_service import NotificationHelpers, NotificationService
-from rest_framework.exceptions import NotFound
+from services.notification.notification_service import NotificationHelpers
+from rest_framework.exceptions import NotFound, ValidationError
 from django.db import transaction
 from django.db.models import Sum
 
@@ -53,13 +53,17 @@ class SharedDashboardService:
           return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.SHORTLISTED)
      
      @staticmethod
-     def perform_shortlisting_applicant(company, job_id, applicant_id):
+     def perform_shortlisting_applicant(job_id, applicant_id):
           with transaction.atomic():
                try:
                     application = JobApplication.objects.get(
                          job_post__id=job_id,
                          job_seeker__id=applicant_id
                     )
+                    
+                    if application.application_status == ApplicationStatus.SHORTLISTED:
+                         raise ValidationError("Application is already in shortlisted state.")
+
                     
                     new_status = ApplicationStatus.SHORTLISTED
                     
@@ -72,6 +76,34 @@ class SharedDashboardService:
                     )
                except JobApplication.DoesNotExist:
                     raise NotFound("Application not found.")
+
+     @staticmethod
+     def remove_from_shortlist(job_id, applicant_id):
+          """
+          Remove candidate from shortlist with proper tracking
+          """
+          with transaction.atomic():
+               try:
+                    application = JobApplication.objects.get(
+                         job_post__id=job_id,
+                         job_seeker__id=applicant_id
+                    )
+
+                    
+                    if application.application_status != ApplicationStatus.REJECTED:
+                         raise ValidationError("Application is already in reject state")
+                    elif application.application_status != ApplicationStatus.SHORTLISTED:
+                         raise ValidationError("Application must be in 'shortlisted' status to remove from shortlist")
+
+                    application.application_status = ApplicationStatus.REJECTED
+                    application.save()
+                    
+                    NotificationHelpers.notify_application_rejected(
+                         application
+                    )
+               except JobApplication.DoesNotExist:
+                    raise NotFound("Application not found.")
+
 
      @staticmethod
      def _get_applicants_queryset(company, job_id=None, application_status=None):
