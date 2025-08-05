@@ -323,7 +323,7 @@ class NotificationService:
 
     # region Notification Sending Utilities
     @staticmethod
-    def _resolve_target_user_list(roles=[], users=[], emails=[], company_id=None) -> List[TalentCloudUser]:
+    def _resolve_target_user_list(roles=[], target_users=[], emails=[], company_id=None) -> List[TalentCloudUser]:
         # Collect all target users
         users = set()
         
@@ -333,8 +333,8 @@ class NotificationService:
             users.update(role_users)
         
         # Add specific users
-        if users:
-            users.update(users)
+        if target_users:
+            users.update(target_users)
         
         # Add users by email
         if emails:
@@ -649,19 +649,48 @@ class NotificationHelpers:
     def notify_application_status_changed(application, new_status):
         """Notify job seeker when application status changes"""
         context = {
+            'user_name': application.job_seeker.name or application.job_seeker.email,
+            'platform_name': 'TalentCloud',
             'job_title': application.job_post.title,
-            'company_name': application.job_post.company.name,
-            'application_status': new_status,
+            'company_name': application.job_post.get_company_name,
+            'application_status': new_status.lower(),  # Ensure lowercase
             'status_changed_date': timezone.now(),
+            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
             'application_id': application.id,
         }
         
+        target_user = application.job_seeker.user
+        
         return NotificationService.send_notification_with_template(
-            notification_type=NotificationType.APPLICATION_STATUS_CHANGED,
-            target_users=[application.job_seeker.user],
+            notification_type=NotificationType.APPLICATION_SHORTLISTED,
+            target_users=[target_user],
             template_context=context,
             channel=NotificationChannel.BOTH
         )
+        
+    @staticmethod
+    def notify_application_shortlisted(application, new_status):
+        """Notify job seeker when application shortlist"""
+        context = {
+            'user_name': application.job_seeker.name or application.job_seeker.email,
+            'platform_name': 'TalentCloud',
+            'job_title': application.job_post.title,
+            'company_name': application.job_post.get_company_name,
+            'application_status': new_status,
+            'status_changed_date': timezone.now(),
+            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
+            'application_id': application.id,
+        }
+        
+        target_user = application.job_seeker.user
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.APPLICATION_SHORTLISTED,
+            target_users=[target_user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+    
     @staticmethod
     def notify_new_job_matches(job_seeker, matched_jobs):
         """Notify job seeker about new job matches based on their profile"""
