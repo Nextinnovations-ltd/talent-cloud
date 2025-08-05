@@ -692,6 +692,28 @@ class NotificationHelpers:
         )
     
     @staticmethod
+    def notify_application_rejected(application):
+        """Notify job seeker when application shortlist"""
+        context = {
+            'user_name': application.job_seeker.name or application.job_seeker.email,
+            'platform_name': 'TalentCloud',
+            'job_title': application.job_post.title,
+            'company_name': application.job_post.get_company_name,
+            'status_changed_date': timezone.now(),
+            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
+            'application_id': application.id,
+        }
+        
+        target_user = application.job_seeker.user
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.APPLICATION_REJECTED,
+            target_users=[target_user],
+            template_context=context,
+            channel=NotificationChannel.BOTH
+        )
+    
+    @staticmethod
     def notify_new_job_matches(job_seeker, matched_jobs):
         """Notify job seeker about new job matches based on their profile"""
         context = {

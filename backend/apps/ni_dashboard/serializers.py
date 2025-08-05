@@ -38,6 +38,22 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      profile_image_url = serializers.CharField(source='job_seeker.profile_image_url')
      applied_date = serializers.DateTimeField(source='created_at', read_only=True)
      
+     class Meta:
+          model = JobApplication
+          fields = [
+               'applicant_id',
+               'application_status',
+               'job_post_id',
+               'name',
+               'phone_number',
+               'email',
+               'role',
+               'is_open_to_work',
+               'address',
+               'profile_image_url',
+               'applied_date',
+          ]
+     
      def get_phone_number(self, obj: JobApplication):
           job_seeker: JobSeeker = obj.job_seeker.user
           
