@@ -90,13 +90,14 @@ export interface Applicant {
   is_open_to_work: boolean;
   address: string | null;
   profile_image_url: string | null;
-  job_post_id:string | null
+  job_post_id:string | null;
+  application_status: string | null
 }
 
 export interface ApplicantsApiResponse {
   status: boolean;
   message: string;
-  data: Applicant[];
+  data: PaginatedData<Applicant>;
 }
 
 export interface JobSeekerCountResponse  {

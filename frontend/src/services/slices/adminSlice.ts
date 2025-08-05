@@ -10,43 +10,46 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
                 body: JSON.stringify(credentials)
             })
         }),
-        getJobDetailOfEdit:builder.query<EditJobDetailResponse,unknown>({
-            query:(id)=> `/job-posts/edit/${id}/`
+        getJobDetailOfEdit: builder.query<EditJobDetailResponse, unknown>({
+            query: (id) => `/job-posts/edit/${id}/`
         }),
-        getOrganizationDetailByAdmin:builder.query<RelatedInfoResponse,void>({
-            query:()=> '/related-company-info/'
+        getOrganizationDetailByAdmin: builder.query<RelatedInfoResponse, void>({
+            query: () => '/related-company-info/'
         }),
-        getNIAllJobsByAdmin:builder.query<JobPostResponse,{ page: string | number, ordering?: string }>({
-            query:(data)=> `/dashboard/ni/job-posts/all/?page=${data?.page}&ordering=${data?.ordering}`
+        getNIAllJobsByAdmin: builder.query<JobPostResponse, { page: string | number, ordering?: string }>({
+            query: (data) => `/dashboard/ni/job-posts/all/?page=${data?.page}&ordering=${data?.ordering}`
         }),
-        getAllApplicants:builder.query<unknown,unknown>({
-            query:(id)=>`/job-posts/${id}/applications/`
+        getAllApplicants: builder.query<unknown, unknown>({
+            query: (id) => `/job-posts/${id}/applications/`
         }),
         getAllJobsApplicants: builder.query<ApplicantsApiResponse, { id: string | number, ordering?: string }>({
             query: (data) =>
-              `/dashboard/ni/job-posts/${data?.id}/applicants/?ordering=${data?.ordering}`,
-          }),
-        getAllRecentJobsList:builder.query<RecentJobPost,void>({
-            query:()=> `/dashboard/ni/job-posts/recent/`
+                `/dashboard/ni/job-posts/${data?.id}/applicants/?ordering=${data?.ordering}`,
         }),
-        getAllRecentApplicantsList:builder.query<ApplicantsApiResponse,void>({
-            query:()=>`/dashboard/ni/applicants/recent/`
+        getAllRecentJobsList: builder.query<RecentJobPost, void>({
+            query: () => `/dashboard/ni/job-posts/recent/`
         }),
-        getDashboardAnalytics:builder.query<JobSeekerCountResponse,void>({
-            query:()=> `/dashboard/ni/statistics`
+        getAllRecentApplicantsList: builder.query<ApplicantsApiResponse, void>({
+            query: () => `/dashboard/ni/applicants/recent/`
+        }),
+        getDashboardAnalytics: builder.query<JobSeekerCountResponse, void>({
+            query: () => `/dashboard/ni/statistics`
         }),
 
         //short list
         shortListApplicants: builder.mutation<unknown, { jobId: string | number; applicantId: string | number }>({
             query: ({ jobId, applicantId }) => ({
-              url: `/dashboard/ni/job-posts/${jobId}/applicants/${applicantId}/shortlist/`,
-              method: "POST", // or PATCH depending on backend
+                url: `/dashboard/ni/job-posts/${jobId}/applicants/${applicantId}/shortlist/`,
+                method: "POST", // or PATCH depending on backend
             }),
-          }),
-          
-        
+            invalidatesTags: ['NotificationList']
+        }),
+        getAllShortListApplicants: builder.query<ApplicantsApiResponse, unknown>({
+            query: (id) => `/dashboard/ni/job-posts/${id}/applicants/shortlisted`,
+            providesTags: ['NotificationList']
+        })
 
     })
 });
 
-export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery,useGetAllJobsApplicantsQuery,useGetAllRecentApplicantsListQuery,useGetAllRecentJobsListQuery,useGetDashboardAnalyticsQuery,useGetJobDetailOfEditQuery,useShortListApplicantsMutation } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery } = extendedAdminSlice

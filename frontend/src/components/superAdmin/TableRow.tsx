@@ -9,22 +9,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
-import {  useParams } from 'react-router-dom';
 import { useShortListApplicantsMutation } from "@/services/slices/adminSlice";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-
-
-interface Applicant {
-  applicant_id: number;
-  name: string | null;
-  phone_number: string | null;
-  email: string;
-  role: string | null;
-  is_open_to_work: boolean;
-  address: string | null;
-  profile_image_url: string | null;
-  job_post_id:string |null;
-}
+import { Applicant } from "@/types/admin-auth-slice";
 
 interface ApplicantsJobItemsProps {
   data: Applicant;
@@ -32,31 +19,26 @@ interface ApplicantsJobItemsProps {
 
 const ApplicantsJobItems = ({ data }: ApplicantsJobItemsProps) => {
 
-  const { id } = useParams<{ id: string }>() as { id: string };
-  const [shortListApplicant, { isLoading, error }] = useShortListApplicantsMutation();
+  const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
 
     try {
-      await shortListApplicant({
+     const response = await shortListApplicant({
         jobId: data.job_post_id,
         applicantId: data.applicant_id,
       }).unwrap();
       console.log("Applicant successfully shortlisted.");
+      console.log(response)
+      console.log("Applicant successfully shortlisted.");
+
     } catch (err) {
       console.error("Error shortlisting applicant:", err);
     }
   };
-
-
-
-
   return (
     <tr className="h-[96px] border-b border-[#CBD5E1] align-middle">
-      {/* <td className="w-[5%] min-w-[40px] max-w-[60px] px-2 align-middle">
-        <Checkbox className="w-5 mb-2 h-5 border border-[#CBD5E1] bg-[#FFF]" />
-      </td> */}
 
       <td className="w-[25%] min-w-[200px] max-w-[300px] px-2 align-middle">
         <div className="flex gap-2 items-center">

@@ -1,60 +1,55 @@
-import ApplicantsJobItems from "@/components/superAdmin/TableRow";
+
 import CandidateApplicantsInfo from "./CandidateApplicantsInfo";
-import { useGetAllJobsApplicantsQuery } from "@/services/slices/adminSlice";
-import { useState } from "react";
-import {  useParams } from 'react-router-dom';
+import { useGetAllJobsApplicantsQuery, useGetAllShortListApplicantsQuery } from "@/services/slices/adminSlice";
+import { useParams } from 'react-router-dom';
 import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
-import { PageInitialLoading } from "@/components/common/PageInitialLoading";
+import AllApplicantsView from "./AllApplicantsView";
+import ShortlistApplicantsView from "./ShortlistApplicantsView";
+import { Applicant } from "@/types/admin-auth-slice";
+import { useState } from "react";
 
-
-interface Applicant {
-  applicant_id: number;
-  name: string | null;
-  phone_number: string | null;
-  email: string;
-  role: string | null;
-  is_open_to_work: boolean;
-  address: string | null;
-  profile_image_url: string | null;
-  job_post_id:string | null;
-}
 
 const CandidateApplicants = () => {
   const { id } = useParams<{ id: string }>() as { id: string };
 
   const [sortBy, setSortBy] = useState("-created_at");
-  const { data, isLoading } = useGetAllJobsApplicantsQuery(
+  const { data } = useGetAllJobsApplicantsQuery(
     { id, ordering: sortBy },
     { skip: !id, refetchOnMountOrArgChange: true }, // Prevents calling API with undefined id,
   );
 
+  const {data:SHORTLISTDATA} = useGetAllShortListApplicantsQuery(id);
+
+
+
+
+  const [tabValues, setTabValues] = useState('account');
 
   const applicants: Applicant[] = data?.data?.results ?? [];
+
+  const shortApplicants: Applicant[] = SHORTLISTDATA?.data?.results ?? [];
+
 
 
   return (
     <div className="mt-3">
-      <JobCandidatesInfoHeader side="applicants" id={id}/>
-    
-        <CandidateApplicantsInfo sortBy={sortBy} setSortBy={setSortBy} totalApplicants={applicants?.length} />
-        {isLoading ? (
-          <p className="text-center mt-10"><PageInitialLoading/></p>
-        ) : applicants.length === 0 ? (
-          <p className="text-center mt-10 text-gray-500">No applicants found.</p>
-        ) : (
-          <table className="w-full table-fixed text-left border-collapse">
-            <tbody>
-              {
-                applicants.map((applicant) => (
-                  <ApplicantsJobItems key={applicant.applicant_id} data={applicant} />
-                ))
-              }
-            </tbody>
-          </table>
+      <JobCandidatesInfoHeader side="applicants" id={id} />
 
+      <CandidateApplicantsInfo 
+       sortBy={sortBy} 
+       setSortBy={setSortBy} 
+       totalApplicants={applicants?.length} 
+       totalShortApplicants={shortApplicants?.length}
+       tabValues={tabValues} 
+       setTabValues={setTabValues} />
 
-        )}
-      
+      {tabValues === "account" && (
+        <AllApplicantsView applicants={applicants} />
+      )}
+
+      {tabValues === "shortlists" && (
+        <ShortlistApplicantsView applicants={shortApplicants} />
+      )}
     </div>
   );
 };
