@@ -9,6 +9,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
+import {  useParams } from 'react-router-dom';
+import { useShortListApplicantsMutation } from "@/services/slices/adminSlice";
+import { LoadingSpinner } from "../common/LoadingSpinner";
+
 
 interface Applicant {
   applicant_id: number;
@@ -19,6 +23,7 @@ interface Applicant {
   is_open_to_work: boolean;
   address: string | null;
   profile_image_url: string | null;
+  job_post_id:string |null;
 }
 
 interface ApplicantsJobItemsProps {
@@ -27,11 +32,22 @@ interface ApplicantsJobItemsProps {
 
 const ApplicantsJobItems = ({ data }: ApplicantsJobItemsProps) => {
 
+  const { id } = useParams<{ id: string }>() as { id: string };
+  const [shortListApplicant, { isLoading, error }] = useShortListApplicantsMutation();
 
-  const handleAddToShortList = ()=>{
- 
-    console.log("Hello this is me")
-  }
+  const handleAddToShortList = async () => {
+    if (!data?.job_post_id || !data?.applicant_id) return;
+
+    try {
+      await shortListApplicant({
+        jobId: data.job_post_id,
+        applicantId: data.applicant_id,
+      }).unwrap();
+      console.log("Applicant successfully shortlisted.");
+    } catch (err) {
+      console.error("Error shortlisting applicant:", err);
+    }
+  };
 
 
 
@@ -96,7 +112,9 @@ const ApplicantsJobItems = ({ data }: ApplicantsJobItemsProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem className="cursor-pointer" onSelect={handleAddToShortList}>
-              Add to shortlist
+              {
+                isLoading ? <LoadingSpinner/> : 'Add to shortlist '
+              }
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

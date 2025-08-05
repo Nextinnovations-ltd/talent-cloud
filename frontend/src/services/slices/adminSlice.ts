@@ -35,9 +35,18 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         getDashboardAnalytics:builder.query<JobSeekerCountResponse,void>({
             query:()=> `/dashboard/ni/statistics`
         }),
+
+        //short list
+        shortListApplicants: builder.mutation<unknown, { jobId: string | number; applicantId: string | number }>({
+            query: ({ jobId, applicantId }) => ({
+              url: `/dashboard/ni/job-posts/${jobId}/applicants/${applicantId}/shortlist/`,
+              method: "POST", // or PATCH depending on backend
+            }),
+          }),
+          
         
 
     })
 });
 
-export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery,useGetAllJobsApplicantsQuery,useGetAllRecentApplicantsListQuery,useGetAllRecentJobsListQuery,useGetDashboardAnalyticsQuery,useGetJobDetailOfEditQuery } = extendedAdminSlice
+export const { useCreateJobMutation,useGetOrganizationDetailByAdminQuery,useGetNIAllJobsByAdminQuery,useGetAllApplicantsQuery,useGetAllJobsApplicantsQuery,useGetAllRecentApplicantsListQuery,useGetAllRecentJobsListQuery,useGetDashboardAnalyticsQuery,useGetJobDetailOfEditQuery,useShortListApplicantsMutation } = extendedAdminSlice

@@ -42,29 +42,29 @@ const AllJobsDetails = () => {
 
 
     return (
-        <div className="mt-10">
+        <div className="mt-3">
             {/* <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"></div> */}
             <JobCandidatesInfoHeader id={id} side="preview" />
-            <ScrollArea className="p-[30px] px-[70px] relative">
+            <ScrollArea className=" px-[70px] relative">
 
 
                 <h3 className="text-[32px] mb-[20px] font-semibold">{jobDetails?.title || ""}</h3>
 
                 <div className="flex items-center mb-[48px] text-[24px] gap-[16px] text-[#575757]">
-                    {!isImageLoaded && (
+                    {!isImageLoaded ? (
                         <div
                             className="mb-[14px] rounded-full bg-gray-200 animate-pulse"
                             style={{ width: 64, height: 64 }}
                         />
-                    )}
-                    <img
+                    ) : <img
                         width={67}
                         height={67}
                         className="mb-[14px] rounded-full"
                         src={OrgData?.data?.image_url}
                         onLoad={() => setIsImageLoaded(true)}
                         alt="Company Logo"
-                    />
+                    />}
+
                     <h3>{OrgData?.data?.name}</h3>
 
                 </div>

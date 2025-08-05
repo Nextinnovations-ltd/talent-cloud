@@ -32,13 +32,8 @@ const CandidateApplicants = () => {
   const applicants: Applicant[] = data?.data?.results ?? [];
 
 
-
-
-
-
-
   return (
-    <div className="mt-10">
+    <div className="mt-3">
       <JobCandidatesInfoHeader side="applicants" id={id}/>
     
         <CandidateApplicantsInfo sortBy={sortBy} setSortBy={setSortBy} totalApplicants={applicants?.length} />

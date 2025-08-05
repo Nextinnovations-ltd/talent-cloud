@@ -43,7 +43,7 @@ const AllJobsEditJobs = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className="mt-3">
       <JobCandidatesInfoHeader id={id} side="preview" />
       <StepOneForm formMethods={stepOneForm} />
     </div>
