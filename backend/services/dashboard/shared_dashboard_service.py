@@ -1,4 +1,5 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
+from services.notification.notification_service import NotificationHelpers, NotificationService
 from rest_framework.exceptions import NotFound
 from django.db import transaction
 from django.db.models import Sum
@@ -60,8 +61,15 @@ class SharedDashboardService:
                          job_seeker__id=applicant_id
                     )
                     
-                    application.application_status = ApplicationStatus.SHORTLISTED
+                    new_status = ApplicationStatus.SHORTLISTED
+                    
+                    application.application_status = new_status
                     application.save()
+                    
+                    NotificationHelpers.notify_application_shortlisted(
+                         application,
+                         new_status
+                    )
                except JobApplication.DoesNotExist:
                     raise NotFound("Application not found.")
 
