@@ -14,7 +14,8 @@ from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
 from apps.ws_channel.serializers import NotificationListSerializer
-from apps.job_posting.models import JobPost
+from apps.job_posting.models import JobApplication, JobPost
+from apps.job_seekers.models import JobSeeker
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
@@ -627,16 +628,19 @@ class NotificationHelpers:
     # region Yet to implement
     
     @staticmethod
-    def notify_application_submitted(job, job_seeker, application):
+    def notify_application_submitted(job: JobPost, application: JobApplication):
         """Notify job seeker when their application is submitted successfully"""
+        
         context = {
             'job_title': job.title,
             'job_id': job.id,
-            'company_name': job.company.name,
+            'company_name': job.get_company_name,
             'applied_date': application.created_at,
             'application_id': application.id,
             'job_url': f'http://localhost:5173/jobs/{job.id}',
         }
+        
+        job_seeker: JobSeeker = application.job_seeker
         
         return NotificationService.send_notification_with_template(
             notification_type=NotificationType.APPLICATION_SUBMITTED,

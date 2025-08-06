@@ -89,7 +89,6 @@ class SharedDashboardService:
                          job_seeker__id=applicant_id
                     )
 
-                    
                     if application.application_status == ApplicationStatus.REJECTED:
                          raise ValidationError("Application is already in reject state")
                     elif application.application_status != ApplicationStatus.SHORTLISTED:
