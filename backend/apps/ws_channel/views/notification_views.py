@@ -417,7 +417,7 @@ class TestMailNoti(APIView):
     def get(self, request):
         from services.notification.notification_service import NotificationService, NotificationHelpers
         from apps.ws_channel.models import NotificationTemplate
-        from backend.utils.notification.types import NotificationTarget
+        from utils.notification.types import NotificationTarget
         from utils.notification.types import NotificationType, NotificationChannel
 
         context = {
