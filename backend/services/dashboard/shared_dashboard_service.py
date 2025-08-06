@@ -53,6 +53,11 @@ class SharedDashboardService:
           return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.SHORTLISTED)
      
      @staticmethod
+     def get_rejected_applicants_by_specific_job_queryset(company, job_id):
+          return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.REJECTED)
+     
+     
+     @staticmethod
      def perform_shortlisting_applicant(job_id, applicant_id):
           with transaction.atomic():
                try:

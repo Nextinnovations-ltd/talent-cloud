@@ -129,11 +129,37 @@ class NIJobSpecificShortlistedApplicantListAPIView(CustomListAPIView):
           return queryset
 
 @extend_schema(tags=["NI Dashboard"])
+class NIJobSpecificRejectedApplicantListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = ApplicantDashboardSerializer
+     filter_backends = [OrderingFilter]
+     ordering_fields = [
+          'created_at',                    # Applied date
+          # 'job_seeker__name',             # Applicant name
+          # 'job_seeker__email',            # Applicant email  
+          # 'application_status',           # Application status
+          # 'job_seeker__user__created_at', # User registration date
+          # 'job_post__title',              # Job title
+          # 'job_seeker__is_open_to_work',  # Open to work status
+     ]
+     ordering = ['-created_at']
+     
+     def get_queryset(self):
+          company = SharedDashboardService.get_company(self.request.user)
+
+          job_id = self.kwargs.get("job_id")
+          
+          queryset = SharedDashboardService.get_rejected_applicants_by_specific_job_queryset(company, job_id)
+     
+          return queryset
+
+@extend_schema(tags=["NI Dashboard"])
 class ApplicantShortListAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = ApplicantDashboardSerializer
-     
+
      def post(self, request, job_id, applicant_id):
           if not job_id or not applicant_id:
                return Response(
@@ -160,7 +186,7 @@ class ApplicantRejectAPIView(APIView):
 
           SharedDashboardService.remove_from_shortlist(job_id, applicant_id)
           
-          return Response(CustomResponse.success('Successfully shortlisted the applicant.'), status=status.HTTP_200_OK)
+          return Response(CustomResponse.success('Successfully rejected the applicant.'), status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=["NI Dashboard"])
