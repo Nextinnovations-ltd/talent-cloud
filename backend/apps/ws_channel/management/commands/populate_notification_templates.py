@@ -89,25 +89,25 @@ class Command(BaseCommand):
             
             NotificationType.APPLICATION_SUBMITTED: {
                 NotificationChannel.EMAIL: {
-                    'subject_template': 'Application Submitted for {job_title}',
+                    'subject_template': 'Application Update for {job_title} Position',
                     'email_template_name': 'emails/application_status/submitted.html',
                     'title_template': 'Application Submitted',
-                    'message_template': 'Your application for "{job_title}" has been submitted.',
+                    'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
                     'destination_url_template': '/my-applications/{application_id}',
                 },
                 NotificationChannel.WEBSOCKET: {
                     'title_template': 'Application Submitted',
-                    'message_template': 'Your application for "{job_title}" has been submitted.',
+                    'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
                     'destination_url_template': '/my-applications/{application_id}',
                 }
             },
             
             NotificationType.APPLICATION_SHORTLISTED: {
                 NotificationChannel.EMAIL: {
-                    'subject_template': 'Application Update for {job_title}',
+                    'subject_template': 'Application Update for {job_title} Position',
                     'email_template_name': 'emails/application_status/shortlisted.html',
                     'title_template': 'Application Update',
-                    'message_template': 'Your application for "{job_title}" has been shortlisted.',
+                    'message_template': 'Your application for {job_title} at {company_name} has been shortlisted.',
                     'destination_url_template': '/my-applications/{application_id}',
                 },
                 NotificationChannel.WEBSOCKET: {
@@ -119,7 +119,7 @@ class Command(BaseCommand):
             
             NotificationType.APPLICATION_REJECTED: {
                 NotificationChannel.EMAIL: {
-                    'subject_template': 'Application Update for {job_title}',
+                    'subject_template': 'Application Update for {job_title} Position',
                     'email_template_name': 'emails/application_status/rejected.html',
                     'title_template': 'Application Update',
                     'message_template': 'Your application for {job_title} at {company_name} has been rejected.',
