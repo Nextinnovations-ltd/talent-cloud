@@ -12,6 +12,7 @@ import {
 import { useShortListApplicantsMutation } from "@/services/slices/adminSlice";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { Applicant } from "@/types/admin-auth-slice";
+import useToast from "@/hooks/use-toast";
 
 interface ApplicantsJobItemsProps {
   data: Applicant;
@@ -20,6 +21,8 @@ interface ApplicantsJobItemsProps {
 const ApplicantsJobItems = ({ data }: ApplicantsJobItemsProps) => {
 
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
+  const { showNotification } = useToast();
+
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
@@ -29,9 +32,13 @@ const ApplicantsJobItems = ({ data }: ApplicantsJobItemsProps) => {
         jobId: data.job_post_id,
         applicantId: data.applicant_id,
       }).unwrap();
-      console.log("Applicant successfully shortlisted.");
-      console.log(response)
-      console.log("Applicant successfully shortlisted.");
+
+      if (response?.status) {
+        showNotification({
+          message:response.message,
+          type: "success",
+        });
+      }; 
 
     } catch (err) {
       console.error("Error shortlisting applicant:", err);

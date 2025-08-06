@@ -1,4 +1,4 @@
-import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCountResponse, RecentJobPost, RelatedInfoResponse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCountResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
@@ -10,6 +10,13 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
                 body: JSON.stringify(credentials)
             })
         }),
+        updateJob: builder.mutation<EditJobDetailResponse, { id: string; credentials: unknown }>({
+            query: ({ id, credentials }) => ({
+              url: `/job-posts/${id}/`,
+              method: 'PATCH',
+              body: JSON.stringify(credentials)
+            }),
+          }),
         getJobDetailOfEdit: builder.query<EditJobDetailResponse, unknown>({
             query: (id) => `/job-posts/edit/${id}/`
         }),
@@ -26,6 +33,10 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             query: (data) =>
                 `/dashboard/ni/job-posts/${data?.id}/applicants/?ordering=${data?.ordering}`,
         }),
+        getAllShortListApplicants: builder.query<ApplicantsApiResponse,  { id: string | number, ordering?: string }>({
+            query: (data) => `/dashboard/ni/job-posts/${data.id}/applicants/shortlisted/?ordering=${data?.ordering}`,
+            providesTags: ['NotificationList']
+        }),
         getAllRecentJobsList: builder.query<RecentJobPost, void>({
             query: () => `/dashboard/ni/job-posts/recent/`
         }),
@@ -37,19 +48,16 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         }),
 
         //short list
-        shortListApplicants: builder.mutation<unknown, { jobId: string | number; applicantId: string | number }>({
+        shortListApplicants: builder.mutation<ShortListMutationResopnse, { jobId: string | number; applicantId: string | number }>({
             query: ({ jobId, applicantId }) => ({
                 url: `/dashboard/ni/job-posts/${jobId}/applicants/${applicantId}/shortlist/`,
                 method: "POST", // or PATCH depending on backend
             }),
             invalidatesTags: ['NotificationList']
         }),
-        getAllShortListApplicants: builder.query<ApplicantsApiResponse, unknown>({
-            query: (id) => `/dashboard/ni/job-posts/${id}/applicants/shortlisted`,
-            providesTags: ['NotificationList']
-        })
+       
 
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation } = extendedAdminSlice

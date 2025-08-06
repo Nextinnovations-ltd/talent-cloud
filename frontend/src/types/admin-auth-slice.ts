@@ -13,7 +13,7 @@ export interface JobPost {
   view_count: number;
   posted_date: string; // ISO datetime string
   deadline_date: string; // ISO date string
-  job_post_id:string;
+  job_post_id: string;
 }
 
 export interface PaginatedData<T> {
@@ -83,14 +83,14 @@ export interface EditJobDetailResponse {
 export interface Applicant {
   applicant_id: number;
   name: string | null;
-  applied_date:string;
+  applied_date: string;
   phone_number: string | null;
   email: string;
   role: string | null;
   is_open_to_work: boolean;
   address: string | null;
   profile_image_url: string | null;
-  job_post_id:string | null;
+  job_post_id: string | null;
   application_status: string | null
 }
 
@@ -100,7 +100,7 @@ export interface ApplicantsApiResponse {
   data: PaginatedData<Applicant>;
 }
 
-export interface JobSeekerCountResponse  {
+export interface JobSeekerCountResponse {
   status: boolean;
   message: string;
   data: {
@@ -126,3 +126,9 @@ export interface JobSeekerCountResponse  {
     verified_user_count: number;
   };
 };
+
+export interface ShortListMutationResopnse {
+  status: boolean;
+  message: string;
+  data: null
+}

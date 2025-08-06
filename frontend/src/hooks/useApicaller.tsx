@@ -11,9 +11,6 @@ export const useApiCaller = (apiMutation: any) => {
       try {
         const response = await callApi(payload);
 
-        console.log(response)
-
-
         const message =
           response?.message || response?.data?.message || response?.error?.data.message|| "Operation completed";
 

@@ -2,7 +2,7 @@ import {  useGetRolesBySpecializationsOptionsQuery } from "@/services/slices/opt
 import { useMemo } from "react";
 
 export const useFormattedRolesBySpecializationList = (specializationId: number | string) => {
-  const { data, isLoading } = useGetRolesBySpecializationsOptionsQuery({ id: specializationId });
+  const { data, isLoading,isSuccess } = useGetRolesBySpecializationsOptionsQuery({ id: specializationId },{skip:!specializationId});
 
 
   const formattedData = useMemo(() => {
@@ -13,5 +13,5 @@ export const useFormattedRolesBySpecializationList = (specializationId: number |
     }));
   }, [data]);
 
-  return { data: formattedData, isLoading };
+  return { data: formattedData, isLoading,isSuccess };
 };
