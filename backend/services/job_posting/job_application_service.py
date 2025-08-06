@@ -2,12 +2,12 @@ from amqp import NotFound
 from django.shortcuts import get_object_or_404
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.job_seekers.models import JobSeeker
+from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from django.http import Http404
 import logging
 
-from backend.services.notification.notification_service import NotificationHelpers
 
 logger = logging.getLogger(__name__)
 
