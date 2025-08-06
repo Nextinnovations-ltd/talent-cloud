@@ -90,7 +90,7 @@ class SharedDashboardService:
                     )
 
                     
-                    if application.application_status != ApplicationStatus.REJECTED:
+                    if application.application_status == ApplicationStatus.REJECTED:
                          raise ValidationError("Application is already in reject state")
                     elif application.application_status != ApplicationStatus.SHORTLISTED:
                          raise ValidationError("Application must be in 'shortlisted' status to remove from shortlist")

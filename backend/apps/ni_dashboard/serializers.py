@@ -55,15 +55,16 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           ]
      
      def get_phone_number(self, obj: JobApplication):
-          job_seeker: JobSeeker = obj.job_seeker.user
+          user = obj.job_seeker.user
           
-          if job_seeker.country_code and job_seeker.phone_number:
-               return f"{job_seeker.country_code}{job_seeker.phone_number}"
+          if user.country_code and user.phone_number:
+               return f"{user.country_code}{user.phone_number}"
 
           return None
      
      def get_role(self, obj: JobApplication):
-          occupation = getattr(obj, 'occupation', None)
+          job_seeker: JobSeeker = obj.job_seeker
+          occupation = getattr(job_seeker, 'occupation', None)
           return getattr(occupation.role, 'name', None) if occupation and occupation.role else None
           
      def get_address(self, obj: JobApplication):
