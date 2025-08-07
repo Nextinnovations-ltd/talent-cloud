@@ -32,12 +32,27 @@ class Command(BaseCommand):
                     'subject_template': 'New Job Posted: {job_title}',
                     'email_template_name': 'emails/job_posted.html',
                     'title_template': 'New Job Posted',
-                    'message_template': 'A new job "{job_title}" has been posted by {company_name}.',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
                     'destination_url_template': '/jobs/{job_id}',
                 },
                 NotificationChannel.WEBSOCKET: {
                     'title_template': 'New Job Posted',
-                    'message_template': 'A new job "{job_title}" has been posted by {company_name}.',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
+                    'destination_url_template': '/jobs/{job_id}',
+                }
+            },
+            
+            NotificationType.ADMIN_JOB_POSTING: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'New Job Posted: {job_title}',
+                    'email_template_name': 'emails/job_posted.html',
+                    'title_template': 'New Job Posted',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
+                    'destination_url_template': '/jobs/{job_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'New Job Posted',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
                     'destination_url_template': '/jobs/{job_id}',
                 }
             },
