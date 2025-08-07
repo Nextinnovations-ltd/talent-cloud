@@ -1,26 +1,24 @@
 
-import React, { useEffect, useRef,useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import TalentCloudLogoImg  from "@/assets/JobPortal/Vector (3).svg";
-import exploreArrow from "@/assets/JobPortal/Group 2292.svg";
+import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import cloud1 from "@/assets/JobPortal/cloud1.png";
 import cloud2 from "@/assets/JobPortal/cloud2.png";
 import cloud3 from "@/assets/JobPortal/cloud3.png";
 import cloud4 from "@/assets/JobPortal/cloud4.png";
 import cloud5 from "@/assets/JobPortal/cloud5.png";
- import Matter from 'matter-js';
-import p5 from 'p5'; 
-import  CheckCircle from '@/assets/check-circle.svg'
-import upArrow from '@/assets/JobPortal/arrow-up-left.svg'
+import Matter from 'matter-js';
+import p5 from 'p5';
+import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
-import CommonButton from '../commonBtn/button'
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
+  const navigate = useNavigate();
   const wordsToDisplay = [
-    'Frontend Developer', 'Python Developer', 'UI UX Designer', 
-    'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
+    'Frontend Developer', 'Python Developer', 'UI UX Designer',
+    'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer', 'QA Engineers'
   ];
 
   const containerRef = useRef(null);
@@ -93,7 +91,7 @@ const HeroSection = () => {
         };
 
         function initPhysics() {
-          engine = Matter.Engine.create({ 
+          engine = Matter.Engine.create({
             render: { visible: false },
             gravity: { x: 0, y: 0.5 },
             enableSleeping: true,
@@ -106,8 +104,8 @@ const HeroSection = () => {
           runner = Matter.Runner.create({ delta: 1000 / 60, isFixed: true });
           Matter.Runner.run(runner, engine);
 
-          const boundaryOptions = { 
-            isStatic: true, 
+          const boundaryOptions = {
+            isStatic: true,
             render: { visible: false },
             restitution: 0.7,
             friction: 0.05,
@@ -118,19 +116,19 @@ const HeroSection = () => {
           const boundaryGroup = Matter.Body.nextGroup(true);
 
           Matter.World.add(engine.world, [
-            Matter.Bodies.rectangle(width / 2, height + thickness/2, width + thickness*2, thickness, {
+            Matter.Bodies.rectangle(width / 2, height + thickness / 2, width + thickness * 2, thickness, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(width / 2, -thickness/2, width + thickness*2, thickness, {
+            Matter.Bodies.rectangle(width / 2, -thickness / 2, width + thickness * 2, thickness, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(-thickness/2, height / 2, thickness, height + thickness*2, {
+            Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height + thickness * 2, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(width + thickness/2, height / 2, thickness, height + thickness*2, {
+            Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height + thickness * 2, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             })
@@ -147,7 +145,7 @@ const HeroSection = () => {
             }
           });
 
-          Matter.Events.on(mouseConstraint, "mousedown", function(event) {
+          Matter.Events.on(mouseConstraint, "mousedown", function (event) {
             if (event.source.body) {
               isDragging = true;
               matterContainerRef.current.classList.remove('grab');
@@ -155,32 +153,32 @@ const HeroSection = () => {
             }
           });
 
-          Matter.Events.on(mouseConstraint, "mouseup", function() {
+          Matter.Events.on(mouseConstraint, "mouseup", function () {
             isDragging = false;
             matterContainerRef.current.classList.remove('grabbing');
             matterContainerRef.current.classList.add('grab');
           });
 
-          Matter.Events.on(mouseConstraint, "enddrag", function() {
+          Matter.Events.on(mouseConstraint, "enddrag", function () {
             isDragging = false;
             matterContainerRef.current.classList.remove('grabbing');
             matterContainerRef.current.classList.add('grab');
           });
 
-          Matter.Events.on(mouseConstraint, "afterUpdate", function() {
+          Matter.Events.on(mouseConstraint, "afterUpdate", function () {
             if (mouseConstraint.body) {
               const body = mouseConstraint.body;
               const halfWidth = body.bounds.max.x - body.bounds.min.x;
               const halfHeight = body.bounds.max.y - body.bounds.min.y;
 
-              const newX = Math.max(halfWidth/2, Math.min(width - halfWidth/2, body.position.x));
-              const newY = Math.max(halfHeight/2, Math.min(height - halfHeight/2, body.position.y));
+              const newX = Math.max(halfWidth / 2, Math.min(width - halfWidth / 2, body.position.x));
+              const newY = Math.max(halfHeight / 2, Math.min(height - halfHeight / 2, body.position.y));
 
               if (newX !== body.position.x || newY !== body.position.y) {
                 Matter.Body.setPosition(body, { x: newX, y: newY });
-                Matter.Body.setVelocity(body, { 
-                  x: body.velocity.x * 0.7, 
-                  y: body.velocity.y * 0.7 
+                Matter.Body.setVelocity(body, {
+                  x: body.velocity.x * 0.7,
+                  y: body.velocity.y * 0.7
                 });
               }
             }
@@ -188,7 +186,7 @@ const HeroSection = () => {
 
           Matter.World.add(engine.world, mouseConstraint);
 
-          Matter.Events.on(engine, 'beforeUpdate', function() {
+          Matter.Events.on(engine, 'beforeUpdate', function () {
             const bodies = Matter.Composite.allBodies(engine.world);
             const correctionFactor = 0.3;
 
@@ -200,10 +198,10 @@ const HeroSection = () => {
               const halfHeight = (body.bounds.max.y - body.bounds.min.y) / 2;
 
               const correction = {
-                x: Math.max(0, halfWidth - body.position.x) - 
-                   Math.max(0, body.position.x - (width - halfWidth)),
-                y: Math.max(0, halfHeight - body.position.y) - 
-                   Math.max(0, body.position.y - (height - halfHeight))
+                x: Math.max(0, halfWidth - body.position.x) -
+                  Math.max(0, body.position.x - (width - halfWidth)),
+                y: Math.max(0, halfHeight - body.position.y) -
+                  Math.max(0, body.position.y - (height - halfHeight))
               };
 
               if (correction.x !== 0 || correction.y !== 0) {
@@ -255,8 +253,8 @@ const HeroSection = () => {
             this.h = h;
 
             this.isSpecial = [
-              'Frontend Developer', 
-              'Python Developer', 
+              'Frontend Developer',
+              'Python Developer',
               'UI UX Designer'
             ].includes(txt);
 
@@ -384,40 +382,37 @@ const HeroSection = () => {
                 </Button>
             {/* responsive toggle */}
             <div
-                  className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
-                  onClick={() => setNavIsOpen(!navIsOpen)}
-                >
-                  {/* Top bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "rotate-45 translate-y-[4px]" : ""
-                    }`}
-                  ></div>
+              className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
+              onClick={() => setNavIsOpen(!navIsOpen)}
+            >
+              {/* Top bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "rotate-45 translate-y-[4px]" : ""
+                  }`}
+              ></div>
 
-                  {/* Middle bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "opacity-0" : ""
-                    }`}
-                  ></div>
+              {/* Middle bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "opacity-0" : ""
+                  }`}
+              ></div>
 
-                  {/* Bottom bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
-                    }`}
-                  ></div>
+              {/* Bottom bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
+                  }`}
+              ></div>
             </div>
           </nav>
-         </div> 
- 
-       
-    
+        </div>
+
+
+
         <div className="max-w-[1240px] mx-auto ">
-            <div className="">
-        
+          <div className="">
+
             {/* responsive menu */}
-       
+
 
             <div className={`flex md:hidden flex-col items-center bg-[#fafafa40] rounded-b-[20px] fixed z-[100] w-[40%] right-0 top-0 py-[24px] gap-6 overflow-hidden
                                 transition-all duration-500 
@@ -425,11 +420,11 @@ const HeroSection = () => {
                               `}>
 
 
-                              <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                                <li><Link to="">Why us</Link></li>
-                                <li><Link to="">About us</Link></li>
-                                <li><Link to="">Blog</Link></li>
-                              </ul>
+              <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
+                <li><Link to="">Why us</Link></li>
+                <li><Link to="">About us</Link></li>
+                <li><Link to="">Blog</Link></li>
+              </ul>
 
                               <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
                                 <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
@@ -461,61 +456,61 @@ Myanmar Professionals
 
 
 
-                  </div>
-                </div>
-                <div className="cloud ">
-                  <img src={cloud1} alt="" style={{ "--i": 1 }} />
-                  <img src={cloud2} alt="" style={{ "--i": 2 }} />
-                  <img src={cloud3} alt="" style={{ "--i": 3 }} />
-                  <img src={cloud4} alt="" style={{ "--i": 4 }} />
-                  <img src={cloud5} alt="" style={{ "--i": 5 }} />
-                </div>
-      
               </div>
-     
             </div>
-           </div>
-           <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
-              <section className="canvas-section h-full " ref={containerRef}>
-              <div id="matter-container" ref={matterContainerRef} />
-                </section>
-                <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
-                <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
-                 </h1>
-                  <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
-                </div>
-                <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
-                 </h1>
-                  <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
-                </div>
-        
-               </div>
-                <div className="md:w-[409px] w-[100%]
+            <div className="cloud ">
+              <img src={cloud1} alt="" style={{ "--i": 1 }} />
+              <img src={cloud2} alt="" style={{ "--i": 2 }} />
+              <img src={cloud3} alt="" style={{ "--i": 3 }} />
+              <img src={cloud4} alt="" style={{ "--i": 4 }} />
+              <img src={cloud5} alt="" style={{ "--i": 5 }} />
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
+        <section className="canvas-section h-full " ref={containerRef}>
+          <div id="matter-container" ref={matterContainerRef} />
+        </section>
+        <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
+          <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+            <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
+            </h1>
+            <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
+          </div>
+          <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+            <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
+            </h1>
+            <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
+          </div>
+
+        </div>
+        <div className="md:w-[409px] w-[100%]
                 h-[313px]  bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]
         ">
-         
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  Legal Compliance Guarantee</p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  Full HR & Payroll Management</p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  IT Talent Specialization </p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] "> Stable & Productive Work Environment</p>
-                  </div>
-    
 
-               </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  Legal Compliance Guarantee</p>
           </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  Full HR & Payroll Management</p>
+          </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  IT Talent Specialization </p>
+          </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] "> Stable & Productive Work Environment</p>
+          </div>
+
+
+        </div>
+      </div>
     </div>
   )
 }

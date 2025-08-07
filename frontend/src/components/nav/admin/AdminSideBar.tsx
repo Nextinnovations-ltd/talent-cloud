@@ -36,7 +36,7 @@ const AdminSideBar = () => {
   const handleLogout = () => {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
-    window.location.href = "/admin/auth/login";
+    window.location.href = "/tc/lp";
   };
   
   return (

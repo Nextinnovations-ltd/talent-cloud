@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Home } from "./pages/home/Home";
 import routesMap from "./constants/routesMap";
 import { AuthLayout } from "./layouts/AuthLayout";
@@ -54,19 +54,23 @@ import AllJobsEditJobs from "./pages/admin/AllJobs/AllJobsEditJobs";
 
 export const router = createBrowserRouter([
   {
+    path: "/",
+    element: <Navigate to="/employee/lp" replace />,
+  },
+  {
     path: "/test-design",
     element: <Index/>
   },
   {
-   path:"/jobseeker/lp",
+   path:"/emp/lp",
    element:<JobSeekerLandingPage/>
   },
   {
-    path:"/employee/lp",
+    path:"/tc/lp",
     element:<EmployeePage/>
    },
   {
-    path: "/",
+   path: "/",
    element: <MainLayout />,
     children: [
       {

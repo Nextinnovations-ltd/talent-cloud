@@ -1,8 +1,14 @@
 import React from 'react'
 import upArrow from '@/assets/JobPortal/arrow-up-left.svg'
+import { useNavigate } from "react-router-dom";
+
+
 const CommonButton = ({title,smallIcon}) => {
+
+  const navigate = useNavigate();
+
   return (
-    <button className="btn_glass_hover flex justify-center items-center gap-4 relative bg-[#0481EF66] pl-5  text-white font-[500] leading-[42px] rounded-[50px] overflow-hidden">
+    <button onClick={()=> navigate("/emp/lp")}  className="btn_glass_hover flex justify-center items-center gap-4 relative bg-[#0481EF66] pl-5  text-white font-[500] leading-[42px] rounded-[50px] overflow-hidden">
     <span>{title ? 'Get Started' : 'Explore Jobs'} </span>   
       <div className="flex justify-center items-center p-4 ">
       <img

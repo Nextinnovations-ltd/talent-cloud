@@ -12,6 +12,8 @@ import WhoCanApply from '../../../components/landingPages/Employee/WhoCanApply'
 import WhyJoinTC from '../../../components/landingPages/Employee/WhyJoinTC'
 import HeroSection from '../../../components/landingPages/Employee/HeroSection'
 import Footer from '../../../components/landingPages/Footer'
+
+
 const EmployeePage = () => {
   return (
     <div>

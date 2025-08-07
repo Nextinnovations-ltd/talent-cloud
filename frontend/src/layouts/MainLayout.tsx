@@ -36,8 +36,6 @@ export const MainLayout = () => {
       
       if (data.type === 'notification') {
         setMessages((prev) => [...prev, data.message]);
-
-        console.log(data?.message);
         
         // Show notification toast
         showNotification({

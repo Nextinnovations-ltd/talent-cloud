@@ -36,7 +36,7 @@ export const UserProfile = () => {
   const handleLogout = () => {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
-    window.location.href = "/auth/login";
+    window.location.href = "/tc/lp";
   };
 
   return (
