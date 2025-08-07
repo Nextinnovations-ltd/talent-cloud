@@ -1,4 +1,4 @@
-from apps.job_posting.models import JobApplication, JobPost
+from apps.job_posting.models import JobPost
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 
 class CompanyDashboardService:  
