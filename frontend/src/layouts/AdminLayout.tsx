@@ -83,7 +83,7 @@ const AdminLayout = () => {
       <AdminSideBar />
       <div className="ml-[263px] min-h-screen">
         {/* Sticky Header */}
-        <div className="bg-white flex items-center justify-end pr-5 border-b border-b-[#F2F2F2] w-full h-[70px] sticky top-0 z-50">
+        <div className="bg-white flex items-center justify-end pr-5 border-b border-b-[#F2F2F2] w-full h-[70px] sticky top-0 ">
          <NotificationDropDown/>
         </div>
 

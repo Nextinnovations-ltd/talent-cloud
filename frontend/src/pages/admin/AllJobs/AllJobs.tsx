@@ -1,5 +1,4 @@
 import JobCard from "@/components/superAdmin/JobCard";
-import AllJobsTabs from "./AllJobsTabs";
 import SortsButtons from "./SortsButtons";
 import { useGetNIAllJobsByAdminQuery } from "@/services/slices/adminSlice";
 import { useState, useEffect } from "react";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PageInitialLoading } from "@/components/common/PageInitialLoading";
 import { AllJobsMainTabs } from "./AllJobsMainTabs";
+import Pagination from "@/components/common/Pagination";
 
 const AllJobs = () => {
   const [page, setPage] = useState(1);
@@ -102,32 +102,21 @@ const AllJobs = () => {
             ))}
           </div>
 
-          {/* Pagination Controls */}
-          <div className="flex justify-center items-center mt-8 gap-4">
-            <Button
-              variant="outline"
-              onClick={handlePrevPage}
-              disabled={!data?.data?.previous || isFetching}
-              className="disabled:opacity-50"
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-gray-600">
-              Page {page} of {Math.ceil(data.data.count / 15)}
-            </span>
-            <Button
-              variant="outline"
-              onClick={handleNextPage}
-              disabled={!data?.data?.next || isFetching}
-              className="disabled:opacity-50"
-            >
-              Next
-            </Button>
-          </div>
+          <Pagination
+            handlePrevPage={handlePrevPage}
+            handleNextPage={handleNextPage}
+            page={page}
+            totalPages={Math.ceil(data.data.count / 15)}
+            isPreviousDisabled={!data?.data?.previous}
+            isNextDisabled={!data?.data?.next}
+            isFetching={isFetching}
+          />
         </>
       )}
     </div>
   );
 };
+
+
 
 export default AllJobs;
