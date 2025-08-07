@@ -65,7 +65,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
     if (isLoading || FORMATTEDLOADING) return <></>;
 
     return (
-        <div className="max-w-[700px]">
+        <div className="max-w-[700px] ">
             <Form {...formMethods}>
                 <form>
                     <div className="gap-[72px] mt-[40px] flex items-center w-full">

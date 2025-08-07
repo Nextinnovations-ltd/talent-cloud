@@ -149,6 +149,8 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
         onOpenChange={setIsDialogOpen}
         onConfirm={handleAddToShortList}
         isLoading={isLoading}
+        title="Confirm Action"
+        description="Are you sure you want to perform this action?"
       />
     </>
   );
