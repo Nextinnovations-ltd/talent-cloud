@@ -32,12 +32,27 @@ class Command(BaseCommand):
                     'subject_template': 'New Job Posted: {job_title}',
                     'email_template_name': 'emails/job_posted.html',
                     'title_template': 'New Job Posted',
-                    'message_template': 'A new job "{job_title}" has been posted by {company_name}.',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
                     'destination_url_template': '/jobs/{job_id}',
                 },
                 NotificationChannel.WEBSOCKET: {
                     'title_template': 'New Job Posted',
-                    'message_template': 'A new job "{job_title}" has been posted by {company_name}.',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
+                    'destination_url_template': '/jobs/{job_id}',
+                }
+            },
+            
+            NotificationType.ADMIN_JOB_POSTING: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'New Job Posted: {job_title}',
+                    'email_template_name': 'emails/job_posted.html',
+                    'title_template': 'New Job Posted',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
+                    'destination_url_template': '/jobs/{job_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'New Job Posted',
+                    'message_template': 'A new job {job_title} has been posted by {company_name}.',
                     'destination_url_template': '/jobs/{job_id}',
                 }
             },
@@ -68,6 +83,66 @@ class Command(BaseCommand):
                 NotificationChannel.WEBSOCKET: {
                     'title_template': 'Application Status Update',
                     'message_template': 'Your application for "{job_title}" has been updated to: {status}.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                }
+            },
+            
+            NotificationType.APPLICATION_STATUS_CHANGED: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'Application Status Update for {job_title}',
+                    'email_template_name': 'emails/application_status_update.html',
+                    'title_template': 'Application Status Update',
+                    'message_template': 'Your application for "{job_title}" has been updated to: {application_status}.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'Application Status Update',
+                    'message_template': 'Your application for "{job_title}" has been updated to: {application_status}.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                }
+            },
+            
+            NotificationType.APPLICATION_SUBMITTED: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'Application Update for {job_title} Position',
+                    'email_template_name': 'emails/application_status/submitted.html',
+                    'title_template': 'Application Submitted',
+                    'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'Application Submitted',
+                    'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                }
+            },
+            
+            NotificationType.APPLICATION_SHORTLISTED: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'Application Update for {job_title} Position',
+                    'email_template_name': 'emails/application_status/shortlisted.html',
+                    'title_template': 'Application Update',
+                    'message_template': 'Your application for {job_title} at {company_name} has been shortlisted.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'Application Update',
+                    'message_template': 'Your application for {job_title} at {company_name} has been shortlisted.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                }
+            },
+            
+            NotificationType.APPLICATION_REJECTED: {
+                NotificationChannel.EMAIL: {
+                    'subject_template': 'Application Update for {job_title} Position',
+                    'email_template_name': 'emails/application_status/rejected.html',
+                    'title_template': 'Application Update',
+                    'message_template': 'Your application for {job_title} at {company_name} has been rejected.',
+                    'destination_url_template': '/my-applications/{application_id}',
+                },
+                NotificationChannel.WEBSOCKET: {
+                    'title_template': 'Application Update',
+                    'message_template': 'Your application for {job_title} at {company_name} has been rejected.',
                     'destination_url_template': '/my-applications/{application_id}',
                 }
             },

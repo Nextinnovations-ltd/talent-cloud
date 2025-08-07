@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.job_posting.models import JobPost
+from apps.job_posting.models import JobApplication, JobPost
 from apps.job_seekers.models import JobSeeker
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
@@ -25,23 +25,47 @@ class JobPostDashboardSerializer(serializers.ModelSerializer):
      def get_company(self, obj: JobPost):
           return obj.get_company_name
 
-# class ApplicantDashboardSerializer(serializers.ModelSerializer):
-#      applicant_id
+class ApplicantDashboardSerializer(serializers.Serializer):
+     applicant_id = serializers.IntegerField(source='job_seeker.user.id')
+     application_status = serializers.CharField()
+     job_post_id = serializers.IntegerField(source='job_post.id')
+     name = serializers.CharField(source='job_seeker.name')
+     phone_number = serializers.SerializerMethodField()
+     email = serializers.CharField(source='job_seeker.email')
+     role = serializers.SerializerMethodField()
+     is_open_to_work = serializers.BooleanField(source='job_seeker.is_open_to_work')
+     address = serializers.SerializerMethodField()
+     profile_image_url = serializers.CharField(source='job_seeker.profile_image_url')
+     applied_date = serializers.DateTimeField(source='created_at', read_only=True)
      
-#      class Meta:
-#           model=JobSeeker
-#           fields = [
-#                'applicant_id', 'name', 'phone_number', 'email', 'role', 'is_open_to_work',
-#                'address', 'profile_image_url'
-#           ]
+     class Meta:
+          model = JobApplication
+          fields = [
+               'applicant_id',
+               'application_status',
+               'job_post_id',
+               'name',
+               'phone_number',
+               'email',
+               'role',
+               'is_open_to_work',
+               'address',
+               'profile_image_url',
+               'applied_date',
+          ]
+     
+     def get_phone_number(self, obj: JobApplication):
+          user = obj.job_seeker.user
           
+          if user.country_code and user.phone_number:
+               return f"{user.country_code}{user.phone_number}"
+
+          return None
+     
+     def get_role(self, obj: JobApplication):
+          job_seeker: JobSeeker = obj.job_seeker
+          occupation = getattr(job_seeker, 'occupation', None)
+          return getattr(occupation.role, 'name', None) if occupation and occupation.role else None
           
-          
-#           # 'applicant_id': user.pk,
-#           #           'name': user.name,
-#           #           'phone_number': f"{user.country_code}{user.phone_number}" if user.country_code is not None and user.phone_number is not None else None,
-#           #           'email': user.email,
-#           #           'role': role.name,
-#           #           'is_open_to_work': job_seeker.is_open_to_work,
-#           #           'address': user.get_address,
-#           #           'profile_image_url': user.profile_image_url,
+     def get_address(self, obj: JobApplication):
+          return obj.job_seeker.get_address

@@ -1,7 +1,6 @@
 import TotalCard from './TotalCard';
 import RecentJobCard from './RecentJobCard';
 import RecentApplicant from './RecentApplicant';
-import TableRow from './TableRow';
 import JobCard from './JobCard';
 import SearchBox from './SearchBox';
 
@@ -11,7 +10,6 @@ const Index = () => {
             <TotalCard/>
             <RecentJobCard/>
             <RecentApplicant/>
-            <TableRow/>
             <JobCard/>
             <SearchBox/>
         </div>

@@ -1,48 +1,157 @@
-import Profile from "@/assets/SuperAdmin/user-profile.png"
-import Phone from "@/assets/SuperAdmin/phone.svg"
-import Location from "@/assets/SuperAdmin/location.svg"
-import { Checkbox } from "@/components/ui/checkbox"
+import { useState } from 'react';
+import Profile from '@/assets/SuperAdmin/user-profile.png';
+import Phone from '@/assets/SuperAdmin/phone.svg';
+import Location from '@/assets/SuperAdmin/location.svg';
+import SvgMore from '@/assets/svgs/SvgMore';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { useShortListApplicantsMutation } from '@/services/slices/adminSlice';
+import { Applicant } from '@/types/admin-auth-slice';
+import useToast from '@/hooks/use-toast';
+import ConfirmationDialog from './ShortListDialog';
 
-const TableRow = () => {
-    return (
-        <tr className='max-w-[1063px] px-[19.5px] py-[43px] flex items-center gap-[62px] border-b border-[#CBD5E1]'>
-            <td>
-                <Checkbox className="w-5 h-5 border border-[#CBD5E1] bg-[#FFF]" />
-            </td>
-            <td>
-                <div className='flex gap-[7px] items-center'>
-                    <img src={Profile} className='rounded-full w-[48px] h-[48px]' alt="" />
-                    <div className='text-[12px] space-y-[5px]'>
-                        <p className='font-semibold text-[#000]'>Than Naung</p>
-                        <p className='font-normal text-[#575757]'>Fronted Developer</p>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <div className='flex gap-[10px] text-[#575757] items-center'>
-                    <img src={Phone} alt="" />
-                    <p className='text-[12px] font-medium'>+95 9123456789</p>
-                </div>
-            </td>
-            <td>
-                <div className='flex gap-[10px] text-[#575757] items-center'>
-                    <img src={Location} alt="" />
-                    <p className='text-[12px] font-medium'>Yangon , Myanmar</p>
-                </div>
-            </td>
-            <td>
-                <div className='flex gap-[10px] text-[#575757] items-center'>
-                    <div className="w-[14px] h-[14px] rounded-full bg-[#29EA5F]"></div>
-                    <p className='text-[12px] font-medium'>Available for Work</p>
-                </div>
-            </td>
-            <td>
-                <div className='w-[102px]'>
-                    <button className='bg-[#0481EF] w-full py-[7.5px] text-[12px] font-semibold rounded-md text-[#FFFFFF] shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] hover:shadow-none'>Download CV</button>
-                </div>
-            </td>
-        </tr>
-    );
+
+
+interface ApplicantsJobItemsProps {
+  data: Applicant;
+  isShortList: boolean
 }
 
-export default TableRow;
+const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
+  const { showNotification } = useToast();
+
+  const handleAddToShortList = async () => {
+    if (!data?.job_post_id || !data?.applicant_id) return;
+
+    try {
+      const response = await shortListApplicant({
+        jobId: data.job_post_id,
+        applicantId: data.applicant_id,
+      }).unwrap();
+
+      showNotification({
+        message: response?.message || 'Applicant shortlisted successfully',
+        type: 'success',
+      });
+    } catch (err) {
+      showNotification({
+        message: err?.data?.message || 'Failed to shortlist applicant',
+        type: 'danger',
+      });
+    } finally {
+      setIsDialogOpen(false);
+    }
+  };
+
+  const handleUserDetail = () => {
+    // Implement view profile logic
+    console.log('View profile:', data.applicant_id);
+  };
+
+  const handleDownloadCV = () => {
+    // Implement download CV logic
+    console.log('Download CV:', data.applicant_id);
+  };
+
+  return (
+    <>
+      <tr className="h-[134px] border-b border-[#F2F2F2] align-middle">
+        {/* Profile Column */}
+        <td className="w-[25%] min-w-[200px] max-w-[300px] px-2 align-middle">
+          <div className="flex gap-2 items-center">
+            <img
+              src={data.profile_image_url ?? Profile}
+              className="rounded-full w-12 h-12 object-cover"
+              alt="profile"
+            />
+            <div className="text-[14px] space-y-1">
+              <p className="font-semibold text-black">{data.name || 'No Name'}</p>
+              <p className="text-gray-600">{data.role || 'Not specified'}</p>
+            </div>
+          </div>
+        </td>
+
+        {/* Phone Column */}
+        <td className="w-[15%] min-w-[120px] max-w-[180px] px-2 align-middle">
+          <div className="flex gap-2 text-gray-600 items-center">
+            <img src={Phone} alt="phone" className="w-4 h-4" />
+            <p className="text-[14px] font-medium">{data.phone_number || 'N/A'}</p>
+          </div>
+        </td>
+
+        {/* Location Column */}
+        <td className="w-[20%] min-w-[150px] max-w-[250px] px-2 align-middle">
+          <div className="flex gap-2 text-gray-600 items-center">
+            <img src={Location} alt="location" className="w-4 h-4" />
+            <p className="text-[14px] font-medium">{data.address || 'Not provided'}</p>
+          </div>
+        </td>
+
+        {/* Availability Column */}
+        <td className="w-[20%] min-w-[150px] max-w-[250px] px-2 align-middle">
+          <div className="flex gap-2 text-gray-600 items-center">
+            <div
+              className={`w-[14px] h-[14px] rounded-full ${data.is_open_to_work ? 'bg-[#29EA5F]' : 'bg-[#EF4444]'
+                }`}
+            />
+            <p className="text-[14px] font-medium">
+              {data.is_open_to_work ? 'Available for Work' : 'Not Available'}
+            </p>
+          </div>
+        </td>
+
+        {/* Download CV Column */}
+        <td className="w-[15%] min-w-[100px] max-w-[150px] px-2 align-middle">
+          <button
+            onClick={handleDownloadCV}
+            className="bg-[#0481EF] px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm hover:shadow-none transition-shadow"
+          >
+            Download CV
+          </button>
+        </td>
+
+        {/* Actions Column */}
+        <td className="w-[5%] min-w-[100px] max-w-[150px] px-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="w-full flex justify-center">
+                <SvgMore />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {
+                !isShortList && <DropdownMenuItem
+                  onSelect={() => setIsDialogOpen(true)}
+                  className="cursor-pointer focus:bg-gray-100"
+                >
+                  Add to shortlist
+                </DropdownMenuItem>
+              }
+              <DropdownMenuItem
+                onSelect={handleUserDetail}
+                className="cursor-pointer focus:bg-gray-100"
+              >
+                View user profile
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </td>
+      </tr>
+
+      <ConfirmationDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onConfirm={handleAddToShortList}
+        isLoading={isLoading}
+      />
+    </>
+  );
+};
+
+export default ApplicantsJobItems;

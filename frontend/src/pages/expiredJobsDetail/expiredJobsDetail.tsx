@@ -81,7 +81,7 @@ const ExpiredJobsDetail = () => {
                 {
                     jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
                 }
-                <AboutJob />
+                 <AboutJob jobTitle={jobDetails?.title || ''} responsibilities={jobDetails?.responsibilities || ''} requirements={jobDetails?.requirements || ''} offer={jobDetails?.offered_benefits || ''} />
             </ScrollArea>
         </div>
     )

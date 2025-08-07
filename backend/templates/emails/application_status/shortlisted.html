@@ -1,0 +1,74 @@
+<!-- templates/emails/application_status/shortlisted.html -->
+{% extends "emails/base_email.html" %}
+
+{% block title %}🌟 You've Been Shortlisted! - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<style>
+    .success-header {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .shortlist-card {
+        background-color: #f0fdff;
+        border: 1px solid #bee5eb;
+        border-left: 4px solid #17a2b8;
+        padding: 25px;
+        margin: 25px 0;
+        border-radius: 8px;
+    }
+    .celebration-icon {
+        font-size: 48px;
+        text-align: center;
+        margin: 20px 0;
+    }
+</style>
+
+<div class="success-header">
+    <h2>🌟 Congratulations! You've Been Shortlisted!</h2>
+    <p>You're among the top candidates for this position</p>
+</div>
+
+<div class="celebration-icon">🎉</div>
+
+<p>Hello {{ user_name|default:"" }},</p>
+
+<p>Fantastic news! Your application for <strong>{{ job_title }}</strong> at <strong>{{ company_name }}</strong> has been <strong>shortlisted</strong>!</p>
+
+<div class="shortlist-card">
+    <h3>🎯 Why this is great news:</h3>
+    <ul>
+        <li>✅ You've successfully passed the initial screening</li>
+        <li>✅ You're now among the top candidates</li>
+        <li>✅ The hiring team is impressed with your qualifications</li>
+        <li>✅ Your profile stands out from other applicants</li>
+    </ul>
+</div>
+
+<div style="background-color: #fff3cd; padding: 20px; border-radius: 6px; margin: 25px 0;">
+    <h4>📅 What to expect next:</h4>
+    <ul>
+        <li><strong>Detailed Review:</strong> Your application will undergo thorough evaluation</li>
+        <li><strong>Possible Interview:</strong> You may be contacted for an interview soon</li>
+        <li><strong>Timeline:</strong> Expect to hear back within 3-5 business days</li>
+        <li><strong>Stay Ready:</strong> Keep your phone and email accessible</li>
+    </ul>
+</div>
+
+<div style="background-color: #e7f3ff; padding: 15px; border-radius: 6px; margin: 20px 0;">
+    <h4>💡 Pro tip:</h4>
+    <p>Start preparing for potential interviews by researching the company and reviewing common interview questions for your field!</p>
+</div>
+
+<p style="text-align: center;">
+    <a href="{{ job_url }}" class="button">View Job Details</a>
+</p>
+
+<p>Keep up the great work - you're one step closer to landing your dream job!</p>
+
+<p>Best regards,<br>The {{ platform_name }} Team</p>
+{% endblock %}

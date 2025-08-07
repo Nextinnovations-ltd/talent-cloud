@@ -56,20 +56,7 @@ const CoolNav = (props: any) => {
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-            {props.currentStep !== 1 && (
-              <Button onClick={handleNextStep} variant="ghost" type="button">
-                {props.currentStep !== 6 && (
-                  <span
-                    className={clsx(
-                      "text-md text-[#05060F] font-semibold",
-                     ( props.currentStep === 3 && props.specializationId === null) && "text-slate-200"
-                    )}
-                  >
-                    Skip
-                  </span>
-                )}
-              </Button>
-            )}
+           
           </div>
         </div>
       </div>

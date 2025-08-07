@@ -24,15 +24,12 @@ export const ProfileUser = () => {
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(
     useAddJobSeekerProfileMutation
   );
+  
   const {
     data: profileData,
     isLoading: isProfileLoading,
     refetch,
   } = useGetJobSeekerProfileQuery();
-
-  console.log({profileData})
-
-
 
  
   const form = useForm<UserProfile>({
@@ -66,13 +63,6 @@ export const ProfileUser = () => {
 
   useEffect(() => {
     if (profileData) {
-
-      console.log("useEffect")
-      console.log(profileData.data)
-      console.log("useEffect")
-
-
-
       form.reset({
         profile_image_url: profileData.data?.profile_image_url || "",
         name: profileData.data?.name || "",

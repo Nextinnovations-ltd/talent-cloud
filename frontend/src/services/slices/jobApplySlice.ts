@@ -138,7 +138,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 0,
     }),
 
-    getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number>({
+    getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number |  string>({
     query: (id) => `/job-posts/${id}/`,
       providesTags: ['JobList','bookmarked'],
       keepUnusedDataFor: 0,
@@ -162,7 +162,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
 
     applyJob: builder.mutation<unknown, ApplyJobArg>({
       query: ({ jobId, credentials }) => ({
-        url: `/job-posts/${jobId}/applications/`,
+        url: `/job-posts/${jobId}/apply/`,
         method: "POST",
         body: credentials,
       }),

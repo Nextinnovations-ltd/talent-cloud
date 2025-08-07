@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
-from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, JobPostView, StatusChoices
+from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.job_posting.serializers import (
     BookmarkedJobSerializer,
@@ -20,13 +20,13 @@ from apps.job_posting.serializers import (
     JobPostSerializer,
 )
 from apps.job_seekers.models import JobSeeker
-from services.job_seeker.profile_score_service import ProfileScoreService
+from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
 from rest_framework.exceptions import ValidationError
 from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import IsCompanyAdminOrSuperadminForJobPost, TalentCloudAllPermission, TalentCloudUserDynamicPermission, TalentCloudSuperAdminPermission
+from core.middleware.permission import IsCompanyAdminOrSuperadminForJobPost, TalentCloudAllPermission, TalentCloudUserDynamicPermission
 from core.middleware.permission import (
     TalentCloudUserPermission,
     TalentCloudAdminOrSuperAdminPermission,
@@ -447,44 +447,46 @@ class CompanyJobListView(CustomListAPIView):
 # region Job Application Views
 
 @extend_schema(tags=["Job Post-Application"])
-class JobApplicationCreateView(CustomCreateAPIView):
+class JobApplicationCreateView(APIView):
      """
      API endpoint for Job Seekers to apply for a job post.
      URL: /api/jobposts/{job_post_id}/applications/ (POST)
      """
-     queryset = JobApplication.objects.all()
-     serializer_class = JobApplicationCreateSerializer
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
 
-     def perform_create(self, serializer):
-          job_post_id = self.kwargs.get('job_post_id')
-          job_post = get_object_or_404(JobPost, id=job_post_id)
-          job_seeker = get_object_or_404(JobSeeker, user=self.request.user)
-
-          # Check if the job seeker has already applied to this job post
-          if JobApplication.objects.filter(job_post=job_post, job_seeker=job_seeker).exists():
+     @extend_schema(
+          description="Create a new job application",
+          request=JobApplicationCreateSerializer,
+          responses={
+               201: JobApplicationSerializer,
+               400: "Validation Error",
+               404: "Job Post Not Found"
+          }
+     )
+     def post(self, request, job_post_id):
+          # Validate input data
+          serializer = JobApplicationCreateSerializer(data=request.data)
+          if not serializer.is_valid():
                return Response(
-                    {"detail": "You have already applied for this job post."},
+                    CustomResponse.error("Invalid application data.", serializer.errors),
                     status=status.HTTP_400_BAD_REQUEST
                )
-
-          application = serializer.save(job_post=job_post, job_seeker=job_seeker)
           
-          # Send notification about the new application
-          try:
-               from services.notification.notification_service import NotificationHelpers
-               from utils.notification.types import NotificationChannel
-               
-               NotificationHelpers.notify_job_application(
-                    job_post, 
-                    self.request.user,
-                    job_post.posted_by.company if hasattr(job_post.posted_by, 'company') else None
-               )
-               logger.info(f"Application notification sent for job: {job_post.title}")
-          except Exception as e:
-               logger.error(f"Failed to send application notification: {str(e)}")
-               # Don't fail the application creation if notification fails
+          # Create application using service
+          application = JobApplicationService.perform_application_submission(
+               user=request.user,
+               job_post_id=job_post_id,
+               application_data=serializer.validated_data
+          )
+          
+          # Return success response
+          response_serializer = JobApplicationSerializer(application, context={'request': request})
+          
+          return Response(
+               CustomResponse.success("Application submitted successfully.", response_serializer.data),
+               status=status.HTTP_201_CREATED
+          )
 
 @extend_schema(tags=["Job Post-Application"])
 class JobSeekerApplicationListView(CustomListAPIView):
@@ -560,29 +562,28 @@ class CompanyApplicationDetailView(CustomRetrieveUpdateDestroyAPIView):
      
      def perform_update(self, serializer):
           """Override to add notification for status updates"""
-          old_status = self.get_object().status
+          old_status = self.get_object().application_status
           application = serializer.save()
-          new_status = application.status
+          new_status = application.application_status
           
           # Send notification if status changed
           if old_status != new_status:
                try:
-                    from services.notification.notification_service import NotificationService
-                    from utils.notification.types import NotificationChannel, NotificationType
+                    from services.notification.notification_service import NotificationHelpers
                     
-                    NotificationService.send_notification(
-                         title="Application Status Update",
-                         message=f"Your application for '{application.job_post.title}' has been updated to: {new_status}",
-                         notification_type=NotificationType.JOB_APPLIED,  # Could add APPLICATION_STATUS_UPDATE type
-                         target_users=[application.job_seeker.user],
-                         destination_url=f"/my-applications/{application.id}",
-                         channel=NotificationChannel.BOTH,
-                         email_context={
-                              'application': application,
-                              'old_status': old_status,
-                              'new_status': new_status
-                         }
-                    )
+                    # NotificationService.send_notification(
+                    #      title="Application Status Update",
+                    #      message=f"Your application for '{application.job_post.title}' has been updated to: {new_status}",
+                    #      notification_type=NotificationType.JOB_APPLIED,  # Could add APPLICATION_STATUS_UPDATE type
+                    #      target_users=[application.job_seeker.user],
+                    #      destination_url=f"/my-applications/{application.id}",
+                    #      channel=NotificationChannel.BOTH,
+                    #      email_context={
+                    #           'application': application,
+                    #           'old_status': old_status,
+                    #           'new_status': new_status
+                    #      }
+                    # )
                     logger.info(f"Application status update notification sent for application: {application.id}")
                except Exception as e:
                     logger.error(f"Failed to send application status update notification: {str(e)}")

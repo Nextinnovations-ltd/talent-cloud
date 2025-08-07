@@ -19,8 +19,8 @@ type FormData = {
   stepThree: {
     salary_mode?: string;
     salary_type: string;
-    salary_min?: string;
-    salary_max?: string;
+    salary_min?: string | undefined;
+    salary_max?: string | undefined;
     is_salary_negotiable: boolean;
     project_duration?: string;
     skills?: string[];

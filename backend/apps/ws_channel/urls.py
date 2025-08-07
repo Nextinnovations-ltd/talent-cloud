@@ -1,4 +1,6 @@
 from django.urls import path
+
+from apps.ws_channel.views.notification_views import TestMailNoti
 # Import all views from the organized views package
 from .views import (
     # Chat views
@@ -6,7 +8,7 @@ from .views import (
     ChatRoomInfoAPIView,
     
     # Notification views
-    NotificationListAPIView,
+    InAppNotificationListAPIView,
     NotificationDetailAPIView,
     NotificationByChannelAPIView,
     NotificationMarkAllReadAPIView,
@@ -22,7 +24,7 @@ from .views import (
 
 urlpatterns = [
     # Notification endpoints
-    path('notifications/', NotificationListAPIView.as_view(), name='notification-list'),
+    path('notifications/', InAppNotificationListAPIView.as_view(), name='notification-list'),
     path('notifications/<int:notification_id>/', NotificationDetailAPIView.as_view(), name='notification-detail'),
     path('notifications/mark-all-read/', NotificationMarkAllReadAPIView.as_view(), name='notification-mark-all-read'),
     path('notifications/mark-as-read/<int:notification_id>', NotificationMarkAsReadByIDAPIView.as_view(), name='notification-mark-as-read-by-id'),
@@ -40,4 +42,6 @@ urlpatterns = [
     
     # Test endpoint (remove in production)
     path('test/', TestAPIView.as_view(), name='test'),
+    path('test-mail/', TestMailNoti.as_view(), name='test-mail'),
+    
 ]

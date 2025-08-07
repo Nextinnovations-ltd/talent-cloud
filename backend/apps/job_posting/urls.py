@@ -30,16 +30,16 @@ urlpatterns = [
     path('job-posts/<int:pk>/', JobPostActionAPIView.as_view(), name='jobpost-detail'),
     path('job-posts/edit/<int:pk>/', JobPostEditDetailAPIView.as_view(), name='jobpost-edit-detail'),
     
+    # Job Application Endpoints for Super Admin and Company Admins
+    path('job-posts/', CompanyJobListView.as_view(), name='company-jobpost-list'), # GET only for superadmin and admins
+    path('job-posts/<int:job_post_id>/applications/', CompanyJobApplicationsListView.as_view(), name='jobpost-applications-list'), # GET only for superadmins and admins
+    path('applications/<int:pk>/', CompanyApplicationDetailView.as_view(), name='application-detail'),
+   
     # Job Seeker Application Endpoints
-    path('job-posts/<int:job_post_id>/applications/', JobApplicationCreateView.as_view(), name='jobpost-applications-create'), # POST only for seekers
+    path('job-posts/<int:job_post_id>/apply/', JobApplicationCreateView.as_view(), name='jobpost-applications-create'), # POST only for seekers
     path('my-applications/', JobSeekerApplicationListView.as_view(), name='my-applications-list'),
     path('my-applications/<int:pk>/', JobSeekerApplicationDetailView.as_view(), name='my-applications-detail'),
-
-    # Job Application Endpoints for Company Admins
-    path('company-job-posts/', CompanyJobListView.as_view(), name='company-jobpost-list'), # GET only for admins
-    path('company-job-posts/<int:job_post_id>/applications/', CompanyJobApplicationsListView.as_view(), name='jobpost-applications-list'), # GET only for admins
-    path('applications/<int:pk>/', CompanyApplicationDetailView.as_view(), name='application-detail'),
-
+    
     # Bookmarked Job Endpoints (Job Seeker)
     path('my-bookmarks/', JobSeekerBookmarkedJobListView.as_view(), name='my-bookmarks-list'),
     path('job-posts/<int:job_post_id>/bookmark/', BookmarkJobView.as_view(), name='jobpost-bookmark'), # POST

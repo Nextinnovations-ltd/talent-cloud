@@ -55,7 +55,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       name={name}
       render={({ field }) => {
 
+       console.log("Role data")
        console.log(field?.value)
+       console.log("Role data")
+
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (

@@ -18,14 +18,6 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     refetch,
   } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
 
-
-  const role =  userInfo?.data?.role
-  
-
-  //role must be user
-  console.log(role)
-
-
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
       navigate(`/auth/${routesMap.login.path}`, {
@@ -36,21 +28,27 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     if (isSuccess) {
       const { is_generated_username, onboarding_step, role } = userInfo?.data || {};
 
+
       if (role === ROLES.SUPERADMIN) {
         navigate("/admin/dashboard", { replace: true });
         return;
       }
 
-      if (is_generated_username) {
+     if (is_generated_username) {
         navigate("/verify");
         return;
       }
 
       if (onboarding_step && onboarding_step !== 5 && !is_generated_username) {
+      if(onboarding_step == 1){
         navigate(
-          `/verify/${routesMap.userWelcome.path}?step=${onboarding_step + 1}`,
-          { replace: true }
+          `/verify/${routesMap.userWelcome.path}`
         );
+      }else{
+        navigate(
+          `/verify/${routesMap.userWelcome.path}?step=${onboarding_step + 1}`
+        );
+      }
       }
 
       if (onboarding_step === 6) {

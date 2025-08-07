@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice';
 import StarBorder from '../common/StarBorder';
-import { LoadingSpinner } from '../common/LoadingSpinner';
+
 
 // Animation variants
 const containerVariants = {

@@ -29,7 +29,7 @@ const NotificationListItems: React.FC<NotificationListItemsProps> = ({
   onMarkAsRead,
 }) => {
   const [open, setOpen] = React.useState(false);
-  const [markAsRead, { isLoading }] = useGetMarkAsReadMutation();
+  const [markAsRead] = useGetMarkAsReadMutation();
   const { refetch } = useGetJobSeekerNotificationsQuery({ limit, offset });
 
   const handleReadNotification = async (id: number | undefined) => {
@@ -139,7 +139,7 @@ const NotificationListItems: React.FC<NotificationListItemsProps> = ({
 
         {open && data?.message && (
           <div className="mt-1">
-            <p className="text-xs text-gray-600 whitespace-pre-line">
+            <p className="text-[12px] text-gray-600 whitespace-pre-line">
               {data.message}
             </p>
           </div>

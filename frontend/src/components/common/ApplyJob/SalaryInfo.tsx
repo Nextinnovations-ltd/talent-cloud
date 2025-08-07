@@ -2,8 +2,8 @@ import React from 'react';
 import SALARY from '@/assets/Dollar.svg';
 
 interface SalaryInfoProps {
-  salary: string;
-  currency: string;
+  salary: string | undefined;
+  currency: string | undefined;
 }
 
 export const SalaryInfo: React.FC<SalaryInfoProps> = ({ salary, currency }) => (

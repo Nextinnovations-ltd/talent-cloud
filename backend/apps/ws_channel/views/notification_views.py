@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from apps.ws_channel.serializers import (
 )
 from services.notification.notification_service import NotificationService, NotificationHelpers
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudUserPermission
+from core.middleware.permission import TalentCloudAllPermission, TalentCloudUserPermission
 from utils.response import CustomResponse
 
 
@@ -28,12 +29,12 @@ class TestAPIView(APIView):
         )
 
 @extend_schema(tags=["Notifications"])
-class NotificationListAPIView(APIView):
+class InAppNotificationListAPIView(APIView):
     """
     List notifications for authenticated user and get unread count
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get user notifications",
@@ -102,7 +103,7 @@ class NotificationDetailAPIView(APIView):
     Retrieve, update, or delete a specific notification
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     def get_object(self, notification_id, user_id):
         """Get notification ensuring it belongs to the authenticated user"""
@@ -230,7 +231,7 @@ class NotificationMarkAllReadAPIView(APIView):
     Mark all notifications as read for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Mark all notifications as read",
@@ -258,7 +259,7 @@ class NotificationMarkAsReadByIDAPIView(APIView):
     Mark all notifications as read for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Mark a single notification as read by its ID",
@@ -285,7 +286,7 @@ class NotificationUnreadCountAPIView(APIView):
     Get unread notification count for authenticated user
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get unread notification count",
@@ -314,7 +315,7 @@ class NotificationByChannelAPIView(APIView):
     Get notifications filtered by specific channel
     """
     authentication_classes = [TokenAuthentication]
-    permission_classes = [TalentCloudUserPermission]
+    permission_classes = [TalentCloudAllPermission]
     
     @extend_schema(
         summary="Get notifications by channel",
@@ -403,4 +404,32 @@ class NotificationByChannelAPIView(APIView):
                 }
             ),
             status=status.HTTP_200_OK
+        )
+
+@extend_schema(tags=["Notifications"])
+class TestMailNoti(APIView):
+    """
+    Get test mail notifications
+    """
+    authentication_classes = []
+    permission_classes = []
+    
+    def get(self, request):
+        from services.notification.notification_service import NotificationService, NotificationHelpers
+        from apps.ws_channel.models import NotificationTemplate
+        from utils.notification.types import NotificationTarget
+        from utils.notification.types import NotificationType, NotificationChannel
+
+        context = {
+            'maintenance_info': "Hello maintainence: message",
+            "start_time": datetime(2024, 8, 1, 9, 0),
+            "end_time": datetime(2024, 8, 1, 11, 30),
+            "duration": "2 hours 30 minutes",
+        }
+        
+        return NotificationService.send_notification_with_template(
+            notification_type=NotificationType.ADMIN_MAINTENANCE,
+            target_roles=[NotificationTarget.ADMIN],
+            channel=NotificationChannel.EMAIL,
+            template_context=context
         )

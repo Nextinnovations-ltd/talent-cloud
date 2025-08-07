@@ -7,13 +7,17 @@
 
 <p>Hello,</p>
 
-<p>You have received a new application for your job posting:</p>
+<p>You have received a new application for the following job posting:</p>
 
 <div class="info-box">
-    <h3>{{ job_post.title }}</h3>
-    <p><strong>Applicant:</strong> {{ applicant_name }}</p>
-    <p><strong>Applied on:</strong> {{ application.created_at|date:"F d, Y at g:i A" }}</p>
-    <p><strong>Application ID:</strong> #{{ application.id }}</p>
+    <h3>{{ job_title }}</h3>
+    <p><strong>Company:</strong> {{ company_name }}</p>
+    <p><strong>Job ID:</strong> #{{ job_id }}</p>
+    <hr>
+    <p><strong>Applicant Name:</strong> {{ applicant_name }}</p>
+    <p><strong>Applicant Email:</strong> {{ applicant_email }}</p>
+    <p><strong>Applied on:</strong> {{ applied_date|date:"F d, Y at g:i A" }}</p>
+    <p><strong>Application ID:</strong> #{{ application_id }}</p>
 </div>
 
 <p>You can review the applicant's profile and application details by clicking the button below:</p>
