@@ -105,7 +105,6 @@ class SuperAdminRegisterAPIView(views.APIView):
         username = data.get('username', None)
         email = data.get('email', None)
         password = data.get('password', None)
-        role = ROLES.SUPERADMIN
         
         if not username:
             raise ValidationError("Username is required.")

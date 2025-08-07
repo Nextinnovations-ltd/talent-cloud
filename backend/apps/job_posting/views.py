@@ -23,7 +23,7 @@ from apps.job_seekers.models import JobSeeker
 from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
 from rest_framework.exceptions import ValidationError
-from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
+from utils.view.custom_api_views import CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import IsCompanyAdminOrSuperadminForJobPost, TalentCloudAllPermission, TalentCloudUserDynamicPermission
