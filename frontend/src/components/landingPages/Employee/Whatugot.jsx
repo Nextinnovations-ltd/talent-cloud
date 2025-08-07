@@ -78,7 +78,7 @@ const Whatugot = () => {
           <div
             key={index}
             ref={(el) => (cardsRef.current[index] = el)}
-            className="bg-[#EEF7FE] rounded-[25px]   flex flex-col md:flex-row justify-center items-center gap-[50px] sticky shadow-md h-[414px] top-[15%] "
+            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col md:flex-row justify-center items-center gap-[50px] sticky h-[414px] top-[15%] "
           >
             <div className="max-w-[506px]">
               <h2 className="mb-4 text-[#000] text-[32px] font-[600] leading-[50px]">
@@ -100,7 +100,7 @@ const Whatugot = () => {
           </div>
         ))} 
       </div>
-      <div className="h-screen w-full"></div>
+  
     </div>
   )
 }

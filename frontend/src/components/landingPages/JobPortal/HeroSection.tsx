@@ -15,7 +15,7 @@ import p5 from 'p5';
 import  CheckCircle from '@/assets/check-circle.svg'
 import upArrow from '@/assets/JobPortal/arrow-up-left.svg'
 import './HeroSection.css'
-
+import CommonButton from '../commonBtn/button'
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const wordsToDisplay = [
@@ -365,7 +365,7 @@ const HeroSection = () => {
   return (
       <div>
           <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
-        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-[#FAFAFA40] max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
+        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] glass max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
         <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[24px] pb-[24px] relative z-10 pr-5 pl-5 ">
                 {/* logo SVG here */}
              <img src={TalentCloudLogoImg} alt="" className="w-[118px] md:w-[198px]"/>
@@ -462,12 +462,7 @@ const HeroSection = () => {
                         className="ml-[10px] relative z-10 transition-transform duration-300 group-hover:translate-x-1 w-[24px] h-[24px] md:w-[32px] md:h-[32px]"
                       />
                     </Button> */}
-                <button className="btn_glass_hover flex justify-center items-center gap-4 relative bg-[#0481EF66] pl-5  text-white font-[500] leading-[42px] rounded-[50px] overflow-hidden">
-                  <span>Explore Jobs</span>   
-                  <div className="flex justify-center items-center p-4 ">
-                  <img src={upArrow} alt="" className="w-[33px] h-[33px]"/>        
-                    </div>
-                  </button>
+      <CommonButton/>
 
 
 

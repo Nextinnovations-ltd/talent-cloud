@@ -54,8 +54,9 @@ const FAQ = () => {
       setOpenIndex(openIndex === index ? null : index);
     };
   return (
-      <div className='max-w-[1240px] mx-auto gap-[30px] md:gap-[100px] flex flex-col md:flex-row items-start pt-[30px] md:pt-[130px] pr-5 pl-5'>
-          <div className="">
+    <div className="w-full bg-[#F9FAFB]">
+     <div className='max-w-[1240px] mx-auto gap-[30px] md:gap-[100px] flex flex-col md:flex-row items-start pt-[30px] pb-[100px] md:pt-[130px] md:pb-[200px] pr-5 pl-5'>
+          <div className="min-w-[394px]">
           <p className='text-[#575757] text-[12px] md:text-[20px] font-[500] leading-[31px]'>All Questions</p>
               <h1 className='mt-4 mb-3 md:mb-[20px] text-[#000] text-[24px] md:text-[40px] font-[500] leading-[37px] md:leading-[51px]'>FREQUENTLY <br></br>
                   ASKED QUESTIONS</h1>
@@ -70,7 +71,7 @@ const FAQ = () => {
                   className="flex flex-col justify-center border-b border-black pt-2 md:pt-[14px] pb-2 md:pb-[14px] transition-all duration-500 ease-in-out"
                 >
                   <div className="flex justify-between items-start gap-[33px]">
-                    <h1 className="text-[#000] text-[12px] md:text-[20px] font-[600] leading-[20px] md:leading-[48px]">
+                    <h1 onClick={() => toggleIndex(index)} className="cursor-pointer duration-300 transition-all  text-[#000] text-[12px] md:text-[20px] font-[600] leading-[20px] md:leading-[48px]">
                       {faq.question}
                     </h1>
                     <img
@@ -105,6 +106,7 @@ const FAQ = () => {
 
         </div>
     </div>
+   </div>
   )
 }
 

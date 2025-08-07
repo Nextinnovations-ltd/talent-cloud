@@ -1,0 +1,25 @@
+.front-line {
+    position: relative;
+}
+
+.front-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20px;
+    width: 7px;
+    height: 100%;
+    border-radius: 12px;
+    background: #0481EF;
+}
+
+.front-line:nth-child(2):before {
+
+    background: linear-gradient(0deg, #E54335 0.01%, #FF037E 99.99%);
+}
+
+.front-line:nth-child(3):before {
+
+    border-radius: 12px;
+    background: linear-gradient(1deg, #0481EF 4.1%, #034A89 114.15%);
+}

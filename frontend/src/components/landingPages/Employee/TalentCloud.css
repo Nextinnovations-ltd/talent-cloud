@@ -1,0 +1,34 @@
+.img-container {
+    position: relative;
+
+}
+
+.img-container .hover-img {
+    position: absolute;
+    inset: 0;
+    border-radius: 20.172px;
+    background: linear-gradient(201deg, rgba(4, 129, 239, 0.00) 13.62%, rgba(0, 101, 189, 0.90) 42.19%), url(<path-to-image>) 50% / cover no-repeat;
+    height: 100%;
+    transform: translateY(0%);
+    opacity: 1;
+}
+
+@media screen and (min-width:768px) {
+    .img-container .hover-img {
+        position: absolute;
+        inset: 0;
+        border-radius: 20.172px;
+        background: linear-gradient(201deg, rgba(4, 129, 239, 0.00) 13.62%, rgba(0, 101, 189, 0.90) 42.19%), url(<path-to-image>) 50% / cover no-repeat;
+        transform: translateY(50%);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        opacity: 0;
+        height: 0%;
+    }
+
+    .img-container:hover .hover-img {
+        height: 100%;
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}

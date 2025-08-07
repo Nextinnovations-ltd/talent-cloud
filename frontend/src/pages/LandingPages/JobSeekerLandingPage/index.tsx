@@ -5,7 +5,7 @@ import SeeMore from "@/components/landingPages/JobPortal/SeeMore";
 import './index.css';
 import EorSection from "@/components/landingPages/JobPortal/EorSection";
 import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
-import FAQ from "@/components/landingPages/JobPortal/FAQ";
+import FAQ from "@/components/landingPages/FAQ";
 const JobSeekerLandingPage = () => {
   
   return (
