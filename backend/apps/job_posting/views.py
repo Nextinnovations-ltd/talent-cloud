@@ -118,6 +118,15 @@ class JobPostActionAPIView(APIView):
 
 # region Job Post List Views
 
+class RecentJobPostListAPIView(CustomListAPIView):
+     queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
+     serializer_class = JobPostListSerializer
+     use_pagination = False
+     success_message = "Successfully fetched all recent job posts."
+
+     def get_queryset(self):
+          return JobService.get_recent_jobs_queryset()
+
 @extend_schema(tags=["Job Post"])
 class JobPostListAPIView(CustomListAPIView):
      queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
