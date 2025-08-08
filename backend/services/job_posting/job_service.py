@@ -112,6 +112,19 @@ class JobService():
           ).filter(date_filter_q).order_by('-created_at').select_related(
                'role', 'experience_level', 'posted_by'
           )
+     
+     def get_recent_jobs_queryset():
+          """Get recent jobs as fallback"""
+          today = date.today()
+          date_filter_q = Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+          
+          return JobPost.objects.active().filter(
+               is_accepting_applications=True,
+               job_post_status=StatusChoices.ACTIVE,
+               number_of_positions__gt=0
+          ).filter(date_filter_q).order_by('-created_at').select_related(
+               'role', 'experience_level', 'posted_by'
+          )[:3]
 
      @staticmethod
      def get_filter_completion_score(user):

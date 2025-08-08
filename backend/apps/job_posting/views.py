@@ -23,7 +23,7 @@ from apps.job_seekers.models import JobSeeker
 from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
 from rest_framework.exceptions import ValidationError
-from utils.view.custom_api_views import CustomCreateAPIView, CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
+from utils.view.custom_api_views import CustomListAPIView, CustomRetrieveDestroyAPIView, CustomRetrieveUpdateDestroyAPIView
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import IsCompanyAdminOrSuperadminForJobPost, TalentCloudAllPermission, TalentCloudUserDynamicPermission
@@ -117,6 +117,15 @@ class JobPostActionAPIView(APIView):
 
 
 # region Job Post List Views
+
+class RecentJobPostListAPIView(CustomListAPIView):
+     queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
+     serializer_class = JobPostListSerializer
+     use_pagination = False
+     success_message = "Successfully fetched all recent job posts."
+
+     def get_queryset(self):
+          return JobService.get_recent_jobs_queryset()
 
 @extend_schema(tags=["Job Post"])
 class JobPostListAPIView(CustomListAPIView):

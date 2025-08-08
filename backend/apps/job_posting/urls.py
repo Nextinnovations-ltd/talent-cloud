@@ -17,12 +17,14 @@ from .views import (
     CompanyApplicationDetailView,
     BookmarkJobView,
     JobSeekerBookmarkedJobListView,
+    RecentJobPostListAPIView,
 )
 
 urlpatterns = [
     # Endpoints related to Job Post
     path('job-posts/', JobPostCreateAPIView.as_view(), name='jobpost-list-create'),
     path('job-posts/all/', JobPostListAPIView.as_view(), name='jobpost-list'),
+    path('job-posts/recent/', RecentJobPostListAPIView.as_view(), name='recent-jobpost-list'),
     path('job-posts/discover/', JobDiscoveryAPIView.as_view(), name='discover-jobpost-list'),
     path('job-posts/newest/', NewestJobPostAPIView.as_view(), name='recent-jobpost-list'),
     path('job-posts/matched/', MatchedJobPostAPIView.as_view(), name='matched-jobpost-list'),
