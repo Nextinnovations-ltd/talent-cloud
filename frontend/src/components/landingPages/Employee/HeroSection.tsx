@@ -1,17 +1,14 @@
-import React from "react";
 import { useState } from "react";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import HeroImg from "@/assets/Employee/Frame 36555.png";
 import bgImage from "@/assets/Employee/Frame 1618873013.png";
-import CommonButton from "../commonBtn/button";
-import { useNavigate } from "react-router-dom";
+
 
 import './HeroSection.css'
+import CommonButton from "../commonBtn/button";
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div>

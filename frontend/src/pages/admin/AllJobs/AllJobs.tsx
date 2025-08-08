@@ -3,7 +3,6 @@ import SortsButtons from "./SortsButtons";
 import { useGetNIAllJobsByAdminQuery } from "@/services/slices/adminSlice";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PageInitialLoading } from "@/components/common/PageInitialLoading";
 import { AllJobsMainTabs } from "./AllJobsMainTabs";
 import Pagination from "@/components/common/Pagination";

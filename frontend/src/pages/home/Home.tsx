@@ -17,12 +17,15 @@ export const Home: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { searchQuery } = useJobSearchStore();
 
+
   const [filters, setFilters] = useState({
     job_type: searchParams.get('job_type') || '',
     work_type: searchParams.get('work_type') || '',
     project_duration: searchParams.get('project_duration') || '',
     salary_rate:searchParams.get('salary_rate') || '',
+    ordering:searchParams?.get('ordering') || ''
   });
+
 
   const { data, isLoading, isFetching,refetch } = useGetJobApplyCardQuery({ 
     page,
@@ -124,40 +127,7 @@ export const Home: React.FC = () => {
   return (
     <div>
       <ApplyJobFilters onFiltersChange={handleFiltersChange} />
-      {/* <div className="relative">
-        <div className="absolute top-[-30px] right-4 z-10">
-          <span
-            className="cursor-pointer p-2 rounded-full bg-white shadow-lg hover:scale-110 hover:bg-blue-100 transition flex items-center justify-center w-10 h-10"
-            onClick={() => setShowHero((prev) => !prev)}
-            aria-label={showHero ? 'Hide Hero' : 'Show Hero'}
-            title={showHero ? 'Hide Hero' : 'Show Hero'}
-            tabIndex={0}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setShowHero(prev => !prev); }}
-            role="button"
-          >
-            {showHero ? (
-              // Eye Open Icon
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3" stroke="#2563eb" strokeWidth="2"/></svg>
-            ) : (
-              // Eye Off Icon
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"><path stroke="#2563eb" strokeWidth="2" d="M17.94 17.94C16.11 19.25 14.13 20 12 20c-7 0-11-8-11-8a21.8 21.8 0 0 1 5.06-6.06M9.53 9.53A3 3 0 0 1 12 9c1.66 0 3 1.34 3 3 0 .47-.11.91-.29 1.29"/><path stroke="#2563eb" strokeWidth="2" d="m1 1 22 22"/></svg>
-            )}
-          </span>
-        </div>
-         <AnimatePresence>
-          {showHero && (
-            <motion.div
-              key="hero"
-              initial={{ opacity: 0, y: -30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.4 }}
-            >
-              <ApplyJobHero />
-            </motion.div>
-          )}
-        </AnimatePresence> 
-      </div> */}
+      
       <div className="container mx-auto mb-[50px] items-center p-4 flex justify-between">
         <h3>{data?.data.count || 0} job opportunities waiting.</h3>
         <PostUploadedCombo />
