@@ -123,11 +123,27 @@ run-daphne: all
 
 run-celery: all
 	@echo "Starting Celery worker..."
-	@$(VENV_DIR)/bin/celery -A main worker -l info
+	@$(VENV_DIR)/bin/celery -A celery_app worker -l info
 
 run-celery-beat: all
 	@echo "Starting Celery beat..."
-	@$(VENV_DIR)/bin/celery -A main beat -l info
+	@$(VENV_DIR)/bin/celery -A celery_app beat -l info
+
+run-celery-flower: all
+	@echo "\n\033[1;34m=== Starting Celery Flower Monitor ===\033[0m"
+	@echo "\033[0;33mMonitoring on: \033[1;33mhttp://localhost:5555\033[0m"
+	@echo "\033[0;36mPress Ctrl+C to stop Flower\033[0m\n"
+	@$(VENV_DIR)/bin/celery -A celery_app flower --port=5555
+
+check-celery-status: all
+	@echo "\n\033[1;34m=== Celery Status ===\033[0m"
+	@$(VENV_DIR)/bin/celery -A celery_app status
+
+celery-purge: all
+	@echo "\n\033[1;34m=== Purging Celery Queues ===\033[0m"
+	@echo "\033[0;31mWarning: This will remove all pending tasks!\033[0m"
+	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+	@$(VENV_DIR)/bin/celery -A celery_app purge -f
 
 # Import Data
 import-location-data: all
