@@ -365,7 +365,7 @@ const HeroSection = () => {
   return (
       <div>
           <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
-        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] glass max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
+        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
         <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[24px] pb-[24px] relative z-10 pr-5 pl-5 ">
                 {/* logo SVG here */}
              <img src={TalentCloudLogoImg} alt="" className="w-[118px] md:w-[198px]"/>
@@ -441,27 +441,17 @@ const HeroSection = () => {
                               </Button>
                 </div>
                 <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
-                  <h1 className="text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[64px] font-[700] leading-[46px] md:leading-[87px]">
-                  A Gateway Connecting <br/>
-                  Local Talent to Global Companies
+                  <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
+                  Global Possibilities for 
+
+<br/>
+Myanmar Professionals
                   </h1>
-                {/*   <p className="md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
-                    <span className="text-[#0389FF]">Talent Cloud</span> takes care of hiring, HR, and compliance—creating a smooth experience for <span className="text-[#0389FF]">employers</span> and a supportive environment for <span className="text-[#0389FF]">employees.</span>
-                  </p> */}
+                <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
+                Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
+                  </p>
                   <div className="flex justify-center md:mt-[80px] mt-[40px]">
-              {/*     <Button className="relative bg-[#0389FF] rounded-[26px] p-[10px] md:w-[205px] md:h-[58px] w-[149px] h-[48px] overflow-hidden group hover:border-b-[6px] border-b-[6px] hover:border-l-[6px] border-l-[6px] hover:border-black border-[#0389FF] transition-all duration-300 ease-in-out"> 
-                      <span className="block text-white md:text-[20px] text-[14px] font-[600] relative z-10 translate-y-0 group-hover:-translate-y-[60px] transition-transform duration-300">
-                        Explore Jobs
-                      </span>
-                      <span className="block text-white md:text-[20px] text-[14px] font-[600] absolute top-full right-[20px] w-full z-0 md:group-hover:-translate-y-[43px] group-hover:-translate-y-[30px] transition-transform duration-300">
-                        Explore Jobs
-                      </span>
-                      <img
-                        src={exploreArrow}
-                        alt="→"
-                        className="ml-[10px] relative z-10 transition-transform duration-300 group-hover:translate-x-1 w-[24px] h-[24px] md:w-[32px] md:h-[32px]"
-                      />
-                    </Button> */}
+           
       <CommonButton/>
 
 

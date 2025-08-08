@@ -67,9 +67,9 @@ const Whatugot = () => {
   }, [])
 
   return (
-    <div className="max-w-[1240px] mx-auto px-4 py-20">
+    <div className="max-w-[1240px] mx-auto px-4 pt-[48px] pb-0 md:py-20">
      
-      <h1 className="text-black text-[40px] font-[600] text-center mb-[100px]">
+      <h1 className="text-black text-[20px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[100px]">
         WHAT YOU GET
       </h1>
 
@@ -78,24 +78,24 @@ const Whatugot = () => {
           <div
             key={index}
             ref={(el) => (cardsRef.current[index] = el)}
-            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col md:flex-row justify-center items-center gap-[50px] sticky h-[414px] top-[15%] "
+            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row justify-center items-center gap-[24px] md:gap-[50px] sticky min-h-[414px] top-[15%] py-6 shadow-[0_1px_3px_0_#A6AFC366] "
           >
-            <div className="max-w-[506px]">
-              <h2 className="mb-4 text-[#000] text-[32px] font-[600] leading-[50px]">
+            <div className="max-w-[345px] md:max-w-[506px]">
+              <h2 className="mb-4 text-[#000] text-[20px] md:text-[32px] font-[600] leading-[31px] md:leading-[50px]">
                 {card.title}
               </h2>
-              <p className="mb-6 text-[#484747] text-[20px] font-[500] leading-[31px]">
+              <p className="mb-3 md:mb-6 text-[#484747] text-[16px] md:text-[20px] font-[500] leading-[25.12px] md:leading-[31px]">
                 {card.content}
               </p>
-              <p className="text-[#000] text-[20px] font-[500] leading-[34px]">
-                {card.quote} —{' '}
+              <p className="text-[#000] text-[16px] md:text-[20px] font-[500] leading-[29.76px ] md:leading-[34px]">
+                {card.quote}
                 {card.img === cardImg1 && <p className="text-[#0481EF]">
-                  Mr. Yuta Mukai, CEO of Next Innovation Ltd
+                <span className='text-[#000]'>—</span>   Mr. Yuta Mukai, CEO of Next Innovation Ltd
                 </p>}
               </p>
             </div>
             <div>
-              <img src={card.img} alt="CEO" className="w-full max-w-[300px]" />
+              <img src={card.img} alt="CEO" className="w-full max-w-[345px] md:max-w-[300px]" />
             </div>
           </div>
         ))} 

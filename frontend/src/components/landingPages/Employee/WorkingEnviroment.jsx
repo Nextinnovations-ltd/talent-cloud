@@ -5,7 +5,7 @@ import './WorkingEnviroment.css'
 const WorkingEnviroment = () => {
   return (
     <div className="overflow-hidden bg-white py-10">
-      <h1 className='text-black text-[40px] font-[600] text-center mb-[32px] mt-[67px]'>
+      <h1 className='text-black text-[18px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[32px] mt-0 md:mt-[67px]'>
         OUR LOVELY WORKING ENVIRONMENT
       </h1>
 

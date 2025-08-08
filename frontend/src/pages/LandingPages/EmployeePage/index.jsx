@@ -18,12 +18,13 @@ const EmployeePage = () => {
       <HeroSection/>
       <JoinBanner/>
       <WhyJoinTC/>
-      <WhoCanApply />
+     <WhoCanApply />
       <JoinBanner/>
       <Whatugot />
       <TalentCloudSay />
       <TalentCloudDone />
-      <WorkingEnviroment />
+      <JoinBanner/>
+      <WorkingEnviroment /> 
       <JobMatch />
       <HowWork />
       <JoinBanner/>

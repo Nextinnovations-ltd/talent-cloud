@@ -10,7 +10,7 @@ const JoinBanner = () => {
   
         width: '100%',
       }} className='flex flex-col items-center justify-center gap-4 md:gap-[32px] md:py-[98px] py-[39px] px-[24px]'>
-          <h1 className='text-black text-[18px] md:text-[40px] font-[600] text-center leading-[34.2px ] md:leading-[76px] uppercase'>
+          <h1 className='text-black text-[18px] md:text-[40px] font-[600] text-center leading-[34.2px] md:leading-[76px] uppercase'>
           Ready to Work on International Projects?
           </h1>
           <p className='text-black text-[12px] md:text-[20px] font-[500] text-center leading-[20px] md:leading-[38px]'>
