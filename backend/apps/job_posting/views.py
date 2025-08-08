@@ -142,9 +142,11 @@ class JobDiscoveryAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserDynamicPermission]
      serializer_class = JobPostListSerializer
-     filter_backends = [DjangoFilterBackend, SearchFilter]
+     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
      filterset_class = JobPostFilter
      search_fields = ['title', 'description', 'location']
+     ordering_fields = [ 'created_at', 'experience_years' ]
+     ordering = ['-created_at']
      
      def has_filters(self, params):
           return any(
