@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_celery_beat',
+    'django_celery_results',
     'channels',
     
     #Local Apps
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'apps.job_seekers',
     'apps.job_posting',
     'apps.audit_log',
+    'apps.test_app'
 ]
 
 # Middleware
@@ -79,6 +81,10 @@ LOGGING = {
             'format': '{levelname} {asctime} {message}',
             'style': '{',
         },
+        'celery': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'console': {
@@ -110,11 +116,24 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'verbose',
         },
+        'celery_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(LOGS_DIR / 'celery.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter': 'simple',
+        },
     },
     'loggers': {
         'exception_handler': {
             'handlers': ['console', 'exception_file', 'error_file'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['console', 'celery_file'],
+            'level': 'INFO',
             'propagate': False,
         },
     },
@@ -274,14 +293,42 @@ CORS_ALLOWED_ORIGINS = [
 # endregion CORS Config
 
 
-# region Celery Config
+# region Celery Configuration - Minimal Setup
 
-CELERY_TIMEZONE = 'UTC'
+# Basic Celery Settings
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/1')
+
+# Serialization & Timezone
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_IMPORTS = ('main.celery.tasks',)
+CELERY_TIMEZONE = TIME_ZONE
+
+# Task Discovery
+CELERY_AUTODISCOVER_TASKS = True
+
+CELERY_IMPORTS = (
+    'celery_app.tasks.sample_tasks',
+)
+
+# Beat Scheduler
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# endregion Celery Config
+# Result Settings
+CELERY_RESULT_EXPIRES = 60 * 60 * 24  # 24 hours
+CELERY_TASK_TRACK_STARTED = True
+
+# Task Execution
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 minutes
+
+# Worker Settings
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Development Override
+# if DEBUG:
+CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cast=bool)
+
+# endregion Celery Configuration
