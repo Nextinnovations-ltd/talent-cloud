@@ -11,7 +11,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
     'add-every-30-seconds': {
-        'task': 'celery_app.tasks.add',
+        'task': 'sample_tasks.add',
         'schedule': 30.0,
         'args': (16, 16)
     },

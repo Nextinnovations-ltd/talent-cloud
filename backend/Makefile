@@ -135,15 +135,9 @@ run-celery-flower: all
 	@echo "\033[0;36mPress Ctrl+C to stop Flower\033[0m\n"
 	@$(VENV_DIR)/bin/celery -A celery_app flower --port=5555
 
-check-celery-status: all
+celery-status: all
 	@echo "\n\033[1;34m=== Celery Status ===\033[0m"
 	@$(VENV_DIR)/bin/celery -A celery_app status
-
-celery-purge: all
-	@echo "\n\033[1;34m=== Purging Celery Queues ===\033[0m"
-	@echo "\033[0;31mWarning: This will remove all pending tasks!\033[0m"
-	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	@$(VENV_DIR)/bin/celery -A celery_app purge -f
 
 # Import Data
 import-location-data: all
