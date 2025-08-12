@@ -27,6 +27,7 @@ jobs:
 
       - name: Install dependencies and build
         run: |
+          ls
           cd talent-cloud/frontend
           npm ci
           npm run build:staging
