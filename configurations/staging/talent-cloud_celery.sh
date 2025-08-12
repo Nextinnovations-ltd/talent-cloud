@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DJANGO_WSGI_MODULE="talent-cloud"      
-DJANGO_SETTINGS_MODULE=talent-cloud.stg_settings  
+DJANGO_SETTINGS_MODULE=talent-cloud.staging  
 DIR=home/ubuntu/talentcloud_networks/talent-cloud   # Directory where project is located
 
 cd $DIR

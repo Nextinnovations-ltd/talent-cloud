@@ -5,7 +5,7 @@ USER=ubuntu   #User to run this script as
 GROUP=ubuntu  #Group to run this script as
 DJANGO_WSGI_MODULE=talent-cloud         
 DJANGO_WSGI_MODULE=talent-cloud         
-DJANGO_SETTINGS_MODULE=talent-cloud.stg_settings   #Which Django setting file should use
+DJANGO_SETTINGS_MODULE=talent-cloud.staging   #Which Django setting file should use
 
 cd $DIR
 source /home/ubuntu/venv/bin/activate #Activate the virtual environment
