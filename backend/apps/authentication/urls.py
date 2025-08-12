@@ -25,6 +25,7 @@ from apps.authentication.views.auth_view import (
     UserInfoAPIView, 
     OAuthStateGenerationAPIView
 )
+from apps.authentication.views.s3_view import ConfirmUploadAPIView, GenerateUploadURLAPIView, GetDownloadURLAPIView
 
 router = SimpleRouter()
 router.register(r'auth', AuthenticationViewSet, basename='login')
@@ -52,6 +53,11 @@ urlpatterns=[
     path('invitations/my-invitations/', MyInvitationsAPIView.as_view(), name='list_my_invitations'),
     path('invitations/<int:invitation_id>/revoke/', RevokeInvitationAPIView.as_view(), name='revoke_invitation'),
     path('invitations/statistics/', InvitationStatisticsAPIView.as_view(), name='get_invitation_statistics'),
+    
+    # S3 Upload endpoints
+    path('s3/upload/generate-url/', GenerateUploadURLAPIView.as_view(), name='generate-upload-url'),
+    path('s3/upload/confirm/', ConfirmUploadAPIView.as_view(), name='confirm-upload'),
+    path('s3/upload/download-url/', GetDownloadURLAPIView.as_view(), name='get-download-url'),
 ]
 
 urlpatterns += router.urls
