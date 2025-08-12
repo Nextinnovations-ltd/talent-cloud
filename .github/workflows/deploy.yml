@@ -1,23 +1,65 @@
-name: Deploy to AWS
+name: Talent-cloud CI/CD Pipeline
 
 on:
-     push:
-          branches:
-               - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-     deploy:
-          runs-on: ubuntu-latest
+  build-frontend-job:
+    name: Build frontend
+    runs-on: ubuntu-latest
 
-          steps:
-          -    name: Deploy to VPS via SSH
-               uses: appleboy/ssh-action@master
-               with:
-                    host: ${{ secrets.VPS_HOST }}
-                    username: ${{ secrets.VPS_USER }}
-                    key: ${{ secrets.VPS_SSH_KEY }}
-                    script: |
-                              cd /home/youruser/yourproject
-                              git pull origin main
-                              docker-compose down
-                              docker-compose up -d --build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Install dependencies and build
+        run: |
+          cd talent-cloud/frontend
+          npm ci
+          npm run build:staging
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: talent-cloud/frontend/_dist
+
+  deploy-job:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    needs: build-frontend-job
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: talent-cloud/frontend/_dist
+
+      - name: Zip all and list the structure
+        run: |
+          tar -czf usen-app.tar.gz usen-app
+          tar -czf configurations.tar.gz configurations
+          ls -lash
