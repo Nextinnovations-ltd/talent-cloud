@@ -86,5 +86,17 @@ jobs:
             host: ${{ secrets.STAGING_HOST }}
             username: ${{ secrets.STAGING_USER }}
             key: ${{ secrets.STAGING_KEY }}
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+            script: |
+                sudo tar -xf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf talent-cloud.tar.gz
+                sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf configurations.tar.gz
            
         
