@@ -21,7 +21,7 @@ FROM nginx:alpine
 # Copy build output to Nginx's public folder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom Nginx config
+# Copy custom Nginx configf
 COPY docker/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

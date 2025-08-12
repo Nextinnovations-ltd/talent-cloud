@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { useNavigate } from 'react-router-dom';
 import { Title } from '../Title'
@@ -57,6 +58,7 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
                 />
             ) : <motion.div
                 className='mb-[70px] px-[100px]'
+                //@ts-ignore
                 variants={itemVariants}
             >
                 <iframe width="100%" height="515" src={data?.data?.video_url} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ></iframe>

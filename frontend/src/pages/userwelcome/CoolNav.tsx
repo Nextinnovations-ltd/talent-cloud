@@ -1,37 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { BackIcon } from "@/constants/svgs";
-import useToast from "@/hooks/use-toast";
-import clsx from "clsx";
-import { useNavigate } from "react-router-dom";
+
 
 const CoolNav = (props: any) => {
-  const { showNotification } = useToast();
   // Calculate progress as a percentage
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
   const progressPercentage = (props.currentStep / props.totalSteps) * 100;
 
-  const handleNextStep = () => {
-    const { currentStep, specializationId, nextStep } = props;
+  //const handleNextStep = () => {
+  //  const { currentStep, specializationId, nextStep } = props;
 
-    if (currentStep === 6) {
-      navigate("/");
-      return;
-    }
+    //if (currentStep === 6) {
+    //  navigate("/");
+    //  return;
+    //}
 
-    if (currentStep === 3) {
-      if (specializationId === null) {
-        showNotification({
-          message: "Please select one talent.",
-          type: "danger",
-        });
-        return;
-      }
-    }
+    //if (currentStep === 3) {
+     // if (specializationId === null) {
+      //  showNotification({
+       //   message: "Please select one talent.",
+        //  type: "danger",
+      //  });
+      //  return;
+    //  }
+  //  }
 
-    nextStep();
-  };
+  //  nextStep();
+  //};
 
-  console.log(props.currentStep);
+
 
   return (
     <div className="w-full">

@@ -3,7 +3,7 @@ import { Applicant } from '@/types/admin-auth-slice';
 import DEFAULT from '@/assets/ProfileNoData.png';
 import { useNavigate } from 'react-router-dom';
 
-const RecentApplicant = ({ data }: { data: Applicant }) => {
+const RecentApplicant = ({ data }: { data?: Applicant }) => {
   const navigate = useNavigate();
   // Fallback values if data is not provided
   if (!data) {

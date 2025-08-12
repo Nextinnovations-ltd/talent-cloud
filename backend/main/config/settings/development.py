@@ -16,7 +16,7 @@ DATABASES = {
         'NAME': 'talentcloud',
         'USER': 'talentclouduser',
         'PASSWORD': 'default',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': '5432'
     }
 }

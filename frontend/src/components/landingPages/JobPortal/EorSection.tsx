@@ -1,4 +1,5 @@
-import React, { useState, useEffect,useRef } from 'react';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import  { useState, useEffect,useRef } from 'react';
 import previousBtn from '@/assets/JobPortal/eva_arrow-ios-front-fill.svg';
 import nextBtn from '@/assets/JobPortal/eva_arrow-ios-back-fill.svg';
 import img1 from '@/assets/JobPortal/freepik__retouch__57107.png';
@@ -48,15 +49,15 @@ const slides = [
 ];
 
 const SLIDE_DURATION = 8000; // 4 seconds
-const PROGRESS_INTERVAL = 40; // Not needed anymore since we're using requestAnimationFrame
+
 
 const EorSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const startRef = useRef(performance.now()); // <-- Reference to track/reset start time
-  const rafIdRef = useRef(); // <-- Track animation frame ID
+  const rafIdRef = useRef<null>(null); // <-- Track animation frame ID
   useEffect(() => {
-    const updateProgress = (now) => {
+    const updateProgress = (now: number) => {
       const elapsed = now - startRef.current;
       const percent = (elapsed / SLIDE_DURATION) * 100;
 
@@ -68,11 +69,12 @@ const EorSection = () => {
         setProgress(Math.min(percent, 100));
       }
 
-      rafIdRef.current = requestAnimationFrame(updateProgress);
+      rafIdRef.current = requestAnimationFrame(updateProgress) as unknown as null;
     };
 
-    rafIdRef.current = requestAnimationFrame(updateProgress);
+    rafIdRef.current = requestAnimationFrame(updateProgress) as unknown as null;
 
+     //@ts-ignore
     return () => cancelAnimationFrame(rafIdRef.current);
   }, []);
 

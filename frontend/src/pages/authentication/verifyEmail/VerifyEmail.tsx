@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { NavLink } from "@/components/common/NavLink";
 import { OTP } from "@/components/common/OTP";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -142,6 +144,7 @@ export const VerifyEmail = () => {
                   Resent code in:&nbsp;
                   <div className="w-[25px] text-center">
                     <CountUp
+                    //@ts-expect-error
                       ref={countRef}
                       onEnd={() => setEnd(true)}
                       end={60}
@@ -156,7 +159,6 @@ export const VerifyEmail = () => {
 
               <PrimaryButton
                 title="Verify"
-                type="submit"
                 loading={formDisabled}
                 isButtonDisabled={formDisabled}
               />

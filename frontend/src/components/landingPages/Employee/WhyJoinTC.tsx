@@ -1,4 +1,3 @@
-import React from 'react'
 import getJobPromotionImg from '../../../assets/Employee/Get Job Promotion 1.png';
 import jobInterviewImg from '../../../assets/Employee/Job Interview 2.png'
 import brainstormImg from '../../../assets/Employee/Team Brainstorming 5.png';

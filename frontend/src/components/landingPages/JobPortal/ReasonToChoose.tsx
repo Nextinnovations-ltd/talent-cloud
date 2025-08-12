@@ -1,4 +1,3 @@
-import React from 'react'
 import {motion} from 'framer-motion'
 import teamwork from '../../../assets/JobPortal/yong-group.png'
 import icon1 from '../../../assets/JobPortal/Frame 36106.svg'

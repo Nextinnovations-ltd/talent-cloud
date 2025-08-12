@@ -4,7 +4,7 @@ export type UserProfile = {
   username: string;
   email: string;
   tagline: string;
-  role: number;
+  role: string;
   specializations:number,
   experience_level: number;
   experience_years: number;

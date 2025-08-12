@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 
 type StepTwoFormProps = {
-    formMethods: UseFormReturn;
+    formMethods: UseFormReturn<any>;
   };
   
 

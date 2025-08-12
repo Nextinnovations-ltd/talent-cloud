@@ -1,4 +1,3 @@
-import React from 'react'
 import createAccImg from '../../../assets/Employee/Create Account 4.png';
 import hiringImg from '../../../assets/Employee/Hiring 3.png';
 import getPromotionImg from '../../../assets/Employee/Get Job Promotion 4.png'

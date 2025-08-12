@@ -1,9 +1,8 @@
-import React from 'react'
 import project1 from '../../../assets/Employee/image 94.png'
 import project2 from '../../../assets/Employee/Frame 36359.png'
 import project3 from '../../../assets/Employee/image 96.png'
-import hoverCircle from '../../../assets/Employee/Frame 36337.png'
 import './TalentCloud.css'
+
 const TalentCloudDone = () => {
   return (
     <div className="bg-[#F7F7F7] pt-[52px] pb-[52px]">

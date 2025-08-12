@@ -15,7 +15,7 @@ interface JobApplyCardResponse {
   };
 }
 
-interface JobDetailCard {
+export interface JobDetailCard {
   id: number;
   title: string;
   description: string;
@@ -70,7 +70,8 @@ interface JobApplyCardParams {
   work_type?: string;
   project_duration?: string;
   salary_rate?: string;
-  search?:string
+  search?:string;
+  ordering?:string;
 }
 
 interface BookmarkedJobResponse {
@@ -130,7 +131,7 @@ export const extendedJobApplySlice = apiSlice.injectEndpoints({
           work_type: params.work_type,
           project_duration: params.project_duration,
           salary_rate: params.salary_rate,
-          ordering: '-created_at',
+          ordering: params?.ordering,
           search:params.search
         },
       }),
