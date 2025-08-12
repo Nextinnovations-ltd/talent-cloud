@@ -42,7 +42,6 @@ const AllJobs = () => {
         <AllJobsMainTabs 
           title="Jobs" 
           myJobTotal={data?.data.count || 0} 
-          isLoading={isLoading}
         />
           <div className="flex items-center justify-center pr-[24px] gap-4">
             <SortsButtons

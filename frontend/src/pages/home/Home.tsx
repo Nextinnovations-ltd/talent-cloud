@@ -22,12 +22,12 @@ export const Home: React.FC = () => {
     job_type: searchParams.get('job_type') || '',
     work_type: searchParams.get('work_type') || '',
     project_duration: searchParams.get('project_duration') || '',
-    salary_rate:searchParams.get('salary_rate') || '',
-    ordering:searchParams?.get('ordering') || ''
+    salary_rate: searchParams.get('salary_rate') || '',
+    ordering: searchParams?.get('ordering') || ''
   });
 
 
-  const { data, isLoading, isFetching,refetch } = useGetJobApplyCardQuery({ 
+  const { data, isLoading, isFetching, refetch } = useGetJobApplyCardQuery({
     page,
     ...filters
   });
@@ -81,7 +81,7 @@ export const Home: React.FC = () => {
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);
     refetch();
-    
+
     // Update URL with jobId
     const params = new URLSearchParams(searchParams.toString());
     params.set('jobId', job.id.toString());
@@ -105,6 +105,24 @@ export const Home: React.FC = () => {
     setSearchParams(params);
   };
 
+  const handleOrderingChange = (newOrdering: string) => {
+    // Update filters with new ordering value
+    const updatedFilters = { ...filters, ordering: newOrdering };
+
+    setFilters(updatedFilters);
+    setPage(1); // reset page on filter change
+    setSelectedJob(null); // clear selected job
+
+    // Update URL params
+    const params = new URLSearchParams();
+    Object.entries(updatedFilters).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      }
+    });
+    setSearchParams(params);
+  };
+
   const handleScroll = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop
@@ -117,7 +135,7 @@ export const Home: React.FC = () => {
     }
   };
 
- 
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
 
@@ -127,35 +145,37 @@ export const Home: React.FC = () => {
   return (
     <div>
       <ApplyJobFilters onFiltersChange={handleFiltersChange} />
-      
+
       <div className="container mx-auto mb-[50px] items-center p-4 flex justify-between">
         <h3>{data?.data.count || 0} job opportunities waiting.</h3>
-        <PostUploadedCombo />
+        <PostUploadedCombo
+          ordering={filters.ordering}
+          onOrderingChange={handleOrderingChange}
+        />
       </div>
       <div className={`flex gap-[40px] pb-[200px] container mx-auto flex-col lg:flex-row`}>
         <div
-          className={`grid mx-auto justify-center items-center transition-all gap-[30px] duration-300 ${
-            selectedJob
+          className={`grid mx-auto justify-center items-center transition-all gap-[30px] duration-300 ${selectedJob
               ? "grid-cols-1 pb-[400px]"
               : "grid-cols-1 sm:grid-cols-2 pb-0 lg:grid-cols-3"
-          }`}
+            }`}
         >
           {isLoading && page === 1
             ? Array.from({ length: 6 }).map((_, index) => (
-                <ApplyJobCardSkeleton key={index} />
-              ))
+              <ApplyJobCardSkeleton key={index} />
+            ))
             : allJobs.length === 0 && !isLoading ? (
-                <CommonError/>
-              ) : (
-                allJobs.map((job) => (
-                  <ApplyJobCard
-                    key={job.id}
-                    job={job}
-                    onClick={handleJobClick}
-                    isSelected={selectedJob?.id === job.id}
-                  />
-                ))
-              )}
+              <CommonError />
+            ) : (
+              allJobs.map((job) => (
+                <ApplyJobCard
+                  key={job.id}
+                  job={job}
+                  onClick={handleJobClick}
+                  isSelected={selectedJob?.id === job.id}
+                />
+              ))
+            )}
           {isLoadingMore && (
             <div className="col-span-full flex justify-center gap-[60px] mt-4 animate-fade-in">
               {Array.from({ length: 3 }).map((_, index) => (

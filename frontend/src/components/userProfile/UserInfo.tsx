@@ -13,7 +13,7 @@ export const UserInfo = () => {
             <UserProfileImage />
             <div className='px-[50px]'>
                 <div className='  flex justify-start items-end relative '>
-                    <AvatarProfile size='w-[164px] mt-[-170px] h-[164px] border-[5px] border-white' status={false} />
+                    <AvatarProfile size='w-[164px] mt-[-170px] h-[164px] border-[5px] border-white' />
                     <div className='mb-[12px] ml-[24px] mt-[20px]   flex flex-col  '>
                         <h3 className=' font-semibold text-[24px]   flex items-center gap-[8.7px]'>Than Naung <BLUEMARK /></h3>
                         <p className='text-[18px] mt-[4px]  text-[#6B6B6B]'>UI/UX Designer</p>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { UserProfile } from './UserProfile';
 import { animate, motion, useMotionValue, useTransform, useScroll } from "framer-motion";
@@ -52,7 +53,7 @@ const links = [
     {
         title: "User",
         icon: (
-           <SvgDockUser/>
+            <SvgDockUser />
         ),
         href: "#user-section",
     },
@@ -60,35 +61,35 @@ const links = [
     {
         title: "Projects",
         icon: (
-            <SvgDockProjects/>
+            <SvgDockProjects />
         ),
         href: "#projects-section",
     },
     {
         title: "Videos",
         icon: (
-           <SvgDockVideo/>
+            <SvgDockVideo />
         ),
         href: "#videos-section",
     },
     {
         title: "Work Experience",
         icon: (
-          <SvgDockExperiences/>
+            <SvgDockExperiences />
         ),
         href: "#work-experience-section",
     },
     {
         title: "Education",
         icon: (
-            <SvgDockEducation/>
+            <SvgDockEducation />
         ),
         href: "#education-section",
     },
     {
         title: "Certificate",
         icon: (
-            <SvgDockCertification/>
+            <SvgDockCertification />
         ),
         href: "#certification-section",
     },
@@ -105,8 +106,7 @@ export const UserInfoSec = () => {
     const [isEducationEdit, setIsEducationEdit] = useState(false);
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
-    const [isSkillEdit, setIsSkillEdit] = useState(false);
-    const [isVideoIntroductionEdit,setIsVideoIntroductionEdit] = useState(false);
+    const [isVideoIntroductionEdit, setIsVideoIntroductionEdit] = useState(false);
 
 
 
@@ -150,12 +150,13 @@ export const UserInfoSec = () => {
             >
 
                 {/* <FocusCards cards={cards} /> */}
-                <JobSeekerSkillSection  />
+                <JobSeekerSkillSection />
 
                 <div id="projects-section">
                     <SelectedProjectsSection
                         isSelectedProjectsEdit={isSelectedProjectsEdit}
                         containerVariants={containerVariants}
+                        //@ts-ignore
                         itemVariants={itemVariants}
                         setIsSelectedProjectsEdit={setIsSelectedProjectsEdit}
                     />
@@ -164,9 +165,9 @@ export const UserInfoSec = () => {
                 {/* Rest of the content with similar motion wrappers */}
 
                 <div id="videos-section">
-                    <VideoIntroductionSection 
-                    isVideoIntroductionEdit={isVideoIntroductionEdit}
-                    setIsVideoIntroductionEdit={setIsVideoIntroductionEdit}
+                    <VideoIntroductionSection
+                        isVideoIntroductionEdit={isVideoIntroductionEdit}
+                        setIsVideoIntroductionEdit={setIsVideoIntroductionEdit}
                     />
                 </div>
 
@@ -174,13 +175,23 @@ export const UserInfoSec = () => {
                 {/* Work Experience */}
 
                 <div id="work-experience-section">
-                    <WorkExperienceSection isWorkExperienceEdit={isWorkExperienceEdit} setIsWorkExperienceEdit={setIsWorkExperienceEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                    <WorkExperienceSection 
+                    isWorkExperienceEdit={isWorkExperienceEdit} 
+                    setIsWorkExperienceEdit={setIsWorkExperienceEdit} 
+                    containerVariants={containerVariants} 
+                     //@ts-ignore
+                    itemVariants={itemVariants} />
                 </div>
 
                 {/* Education */}
 
                 <div id="education-section">
-                    <EducationSection isEducationEdit={isEducationEdit} setIsEducationEdit={setIsEducationEdit} containerVariants={containerVariants} itemVariants={itemVariants} />
+                    <EducationSection 
+                    isEducationEdit={isEducationEdit} 
+                    setIsEducationEdit={setIsEducationEdit} 
+                    containerVariants={containerVariants} 
+                      //@ts-ignore
+                    itemVariants={itemVariants} />
                 </div>
 
 
@@ -188,7 +199,7 @@ export const UserInfoSec = () => {
 
                 {/* Certifications */}
                 <div id="certification-section">
-                <CertificationSection isCertificationEdit={isCertificationEdit} setIsCertificationEdit={setIsCertificationEdit} />
+                    <CertificationSection isCertificationEdit={isCertificationEdit} setIsCertificationEdit={setIsCertificationEdit} />
                 </div>
 
                 <ContentSection
@@ -204,7 +215,7 @@ export const UserInfoSec = () => {
                     BackGroundGrid={BackGroundGrid}
                     ScrollVelocity={ScrollVelocity}
                 />
-              
+
 
             </motion.div>
             <motion.div

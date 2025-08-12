@@ -1,4 +1,3 @@
-import React from 'react'
 import designerImg from '../../../assets/Employee/Illustrator Drawing With Ipad 4.png';
 import frontendDeveloperImg from '../../../assets/Employee/Modular Coding 1.png';
 import backendDeveloperImg from '../../../assets/Employee/Coding 1.png';     

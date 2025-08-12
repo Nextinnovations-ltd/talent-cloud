@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import  { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import cardImg1 from '../../../assets/Employee/Frame 36408.png'
@@ -46,7 +47,7 @@ const Whatugot = () => {
   ]
 
   useEffect(() => {
-    cardsRef.current.forEach((card, index) => {
+    cardsRef.current.forEach((card) => {
       gsap.fromTo(
         card,
         { opacity: 0, y: 40, scale: 0.95 },
@@ -77,6 +78,7 @@ const Whatugot = () => {
         {cardData.map((card, index) => (
           <div
             key={index}
+            //@ts-ignore
             ref={(el) => (cardsRef.current[index] = el)}
             className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row justify-center items-center gap-[24px] md:gap-[50px] sticky min-h-[414px] top-[15%] py-6 shadow-[0_1px_3px_0_#A6AFC366] "
           >

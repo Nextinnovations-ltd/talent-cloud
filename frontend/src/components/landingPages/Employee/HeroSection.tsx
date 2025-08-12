@@ -7,6 +7,7 @@ import bgImage from "@/assets/Employee/Frame 1618873013.png";
 
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
+
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
 
@@ -33,7 +34,7 @@ const HeroSection = () => {
           </ul>
           <Link to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
           <div className=" hidden md:flex">
-          <CommonButton title="Get Started" smallIcon="16" />
+          <CommonButton title="Get Started" smallIcon={true} />
           </div>
          
           {/* responsive toggle */}

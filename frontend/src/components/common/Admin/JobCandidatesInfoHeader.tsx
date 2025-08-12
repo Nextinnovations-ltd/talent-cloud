@@ -26,10 +26,13 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
     const handleDelete = async () => {
         if (id) {
             const response = await deleteJob(id);
-            showNotification({ message: response?.data?.message, type: 'success' });
+            const message =
+                (response as { data?: { message?: string } })?.data?.message ||
+                "Job deleted successfully";
+            showNotification({ message, type: 'success' });
             setIsDialogOpen(false);
 
-            navigation('/admin/dashboard/allJobs')
+            navigation('/admin/dashboard/allJobs');
         }
     }
 

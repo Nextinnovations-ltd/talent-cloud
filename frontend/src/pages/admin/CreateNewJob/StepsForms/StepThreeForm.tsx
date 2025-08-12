@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import { StepThreeFormType } from "../CreateNewJob";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import { PER_SALARY_TYPE_DATA, PROJECT_DURATION_TYPE_DATA, SALARY_MODE_TYPE_DATA } from "@/constants/workTypeConstants";
 import InputField from "@/components/common/form/fields/input-field";
@@ -13,7 +13,7 @@ import clsx from "clsx";
 import DatePickerField from "@/components/common/form/fields/date-picker-field";
 
 type StepThreeFormProps = {
-    formMethods: UseFormReturn<StepThreeFormType>;
+    formMethods: UseFormReturn<any>;
 };
 
 const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {

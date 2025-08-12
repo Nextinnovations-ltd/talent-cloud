@@ -15,7 +15,7 @@ interface JobApplyCardResponse {
   };
 }
 
-interface JobDetailCard {
+export interface JobDetailCard {
   id: number;
   title: string;
   description: string;

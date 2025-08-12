@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Check, ChevronDown } from "lucide-react"
-import { useSearchParams } from "react-router-dom"
+
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,32 +17,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+interface PostUploadedComboProps {
+  ordering: string; // current ordering value
+  onOrderingChange: (newOrdering: string) => void; // callback when ordering changes
+}
 
-const sortOptions = [
-  { value: "-created_at", label: "Latest" },
-  { value: "created_at", label: "Oldest" },
-]
+export function PostUploadedCombo({ ordering, onOrderingChange }: PostUploadedComboProps) {
+  const [open, setOpen] = React.useState(false);
 
-export function PostUploadedCombo() {
-  const [open, setOpen] = React.useState(false)
+  const sortOptions = [
+    { value: "-created_at", label: "Latest" },
+    { value: "created_at", label: "Oldest" },
+  ];
 
-  // Get and set URL search params
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  // Current ordering param from URL
-  const currentOrdering = searchParams.get("ordering") || ""
-
-  function onSelectOrdering(value: string) {
-    if (value === currentOrdering) {
-      // Toggle off: remove ordering param
-      searchParams.delete("ordering")
-      setSearchParams(searchParams)
+  function handleSelect(value: string) {
+    if (value === ordering) {
+      onOrderingChange(""); // toggle off
     } else {
-      // Set ordering param
-      searchParams.set("ordering", value)
-      setSearchParams(searchParams)
+      onOrderingChange(value);
     }
-    setOpen(false)
+    setOpen(false);
   }
 
   return (
@@ -54,8 +48,8 @@ export function PostUploadedCombo() {
           aria-expanded={open}
           className="w-[157px] px-[24px] rounded-[8px] py-[10px] justify-between"
         >
-          {currentOrdering
-            ? sortOptions.find((opt) => opt.value === currentOrdering)?.label
+          {ordering
+            ? sortOptions.find((opt) => opt.value === ordering)?.label
             : "Sort by Date"}
           <ChevronDown className="opacity-50" />
         </Button>
@@ -71,13 +65,13 @@ export function PostUploadedCombo() {
                 <CommandItem
                   key={option.value}
                   value={option.value}
-                  onSelect={onSelectOrdering}
+                  onSelect={handleSelect}
                 >
                   {option.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      currentOrdering === option.value ? "opacity-100" : "opacity-0"
+                      ordering === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
@@ -87,5 +81,5 @@ export function PostUploadedCombo() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
