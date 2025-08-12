@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: talent-cloud/frontend/_dist
+          path: frontend/_dist
 
   deploy-job:
     name: Deploy to staging
@@ -57,7 +57,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: talent-cloud/frontend/_dist
+          path: frontend/_dist
 
       - name: Zip all and list the structure
         run: |
