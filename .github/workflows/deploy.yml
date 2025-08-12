@@ -61,6 +61,6 @@ jobs:
 
       - name: Zip all and list the structure
         run: |
-          tar -czf usen-app.tar.gz usen-app
+          tar -czf talent-cloud.tar.gz talent-cloud
           tar -czf configurations.tar.gz configurations
           ls -lash
