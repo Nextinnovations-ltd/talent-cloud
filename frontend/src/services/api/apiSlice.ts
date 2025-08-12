@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError, FetchArgs, BaseQueryApi } from "@reduxjs/toolkit/query/react";
-import { LocalUrl } from "./apiurls";
+import { URL } from "./apiurls";
 import {
   getTokenFromLocalStorage,
   getTokenFromSessionStorage,
@@ -11,7 +11,7 @@ import {
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: LocalUrl,
+  baseUrl: URL,
   credentials: "include",
   prepareHeaders: (headers) => {
     if (headers.has("Content-Type")) {
