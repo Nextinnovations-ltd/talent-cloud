@@ -18,6 +18,8 @@ export default function useTokenVerify(
   shouldSkip?: boolean
 ): UseTokenVerifyReturn {
   const token = useSelector(selectToken) || getTokenFromLocalStorage() || getTokenFromSessionStorage();
+
+
   const isGeneratedUsername = useSelector(getIsGeneratedUsername) as boolean;
   const [verifyToken, { isLoading, isSuccess }] = useVerifyTokenMutation();
 

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_celery_beat',
+    'django_celery_results',
     'channels',
     
     #Local Apps
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'apps.job_seekers',
     'apps.job_posting',
     'apps.audit_log',
+    'apps.test_app'
 ]
 
 # Middleware
@@ -62,12 +65,98 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+# region LOGGER CONFIGURATION
+
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+        'celery': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'exception_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(LOGS_DIR / 'exceptions.log'),
+            'maxBytes': 1024*1024*10,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(LOGS_DIR / 'errors.log'),
+            'maxBytes': 1024*1024*10,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'django_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(LOGS_DIR / 'django.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'celery_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': str(LOGS_DIR / 'celery.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'exception_handler': {
+            'handlers': ['console', 'exception_file', 'error_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['console', 'celery_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+SEND_ERROR_NOTIFICATIONS = True
+ADMINS = [
+    ('Admin Name', 'admin@tc.io'),
+]
+
+# endregion LOGGER CONFIGURATION
+
+# region SPECTACULAR CONFIGURATION
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Talent Cloud Backend API',
     'DESCRIPTION': 'A Job Seeking Platform for Technology Sector',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# endregion SPECTACULAR CONFIGURATION
 
 ROOT_URLCONF = 'main.config.urls'
 
@@ -89,8 +178,22 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'main.config.asgi.application'
-
 WSGI_APPLICATION = 'main.config.wsgi.application'
+
+# region CACHE Configuration
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'oauth-rate-limiting',
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,
+        }
+    }
+}
+
+# endregion CACHE Configuration
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
@@ -103,7 +206,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Password validation
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -131,25 +234,47 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom User Model
 AUTH_USER_MODEL = 'users.TalentCloudUser'
 
-
 # region OAuth Configuration
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend'
 ]
 
-GOOGLE_CLIENT_ID = '394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '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'
+# OAuth Credentials - MUST be set via environment variables
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
 
-LINKEDIN_CLIENT_ID = '866khyw28sevz8'
-LINKEDIN_CLIENT_SECRET = 'WPL_AP1.m68SvuuDfa1LXupr.+YHjyg=='
+LINKEDIN_CLIENT_ID = config('LINKEDIN_CLIENT_ID', default='')
+LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
 
-FACEBOOK_CLIENT_ID = '1999611343882551'
-FACEBOOK_CLIENT_SECRET = '495a6ed1c1986293eb357350b2ea4f02'
+FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
+FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
-OAUTH_REDIRECT_URL = "http://localhost:5173/oauth/callback"
+# OAUTH URLs
+OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://localhost:5173/oauth/callback")
+
+# Provider-specific redirect URIs
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/google")
+LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/linkedin")
+FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
+
+# Facebook API Version
+FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')
+
+# Validate that OAuth credentials are set in production
+if config('DJANGO_ENV', default='development') == 'production':
+    required_oauth_settings = [
+        'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET',
+        'LINKEDIN_CLIENT_ID', 'LINKEDIN_CLIENT_SECRET', 
+        'FACEBOOK_CLIENT_ID', 'FACEBOOK_CLIENT_SECRET'
+    ]
+    
+    missing_settings = [setting for setting in required_oauth_settings if not config(setting, default='')]
+    if missing_settings:
+        raise Exception(f"Missing required OAuth environment variables: {', '.join(missing_settings)}")
 
 # endregion OAuth Configuration
+
 
 # region Static Config
 
@@ -177,14 +302,42 @@ CORS_ALLOWED_ORIGINS = [
 # endregion CORS Config
 
 
-# region Celery Config
+# region Celery Configuration
 
-CELERY_TIMEZONE = 'UTC'
+# Basic Celery Settings
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/1')
+
+# Serialization & Timezone
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_IMPORTS = ('main.celery.tasks',)
+CELERY_TIMEZONE = TIME_ZONE
+
+# Task Discovery
+CELERY_AUTODISCOVER_TASKS = True
+
+CELERY_IMPORTS = (
+    'celery_app.tasks.sample_tasks',
+)
+
+# Beat Scheduler
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# endregion Celery Config
+# Result Settings
+CELERY_RESULT_EXPIRES = 60 * 60 * 24  # 24 hours
+CELERY_TASK_TRACK_STARTED = True
+
+# Task Execution
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 minutes
+
+# Worker Settings
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Development Override
+# if DEBUG:
+CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cast=bool)
+
+# endregion Celery Configuration

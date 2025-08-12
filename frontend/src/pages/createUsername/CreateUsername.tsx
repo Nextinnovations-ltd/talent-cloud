@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InputField from "@/components/common/form/fields/input-field";
 import { NavLink } from "@/components/common/NavLink";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -15,6 +16,7 @@ import { useApiCaller } from "@/hooks/useApicaller";
 import { fields } from "@/lib/formData.tsx/Createusername";
 import { UsernameSchema } from "@/lib/inputYupSchema";
 import { cn } from "@/lib/utils";
+import { useGetUserInfoQuery } from "@/services/api/userSlice";
 import { useUpdateUserNameMutation } from "@/services/slices/authSlice";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -27,6 +29,7 @@ const filedWidth = "w-full";
 export const CreateUsername = () => {
   const { t } = useTranslation("createUsername");
   const { executeApiCall, isLoading } = useApiCaller(useUpdateUserNameMutation);
+  const {refetch} = useGetUserInfoQuery();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -40,9 +43,15 @@ export const CreateUsername = () => {
       };
 
       const res = await executeApiCall(payload);
+     
 
-      if (res.success) {
+
+      if (res?.success) {
+        refetch()
+
         navigate("/verify/userwelcome");
+
+
       }
     } catch (error) {
       console.log(error);

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { NavLink } from "@/components/common/NavLink";
 import { OTP } from "@/components/common/OTP";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -11,20 +13,18 @@ import {
 } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import CountUp from "react-countup";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   useReactiavateTokenMutation,
   useRegisterActivationMutation,
   useTokenVerifyMutation,
 } from "@/services/slices/authSlice";
 import useToast from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { OTPSchema } from "@/lib/inputYupSchema";
 import { FormControl, FormField, FormItem, Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import * as yup from "yup";
 import routesMap from "@/constants/routesMap";
 import { useApiCaller } from "@/hooks/useApicaller";
@@ -34,79 +34,54 @@ type OTPFormValues = yup.InferType<typeof OTPSchema>;
 export const VerifyEmail = () => {
   const { t } = useTranslation("verifyEmail");
   const [end, setEnd] = useState(false);
-  const { executeApiCall, isLoading: reactivateLoading } = useApiCaller(
+  const countRef = useRef<any>(null);
+
+  const { executeApiCall, isLoading: resendLoading } = useApiCaller(
     useReactiavateTokenMutation
   );
+  const [verify, { isLoading: verifyLoading }] = useTokenVerifyMutation();
+  const [register, { isLoading: registerLoading }] = useRegisterActivationMutation();
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const { showNotification } = useToast();
-  const navigate = useNavigate(); 
-
-  const [verify, { isLoading }] = useTokenVerifyMutation();
-  const [register, { isLoading: registerLoading }] =
-    useRegisterActivationMutation();
-  // const [reVerify, { isLoading: ReverifyLoading }] =
-  //   useReactiavateTokenMutation();
+  const navigate = useNavigate();
 
   const form = useForm<OTPFormValues>({
     resolver: yupResolver(OTPSchema),
   });
 
-  const buttonLoading = reactivateLoading || isLoading || registerLoading;
+  const formDisabled = resendLoading || registerLoading || verifyLoading;
 
   useEffect(() => {
     const verifyToken = async (token: string | null) => {
-      if (!token) {
-        console.error("Token is missing from the URL!");
-        return;
-      }
-
+      if (!token) return;
       try {
-        const res = await verify({
-          token: token,
-          action: "registration",
-        }).unwrap();
-
-        console.log("Verification successful:", res);
+        await verify({ token, action: "registration" }).unwrap();
       } catch (error: any) {
-        console.log(error);
-
         showNotification({
           message: error?.data.message,
           type: "danger",
         });
         setEnd(true);
-
-        // navigate(`/signup`);
       }
     };
-
     verifyToken(token);
   }, [token, verify]);
 
   const handleResendToken = async () => {
-    if (!token) {
-      return;
-    }
-
+    if (!token) return;
     try {
-
-      const payload = {
-        token: token,
-      };
-
-      await executeApiCall(payload);
+      await executeApiCall({ token });
+      setEnd(false);
+      countRef.current?.start(); // Restart timer
     } catch (error: any) {
       console.log(error);
     }
   };
 
-  const handleSubmitfrom = async (value: OTPFormValues) => {
-    if (!token) {
-      console.error("Token is missing from the URL!");
-      return;
-    }
+  const handleSubmitForm = async (value: OTPFormValues) => {
+    if (!token) return;
     try {
       const res: any = await register({
         token: token,
@@ -114,39 +89,33 @@ export const VerifyEmail = () => {
       }).unwrap();
 
       if (res?.status) {
-        showNotification({
-          message: res?.message,
-          type: "success",
-        });
-
+        showNotification({ message: res?.message, type: "success" });
         navigate(`/auth/${routesMap.login.path}`);
       }
     } catch (error: any) {
-      console.log(error);
       showNotification({
-        message:
-          error?.data?.message || "An error occurred during verification.",
+        message: error?.data?.message || "An error occurred during verification.",
         type: "danger",
       });
     }
   };
 
   return (
-    <div className="  md:mx-0 h-[100svh] flex items-center justify-center bg-slate-100 ">
+    <div className="md:mx-0 h-[100svh] flex items-center justify-center bg-slate-100">
       <Card className="md:w-[506px] w-[90%]">
         <CardHeader className="text-center">
           <CardTitle className="text-xl">
-            <h3 className=" font-extrabold">{t("title")}</h3>
+            <h3 className="font-extrabold">{t("title")}</h3>
           </CardTitle>
           <CardDescription>
             {end ? "Token is expired please resend the code" : t("description")}
           </CardDescription>
         </CardHeader>
-        <CardContent className=" text-right">
+        <CardContent className="text-right">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSubmitfrom)}
-              className=" space-y-4 my-4"
+              onSubmit={form.handleSubmit(handleSubmitForm)}
+              className="space-y-4 my-4"
             >
               <FormField
                 control={form.control}
@@ -161,7 +130,7 @@ export const VerifyEmail = () => {
               />
 
               {end ? (
-                <Button type="button" className="" variant={"ghost"}>
+                <div>
                   <h3
                     title="Resend code"
                     onClick={handleResendToken}
@@ -169,26 +138,30 @@ export const VerifyEmail = () => {
                   >
                     Resend code
                   </h3>
-                </Button>
+                </div>
               ) : (
-                <h3
-                  title="Resent code"
-                  className="text-[#686C73] flex items-center justify-end"
-                >
-                  Resent code in:{" "}
+                <h3 className="text-[#686C73] flex items-center justify-end">
+                  Resent code in:&nbsp;
                   <div className="w-[25px] text-center">
                     <CountUp
+                    //@ts-expect-error
+                      ref={countRef}
                       onEnd={() => setEnd(true)}
                       end={60}
-                      delay={0}
+                      start={0}
                       duration={60}
                       useEasing={false}
                     />
-                  </div>{" "}
-                  sec
+                  </div>
+                  &nbsp;sec
                 </h3>
               )}
-              <PrimaryButton loading={buttonLoading} title="Verify" isButtonDisabled={buttonLoading} />
+
+              <PrimaryButton
+                title="Verify"
+                loading={formDisabled}
+                isButtonDisabled={formDisabled}
+              />
             </form>
           </Form>
         </CardContent>

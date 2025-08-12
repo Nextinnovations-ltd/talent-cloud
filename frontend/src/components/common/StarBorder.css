@@ -1,6 +1,6 @@
 .star-border-container {
   display: inline-block;
-  padding: 1px 0;
+  padding: 3px 0;
   position: relative;
   border-radius: 20px;
   overflow: hidden;
@@ -13,7 +13,7 @@
   position: absolute;
   width: 400%;
   height: 100%;
-  opacity: 0.8; /* Increased opacity */
+  opacity: 1; /* Increased opacity */
   border-radius: 50%;
   z-index: 0;
   background: linear-gradient(90deg, rgba(255, 0, 150, 0.6), rgba(0, 204, 255, 0.6), rgba(255, 0, 150, 0.6));

@@ -57,4 +57,5 @@ export  interface JOBDETAILTYPES {
     is_new: boolean;
     is_bookmarked: boolean;
     is_applied: boolean;
+    is_expired: boolean,
   }

@@ -1,6 +1,7 @@
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import "./phoneNumberInput.css";
+import clsx from "clsx";
 
 export const PhoneNumberInput = ({
   value,
@@ -14,7 +15,7 @@ export const PhoneNumberInput = ({
   
 
   return (
-    <div className={isError && "border-2 border-red-500  rounded-md"}>
+    <div className={clsx(isError && "border-2  border-red-500  rounded-md" ,"mt-3")}>
       <PhoneInput
         className="border-red-500 border-2"
         value={`${value}`}

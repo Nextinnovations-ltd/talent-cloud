@@ -27,6 +27,7 @@ export const extendedUserSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserInfo: builder.query<UserStateResponse, void>({
       query: () => "/auth/me/",
+      keepUnusedDataFor: 0
     }),
   }),
 });

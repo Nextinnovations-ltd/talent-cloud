@@ -35,6 +35,9 @@ export const SpecializationSkillSet = ({
     refetch,
   } = useGetSpecializationsByIndustryIdQuery(id as number, { skip: id === null });
 
+
+
+
   useEffect(() => {
     if (id !== null) {
       refetch();
@@ -48,14 +51,22 @@ export const SpecializationSkillSet = ({
   },[value]);
 
   const handleClick = async () => {
-    if (value !== null) {
+    if (value !== null && id !== null) {
       const formData = new FormData();
-      formData.append("specialization_id", value.toString());
-      formData.append("step", "3");
-      const res = await executeApiCall(formData);
+      formData.append("specialization_id", `${id.toString()}`);
+      formData.append("role_id", `${value.toString()}` );
+      formData.append("step", "2");
 
-      if (res.success) {
+  
+      const res = await executeApiCall(formData); // ✅ send formData directly
+  
+      if (res?.success) {
         goToNextStep();
+      } else {
+        showNotification({
+          message: res?.data?.message || "Submission failed. Try again.",
+          type: "danger",
+        });
       }
     } else {
       showNotification({
@@ -64,6 +75,7 @@ export const SpecializationSkillSet = ({
       });
     }
   };
+  
 
   if (id === null) {
     return (
@@ -126,9 +138,7 @@ export const SpecializationSkillSet = ({
 
         <SearchBar setValue={setSearch} value={search} width="lg" />
 
-
         {renderSpecializations()}
-
 
         <PrimaryButton
           handleClick={handleClick}

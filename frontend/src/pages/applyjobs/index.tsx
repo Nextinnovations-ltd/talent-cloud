@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { JobInfoGrid } from "@/components/common/ApplyJob/JobInfoGrid"
 import { SkillsSection } from "@/components/common/ApplyJob/SkillsSection"
 import { LoadingSpinner } from "@/components/common/LoadingSpinner"
@@ -20,8 +21,6 @@ import { Link, useParams } from "react-router-dom"
     const [applyJob,{ isLoading:JOBBOOKLOADING}] = useApplyJobMutation();
     const {
         data:JOBDETAILDATA,
-        isLoading,
-        error,
       } = useGetDetailJobApplyCardQuery(numericJobId);
 
       
@@ -56,6 +55,7 @@ import { Link, useParams } from "react-router-dom"
 
 
             showNotification({
+               //@ts-ignore
               message: response?.message,
               type: "success",
             });
@@ -72,12 +72,13 @@ import { Link, useParams } from "react-router-dom"
         <Link to={'/'}>
         <button className="border-[1px] ml-[50px] fixed  cursor-pointer w-[62px] h-[62px] flex duration-700 hover:border-blue-300 hover:bg-slate-100 items-center justify-center rounded-full">
             <ChevronLeft/>
-        </button></Link>
+        </button>
+        </Link>
         <div className="max-w-[600px]   pb-[50px] pt-[50px]  ml-[25%]">
         <h3 className="text-[24px] mb-[24px] font-semibold">{jobDetails?.title }</h3>
          <JobInfoGrid job={jobDetails} /> 
         <SkillsSection skills={jobDetails?.skills || []} />
-        <Link to={`/?jobId=${jobDetails.id}`}>
+      <Link to={`/?jobId=${jobDetails?.id}`}>
         <h3 className=" underline text-[#0481EF] text-[18px]">View Full Job Description </h3>
         </Link>
 

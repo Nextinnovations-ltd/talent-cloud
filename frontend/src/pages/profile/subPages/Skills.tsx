@@ -27,16 +27,18 @@ export const Skills = () => {
     resolver: yupResolver(SkillYupSchema),
   });
 
-  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(FORMATTEDUSER || []);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(
+    Array.isArray(FORMATTEDUSER) ? FORMATTEDUSER.map(String) : []
+  );
 
   useEffect(() => {
-    if (FORMATTEDUSER && FORMATTEDUSER.length > 0) {
-      setSelectedFrameworks(FORMATTEDUSER);
+    if (Array.isArray(FORMATTEDUSER) && FORMATTEDUSER.length > 0) {
+      setSelectedFrameworks(FORMATTEDUSER.map(String));
     }
   }, [FORMATTEDUSER]);
 
   useEffect(() => {
-    if (selectedFrameworks.length > 0) {
+    if (Array.isArray(selectedFrameworks) && selectedFrameworks.length > 0) {
       form.setValue('skill_list', selectedFrameworks);
     }
   }, [selectedFrameworks]);
@@ -52,7 +54,7 @@ export const Skills = () => {
     }
   };
 
-  if (isLoading && USERLOADING) {
+  if (isLoading || USERLOADING) {
     return <PageInitialLoading />;
   }
 
@@ -62,11 +64,8 @@ export const Skills = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 max-w-[672px]">
-            <h3 className="font-semibold text-[16px] mb-[10px] text-[#05060F]">
-              Skills
-            </h3>
             <MultiSelect
-              options={FORMATTEDDATA}
+              options={Array.isArray(FORMATTEDDATA) ? FORMATTEDDATA.map(opt => ({ ...opt, value: String(opt.value) })) : []}
               onValueChange={setSelectedFrameworks}
               defaultValue={selectedFrameworks}
               placeholder="eg. Microsoft Office"

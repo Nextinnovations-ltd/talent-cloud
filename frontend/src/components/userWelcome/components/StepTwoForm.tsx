@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,57 +12,53 @@ import {
 } from "@/lib/formData.tsx/StepperTwoFieldData";
 import { SVGProfile, SVGUploadSign } from "@/constants/svgs";
 import { ImageEditor } from "@/components/common/ImageEditor";
-import { Input } from "@/components/ui/input";
-import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import useToast from "@/hooks/use-toast";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
-import { WORKEXPERIENCE } from "@/lib/formData.tsx/CommonData";
 import { OnBoardingStepTwoSchema } from "@/lib/OnBoardingStepTwoSchema";
 
 
 type OnBoardingStepTwoType = {
-  image:any,
-  name:string,
-  level:string,
-  workExperience:string,
-  tagline:string,
-}
+  image: File | null;
+  name: string;
+  level: string;
+  workExperience: string;
+  tagline: string;
+};
 
-const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
+const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
-  const { executeApiCall } = useApiCaller(useOnBoardingMutation);
+  // Remove useApiCaller and use useOnBoardingMutation directly
+  const [onBoardingMutation] = useOnBoardingMutation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const { showNotification } = useToast();
   const { data: EXPERIENCEDATA } = useFormattedExperience();
 
   const form = useForm<OnBoardingStepTwoType>({
-    resolver: yupResolver(OnBoardingStepTwoSchema),
+    resolver: yupResolver(OnBoardingStepTwoSchema) as unknown as import("react-hook-form").Resolver<OnBoardingStepTwoType, any>,
     mode: "onBlur",
     defaultValues: {
-      image: new File([""], "filename"),
+      image: null,
       name: "",
-      tagline:"",
-      level:"",
-      workExperience:""
+      tagline: "",
+      level: "",
+      workExperience: "",
     },
   });
 
-  const formValues: any = form.watch();
+  const formValues = form.watch();
 
   useEffect(() => {
-    const requiredFields = [
-      "name",
-      "workExperience",
-      "tagline",
-      "level"
-    ];
-    const isFormValid = requiredFields.every((field) => !!formValues[field]);
-
+    // Type-safe required fields check
+    const isFormValid =
+      !!formValues.name &&
+      !!formValues.workExperience &&
+      !!formValues.tagline &&
+      !!formValues.level;
     setIsButtonDisabled(!isFormValid);
   }, [formValues]);
 
@@ -73,7 +71,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
         form.setValue("image", acceptedFiles[0]);
         form.clearErrors("image");
         setIsModalOpen(true);
-      } catch (error) {
+      } catch {
         setPreview(null);
         form.resetField("image");
       }
@@ -88,29 +86,40 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
     accept: { "image/png": [], "image/jpg": [], "image/jpeg": [] },
   });
 
-  const onSubmit = async (values: any) => {
+  // Helper to convert dataURL to File
+  function dataURLtoFile(dataurl: string, filename: string): File {
+    const arr = dataurl.split(",");
+    //@ts-ignore
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+
+  const onSubmit = async (values: OnBoardingStepTwoType) => {
     if (!isButtonDisabled) {
       setIsModalOpen(false);
       const formData = new FormData();
       formData.append("name", values.name);
-      formData.append("country_code", values.countryCode);
-      formData.append("address", values.address);
-      formData.append("phone_number", values.phone);
+      formData.append("tagline", values.tagline);
+      formData.append("experience_level_id", values.level);
+      formData.append("experience_years", values.workExperience);
       formData.append("step", "1");
-
-
-      formData.append(
-        "date_of_birth",
-        `${values.year}-${values.month}-${values.day}`
-      );
-
-      // Append image
       if (values.image) {
         formData.append("profile_image", values.image);
       }
-      const res = await executeApiCall(formData);
+      // Call mutation directly with FormData (cast as unknown then any for mutation)
+      //@ts-ignore
+      const res = await onBoardingMutation(formData);
 
-      if (res.success) {
+
+
+      // @ts-expect-error: dynamic response shape
+      if (res?.data?.status) {
         goToNextStep();
       }
     } else {
@@ -131,39 +140,32 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
 
   const saveEditedImage = () => {
     if (!preview) return;
-
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-
     if (!ctx) return;
-
-    const image = new Image();
+    const image = new window.Image();
     image.src = preview as string;
-
     image.onload = () => {
       const radians = (rotation * Math.PI) / 180;
       const scaledWidth = image.width;
       const scaledHeight = image.height;
-
       const rotatedWidth =
         Math.abs(scaledWidth * Math.cos(radians)) +
         Math.abs(scaledHeight * Math.sin(radians));
       const rotatedHeight =
         Math.abs(scaledWidth * Math.sin(radians)) +
         Math.abs(scaledHeight * Math.cos(radians));
-
       canvas.width = rotatedWidth;
       canvas.height = rotatedHeight;
-
+      if (!ctx) return;
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(radians);
       ctx.scale(scale, scale);
       ctx.drawImage(image, -image.width / 2, -image.height / 2);
-
       const editedImageUrl = canvas.toDataURL("image/png");
-
       setPreview(editedImageUrl);
-
+      const file = dataURLtoFile(editedImageUrl, "profile.png");
+      form.setValue("image", file);
       canvas.toBlob((blob) => {
         if (blob) {
           setIsModalOpen(false);
@@ -208,75 +210,19 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
                 data={EXPERIENCEDATA}
                 width=" max-w-[672px] mt-[24px]"
               />
-              <SelectField
-                name={"workExperience"}
-                labelName={'Work Experience'}
-                isRequired={true}
-                error={!!form.formState.errors.workExperience}
-                showRequiredLabel={true}
-                placeholder={"eg. Less than 1 year"}
-                data={WORKEXPERIENCE}
-                width=" max-w-[672px] mt-[24px]"
-              />
-
-              {/* <div>
-                <p className="mb-[7px]">{t("phoneNumber")}</p>
-                <div className="flex items-center  gap-[16px]">
-                  <PhoneNumberInput
-                    value={form.getValues("countryCode")}
-                    setValue={(e: any) => form.setValue("countryCode", e)}
-                  />
-                  {phoneNumberFields.map((field) => (
-                    <InputField
-                      key={field.fieldName}
-                      fieldName={field.fieldName}
-                      placeholder={field.placeholder}
-                      isError={field.isError(form)}
-                      required={field.required}
-                      requiredLabel={field.requiredLabel}
-                      type={field.type}
-                      languageName={"stepTwo"}
-                      fieldHeight={""}
-                      fieldWidth={"w-full"}
-                    />
-                  ))}
-                </div>
-              </div> */}
-
-              {/* <div>
-                <p className="mb-[7px]">{t("dateOfBirth")}</p>
-                <div className="flex items-center gap-[16px]">
-                  {dateOFBirthFields.map((field) => (
-                    <InputField
-                      key={field.fieldName}
-                      fieldName={field.fieldName}
-                      placeholder={field.placeholder}
-                      isError={field.isError(form)}
-                      required={field.required}
-                      requiredLabel={field.requiredLabel}
-                      type={field.type}
-                      languageName={""}
-                      fieldHeight={""}
-                      fieldWidth={"w-[85px]"}
-                    />
-                  ))}
-                </div>
-              </div> */}
-
-              {/* {addressFields.map((field) => (
-                <InputField
-                  key={field.fieldName}
-                  fieldName={field.fieldName}
-                  placeholder={field.placeholder}
-                  isError={field.isError(form)}
-                  required={field.required}
-                  requiredLabel={field.requiredLabel}
-                  type={field.type}
+               <InputField
+                  fieldName={"workExperience"}
+                  placeholder={"1.5"}
+                  isError={!!form.formState.errors.workExperience}
+                  required={true}
+                  requiredLabel={true}
+                  type={'number'}
                   languageName={"stepTwo"}
                   fieldHeight={""}
                   fieldWidth={""}
                 />
-              ))} */}
+         
+
             </div>
 
             {/* Image Uploader */}
@@ -322,7 +268,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: any }) => {
                     </p>
                   </div>
                 )}
-                <Input {...getInputProps()} type="file" />
+                <input {...getInputProps()} type="file" style={{ display: 'none' }} />
               </div>
               <p className="text-[#686C73] mt-[25px]">
                 Upload your profile picture to stand out.

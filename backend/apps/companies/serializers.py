@@ -38,6 +38,23 @@ class CompanySerializer(serializers.ModelSerializer):
           instance.save()
           
           return instance
+
+class CompanyListSerializer(serializers.ModelSerializer):
+     """
+     Serializer for the Company list.
+     """
+     opening_jobs = serializers.SerializerMethodField()
+     
+     class Meta:
+          model = Company
+          fields = [
+               'id', 'name', 'slug', 'image_url', 'description', 
+               'industry', 'tagline', 'is_verified', 'size', 'opening_jobs'
+          ]
+          read_only_fields = ['id', 'slug']
+     
+     def get_opening_jobs(self, obj: Company):
+          return obj.get_opening_jobs.count()
           
 class CompanyDetailSerializer(serializers.ModelSerializer):
      """

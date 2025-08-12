@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from services.models import TimeStampModel
 from django.utils.text import slugify
@@ -47,18 +48,12 @@ class Company(TimeStampModel):
           blank=True,
           help_text="URL-friendly version of the company name."
      )
-     location = models.ForeignKey(
-          'users.Location',
+     address = models.ForeignKey(
+          'users.Address',
           on_delete=models.SET_NULL,
           null=True,
           blank=True,
-          help_text="The location of the company."
-     )
-     address = models.CharField(
-          max_length=255,
-          null=True,
-          blank=True,
-          help_text="The address of the company (deprecated - use location instead)."
+          help_text="The address of the company."
      )
      why_join_us = models.TextField(
           null=True,
@@ -145,6 +140,26 @@ class Company(TimeStampModel):
                     counter += 1
 
           super().save(*args, **kwargs)
+     
+     @property
+     def job_posts(self):
+          """All job posts for this company"""
+          from apps.job_posting.models import JobPost
+          return JobPost.objects.company_jobs(self)
+     
+     @property
+     def get_opening_jobs(self):
+          """
+          Get all active and opening jobs from company
+          """
+          from apps.job_posting.models import StatusChoices
+          
+          return self.job_posts.filter(
+               job_post_status=StatusChoices.ACTIVE,
+               is_accepting_applications=True
+          ).exclude(
+               models.Q(last_application_date__lt=date.today())
+          )
 
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)

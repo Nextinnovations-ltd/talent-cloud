@@ -4,7 +4,8 @@ export type UserProfile = {
   username: string;
   email: string;
   tagline: string;
-  role: number;
+  role: string;
+  specializations:number,
   experience_level: number;
   experience_years: number;
   country_code: string;
@@ -13,6 +14,27 @@ export type UserProfile = {
   address?: string;
   bio?: string;
   resume_url?: string;
+  is_open_to_work:boolean;
+  linkedin_url?:string;
+  behance_url?:string;
+  portfolio_url?:string;
+  github_url?:string;
+  facebook_url?:string;
+  country:number,
+  city:number,
+};
+
+export type WorkExperience = {
+  id: number;
+  title: string;
+  organization: string;
+  job_type: string | null;
+  work_type: string | null;
+  start_date: string; // Consider using Date if you parse it
+  end_date: string | null;
+  description: string;
+  is_present_work: boolean;
+  user: number;
 };
 
 export type UserProfileFormValues = Partial<UserProfile>;

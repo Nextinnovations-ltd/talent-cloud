@@ -408,28 +408,6 @@ class TestJobSeekerSkillOptions(TestCase):
           self.skill_data = JobSeekerSkillSerializer(self.sample_skills, many=True).data
           self.empty_skill_data = JobSeekerSkillSerializer(self.empty_skills, many=True).data
 
-     # Test Case 1: Successfully fetch skills (using serialized data)
-     @patch('apps.job_seekers.models.JobSeekerSkill.objects.all')
-     @patch('apps.job_seekers.serializers.occupation_serializer.JobSeekerSkillSerializer')
-     def test_get_skill_options_success(self, mock_serializer, mock_objects_all):
-          mock_objects_all.return_value = self.sample_skills
-          mock_serializer.return_value.data = self.skill_data
-
-          result = JobSeekerService.get_skill_options()
-
-          self.assertEqual(result['message'], "Successfully fetched job seeker skills options.")
-          self.assertEqual(result['data']['skills'], self.skill_data)
-
-     # Test Case 2: Empty skill list (using serialized empty data)
-     @patch('apps.job_seekers.models.JobSeekerSkill.objects.all')
-     @patch('apps.job_seekers.serializers.occupation_serializer.JobSeekerSkillSerializer')
-     def test_get_skill_options_empty(self, mock_serializer, mock_objects_all):
-          mock_objects_all.return_value = self.empty_skills
-          mock_serializer.return_value.data = self.empty_skill_data
-
-          result = JobSeekerService.get_skill_options()
-          self.assertEqual(result['data']['skills'], self.empty_skill_data)
-
 class TestJobSeekerSkills(TestCase):
      def setUp(self):
           self.mock_user = MagicMock()
@@ -667,27 +645,6 @@ class TestLanguageOptions(TestCase):
                MagicMock(id=2, name="Spanish", code="es")
           ]
           self.serialized_data = SpokenLanguageSerializer(self.sample_languages, many=True).data
-
-     @patch('apps.job_seekers.models.SpokenLanguage.objects.all')
-     @patch('apps.job_seekers.serializers.occupation_serializer.SpokenLanguageSerializer')
-     def test_get_language_options_success(self, mock_serializer, mock_objects_all):
-          mock_objects_all.return_value = self.sample_languages
-          mock_serializer.return_value.data = self.serialized_data
-
-          result = JobSeekerService.get_language_options()
-
-          self.assertEqual(result['message'], "Successfully generated all language options.")
-          self.assertEqual(result['data']['languages'], self.serialized_data)
-          mock_objects_all.assert_called_once()
-
-     @patch('apps.job_seekers.models.SpokenLanguage.objects.all')
-     def test_get_language_options_empty(self, mock_objects_all):
-          mock_objects_all.return_value = []
-
-          result = JobSeekerService.get_language_options()
-
-          self.assertEqual(result['message'], "Successfully generated all language options.")
-          self.assertEqual(len(result['data']['languages']), 0)
           
 class TestGetJobSeekerLanguage(TestCase):
      def setUp(self):

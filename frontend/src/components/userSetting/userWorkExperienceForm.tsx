@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // UserWorkExperienceForm.js
 // import { fields } from "@/lib/formData.tsx/UserWorkExperience"; // Adjust path if needed
 import InputField from "../common/form/fields/input-field"; // Adjust path if needed
@@ -34,7 +35,6 @@ const generateYearData = (
 export const UserWorkExperienceForm = ({
   form,
   fields,
-  jobId
 }: {
   form: any;
   jobId: any;
@@ -46,10 +46,6 @@ export const UserWorkExperienceForm = ({
     formState: { errors },
   } = form;
 
-
-  console.log("kdkkddk" + jobId)
-  console.log(errors)
-  console.log("kdkkddk" + jobId)
 
 
   // const getFieldName = (fieldName: any) => `${fieldName}_${jobId}`;

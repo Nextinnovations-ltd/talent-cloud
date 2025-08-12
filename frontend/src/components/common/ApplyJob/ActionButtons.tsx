@@ -61,25 +61,26 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ jobId, alreadyAppl
   };
 
   return (
-    <div className='gap-[28px] mb-[40px] flex'>
-     <div className='flex items-center gap-[28px] justify-center'>
-     {
-        !alreadyApplied ? (
-          <Link to={`user/job_apply/${jobId}`}>
-            <Button className='bg-blue-500 text-[16px]  drop-shadow-lg rounded-[12px] text-white'>Quick Apply</Button>
-          </Link>
-        ) : (
-          <p  className='text-blue-500 text-[16px]  drop-shadow-lg rounded-[12px]'>Already applied</p>
-        )
-      }
-     </div>
+    <div className='gap-[28px] mb-[40px] flex items-center '>
+    
       <Button
         onClick={() => (isBookmarked ? handleDeleteBookmark(jobId) : handleBookmark(jobId))}
-        className={` rounded-[12px] text-[16px]   w-[100px] text-[#0481EF] gap-2 bg-[#E6F3FF]   `}
+        className={` rounded-[12px] text-[16px] h-[48px]  w-[100px] text-[#0481EF] gap-2 bg-[#E6F3FF]   `}
         disabled={JOBBOOKLOADING || DELETELOADING}
       >
         {(JOBBOOKLOADING || DELETELOADING) ? <LoadingSpinner /> : <>{isBookmarked ? 'Unsave' : 'Save'}</>}
       </Button>
+      <div className='flex items-center gap-[28px] justify-center'>
+     {
+        !alreadyApplied ? (
+          <Link to={`user/job_apply/${jobId}`}>
+            <Button className='bg-blue-500 text-[16px] h-[48px] px-[20px]   rounded-[12px] text-white'>Quick Apply</Button>
+          </Link>
+        ) : (
+          <p  className='text-blue-500   text-[16px]   rounded-[12px]'>Already applied</p>
+        )
+      }
+     </div>
     </div>
   );
 }; 

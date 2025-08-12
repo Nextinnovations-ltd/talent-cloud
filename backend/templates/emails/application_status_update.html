@@ -1,0 +1,281 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Application Status Update - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<style>
+    .status-card {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        padding: 25px;
+        margin: 25px 0;
+        border-radius: 8px;
+    }
+    .status-accepted {
+        border-left: 4px solid #28a745;
+        background-color: #f8fff9;
+    }
+    .status-rejected {
+        border-left: 4px solid #dc3545;
+        background-color: #fff8f8;
+    }
+    .status-shortlisted {
+        border-left: 4px solid #17a2b8;
+        background-color: #f0fdff;
+    }
+    .status-under-review {
+        border-left: 4px solid #ffc107;
+        background-color: #fffdf7;
+    }
+    .status-pending {
+        border-left: 4px solid #007bff;
+        background-color: #f0f8ff;
+    }
+    .status-interview-scheduled {
+        border-left: 4px solid #6f42c1;
+        background-color: #f8f7ff;
+    }
+    .status-offer-extended {
+        border-left: 4px solid #28a745;
+        background-color: #f0fff4;
+    }
+    .status-withdrawn {
+        border-left: 4px solid #6c757d;
+        background-color: #f8f9fa;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .badge-accepted { background-color: #28a745; color: white; }
+    .badge-rejected { background-color: #dc3545; color: white; }
+    .badge-shortlisted { background-color: #17a2b8; color: white; }
+    .badge-under-review { background-color: #ffc107; color: #212529; }
+    .badge-pending { background-color: #007bff; color: white; }
+    .badge-interview-scheduled { background-color: #6f42c1; color: white; }
+    .badge-offer-extended { background-color: #28a745; color: white; }
+    .badge-withdrawn { background-color: #6c757d; color: white; }
+    .badge-applied { background-color: #007bff; color: white; }
+    .job-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0389FF;
+        margin-bottom: 15px;
+    }
+    .status-message {
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    .message-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .message-info {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+    }
+    .message-warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+    }
+    .message-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+    .next-steps {
+        background-color: #e7f3ff;
+        border: 1px solid #0389FF;
+        padding: 20px;
+        border-radius: 6px;
+        margin: 20px 0;
+    }
+    .job-detail-row {
+        margin-bottom: 12px;
+        display: block;
+        line-height: 1.5;
+        font-size: 14px;
+    }
+    .job-detail-row strong {
+        font-weight: 600;
+        color: #495057;
+        margin-left: 5px;
+    }
+    .job-detail-row .icon {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 8px;
+        color: #0389FF;
+    }
+</style>
+
+<h2>📬 Application Status Update</h2>
+
+<p>Hello {{ user_name|default:"Job Seeker" }},</p>
+
+<p>We have an update regarding your job application:</p>
+
+<div class="status-card status-{{ application_status|lower|cut:' '|cut:'_' }}">
+    <h3 class="job-title">{{ job_title }}</h3>
+    
+    <div class="job-detail-row">
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <strong>Company:</strong> {{ company_name }}
+    </div>
+    
+    <div class="job-detail-row">
+        <span class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+        </span>
+        <strong>Status Updated:</strong> {{ status_changed_date|date:"F d, Y at g:i A" }}
+    </div>
+    
+    <span class="status-badge badge-{{ application_status|lower|cut:' '|cut:'_' }}">
+        {{ application_status|title }}
+    </span>
+</div>
+
+<!-- Status-specific messages and styling -->
+{% if application_status == 'pending' or application_status == 'applied' %}
+    <div class="status-message message-info">
+        <h4>📋 Application Successfully Submitted!</h4>
+        <p>Thank you for applying! Your application has been <strong>submitted</strong> and is now pending review by the hiring team at {{ company_name }}.</p>
+        <p>We have received all your application materials and they will be reviewed carefully along with other qualified candidates.</p>
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 What happens next:</h4>
+        <ul>
+            <li>Your application will be reviewed by the hiring team</li>
+            <li>You'll receive email updates when your application status changes</li>
+            <li>The review process typically takes 3-7 business days</li>
+            <li>You can track your application status in your dashboard</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'accepted' or application_status == 'offer_extended' %}
+    <div class="status-message message-success">
+        <h4>🎉 Congratulations!</h4>
+        <p>Your application has been <strong>accepted</strong>! This is fantastic news - you've made it through the selection process.</p>
+        {% if application_status == 'offer_extended' %}
+        <p><strong>An offer has been extended to you.</strong> The hiring team will contact you soon with details about the position, compensation, and next steps.</p>
+        {% else %}
+        <p>The hiring team will be in touch with you soon regarding the next steps in the process.</p>
+        {% endif %}
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 What to expect next:</h4>
+        <ul>
+            <li>The hiring team will contact you within 2-3 business days</li>
+            <li>You may receive information about onboarding processes</li>
+            <li>Keep an eye on your email and phone for important communications</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'shortlisted' %}
+    <div class="status-message message-success">
+        <h4>🌟 Great News!</h4>
+        <p>Your application has been <strong>shortlisted</strong>! You've successfully passed the initial screening and are now among the top candidates for this position.</p>
+        <p>The hiring team is impressed with your qualifications and will be reviewing your application more closely.</p>
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 What happens next:</h4>
+        <ul>
+            <li>Your application will undergo detailed review</li>
+            <li>You may be contacted for an interview</li>
+            <li>Additional assessments or screening may be conducted</li>
+            <li>We'll keep you updated on your progress</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'interview_scheduled' %}
+    <div class="status-message message-info">
+        <h4>📅 Interview Scheduled!</h4>
+        <p>Congratulations! You've been selected for an <strong>interview</strong> for this position.</p>
+        <p>This is an important step in the hiring process. The hiring team is interested in learning more about you and your qualifications.</p>
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 Prepare for your interview:</h4>
+        <ul>
+            <li>Research the company and the role thoroughly</li>
+            <li>Prepare examples of your relevant experience</li>
+            <li>Have questions ready to ask about the company and position</li>
+            <li>Check your email for interview details and instructions</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'under_review' %}
+    <div class="status-message message-info">
+        <h4>⏳ Application Under Review</h4>
+        <p>Your application is currently being <strong>reviewed</strong> by the hiring team at {{ company_name }}.</p>
+        <p>They are carefully evaluating all candidates to find the best fit for this position. We appreciate your patience during this process.</p>
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 While you wait:</h4>
+        <ul>
+            <li>We'll notify you as soon as there's an update</li>
+            <li>Continue exploring other opportunities on our platform</li>
+            <li>Keep your profile updated with any new skills or experience</li>
+            <li>Review time varies by company and position</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'rejected' %}
+    <div class="status-message message-danger">
+        <h4>Thank you for your interest</h4>
+        <p>After careful consideration, we regret to inform you that your application for this position was <strong>not selected</strong> to move forward in the hiring process.</p>
+        <p>This decision doesn't reflect on your qualifications or potential. Sometimes it's simply a matter of finding the best fit for the specific role and team.</p>
+    </div>
+    
+    <div class="next-steps">
+        <h4>📋 Keep moving forward:</h4>
+        <ul>
+            <li>Don't be discouraged - this is a normal part of the job search process</li>
+            <li>Continue applying for other positions that match your skills</li>
+            <li>Consider updating your profile based on feedback or new experiences</li>
+            <li>Many successful candidates are rejected multiple times before finding the right fit</li>
+        </ul>
+    </div>
+
+{% elif application_status == 'withdrawn' %}
+    <div class="status-message message-warning">
+        <h4>Application Withdrawn</h4>
+        <p>Your application for this position has been <strong>withdrawn</strong>.</p>
+        <p>If you withdrew your application, thank you for letting us know. If this was done in error, please contact support immediately.</p>
+    </div>
+
+{% else %}
+    <div class="status-message message-info">
+        <h4>Status Update</h4>
+        <p>Your application status has been updated to: <strong>{{ application_status|title }}</strong></p>
+        <p>Please check your application dashboard for more details and any additional steps you may need to take.</p>
+    </div>
+{% endif %}
+
+<p style="text-align: center;">
+    <a href="{{ job_url }}" class="button">View Job Details</a>
+</p>
+
+<p>Thank you for using {{ platform_name }} for your job search. We're here to help you find the perfect opportunity!</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

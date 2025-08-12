@@ -1,7 +1,18 @@
-from apps.job_posting.models import JobApplication, JobPost, StatusChoices
+from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
+from services.notification.notification_service import NotificationHelpers
+from rest_framework.exceptions import NotFound, ValidationError
+from django.db import transaction
 from django.db.models import Sum
 
 class SharedDashboardService:
+     @staticmethod
+     def get_company(user):
+          company = getattr(user, 'company', None)
+          
+          if not company:
+               raise NotFound("Company doesn't exist for the user.")
+          return company
+     
      @staticmethod
      def get_company_applicant_count(company):
           # Get all applicants from all job posts
@@ -24,10 +35,96 @@ class SharedDashboardService:
           )['total_views'] or 0
      
      @staticmethod
-     def get_company_applicants_by_latest_order(company):
+     def get_company_applicants_queryset(company, is_recent=False):
           # Get all applicants from all job posts
-          applications = JobApplication.objects.filter(
-               job_post__posted_by__company=company
+          queryset = SharedDashboardService._get_applicants_queryset(company)
+          
+          if is_recent:
+               queryset = queryset[:4]
+          
+          return queryset
+     
+     @staticmethod
+     def get_job_specific_applicants_queryset(company, job_id):
+          return SharedDashboardService._get_applicants_queryset(company, job_id)
+          
+     @staticmethod
+     def get_shortlisted_applicants_by_specific_job_queryset(company, job_id):
+          return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.SHORTLISTED)
+     
+     @staticmethod
+     def get_rejected_applicants_by_specific_job_queryset(company, job_id):
+          return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.REJECTED)
+     
+     
+     @staticmethod
+     def perform_shortlisting_applicant(job_id, applicant_id):
+          with transaction.atomic():
+               try:
+                    application = JobApplication.objects.get(
+                         job_post__id=job_id,
+                         job_seeker__id=applicant_id
+                    )
+                    
+                    if application.application_status == ApplicationStatus.SHORTLISTED:
+                         raise ValidationError("Application is already in shortlisted state.")
+
+                    
+                    new_status = ApplicationStatus.SHORTLISTED
+                    
+                    application.application_status = new_status
+                    application.save()
+                    
+                    NotificationHelpers.notify_application_shortlisted(
+                         application,
+                         new_status
+                    )
+               except JobApplication.DoesNotExist:
+                    raise NotFound("Application not found.")
+
+     @staticmethod
+     def remove_from_shortlist(job_id, applicant_id):
+          """
+          Remove candidate from shortlist with proper tracking
+          """
+          with transaction.atomic():
+               try:
+                    application = JobApplication.objects.get(
+                         job_post__id=job_id,
+                         job_seeker__id=applicant_id
+                    )
+
+                    if application.application_status == ApplicationStatus.REJECTED:
+                         raise ValidationError("Application is already in reject state")
+                    elif application.application_status != ApplicationStatus.SHORTLISTED:
+                         raise ValidationError("Application must be in 'shortlisted' status to remove from shortlist")
+
+                    application.application_status = ApplicationStatus.REJECTED
+                    application.save()
+                    
+                    NotificationHelpers.notify_application_rejected(
+                         application
+                    )
+               except JobApplication.DoesNotExist:
+                    raise NotFound("Application not found.")
+
+
+     @staticmethod
+     def _get_applicants_queryset(company, job_id=None, application_status=None):
+          # Get all applicants from all job posts
+          
+          filters = {
+               'job_post__posted_by__company': company,
+          }
+          
+          if job_id:
+               filters['job_post__id'] = job_id
+               
+          if application_status:
+               filters['application_status'] = application_status
+               
+          return JobApplication.objects.filter(
+               **filters
           ).select_related(
                'job_post', 
                'job_post__posted_by', 
@@ -36,162 +133,46 @@ class SharedDashboardService:
                'job_seeker__occupation__role'
           ).only(
                'created_at',
+               'job_post__id',
                'job_post__posted_by__company',
                'job_seeker__user__id',
                'job_seeker__user__name',
                'job_seeker__user__profile_image_url',
                'job_seeker__occupation__role__name'
           ).order_by('-created_at')
-          
-          result = []
-          
-          for application in applications:
-               job_seeker = application.job_seeker
-               user = job_seeker.user
-               role = getattr(getattr(job_seeker, 'occupation', None), 'role', None)
-               
-               result.append({
-                    'applicant_id': user.pk,
-                    'name': user.name,
-                    'phone_number': f"{user.country_code}{user.phone_number}" if user.country_code is not None and user.phone_number is not None else None,
-                    'email': user.email,
-                    'role': role.name,
-                    'applied_date': application.created_at,
-                    'profile_image_url': user.profile_image_url,
-               })
-          
-          return {
-               'message': 'Succefully generated applicants by most recent order.',
-               'data': result
-          }
      
      @staticmethod
-     def get_company_job_posts_by_latest_order(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
+     def get_job_post_queryset_by_status(company, status = None):
+          """Generate Job Post Queryset by job post status parameter
+          """
+          queryset = SharedDashboardService.get_job_post_queryset(company)
           
-          result = []
-          
-          for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date,
-               })
-          
-          return {
-               'message': 'Succefully generated job posts by most recent order.',
-               'data': result
-          }
-     
-     @staticmethod
-     def get_active_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.active().filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date,
-               })
-          
-          return {
-               'message': 'Succefully generated active job posts by most recent order.',
-               'data': result
-          }
-     
-     @staticmethod
-     def get_draft_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.draft().filter(
-               posted_by__company=company
-          ).select_related(
-               'specialization'
-          ).only(
-               'specialization__name'
-          ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date
-               })
-          
-          return {
-               'message': 'Succefully generated draft job posts by most recent order.',
-               'data': result
-          }
+          if status == StatusChoices.ACTIVE:
+               return queryset.active()
+          elif status == StatusChoices.DRAFT:
+               return queryset.draft()
+          elif status == StatusChoices.EXPIRED:
+               return queryset.expired()
+          else:
+               return queryset
           
      @staticmethod
-     def get_expired_job_posts(company):
-          # Get all applicants from all job posts
-          job_posts = JobPost.objects.expired().filter(
+     def get_recent_job_post_queryset(company):
+          """Generate Recent Job Post Queryset
+          """
+          queryset = SharedDashboardService.get_job_post_queryset(company)
+          
+          return queryset[:4]
+          
+     @staticmethod
+     def get_job_post_queryset(company):
+          return JobPost.objects.filter(
                posted_by__company=company
           ).select_related(
                'specialization'
           ).only(
                'specialization__name'
           ).order_by('-created_at')
-          
-          result = []
-          
-          for job_post in job_posts:
-               specialization = getattr(job_post, 'specialization', None)
-               
-               result.append({
-                    'id': job_post.pk,
-                    'title': job_post.title,
-                    'specialization_name': specialization.name if specialization else None,
-                    'job_post_status': job_post.job_post_status,
-                    'applicant_count': job_post.applicant_count,
-                    'view_count': job_post.view_count,
-                    'posted_date': job_post.created_at,
-                    'deadline_date': job_post.last_application_date
-               })
-          
-          return {
-               'message': 'Succefully generated expired job posts by most recent order.',
-               'data': result
-          }
      
      @staticmethod
      def toggle_job_post_status(job_post_id):
@@ -224,4 +205,3 @@ class SharedDashboardService:
                     'new_status': new_status
                }
           }
-          

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+from django.utils import timezone
 from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType
 from apps.companies.serializers import CompanyDetailSerializer
 from utils.job_posting.job_posting_utils import format_salary
@@ -34,18 +35,6 @@ class JobPostDisplayMixin:
           
           return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
      
-     def get_is_bookmarked(self, obj):
-          user = self.context['request'].user
-          
-          if not user.is_authenticated:
-               return False
-          try:
-               job_seeker = user.jobseeker
-          except Exception:
-               return False
-          
-          return BookmarkedJob.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
-     
      def get_is_applied(self, obj):
           user = self.context['request'].user
           
@@ -58,6 +47,31 @@ class JobPostDisplayMixin:
           
           return JobApplication.objects.filter(job_post=obj, job_seeker=job_seeker).exists()
 
+     def get_is_expired(self, obj):
+          """
+          Check if job is expired based on:
+          1. Manual status (job_post_status = 'expired')
+          2. Automatic expiration (last_application_date has passed)
+          """
+          from datetime import date
+          
+          # Check manual expiration status
+          if obj.job_post_status == 'expired':
+               return True
+          
+          # Check automatic expiration based on last application date
+          if obj.last_application_date:
+               today = date.today()
+               
+               if obj.last_application_date < today:
+                    return True
+          
+          return False
+     
+     def get_effective_status(self, obj):
+          """Get the effective status of the job post"""
+          return obj.get_effective_status()
+          
 class JobPostSerializer(ModelSerializer):
      class Meta:
           model=JobPost
@@ -86,6 +100,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
      is_new = serializers.SerializerMethodField()
      is_bookmarked = serializers.SerializerMethodField()
      is_applied = serializers.SerializerMethodField()
+     is_expired = serializers.SerializerMethodField()
+     effective_status = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -96,6 +112,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'location',
                'experience_level',
                'experience_years',
+               'role',
+               'specialization',
                'skills',
                'job_type',
                'work_type',
@@ -107,6 +125,8 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'is_new',
                'is_bookmarked',
                'is_applied',
+               'is_expired',
+               'effective_status',
           ]
 
      # Use JobPostDisplayMixin methods except get_is_new
@@ -136,6 +156,12 @@ class JobPostListSerializer(serializers.ModelSerializer):
 
      def get_is_applied(self,obj):
           return JobPostDisplayMixin.get_is_applied(self, obj)
+     
+     def get_is_expired(self, obj):
+          return JobPostDisplayMixin.get_is_expired(self, obj)
+     
+     def get_effective_status(self, obj):
+          return obj.get_effective_status()
 
 class JobPostDetailSerializer(serializers.ModelSerializer):
      specialization = serializers.StringRelatedField()
@@ -150,6 +176,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
      job_poster_name = serializers.SerializerMethodField()
      is_bookmarked = serializers.SerializerMethodField()
      is_applied = serializers.SerializerMethodField()
+     is_expired = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -159,7 +186,7 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
                'job_type', 'work_type', 'number_of_positions', 'display_salary', 'is_salary_negotiable',
                'project_duration', 'last_application_date', 'is_accepting_applications',
                'view_count', 'applicant_count', 'bookmark_count', 'company', 'job_poster_name',
-               'is_bookmarked', 'is_applied', 'created_at'
+               'is_bookmarked', 'is_applied', 'is_expired', 'created_at'
           ]
 
      def get_company(self, obj):
@@ -180,13 +207,18 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
           return JobPostDisplayMixin.get_display_salary(self, obj)
 
      def get_is_applied(self,obj):
-          return JobPostDisplayMixin.get_is_applied(self, obj)     
+          return JobPostDisplayMixin.get_is_applied(self, obj)
+     
+     def get_is_expired(self, obj):
+          return JobPostDisplayMixin.get_is_expired(self, obj)
 
 class JobApplicationSerializer(ModelSerializer):
+     job_post = JobPostListSerializer()
+     
      class Meta:
           model = JobApplication
-          fields = ['id', 'job_post', 'job_seeker', 'status', 'cover_letter', 'application_resume_url', 'created_at']
-          read_only_fields = ['id', 'job_post', 'job_seeker', 'status', 'created_at']
+          fields = ['id', 'job_post', 'job_seeker', 'application_status', 'cover_letter', 'application_resume_url', 'created_at']
+          read_only_fields = ['id', 'job_post', 'job_seeker', 'application_status', 'created_at']
 
 class JobApplicationCreateSerializer(ModelSerializer):
      class Meta:
@@ -199,9 +231,9 @@ class JobApplicationCreateSerializer(ModelSerializer):
 class JobApplicationStatusUpdateSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
-          fields = ['status']
+          fields = ['application_status']
 
-     def validate_status(self, value):
+     def validate_application_status(self, value):
           valid_statuses = [choice[0] for choice in ApplicationStatus.choices]
           
           if value not in valid_statuses:
@@ -211,6 +243,8 @@ class JobApplicationStatusUpdateSerializer(ModelSerializer):
 # region Bookmarked Job Serializers
 
 class BookmarkedJobSerializer(ModelSerializer):
+     job_post = JobPostListSerializer()
+     
      class Meta:
           model = BookmarkedJob
           fields = ['id', 'job_post', 'created_at']

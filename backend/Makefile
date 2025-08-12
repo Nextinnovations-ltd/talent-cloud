@@ -89,6 +89,12 @@ migrate: all
 	@$(VENV_DIR)/bin/python manage.py migrate --settings=$(SETTINGS)
 	@echo "\n\033[1;32m✓ Migrations applied successfully\033[0m\n"
 
+migrate-cities: all
+	@echo "\n\033[1;34m=== Applying City Migrations ===\033[0m"
+	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m\n"
+	@$(VENV_DIR)/bin/python manage.py cities_light
+	@echo "\n\033[1;32m✓ City Migrations applied successfully\033[0m\n"
+
 ## User Management
 createsuperuser: all
 	@echo "\n\033[1;34m=== Creating Superuser ===\033[0m"
@@ -117,11 +123,28 @@ run-daphne: all
 
 run-celery: all
 	@echo "Starting Celery worker..."
-	@$(VENV_DIR)/bin/celery -A main worker -l info
+	@$(VENV_DIR)/bin/celery -A celery_app worker -l info
 
 run-celery-beat: all
 	@echo "Starting Celery beat..."
-	@$(VENV_DIR)/bin/celery -A main beat -l info
+	@$(VENV_DIR)/bin/celery -A celery_app beat -l info
+
+run-celery-flower: all
+	@echo "\n\033[1;34m=== Starting Celery Flower Monitor ===\033[0m"
+	@echo "\033[0;33mMonitoring on: \033[1;33mhttp://localhost:5555\033[0m"
+	@echo "\033[0;36mPress Ctrl+C to stop Flower\033[0m\n"
+	@$(VENV_DIR)/bin/celery -A celery_app flower --port=5555
+
+celery-status: all
+	@echo "\n\033[1;34m=== Celery Status ===\033[0m"
+	@$(VENV_DIR)/bin/celery -A celery_app status
+
+# Import Data
+import-location-data: all
+	@echo "\n\033[1;34m=== Importing Location Data ===\033[0m"
+	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m"
+	@$(VENV_DIR)/bin/python manage.py import_location_data
+	@echo "\n\033[1;32m✓ Location Data imported.\033[0m\n"
 
 ## Deployment
 collectstatic: all

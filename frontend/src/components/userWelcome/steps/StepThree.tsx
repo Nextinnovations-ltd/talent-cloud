@@ -12,6 +12,8 @@ import {
   SVGHuman,
   VIDEO,
 } from "@/constants/svgs";
+import { useApiCaller } from "@/hooks/useApicaller";
+import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import { useGetUserTalentsQuery } from "@/services/slices/onBoardingSlice";
 
 type Specialization = {
@@ -57,6 +59,9 @@ export const StepThree = ({
     isLoading: SpecializationLoading,
     isError,
   } = useGetUserTalentsQuery();
+  useApiCaller(
+    useOnBoardingMutation
+  );
 
   // Combine specialization data with corresponding SVG image
   const combinedData: CombinedData[] | undefined = data?.data.map(
@@ -76,14 +81,16 @@ export const StepThree = ({
 
   const renderSpecializations = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-4">
-      {combinedData?.map(({ id, description, SVGImg }) => (
+      {combinedData?.map(({ id, name, SVGImg }) => (
         <SpecializationCard
           handleClick={() => {
-            setSpecializationId(id);
-            goToNextStep();
+
+              setSpecializationId(id);
+              goToNextStep();
+            
           }}
           key={id}
-          title={description}
+          title={name}
           SVGImg={SVGImg}
           active={id === specializationId}
         />

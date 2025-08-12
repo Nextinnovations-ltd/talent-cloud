@@ -9,9 +9,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
           
           if user.is_authenticated:
                # Added to individual user
-               self.user_group = f"user_{user.id}"
+               self.user_group = f"user_{user.id}_notifications"
                await self.channel_layer.group_add(self.user_group, self.channel_name)
-               
+
                role_name = None
                if user.role_id:  # check if user has a role
                     role_obj = await sync_to_async(lambda: user.role)()
@@ -53,6 +53,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
      async def send_notification(self, event):
           payload = event.get("notification", { "message": event.get("message") })
+          
+          await self.send(text_data=json.dumps({
+               "type": "notification",
+               **payload
+          }))
+     
+     async def notification_message(self, event):
+          """Handle notification_message type sent from NotificationService"""
+          payload = event.get("notification", {})
           
           await self.send(text_data=json.dumps({
                "type": "notification",

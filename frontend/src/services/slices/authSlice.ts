@@ -135,13 +135,13 @@ export const extendedAuthSlice = apiSlice.injectEndpoints({
         body: JSON.stringify(credentials),
       }),
     }),
-    onBoarding: builder.mutation<null, null>({
+    onBoarding: builder.mutation<unknown, null>({
       query: (credentials) => ({
         url: "/onboarding/",
         method: "POST",
         body: credentials,
         headers: {
-          "Content-Type": "multipart/form-data", // Manually adding the content-type
+          "Content-Type": "multipart/form-data",
         },
       }),
     }),
@@ -173,8 +173,8 @@ const token: string | null =
   getKeepMeLoggedInFromLocalStorage() && getTokenFromLocalStorage()
     ? getTokenFromLocalStorage()
     : getTokenFromSessionStorage()
-    ? getTokenFromSessionStorage()
-    : getTokenFromLocalStorage();
+      ? getTokenFromSessionStorage()
+      : getTokenFromLocalStorage();
 
 // Define the initial state
 const initialState: AuthState = {
@@ -208,6 +208,9 @@ const authSlice = createSlice({
           state.token = action.payload.data.token;
           state.isGeneratedName = action.payload.data.is_generated_username;
           // state.isGeneratedName = action.payload.data
+          removeTokensFromLocalStorage()
+          removeTokenFromSessionStorage();
+
 
           // Handle token storage based on keepMeLoggedIn flag
           if (state.keepMeLoggedIn) {
@@ -219,7 +222,7 @@ const authSlice = createSlice({
             removeTokensFromLocalStorage();
           }
         }
-      }
+      },
     );
   },
 });

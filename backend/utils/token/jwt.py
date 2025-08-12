@@ -22,7 +22,7 @@ class TokenUtil:
           return expired_at < datetime.datetime.now(datetime.timezone.utc)
      
      @staticmethod
-     def generate_access_token(id, role, minutes = 30):
+     def generate_access_token(id, role, minutes = 60):
           return jwt.encode({
                'user_id': id,
                'role': role,
@@ -51,7 +51,7 @@ class TokenUtil:
                'user_id': id,
                # 'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7),
                'role': role,
-               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=60),
+               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=300),
                'iat': datetime.datetime.now(datetime.UTC),
           }, config('REFRESH_SECRET', default='refresh_secret'), algorithm=config('ENCRYPTION_ALGORITHM', default='HS256'))
 
@@ -59,7 +59,7 @@ class TokenUtil:
      @staticmethod# Decode the refresh token to payload
      def decode_refresh_token(token):
           try:
-               payload = jwt.decode(token, config('REFRESH_SECREt', default='refresh_secret'), algorithms=config('ENCRYPTION_ALGORITHM', default='HS256'))
+               payload = jwt.decode(token, config('REFRESH_SECRET', default='refresh_secret'), algorithms=config('ENCRYPTION_ALGORITHM', default='HS256'))
                # return payload['user_id']
                return payload
           except jwt.ExpiredSignatureError:

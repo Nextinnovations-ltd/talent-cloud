@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Home } from "./pages/home/Home";
 import routesMap from "./constants/routesMap";
 import { AuthLayout } from "./layouts/AuthLayout";
@@ -29,17 +29,50 @@ import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
 
+import SelectedProject from "./pages/profile/subPages/SelectedProject";
+import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
+import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
+import AppliedJobs from "./pages/appliedJobs";
+import SavedJobs from "./pages/savedJobs";
+import Index from "./components/superAdmin";
+import ExpiredJobsDetail from "./pages/expiredJobsDetail/expiredJobsDetail";
+import adminRoutesMap from "./constants/adminRoutesMap";
+import AdminLogin from "./pages/authentication/adminAuthentication/login/Login";
+import AdminLayout from "./layouts/AdminLayout";
+import VerifyRoleAndToken from "./components/common/VerifyRoleAndToken";
+import AnalyticalPage from "./pages/admin/Analytical/analyticalPage";
+import Candidates from "./pages/admin/Candidates/Candidates";
+import AllJobs from "./pages/admin/AllJobs/AllJobs";
+import ActiveJobs from "./pages/admin/ActiveJobs/ActiveJobs";
+import ExpiredJobs from "./pages/admin/ExpiredJobs/ExpiredJobs";
+import CreateNewJob from "./pages/admin/CreateNewJob/CreateNewJob";
+import AllJobsDetails from "./pages/admin/AllJobs/AllJobsDetails";
+import CandidateApplicants from "./pages/admin/Candidates/CandidateApplicants";
+import AllJobsEditJobs from "./pages/admin/AllJobs/AllJobsEditJobs";
+import EmployeePage from "./pages/LandingPages/EmployeePage";
+
+
 
 export const router = createBrowserRouter([
   {
-   path:"/jobseeker/lp",
+    path: "/",
+    element: <Navigate to="/employee/lp" replace />,
+  },
+  {
+    path: "/test-design",
+    element: <Index/>
+  },
+  {
+   path:"/emp/lp",
    element:<JobSeekerLandingPage/>
   },
   {
-    path: "/",
+    path:"/tc/lp",
+    element:<EmployeePage/>
+   },
+  {
+   path: "/",
    element: <MainLayout />,
-
-
     children: [
       {
         path: "/",
@@ -49,13 +82,24 @@ export const router = createBrowserRouter([
             index: true,
             element: <Home />,
           },
-         
           {
             path: "/user",
             children: [
               {
                 path: routesMap.mainProfile.path,
                 element: <MainUserProfile />
+              },
+              {
+                path: routesMap.appliedJobs.path,
+                element: <AppliedJobs />
+              },
+              {
+                path: routesMap.savedJobs.path,
+                element: <SavedJobs />
+              },
+              {
+                path: routesMap.expiredJobDetails.path,
+                element: <ExpiredJobsDetail />
               },
               {
                 path: 'job_apply/:id',
@@ -73,8 +117,6 @@ export const router = createBrowserRouter([
                 element: <OrganizationDetail />
               },
             ]
-
-
           },
           {
             path: "/user/edit",
@@ -109,12 +151,25 @@ export const router = createBrowserRouter([
                 path: routesMap.languages.path,
                 element: <Language />,
               },
+              {
+                path:routesMap.selectedProjects.path,
+                element:<SelectedProject/>
+              },
+              {
+                path:routesMap.videoIntroduction.path,
+                element:<VideoIntroduction/>
+              },
+              {
+                path:routesMap.specialSkills.path,
+                element:<SpecailSkills/>
+              }
             ],
           },
         ],
       },
     ],
   },
+
   {
     path: `/${routesMap.verify.path}`,
     element: <AuthLayout />,
@@ -169,6 +224,69 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path:"/admin",
+    element:<VerifyRoleAndToken shouldSkip={false}/>,
+    children:[
+      {
+        path:'dashboard',
+        element:<AdminLayout/>,
+        children:[
+          {
+            index:true,
+            element:<AnalyticalPage/>
+          },
+          {
+            path:adminRoutesMap?.candiates.path,
+            element:<Candidates/>
+          },
+          {
+            path:adminRoutesMap?.candidatesJobDetails.path,
+            element:<CandidateApplicants/>
+          },
+          {
+            path:adminRoutesMap?.allJobs.path,
+            element:<AllJobs/>
+          },
+          {
+            path:adminRoutesMap?.activeJobs.path,
+            element:<ActiveJobs/>
+          },
+          {
+            path:adminRoutesMap?.expiredJobs.path,
+            element:<ExpiredJobs/>
+          },
+          {
+            path:adminRoutesMap?.createNewJob.path,
+            element:<CreateNewJob/>
+          },{
+            path:adminRoutesMap?.allJobsDetails?.path,
+            element:<AllJobsDetails/>
+          },
+          {
+            path:adminRoutesMap?.allJobsDetailApplicants?.path,
+            element:<CandidateApplicants/>
+          },
+          {
+            path:adminRoutesMap?.allJobsEditJob?.path,
+            element:<AllJobsEditJobs/>
+          }
+        ]
+
+      },
+    ]
+  },
+
+  {
+    path:"/admin/auth",
+    element:<AuthLayout/>,
+    children:[
+      {
+        path:adminRoutesMap.login.path,
+        element:<AdminLogin/>
+      }
+    ]
   },
   {
     path: "/oauth/callback",

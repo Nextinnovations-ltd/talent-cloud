@@ -1,7 +1,6 @@
-"use client"
-
 import * as React from "react"
 import { Check, ChevronDown } from "lucide-react"
+
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -18,21 +17,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+interface PostUploadedComboProps {
+  ordering: string; // current ordering value
+  onOrderingChange: (newOrdering: string) => void; // callback when ordering changes
+}
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "2 Days ago",
-  },
-  {
-    value: "sveltekit",
-    label: "1 Week ago",
-  },
-]
+export function PostUploadedCombo({ ordering, onOrderingChange }: PostUploadedComboProps) {
+  const [open, setOpen] = React.useState(false);
 
-export function PostUploadedCombo() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const sortOptions = [
+    { value: "-created_at", label: "Latest" },
+    { value: "created_at", label: "Oldest" },
+  ];
+
+  function handleSelect(value: string) {
+    if (value === ordering) {
+      onOrderingChange(""); // toggle off
+    } else {
+      onOrderingChange(value);
+    }
+    setOpen(false);
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -41,34 +46,32 @@ export function PostUploadedCombo() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[157px] px-[24px]  rounded-[8px] py-[10px] justify-between"
+          className="w-[157px] px-[24px] rounded-[8px] py-[10px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Date Posted"}
+          {ordering
+            ? sortOptions.find((opt) => opt.value === ordering)?.label
+            : "Sort by Date"}
           <ChevronDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-[157px] p-0">
         <Command>
-          <CommandInput  placeholder="Date..." className="h-9" />
+          <CommandInput placeholder="Sort..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {sortOptions.map((option) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                  }}
+                  key={option.value}
+                  value={option.value}
+                  onSelect={handleSelect}
                 >
-                  {framework.label}
+                  {option.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      ordering === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
@@ -78,5 +81,5 @@ export function PostUploadedCombo() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

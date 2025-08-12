@@ -1,0 +1,43 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}System Maintenance Notice - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>🔧 Scheduled System Maintenance</h2>
+
+<p>Hello {{ user.name|default:"" }},</p>
+
+<p>We want to inform you about upcoming maintenance on {{ platform_name }} to improve our service quality.</p>
+
+<div class="info-box">
+    <h3>Maintenance Details</h3>
+    <p><strong>Start Time:</strong> {{ start_time|date:"F d, Y at g:i A" }}</p>
+    <p><strong>End Time:</strong> {{ end_time|date:"F d, Y at g:i A" }}</p>
+    <p><strong>Duration:</strong> {{ duration }}</p>
+    <p><strong>Type:</strong> {{ maintenance_info }}</p>
+</div>
+
+<h4>What to Expect:</h4>
+<ul>
+    <li>{{ platform_name }} will be temporarily unavailable during the maintenance window</li>
+    <li>Any unsaved work may be lost</li>
+    <li>Please save your work and log out before the maintenance begins</li>
+    <li>All services will be restored after the maintenance is complete</li>
+</ul>
+
+<h4>What You Should Do:</h4>
+<ul>
+    <li>📝 Save any ongoing applications or profile updates</li>
+    <li>💾 Backup any important data</li>
+    <li>🕐 Plan your activities accordingly</li>
+</ul>
+
+<p>We apologize for any inconvenience this may cause and appreciate your patience as we work to improve {{ platform_name }}.</p>
+
+<p>If you have any urgent questions, please contact our support team before the maintenance window begins.</p>
+
+<p>Thank you for your understanding.</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

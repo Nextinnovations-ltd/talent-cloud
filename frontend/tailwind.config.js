@@ -170,13 +170,24 @@ export default {
             height: "0",
           },
         },
-        'star-movement-bottom': {
-          '0%': { transform: 'translate(0%, 0%)', opacity: '1' },
-          '100%': { transform: 'translate(-100%, 0%)', opacity: '0' },
+        "star-movement-bottom": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(-100%, 0%)", opacity: "0" },
         },
-        'star-movement-top': {
-          '0%': { transform: 'translate(0%, 0%)', opacity: '1' },
-          '100%': { transform: 'translate(100%, 0%)', opacity: '0' },
+        "star-movement-top": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(100%, 0%)", opacity: "0" },
+        },
+        "drop-bounce": {
+          "0%": { transform: "translateY(-100%) scaleY(0.5)", opacity: "0" },
+          "60%": { transform: "translateY(10%) scaleY(1.05)", opacity: "1" },
+          "80%": { transform: "translateY(-4%) scaleY(0.98)" },
+          "100%": { transform: "translateY(0) scaleY(1)" },
+        },
+        "close-bounce": {
+          "0%": { transform: "translateY(0) scaleY(1)", opacity: "1" },
+          "20%": { transform: "translateY(-10%) scaleY(0.95)" },
+          "100%": { transform: "translateY(-100%) scaleY(0.5)", opacity: "0" },
         },
       },
       animation: {
@@ -185,9 +196,12 @@ export default {
         fade: "fade 1s linear infinite ",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        shine: 'shine 5s linear infinite',
-        'star-movement-bottom': 'star-movement-bottom linear infinite alternate',
-        'star-movement-top': 'star-movement-top linear infinite alternate',
+        shine: "shine 5s linear infinite",
+        "star-movement-bottom":
+          "star-movement-bottom linear infinite alternate",
+        "star-movement-top": "star-movement-top linear infinite alternate",
+        "bouncy-drop": "drop-bounce 0.6s ease-out forwards",
+        "bouncy-close": "close-bounce 0.5s ease-in forwards",
       },
     },
   },

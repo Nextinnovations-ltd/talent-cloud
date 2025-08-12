@@ -1,14 +1,16 @@
 import { SVGProfile } from "@/constants/svgs";
+import DefaultImage from '@/assets/Login/DefaultImg.png';
 import { useState,useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/button";
 import { ImageEditor } from "./ImageEditor";
 
- const ImagePicker = ({setPreview,preview,form,setIsOpen}:{
+ const ImagePicker = ({setPreview,preview,form,setIsOpen, type = "circle"}:{
     setPreview: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>;
     preview: string | ArrayBuffer | null;
     form: any;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    type?: "circle" | "square";
  }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -85,7 +87,9 @@ import { ImageEditor } from "./ImageEditor";
     <div className="flex gap-[30px] items-center">
     <div
 {...getRootProps()}
-className="border-2 rounded-full cursor-pointer flex items-center justify-center bg-transparent transition-all duration-300 w-[110px] h-[110px]"
+className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  transition-all duration-300 w-[110px] h-[110px] ${
+  type === "circle" ? "rounded-full" : "rounded-[16px]"
+}`}
 >
 {preview ? (
   <img
@@ -93,10 +97,18 @@ className="border-2 rounded-full cursor-pointer flex items-center justify-center
     width={110}
     height={110}
     alt="Uploaded"
-    className="rounded-full object-cover w-full h-full"
+    className={`object-cover w-full h-full ${
+      type === "circle" ? "rounded-full" : "rounded-[16px]"
+    }`}
   />
 ) : (
-  <SVGProfile />
+  type === "circle" ?  <SVGProfile /> :  <img
+  src={DefaultImage}
+  width={110}
+  height={110}
+  alt="Uploaded"
+  className={`object-contain w-full h-full opacity-50`}
+/>
 )}
 </div>
       <div className="flex ">

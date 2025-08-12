@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Slider from "@/components/common/Slider";
 import LINKEDIN from '@/assets/skill-icons_linkedin.png';
 import INSTAGRAM from '@/assets/skill-icons_instagram.png';
@@ -13,20 +13,17 @@ import PHONE from '@/assets/svgs/phone.svg';
 import CALENDAR from '@/assets/calendar.svg';
 import SHIELD from '@/assets/shield-check.svg';
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
 import JobCardGrid from "@/components/jobApply/JobCardGrid";
-import { Job } from "@/components/jobApply/ApplyJobCard";
 import { useGetOrganizationDetailQuery } from "@/services/slices/organizationSlice";
 
 
 const OrganizationDetail = () => {
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const { data: organization, isLoading, isError } = useGetOrganizationDetailQuery('next-innovations');
 
   const jobs = organization?.job_posts ?? [];
 
-  const handleJobClick = (job: Job) => {
+  const handleJobClick = () => {
 
   };
 

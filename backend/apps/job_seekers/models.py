@@ -6,6 +6,7 @@ class JobSeeker(TalentCloudUser):
      user = models.OneToOneField(TalentCloudUser, on_delete=models.CASCADE, parent_link=True)
      onboarding_step = models.IntegerField(default=1)
      resume_url = models.URLField(max_length=2048, null=True, blank=True)
+     video_url = models.TextField(null=True, blank=True)
      is_open_to_work = models.BooleanField(default=True)
      tagline = models.CharField(max_length=150, null=True, blank=True)
      expected_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -178,11 +179,29 @@ class JobSeekerOccupation(TimeStampModel):
                models.Index(fields=['specialization', 'role','experience_level'])  # Composite index on both fields
           ]
 
+     def clean(self):
+          """Validate that role belongs to the selected specialization"""
+          from django.core.exceptions import ValidationError
+          
+          # If both specialization and role are provided, validate they match
+          if self.specialization and self.role:
+               if self.role.specialization != self.specialization:
+                    raise ValidationError("Selected role does not belong to specialization. Please update specialization first.")
+          
+          # If role is provided but no specialization, that's invalid
+          if self.role and not self.specialization:
+               raise ValidationError("Specialization is required when selecting a role.")
+
+     def save(self, *args, **kwargs):
+          # Run validation before saving
+          self.clean()
+          super().save(*args, **kwargs)
+
      def __str__(self):
           return f"{self.user.username}"
 
 class JobSeekerSocialLink(TimeStampModel):
-     user = models.ForeignKey(JobSeeker, related_name='sociallinks', on_delete=models.CASCADE)
+     user = models.OneToOneField(JobSeeker, related_name='social_links', on_delete=models.CASCADE)
      facebook_social_url = models.URLField(max_length=2048, null=True, blank=True)
      linkedin_social_url = models.URLField(max_length=2048, null=True, blank=True)
      behance_social_url = models.URLField(max_length=2048, null=True, blank=True)

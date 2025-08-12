@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import { Form } from "@/components/ui/form";
 import { EducationYupSchema } from "@/lib/EducationSchema";
@@ -6,6 +7,12 @@ import { useForm } from "react-hook-form";
 import InputField from "@/components/common/form/fields/input-field";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
+import { useApiCaller } from "@/hooks/useApicaller";
+import { useAddEducationsMutation, useGetEducationByIdQuery, useUpdateEducationMutation } from "@/services/slices/jobSeekerSlice";
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect } from "react";
+import useToast from "@/hooks/use-toast";
+
 
 type EducationFrom = {
   institution: string;
@@ -13,6 +20,7 @@ type EducationFrom = {
   startDate: string;
   endDate: string;
   description: string;
+  is_currently_attending?: boolean;
 };
 
 const generateYearData = (
@@ -26,6 +34,16 @@ const generateYearData = (
 };
 
 export const Education = () => {
+  const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddEducationsMutation);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const id = searchParams.get("id");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: educationData = {} as any, isLoading } = useGetEducationByIdQuery(id ?? '', { skip: !id });
+  const [updateEducation, { isLoading: isUpdating }] = useUpdateEducationMutation();
+  const {showNotification} = useToast()
+
+
   const form = useForm<EducationFrom>({
     resolver: yupResolver(EducationYupSchema),
     defaultValues: {
@@ -37,7 +55,58 @@ export const Education = () => {
     },
   });
 
-  const onSubmit = (data: EducationFrom) => console.log(data);
+  useEffect(() => {
+    if (educationData && Object.keys(educationData).length > 0) {
+      form.reset({
+        institution: educationData.institution || "",
+        degree: educationData.degree || "",
+        startDate: educationData.start_date ? educationData.start_date.split("-")[0] : "",
+        endDate: educationData.end_date ? educationData.end_date.split("-")[0] : "",
+        description: educationData.description || "",
+        is_currently_attending: educationData.is_currently_attending ?? false,
+      });
+    }
+  }, [educationData, form]);
+
+  const onSubmit = async (data: EducationFrom) => {
+    try {
+      let response;
+      if (id) {
+        // Edit mode: update
+        const updatePayload = {
+          id: Number(id),
+          institution: data.institution,
+          degree: data.degree,
+          start_date: data.startDate ? `${data.startDate}-01-01` : "",
+          end_date: data.endDate ? `${data.endDate}-01-01` : "",
+          description: data.description,
+          is_currently_attending: data.is_currently_attending ?? false,
+        };
+        response = await updateEducation({ id: Number(id), credentials: updatePayload });
+         //@ts-ignore
+        showNotification({message:response?.data?.message,type:"success"})
+      } else {
+        // Create mode: add
+        const addPayload = {
+          institution: data.institution,
+          degree: data.degree,
+          start_date: data.startDate ? `${data.startDate}-01-01` : "",
+          end_date: data.endDate ? `${data.endDate}-01-01` : "",
+          description: data.description,
+          is_currently_attending: data.is_currently_attending ?? false,
+        };
+        response = await executeApiCall(addPayload);
+      }
+      if (response) {
+       
+        navigate('/user/mainProfile');
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div className=" mb-[120px]">
@@ -76,7 +145,7 @@ export const Education = () => {
                 width="w-[50%]"
               />
               <SelectField
-                name={`education.endDate`}
+                name={`endDate`}
                 placeholder="Month"
                 error={!!form.formState.errors?.endDate}
                 showRequiredLabel
@@ -86,7 +155,7 @@ export const Education = () => {
               />
             </div>
             <TextAreaField
-              key={`education.description`}
+              key={`description`}
               lableName={"Description"}
               isError={!!form.formState.errors?.description}
               fieldName={`description`}
@@ -101,9 +170,10 @@ export const Education = () => {
           <div className="max-w-[672px]  flex items-center justify-end">
             <button
               type="submit"
-              className="mt-4 w-[155px] h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 "
+              className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 "
+              disabled={isSubmitting || isUpdating}
             >
-              Save Profile
+              {(isSubmitting || isUpdating) ? "Saving..." : id ? "Update Education" : "Save Profile"}
             </button>
           </div>
         </form>

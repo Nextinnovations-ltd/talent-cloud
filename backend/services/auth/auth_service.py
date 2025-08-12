@@ -32,9 +32,21 @@ class AuthenticationService:
           return user
      
      @staticmethod
-     def register_user_with_role(email, password, role):
+     def register_user_with_role(email, password, role, **kwargs):
           with transaction.atomic():
-               user = TalentCloudUser.objects.create_user_with_role(email=email, password=password, role_name = role)
+               user = TalentCloudUser.objects.create_user_with_role(email=email, password=password, role_name = role, **kwargs)
+
+               # Create verification code, token, and send mail to verify the user as active user
+               verify_token = AuthEmailService.verify_user_registration(user.email)
+
+               return verify_token
+          
+          return None
+     
+     @staticmethod
+     def register_ni_super_user(username, email, password):
+          with transaction.atomic():
+               user = TalentCloudUser.objects.create_superuser(username=username, email=email, password=password)
 
                # Create verification code, token, and send mail to verify the user as active user
                verify_token = AuthEmailService.verify_user_registration(user.email)
@@ -107,6 +119,8 @@ class AuthenticationService:
           if not TalentCloudUser.objects.filter(email=email).exists():
                raise ValueError("Talent cloud user with this email does not exist.")
 
+          user = TalentCloudUser.objects.get(email=email)
+          
           reset_request = PasswordReset.objects.active().filter(email=email).first()
           is_expired_reset_request = False
 
@@ -121,8 +135,8 @@ class AuthenticationService:
                     else:
                          reset_token = PasswordService.create_password_reset(email)
 
-                    AuthEmailService.send_password_reset_email(email, reset_token)
-                    
+                    # AuthEmailService.send_password_reset_email(email, reset_token)
+                    AuthEmailService.send_password_reset_email_with_template(user, reset_token)
                     return reset_token
           elif reset_request and not is_expired_reset_request:
                raise ValueError("Password reset request already sent.")
@@ -202,7 +216,7 @@ class AuthenticationService:
 
      @staticmethod
      def generate_login_success_response(user):
-          access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 30)
+          access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 180)
           refresh_token = TokenUtil.generate_refresh_token(user.pk, user.role.name)
           
           return {

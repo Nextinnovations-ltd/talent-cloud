@@ -1,16 +1,44 @@
+"""
+Views for the ws_channel app
+"""
+
+# Chat views
 from .chat_views import UserChatListAPIView, ChatRoomInfoAPIView
+
+# Notification views
 from .notification_views import (
-    NotificationListAPIView,
+    InAppNotificationListAPIView,
     NotificationDetailAPIView,
+    NotificationByChannelAPIView,
     NotificationMarkAllReadAPIView,
-    NotificationUnreadCountAPIView
+    NotificationMarkAsReadByIDAPIView,
+    NotificationUnreadCountAPIView,
+    TestAPIView
+)
+
+# Admin views
+from .admin_views import (
+    AdminNotificationAPIView,
+    AdminCompanyApprovalAPIView,
+    AdminSystemMaintenanceAPIView
 )
 
 __all__ = [
+    # Chat views
     'UserChatListAPIView',
     'ChatRoomInfoAPIView',
-    'NotificationListAPIView',
+    
+    # Notification views
+    'InAppNotificationListAPIView',
     'NotificationDetailAPIView',
+    'NotificationByChannelAPIView',
     'NotificationMarkAllReadAPIView',
-    'NotificationUnreadCountAPIView'
+    'NotificationMarkAsReadByIDAPIView',
+    'NotificationUnreadCountAPIView',
+    'TestAPIView',
+    
+    # Admin views
+    'AdminNotificationAPIView',
+    'AdminCompanyApprovalAPIView',
+    'AdminSystemMaintenanceAPIView',
 ]

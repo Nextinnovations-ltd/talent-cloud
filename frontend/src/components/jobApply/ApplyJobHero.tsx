@@ -1,22 +1,9 @@
 import MEGAPHONE from '@/assets/Megaphone.png';
 
-const floatVariants = (delay = 0, amplitude = 15, rotate = 4, duration = 5) => ({
-  animate: {
-    y: [0, -amplitude, 0, amplitude, 0],
-    rotate: [0, -rotate, 0, rotate, 0],
-    transition: {
-      duration,
-      repeat: Infinity,
-      repeatType: 'loop' as const,
-      ease: 'easeInOut',
-      delay,
-    },
-  },
-});
 
 const ApplyJobHero = () => {
   return (
-    <div className="relative container  rounded-[10px] mx-auto mb-[50px] items-center gap-[8px] p-4 flex flex-col justify-center">
+    <div className="relative container  rounded-[10px] mt-[80px] mx-auto mb-[50px] items-center gap-[8px] p-4 flex flex-col justify-center">
      
       
        

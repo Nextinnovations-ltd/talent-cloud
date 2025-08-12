@@ -2,8 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 from apps.job_seekers.models import JobSeekerProject
 from apps.job_seekers.serializers.project_serializer import (
     JobSeekerProjectDisplaySerializer,

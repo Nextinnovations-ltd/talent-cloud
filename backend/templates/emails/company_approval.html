@@ -1,0 +1,36 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Company Approved! - {{ platform_name }}{% endblock %}
+
+{% block content %}
+<h2>🎉 Congratulations! Your Company is Approved</h2>
+
+<p>Hello,</p>
+
+<p>Excellent news! Your company registration has been approved and you're now officially part of the {{ platform_name }} community.</p>
+
+<div class="info-box">
+    <h3>{{ company_name }}</h3>
+    <p><strong>Status:</strong> <span style="color: green; font-weight: bold;">Approved & Active</span></p>
+    <p><strong>Approved on:</strong> {{ approval_date|date:"F d, Y at g:i A" }}</p>
+</div>
+
+<p>You can now access all company features including:</p>
+<ul>
+    <li>✅ Post job openings</li>
+    <li>✅ Manage applications</li>
+    <li>✅ Access company dashboard</li>
+    <li>✅ Build your company profile</li>
+</ul>
+
+<p style="text-align: center;">
+    <a href="{{ dashboard_url }}" class="button">Access Company Dashboard</a>
+</p>
+
+<p>We're excited to have you on board and look forward to helping you find the best talent for your organization.</p>
+
+<p>Welcome to {{ platform_name }}!</p>
+
+<p>Best regards,<br>
+The {{ platform_name }} Team</p>
+{% endblock %}

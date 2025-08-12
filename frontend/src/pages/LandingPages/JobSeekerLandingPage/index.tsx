@@ -1,13 +1,23 @@
-import { Button } from "@/components/ui/button"
+import HeroSection from "@/components/landingPages/JobPortal/HeroSection";
+import ReasonToChoose from "@/components/landingPages/JobPortal/ReasonToChoose";
+import SeeMore from "@/components/landingPages/JobPortal/SeeMore";
 
-
+import './index.css';
+import EorSection from "@/components/landingPages/JobPortal/EorSection";
+import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
+import FAQ from "@/components/landingPages/FAQ";
 const JobSeekerLandingPage = () => {
+  
   return (
-    <div>
-      <p>Test</p>
-      <Button  className="round bg-red" variant={'ghost'}></Button>
-    </div>
-  )
-}
+    <div className="bg-[#fff] overflow-x-hidden">
+      <HeroSection/>
+      <ReasonToChoose />
+      <SeeMore />
+      <EorSection />
+      <SuccessStory />
+      <FAQ/>
+</div>
+  );
+};
 
-export default JobSeekerLandingPage
+export default JobSeekerLandingPage;
