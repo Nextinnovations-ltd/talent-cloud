@@ -66,15 +66,7 @@ jobs:
           cd ./talent-cloud
           tar -czf configurations.tar.gz configurations
           ls -lash
-
-      - name: Copy talent-cloud.tar.gz over scp
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          source: talent-cloud.tar.gz
-          target: /home/ubuntu/talentcloud-networks/
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_KEY }}
+          ls
 
       - name: Copy configurations.tgz over scp
         uses: appleboy/scp-action@v0.1.7
