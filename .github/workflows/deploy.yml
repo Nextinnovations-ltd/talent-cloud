@@ -63,5 +63,6 @@ jobs:
         run: |
           cd ..
           tar -czf talent-cloud.tar.gz talent-cloud
+          cd ./talent-cloud
           tar -czf configurations.tar.gz configurations
           ls -lash
