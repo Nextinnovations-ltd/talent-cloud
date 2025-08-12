@@ -28,8 +28,6 @@ const CandidateApplicants = () => {
   const applicants: Applicant[] = data?.data?.results ?? [];
   const shortApplicants: Applicant[] = SHORTLISTDATA?.data?.results ?? [];
 
-
-
   // Determine if we're currently loading based on the active tab
   const isLoading = tabValues === "account"
     ? (isLoadingAllApplicants || isFetchingAllApplicants)

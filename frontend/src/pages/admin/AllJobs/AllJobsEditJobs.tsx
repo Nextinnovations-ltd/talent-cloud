@@ -288,12 +288,15 @@ const AllJobsEditJobs = () => {
   return (
     <div className="mt-3">
       <JobCandidatesInfoHeader id={id} side="preview" />
-      {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
+      
+
+     <div className="ml-10">
+     {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
       {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
       {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
       {currentStep === 3 && <PreviewForm />}
 
-      <div className="flex justify-between pr-[20px] mt-[50px]">
+      <div className="flex  justify-between max-w-[700px]  mt-[50px]">
         <Button
           className="text-[#000000] text-[16px] w-[150px] h-[53px]"
           variant="outline"
@@ -320,10 +323,12 @@ const AllJobsEditJobs = () => {
           </Button>
         )}
       </div>
+     </div>
+      </div>
 
 
 
-    </div>
+
   );
 };
 

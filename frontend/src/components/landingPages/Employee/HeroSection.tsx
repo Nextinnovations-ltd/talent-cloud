@@ -1,12 +1,13 @@
-import React from "react";
 import { useState } from "react";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import HeroImg from "@/assets/Employee/Frame 36555.png";
 import bgImage from "@/assets/Employee/Frame 1618873013.png";
-import CommonButton from "../commonBtn/button";
+
+
 import './HeroSection.css'
+import CommonButton from "../commonBtn/button";
+
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
 
@@ -31,9 +32,9 @@ const HeroSection = () => {
               <Link to="">Find Jobs</Link>
             </li>
           </ul>
-          <Link className="text-[#0481EF] hidden md:flex">For Employee</Link>
+          <Link to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
           <div className=" hidden md:flex">
-          <CommonButton title="Get Started" smallIcon="16" />
+          <CommonButton title="Get Started" smallIcon={true} />
           </div>
          
           {/* responsive toggle */}

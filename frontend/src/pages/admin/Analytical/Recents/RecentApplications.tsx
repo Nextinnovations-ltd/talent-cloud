@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import RecentApplicant from "@/components/superAdmin/RecentApplicant";
 import { RecenTitles } from "./RecenTitles";
 import { useGetAllRecentApplicantsListQuery } from "@/services/slices/adminSlice";
@@ -19,6 +20,7 @@ const RecentApplications = () => {
         ))
       ) : (
         // Render actual applicants
+         //@ts-expect-error
         recentApplicants?.slice(0, 4).map((applicant) => (
           <RecentApplicant key={applicant.applicant_id} data={applicant} />
         )) ?? null

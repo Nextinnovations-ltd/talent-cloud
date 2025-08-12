@@ -2,6 +2,8 @@ import Pagination from "@/components/common/Pagination";
 import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 import { Applicant, PaginatedData } from "@/types/admin-auth-slice";
 import { Dispatch, SetStateAction } from "react";
+import CommonError from "@/components/CommonError/CommonError";
+import EMPTY from '@/assets/SuperAdmin/noApplicants.png'
 
 interface ShortlistApplicantsViewProps {
     applicants: PaginatedData<Applicant> | undefined;
@@ -31,7 +33,9 @@ const ShortlistApplicantsView: React.FC<ShortlistApplicantsViewProps> = ({
     };
 
     if (!applicants?.results.length) {
-        return <div className="py-8 text-center text-gray-500">No applicants found</div>;
+        return <div className="py-8 text-center text-gray-500">
+            <CommonError image={EMPTY} title="You haven’t shortlisted anyone yet" description="" />
+        </div>;
     }
 
     return (

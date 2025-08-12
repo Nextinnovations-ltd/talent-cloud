@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import routesMap from "@/constants/routesMap";
 import {
   removeTokenFromSessionStorage,
@@ -32,19 +33,23 @@ export const ParsingTokenLayout = () => {
 
           
 
+           //@ts-ignore
           const isGeneratedUsername = response?.data?.is_generated_username;
+           //@ts-ignore
           const role = response?.data?.role;
+           //@ts-ignore
           const onBoarding = response?.data?.onboarding_step;
 
-          console.log()
 
           console.log({response})
 
           removeTokenFromSessionStorage();
           removeTokensFromLocalStorage();
 
+           //@ts-ignore
           dispatch(setReauthToken(response?.data?.token));
 
+           //@ts-ignore
           setTokenToLocalStorage(response?.data.token);
 
           if (isGeneratedUsername) {

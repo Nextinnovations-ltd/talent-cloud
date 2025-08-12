@@ -126,7 +126,7 @@ export const SearchBar = ({
               <div
                 key={s}
                 className={clsx(
-                  "px-4 py-2 cursor-pointer rounded-full bg-blue-50 text-blue-700 text-sm font-medium border border-blue-100 hover:bg-blue-100 hover:text-blue-900 transition-all",
+                  "px-4 py-2 cursor-pointer rounded-full bg-blue-50 text-blue-500 text-sm font-medium border border-blue-100 hover:bg-blue-100 hover:text-blue-900 transition-all",
                   highlighted === idx && "ring-2 ring-blue-300"
                 )}
                 onMouseDown={() => {

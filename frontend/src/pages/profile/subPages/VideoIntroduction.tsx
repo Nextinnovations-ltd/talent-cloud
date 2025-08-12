@@ -15,7 +15,7 @@ import {  useSearchParams } from "react-router-dom";
 
 
 type VideoIntroduction = {
-  title?: string;
+  title?: string | undefined ;
 };
 
 const VideoIntroduction = () => {

@@ -1,15 +1,8 @@
-import React from 'react'
-import successStoryImage from '../../../assets/JobPortal/Rectangle 5605.png' // Replace with actual image path
+
 import profile1 from '../../../assets/JobPortal/Ellipse 1117.png'
 import profile2 from '../../../assets/JobPortal/Mask group.png'
 const SuccessStory = () => {
-    const gradientStyle = {
-        background: "linear-gradient(95deg, #FF7F00 20.11%, #FF037E 81.4%)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text", // for Firefox
-        color: "transparent",
-      };
+   
     return (
       <div className="bg-[#E8F1FC] pl-5 pr-5">
            <div className='max-w-[1240px] mx-auto pt-[53px] md:pt-[83px] pb-[30px] md:pb-[139px] '>

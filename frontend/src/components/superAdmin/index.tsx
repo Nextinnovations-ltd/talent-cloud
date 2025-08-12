@@ -1,7 +1,5 @@
 import TotalCard from './TotalCard';
 import RecentJobCard from './RecentJobCard';
-import RecentApplicant from './RecentApplicant';
-import JobCard from './JobCard';
 import SearchBox from './SearchBox';
 
 const Index = () => {
@@ -9,8 +7,7 @@ const Index = () => {
         <div className='max-w-[1300px] mx-auto space-y-7 my-5'>
             <TotalCard/>
             <RecentJobCard/>
-            <RecentApplicant/>
-            <JobCard/>
+            
             <SearchBox/>
         </div>
     );

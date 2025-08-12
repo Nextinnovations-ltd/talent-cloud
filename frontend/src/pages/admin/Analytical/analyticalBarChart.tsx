@@ -63,7 +63,8 @@ function AnalyticalBarChart() {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Bar dataKey="jobSeeker" fill="var(--color-desktop)" radius={0}>
-                            {chartData.map((entry, index) => (
+
+                            {chartData.map((_entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={
@@ -101,7 +102,7 @@ function AnalyticalBarChart() {
 }
 
 
-function AnalyticalActiveItems({color,text}: {color?:string,text?:string}) {
+function AnalyticalActiveItems() {
     return (
         <div className="flex items-center gap-1">
             <div className="w-[10px] h-[10px] bg-[#0481EF] rounded-full "></div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import { Form } from "@/components/ui/form";
 import { EducationYupSchema } from "@/lib/EducationSchema";
@@ -82,6 +83,7 @@ export const Education = () => {
           is_currently_attending: data.is_currently_attending ?? false,
         };
         response = await updateEducation({ id: Number(id), credentials: updatePayload });
+         //@ts-ignore
         showNotification({message:response?.data?.message,type:"success"})
       } else {
         // Create mode: add

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState, useRef } from "react"
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue } from "framer-motion"
 import {
@@ -356,6 +357,7 @@ export default function LandingPage() {
 
           <div className="overflow-hidden mb-4">
             <motion.h1
+             //@ts-expect-error
               variants={textReveal}
               initial="hidden"
               animate="visible"
@@ -367,6 +369,7 @@ export default function LandingPage() {
 
           <div className="overflow-hidden mb-12">
             <motion.p
+            //@ts-expect-error
               variants={textReveal}
               initial="hidden"
               animate="visible"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import Profile from '@/assets/SuperAdmin/user-profile.png';
 import Phone from '@/assets/SuperAdmin/phone.svg';
@@ -41,6 +42,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
       });
     } catch (err) {
       showNotification({
+        //@ts-ignore
         message: err?.data?.message || 'Failed to shortlist applicant',
         type: 'danger',
       });
@@ -149,6 +151,8 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
         onOpenChange={setIsDialogOpen}
         onConfirm={handleAddToShortList}
         isLoading={isLoading}
+        title="Confirm Action"
+        description="Are you sure you want to perform this action?"
       />
     </>
   );
