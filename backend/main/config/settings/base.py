@@ -65,10 +65,11 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+# region LOGGER CONFIGURATION
+
 LOGS_DIR = BASE_DIR / 'logs'
 LOGS_DIR.mkdir(exist_ok=True)
 
-# Enhanced logging configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -144,12 +145,18 @@ ADMINS = [
     ('Admin Name', 'admin@tc.io'),
 ]
 
+# endregion LOGGER CONFIGURATION
+
+# region SPECTACULAR CONFIGURATION
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Talent Cloud Backend API',
     'DESCRIPTION': 'A Job Seeking Platform for Technology Sector',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# endregion SPECTACULAR CONFIGURATION
 
 ROOT_URLCONF = 'main.config.urls'
 
@@ -171,10 +178,10 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = 'main.config.asgi.application'
-
 WSGI_APPLICATION = 'main.config.wsgi.application'
 
-# Cache Configuration (Required for rate limiting)
+# region CACHE Configuration
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -185,6 +192,8 @@ CACHES = {
         }
     }
 }
+
+# endregion CACHE Configuration
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
@@ -197,7 +206,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Password validation
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -225,7 +234,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom User Model
 AUTH_USER_MODEL = 'users.TalentCloudUser'
 
-
 # region OAuth Configuration
 
 AUTHENTICATION_BACKENDS = [
@@ -242,7 +250,7 @@ LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
 FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
 FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
-# OAuth URLs
+# OAUTH URLs
 OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://localhost:5173/oauth/callback")
 
 # Provider-specific redirect URIs
@@ -266,6 +274,7 @@ if config('DJANGO_ENV', default='development') == 'production':
         raise Exception(f"Missing required OAuth environment variables: {', '.join(missing_settings)}")
 
 # endregion OAuth Configuration
+
 
 # region Static Config
 
@@ -293,7 +302,7 @@ CORS_ALLOWED_ORIGINS = [
 # endregion CORS Config
 
 
-# region Celery Configuration - Minimal Setup
+# region Celery Configuration
 
 # Basic Celery Settings
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
