@@ -27,7 +27,8 @@ jobs:
 
       - name: Install dependencies and build
         run: |
-          cd talent-cloud/frontend
+          ls
+          cd frontend
           npm ci
           npm run build:staging
 
@@ -35,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: talent-cloud/frontend/_dist
+          path: frontend/dist
 
   deploy-job:
     name: Deploy to staging
@@ -56,10 +57,55 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: talent-cloud/frontend/_dist
+          path: frontend/dist
 
       - name: Zip all and list the structure
         run: |
-          tar -czf usen-app.tar.gz usen-app
-          tar -czf configurations.tar.gz configurations
-          ls -lash
+            cd ..
+            tar -czf talent-cloud.tar.gz talent-cloud
+            mv talent-cloud.tar.gz talent-cloud/
+            cd talent-cloud
+            tar -czf configurations.tar.gz configurations
+            ls -lash 
+
+      - name: Copy talent-cloud.tar.gz over scp
+        uses: appleboy/scp-action@v0.1.7
+        with:
+            source: talent-cloud.tar.gz
+            target: /home/ubuntu/talentcloud-networks/
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+        
+
+      - name: Copy configurations.tgz over scp
+        uses: appleboy/scp-action@v0.1.7
+        with:
+            source: configurations.tar.gz
+            target: /home/ubuntu/talentcloud-networks/
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+            script: |
+                sudo tar -xf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz
+                sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
+
+                sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
+
+
+                sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
+                sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
+
+                sudo systemctl restart nginx
+
+           
+        
