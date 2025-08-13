@@ -101,10 +101,29 @@ jobs:
 
                 sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
 
+
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
                 sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
 
                 sudo systemctl restart nginx
+
+                sudo virtualenv -p python3 /home/ubuntu/venv
+
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/venv
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/talent-cloud
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/configurations
+
+                echo ":unlock: Decrypting staging environment..."
+                cd /home/ubuntu/talentcloud_networks/talent-cloud/backend
+            
+                export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
+                bash scripts/decrypt_staging.sh
+
+                source /home/ubuntu/venv/bin/activate
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && python -m pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput --clear && cd -
+
+
+
 
            
         
