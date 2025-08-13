@@ -101,7 +101,6 @@ jobs:
 
                 sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
 
-
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
                 sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
 
