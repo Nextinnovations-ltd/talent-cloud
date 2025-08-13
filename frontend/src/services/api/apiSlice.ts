@@ -7,9 +7,6 @@ import {
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
 
-
-
-
 const baseQuery = fetchBaseQuery({
   baseUrl: URL,
   credentials: "include",
@@ -44,7 +41,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 
   // Detailed logging for debugging
 
-  if (status === 401 || status === 403) {
+  if (status === 401 || status === 403 || status === 500) {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
     window.location.href = "/tc/lp";
