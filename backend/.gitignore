@@ -19,6 +19,14 @@ ENV/
 
 # Environment variables
 .env
+.env.*
+!.env.example
+!.env.gpg
+!.env.*.gpg
+
+# Additional security
+*.sec
+*-private-key.asc
 
 # Django static and media files (if generated locally)
 static/

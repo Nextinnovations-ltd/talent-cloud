@@ -1,46 +1,84 @@
 from .base import *
-from decouple import config
+from decouple import Config, RepositoryEnv
+import os
 
-DEBUG = True
+# Load only development-specific environment file
+dev_env = os.path.join(BASE_DIR, '.env.development')
 
-ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='*').split(',')]
+if os.path.exists(dev_env):
+    config = Config(RepositoryEnv(dev_env))
+    print(f"🔧 Development: Loaded .env.development")
+else:
+    config = Config()
+    print(f"⚠️ Development: .env.development not found, using system environment")
 
-# Internal IP for Django Debug Toolbar
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+DEBUG = config('DEBUG', default=True, cast=bool)
+ENVIRONMENT='development'
+
+ALLOWED_HOSTS = ['*']
+
+INTERNAL_IPS = ["127.0.0.1"]
+
+FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'http://localhost:5173')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'talentcloud',
-        'USER': 'talentclouduser',
-        'PASSWORD': 'default',
-        'HOST': 'postgres',
-        'PORT': '5432'
+        'NAME': config('DB_NAME', default='talentcloud'),
+        'USER': config('DB_USER', default='talentclouduser'),
+        'PASSWORD': config('DB_PASSWORD', default='default'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
 # Development Email Setting
-EMAIL_HOST = "0.0.0.0"
-EMAIL_PORT = "1025"
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = False
-EMAIL_FROM = "master@tc.io"
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default="localhost")
+EMAIL_PORT = config('EMAIL_PORT', default=1025, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default="")
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default="")
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_FROM = config('EMAIL_FROM', default="master@tc.io")
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
-FRONTEND_BASE_URL = 'http://localhost:5173'
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+]
 
-#region S3 Credentials
+CORS_ALLOWED_ORIGINS = [
+     "http://localhost:5173",
+     "http://localhost:8000",
+]
 
+# Celery Configuration
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+
+# S3 Configuration
 AWS_ACCESS_KEY = config('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = config('AWS_SECRET_KEY')
 AWS_BUCKET_NAME = config('AWS_BUCKET_NAME')
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='ap-northeast-1')
 AWS_S3_FILE_OVERWRITE = False
 
-#endregion S3 Credentials
+
+# OAuth Configuration
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
+LINKEDIN_CLIENT_ID = config('LINKEDIN_CLIENT_ID', default='')
+LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
+FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
+FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
+
+OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://localhost:5173/oauth/callback")
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/google")
+LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/linkedin")
+FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
+FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')

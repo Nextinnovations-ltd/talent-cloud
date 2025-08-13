@@ -5,8 +5,8 @@ DIR=home/ubuntu/talentcloud_networks/talent-cloud   # Directory where project is
 USER=ubuntu   # User to run this script as
 GROUP=ubuntu  # Group to run this script as
 SOCKFILE=/home/ubuntu/talentcloud_networks/talent-cloud/configurations/daphne.sock  # Unix socket for Daphne communication
-DJANGO_SETTINGS_MODULE=talent-cloud.staging  # Django settings module
-DJANGO_ASGI_MODULE=talent-cloud.asgi  # Daphne uses ASGI application
+DJANGO_SETTINGS_MODULE=main.config.settings.staging  # Django settings module
+DJANGO_ASGI_MODULE=main.config.asgi  # Daphne uses ASGI application
 LOG_LEVEL=debug
 
 source /home/ubuntu/venv/bin/activate  # Activate the virtual environment
