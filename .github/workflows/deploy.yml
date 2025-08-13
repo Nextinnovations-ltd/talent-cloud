@@ -66,7 +66,7 @@ jobs:
             mv talent-cloud.tar.gz talent-cloud/
             cd talent-cloud
             tar -czf configurations.tar.gz configurations
-            ls -lash
+            ls -lash 
 
       - name: Copy talent-cloud.tar.gz over scp
         uses: appleboy/scp-action@v0.1.7
@@ -95,8 +95,8 @@ jobs:
             key: ${{ secrets.STAGING_KEY }}
             script: |
                 sudo tar -xf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz -C /home/ubuntu/talentcloud-networks
-                sudo rm -rf talent-cloud.tar.gz
+                sudo rm -rf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz
                 sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
-                sudo rm -rf configurations.tar.gz
+                sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
            
         
