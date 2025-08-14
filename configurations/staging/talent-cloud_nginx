@@ -19,37 +19,37 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-   #location /static/ {
-   #     alias  /home/ubuntu/talentcloud-networks/locaboo/staticfiles/;
-   # }
+   location /static/ {
+        alias  /home/ubuntu/talentcloud-networks/talent-cloud/backend/staticfiles/;
+    }
 
-   # location /api/ {
-   #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-   #     proxy_set_header Host $http_host;
-   #     proxy_redirect off;
+location /api/ {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
 
         # WebSocket headers
-   #     proxy_set_header Upgrade $http_upgrade;
-   #     proxy_set_header Connection "upgrade";
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
 
         # Pass requests to Daphne through the Unix socket
-  #      proxy_pass http://unix:/home/ubuntu/flyhigh_networks/configurations/daphne.sock;
-  #      proxy_send_timeout 300;
-   #     proxy_read_timeout 300;
+        proxy_pass http://unix:/home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock;
+        proxy_send_timeout 300;
+        proxy_read_timeout 300;
 
         # Increase buffer and timeout values for WebSocket support
-   #     proxy_buffering off;
-   #     proxy_http_version 1.1;
-    #     }
+        proxy_buffering off;
+        proxy_http_version 1.1;
+         }
 
-  #  location /api/ws/ {
-  #  proxy_pass http://unix:/home/ubuntu/flyhigh_networks/configurations/daphne.sock;
-  #  proxy_http_version 1.1;
-  #  proxy_set_header Upgrade $http_upgrade;
-  #  proxy_set_header Connection "Upgrade";
-  #  proxy_set_header Host $host;
-  #  proxy_set_header X-Real-IP $remote_addr;
-   # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-   # proxy_set_header X-Forwarded-Proto $scheme;
-#}
+    location /api/ws/ {
+    proxy_pass http://unix:/home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
 }

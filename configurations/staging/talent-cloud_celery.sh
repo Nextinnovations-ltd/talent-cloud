@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DJANGO_ASGI_MODULE=main.config
-DJANGO_WSGI_MODULE=main.config
+DJANGO_WSGI_MODULE=celery_app
 DJANGO_SETTINGS_MODULE=main.config.settings.staging
 
 DIR=home/ubuntu/talentcloud-networks/talent-cloud/backend    # Directory where project is located

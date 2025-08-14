@@ -3,7 +3,7 @@ NAME="talent-cloud"
 DIR=home/ubuntu/talentcloud-networks/talent-cloud/backend   # Directory where project is located
 USER=ubuntu   #User to run this script as
 GROUP=ubuntu  #Group to run this script as
-DJANGO_WSGI_MODULE=main.config
+DJANGO_WSGI_MODULE=celery_app
 DJANGO_SETTINGS_MODULE=main.config.settings.staging
 
 cd $DIR
