@@ -99,9 +99,6 @@ jobs:
                 sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
                 sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
 
-                sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
-
-
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
                 sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
 
