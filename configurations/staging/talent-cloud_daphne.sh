@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME="talent-cloud" # Django application name
-DIR=home/ubuntu/talentcloud-networks/talent-cloud   # Directory where project is located
+DIR=home/ubuntu/talentcloud-networks/talent-cloud/backend   # Directory where project is located
 USER=ubuntu   # User to run this script as
 GROUP=ubuntu  # Group to run this script as
 SOCKFILE=/home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock  # Unix socket for Daphne communication
