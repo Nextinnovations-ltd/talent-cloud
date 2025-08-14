@@ -107,7 +107,11 @@ jobs:
 
                 sudo chown -R ubuntu:ubuntu /home/ubuntu/venv
                 sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/talent-cloud
-                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/configurations
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/configurations/staging
+
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_beat.sh
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_celery.sh
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_daphne.sh
 
                 echo ":unlock: Decrypting staging environment..."
                 cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
@@ -117,7 +121,18 @@ jobs:
                 bash scripts/decrypt_staging.sh
 
                 source /home/ubuntu/venv/bin/activate
-                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate  && python manage.py collectstatic --noinput --clear && cd -
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py create_superuser  && python manage.py collectstatic --noinput --clear && cd -
+
+
+                sudo systemctl start  supervisor.service
+                sudo supervisorctl reread && sudo supervisorctl update
+                sudo supervisorctl restart talent-cloud-celery
+                sudo supervisorctl restart talent-cloud-beat
+                sudo supervisorctl restart talent-cloud-daphne
+
+                echo ":unlock: Staging environment deployed successfully!"
+
+                
 
               
            
