@@ -63,7 +63,7 @@ def test_notification_templates():
                print(f"   Message: {message}")
           else:
                print("⚠️  No maintenance template found, creating one...")
-               from apps.ws_channel.management.commands.populate_notification_templates import Command
+               from backend.apps.ws_channel.management.commands.import_notification_template import Command
                cmd = Command()
                cmd.handle()
                
