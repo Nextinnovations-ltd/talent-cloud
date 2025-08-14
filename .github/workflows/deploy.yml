@@ -111,6 +111,7 @@ jobs:
 
                 echo ":unlock: Decrypting staging environment..."
                 cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
+                ls
             
                 export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
                 bash scripts/decrypt_staging.sh
