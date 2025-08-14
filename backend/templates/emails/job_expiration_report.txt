@@ -1,0 +1,31 @@
+TalentCloud Job Expiration Report
+================================
+
+Date: {{ execution_date }}
+Time: {{ execution_time }}
+
+SUMMARY
+-------
+Total Active Jobs Checked: {{ total_jobs_checked }}
+Jobs Expired Today: {{ jobs_expired_count }}
+Task Status: {{ status }}
+
+{% if has_updates %}
+EXPIRED JOBS DETAILS
+------------------
+{% for job in jobs_expired %}
+• Job ID: {{ job.id }}
+  Title: {{ job.title }}
+  Last Application Date: {{ job.last_application_date }}
+  Days Overdue: {{ job.days_overdue }}
+  Posted By: {{ job.posted_by_email }}
+
+{% endfor %}
+{% else %}
+✅ No jobs required expiration updates today.
+{% endif %}
+
+{{ message }}
+
+---
+This is an automated report from TalentCloud Job Management System.
