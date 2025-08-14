@@ -32,8 +32,8 @@ STAGING_SERVER_IP = config('STAGING_SERVER_IP', default='STAGING_SERVER_IP')
 
 ALLOWED_HOSTS = [
      STAGING_SERVER_IP,
-     'staging.talentcloud.asia',
-     'staging-api.talentcloud.asia',
+     'staging.talent-cloud.asia',
+     'staging-api.talent-cloud.asia',
      'localhost',
      '127.0.0.1',
 ]
@@ -42,8 +42,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # CORS Settings for staging
 CORS_ALLOWED_ORIGINS = [
-     "https://staging.talentcloud.asia",
-     "https://staging-app.talentcloud.asia", 
+     "https://staging.talent-cloud.asia",
+     "https://staging-app.talent-cloud.asia", 
      
      # IP-based origins for staging server
      f"https://{STAGING_SERVER_IP}",
@@ -59,8 +59,8 @@ CORS_ALLOWED_ORIGINS = [
 
 # CSRF settings for IP access
 CSRF_TRUSTED_ORIGINS = [
-     "https://staging.talentcloud.asia",
-     "http://staging.talentcloud.asia",
+     "https://staging.talent-cloud.asia",
+     "http://staging.talent-cloud.asia",
      
      f"https://{STAGING_SERVER_IP}",
      f"http://{STAGING_SERVER_IP}",
@@ -72,7 +72,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Internal IP for Django Debug Toolbar
 INTERNAL_IPS = [ "127.0.0.1", "localhost" ]
 
-FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'https://staging.talentcloud.asia')
+FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'https://staging.talent-cloud.asia')
 
 DATABASES = {
      'default': {

@@ -132,6 +132,10 @@ jobs:
                 sudo supervisorctl restart talent-cloud-beat
                 sudo supervisorctl restart talent-cloud-daphne
 
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
+
+
+
                 echo ":unlock: Staging environment deployed successfully!"
 
                 
