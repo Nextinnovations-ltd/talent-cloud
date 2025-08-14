@@ -1,6 +1,6 @@
 #!/bin/bash
 NAME="talent-cloud"
-DIR=home/ubuntu/talentcloud_networks/talent-cloud   # Directory where project is located
+DIR=home/ubuntu/talentcloud-networks/talent-cloud   # Directory where project is located
 USER=ubuntu   #User to run this script as
 GROUP=ubuntu  #Group to run this script as
 DJANGO_WSGI_MODULE=main.config
