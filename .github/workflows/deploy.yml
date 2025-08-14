@@ -117,7 +117,7 @@ jobs:
                 bash scripts/decrypt_staging.sh
 
                 source /home/ubuntu/venv/bin/activate
-                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py create_superuser && python manage.py collectstatic --noinput --clear && cd -
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate  && python manage.py collectstatic --noinput --clear && cd -
 
               
            
