@@ -80,7 +80,6 @@ class Command(BaseCommand):
             existing_cities[key] = city
 
         cities_to_create = []
-        cities_to_update = []
         error_count = 0
         batch_size = 1000
 
@@ -105,6 +104,7 @@ class Command(BaseCommand):
                 else:
                     # Create new city
                     cities_to_create.append(City(
+                        id=row['id'],
                         name=row['name'],
                         country=country
                     ))

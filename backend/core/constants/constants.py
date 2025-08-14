@@ -32,6 +32,8 @@ class PARENT_COMPANY:
     industry = "Technology"
     size = "1-10"
     tagline = "Innovate. Create. Lead."
+    city = "389453"
+    country = "1034"
     address = 'Room No (602), Gandamar Residence, Gandamar Road, Mayangone Township, , Yangon, Myanmar'
     contact_email = "info@example.com"
     contact_phone = "555-123-4567"
