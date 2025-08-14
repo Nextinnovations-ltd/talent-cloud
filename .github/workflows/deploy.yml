@@ -128,9 +128,9 @@ jobs:
 
                 sudo systemctl start  supervisor.service
                 sudo supervisorctl reread && sudo supervisorctl update
-                sudo supervisorctl restart talent-cloud-celery
-                sudo supervisorctl restart talent-cloud-beat
-                sudo supervisorctl restart talent-cloud-daphne
+                sudo supervisorctl start talent-cloud-celery
+                sudo supervisorctl start talent-cloud-beat
+                sudo supervisorctl start talent-cloud-daphne
 
                 sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
 
