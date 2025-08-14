@@ -48,7 +48,7 @@ const ReasonToChoose = () => {
                         <div className="flex flex-col gap-[8px]">
                             <img src={icon4} alt="" className='w-[38px] h-[38px] md:w-[52px] md:h-[50px]'/>
                             <h1 className='md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600] lg:text-nowrap'>Workplace & Equipment Support</h1>
-                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We provide everything  from workplace with backup generators ,laptops to high-speed internet—ensuring productive work environment.</p>
+                            <p className='text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]'>We provide everything  from workplace with backup generators, laptops to high-speed internet—ensuring productive work environment.</p>
                         </div>
 
                     </div>

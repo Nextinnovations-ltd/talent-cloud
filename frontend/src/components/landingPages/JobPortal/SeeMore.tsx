@@ -12,7 +12,7 @@ const SeeMore = () => {
                   </h1>
                   
                   <p className="text-[12px] md:text-[20px] leading-[27px] md:leading-[39px] font-[500] text-[#403E3E] mt-[20px] md:mt-[40px] mb-[25px]">
-                  Talent Cloud is powered by Next Innovations Ltd., a trusted provider of EOR services since 2020 with a proven track record of success.
+                  Talent Cloud is powered by Next Innovations Ltd. a trusted provider of EOR services since 2020 with a proven track record of success.
   
                   <span
                     className={`block transition-all duration-500 ease-in-out overflow-hidden ${

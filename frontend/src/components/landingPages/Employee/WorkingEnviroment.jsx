@@ -12,12 +12,12 @@ const WorkingEnviroment = () => {
       <div className="marquee-container overflow-hidden whitespace-nowrap w-[90%] justify-self-end">
         <div className="marquee-content inline-flex animate-marquee gap-[23px]">
           {/* Repeat enough images to create a seamless loop */}
-          <img src={marqueeImg1} alt="" className="w-[45%]" />
-          <img src={marqueeImg2} alt="" className="w-[45%]" />
-          <img src={marqueeImg1} alt="" className="w-[45%]" />
-          <img src={marqueeImg2} alt="" className="w-[45%]" />
-          <img src={marqueeImg1} alt="" className="w-[45%]" />
-          <img src={marqueeImg2} alt="" className="w-[45%]" />
+          <img src={marqueeImg1} alt="" className="w-[293px] md:w-[608px]" />
+          <img src={marqueeImg2} alt="" className="w-[293px] md:w-[608px]" />
+          <img src={marqueeImg1} alt="" className="w-[293px] md:w-[608px]" />
+          <img src={marqueeImg2} alt="" className="w-[293px] md:w-[608px]" />
+          <img src={marqueeImg1} alt="" className="w-[293px] md:w-[608px]" />
+          <img src={marqueeImg2} alt="" className="w-[293px] md:w-[608px]" />
         </div>
       </div>
     </div>

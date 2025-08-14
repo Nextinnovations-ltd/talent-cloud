@@ -90,7 +90,7 @@ const Whatugot = () => {
               <p className="text-[#000] text-[16px] md:text-[20px] font-[500] leading-[29.76px ] md:leading-[34px]">
                 {card.quote}
                 {card.img === cardImg1 && <p className="text-[#0481EF]">
-                <span className='text-[#000]'>—</span>   Mr. Yuta Mukai, CEO of Next Innovation Ltd
+                <span className='text-[#000]'>—</span>   Mr. Yuta Mukai, CEO of Next Innovations Ltd.
                 </p>}
               </p>
             </div>

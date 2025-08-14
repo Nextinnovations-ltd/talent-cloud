@@ -33,10 +33,10 @@ const TalentCloudDone = () => {
         
           
         </div>
-        <div className="bg-white px-[24px] py-[24px] lg:px-[78px] lg:py-[48px] flex flex-col-reverse md:flex-row justify-between items-center mt-8 rounded-[16px]">
-          <div className="max-w-[456px] flex flex-col gap-[24px] md:gap-[37px] mb-0">
-            <h1 className='text-[#000] text-[20px] font-[600] '>Project overviews</h1>
-            <p className='text-[#575757] text-[16px] font-[500] '>
+        <div className="bg-white px-[24px] py-[24px] lg:px-[78px] lg:py-[48px] flex flex-col-reverse md:flex-row justify-between items-center gap-5 mt-8 rounded-[16px]">
+          <div className="max-w-[456px] flex flex-col gap-[20px] md:gap-[37px] mb-0">
+            <h1 className='text-[#000] text-[16px] md:text-[20px] font-[600] '>Project overviews</h1>
+            <p className='text-[#575757] text-[14px] md:text-[16px] font-[500] '>
             Backend Engineer, DevOps Engineer Remote — 2025 – Present
               • AI Agent: Built a custom SDK to abstract and extend integration with Dify (an open-
               source LLMOps platform), which was later integrated into a Django backend.
@@ -44,8 +44,8 @@ const TalentCloudDone = () => {
               mated provisioning and deployment via GitHub Actions.
             </p>
             <div className="max-w-[331px] flex justify-between ">
-              <p className='text-[16px] font-[500]'>Team member</p>
-              <p className='text-[16px] font-[500]'>Language</p>
+              <p className=' text-[14px] md:text-[16px] font-[500]'>Team member</p>
+              <p className=' text-[14px] md:text-[16px] font-[500]'>Language</p>
             </div>
           </div>
         <img src={project3} alt="" className='w-full md:w-[50%] lg:max-w-[447px]'/>

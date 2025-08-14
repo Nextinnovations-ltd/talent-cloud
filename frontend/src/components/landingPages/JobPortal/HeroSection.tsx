@@ -19,7 +19,7 @@ import CommonButton from '../commonBtn/button'
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const wordsToDisplay = [
-    'Frontend Developer', 'Python Developer', 'UI UX Designer', 
+    'Frontend Developer', 'Python Developer', 'UI/UX Designer', 
     'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
   ];
 

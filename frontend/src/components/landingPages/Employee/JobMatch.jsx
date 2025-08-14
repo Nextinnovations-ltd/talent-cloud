@@ -9,6 +9,7 @@ import BookMarkActive from '../../../assets/Employee/Bookmark Active.svg'
 import dollarSign from '../../../assets/Employee/dollar_16026501 1.svg'
 import userSign from '../../../assets/Employee/users_7263413 1.svg'
 import fragSign from '../../../assets/Employee/users_7263413 2.svg'
+import { Link } from 'react-router-dom'
 const JobMatch = () => {
   return (
       <div className='w-full bg-[#EEF4FF] pt-[32px] pb-[32px] md:pt-[74px] md:pb-[74px] flex flex-col gap-[24px] md:gap-[69px]'>
@@ -35,7 +36,7 @@ const JobMatch = () => {
                               <img src={userSign} alt="" />
                               <p className='text-[#6B6B6B] text-[12px] md:text-[14px] font-[400] leading-[16px] md:leading-[24px]'> Full Time</p>
                           </div>
-                          <div className="flex  gap-[10px] md:gap-3  justify-start items-center">
+                          <div className="flex  gap-[10px] md:gap-3  justify-start items-start">
                               <img src={fragSign} alt="" />
                               <div className="flex gap-[6px] flex-wrap items-start">
                                   <p className='text-[#05060F] text-[12px] md:text-[14px] font-[400] leading-normal px-[10px] py-[4px] bg-[#F2F2F2] rounded-[8px]'>Figma</p>
@@ -74,7 +75,7 @@ const JobMatch = () => {
                               <img src={userSign} alt="" />
                               <p className='text-[#6B6B6B] text-[12px] md:text-[14px] font-[400] leading-[16px] md:leading-[24px]'> Full Time</p>
                           </div>
-                          <div className="flex  gap-[10px] md:gap-3  justify-start items-center">
+                          <div className="flex  gap-[10px] md:gap-3  justify-start items-start">
                               <img src={fragSign} alt="" />
                               <div className="flex gap-[6px] flex-wrap items-start">
                                   <p className='text-[#05060F] text-[12px] md:text-[14px] font-[400] leading-normal px-[10px] py-[4px] bg-[#F2F2F2] rounded-[8px]'>Figma</p>
@@ -113,7 +114,7 @@ const JobMatch = () => {
                               <img src={userSign} alt="" />
                               <p className='text-[#6B6B6B] text-[12px] md:text-[14px] font-[400] leading-[16px] md:leading-[24px]'> Full Time</p>
                           </div>
-                          <div className="flex  gap-[10px] md:gap-3  justify-start items-center">
+                          <div className="flex  gap-[10px] md:gap-3  justify-start items-start">
                               <img src={fragSign} alt="" />
                               <div className="flex gap-[6px] flex-wrap items-start">
                                   <p className='text-[#05060F] text-[12px] md:text-[14px] font-[400] leading-normal px-[10px] py-[4px] bg-[#F2F2F2] rounded-[8px]'>Figma</p>
@@ -137,11 +138,14 @@ const JobMatch = () => {
            
           </div>
         
-        
-          <div className="flex gap-[17px] justify-center items-center w-[233px] h-[66px] md:w-[345px] md:h-[72px] rounded-[28px] border border-[#0A66C2] mx-auto">
-          <a href="" className=''>See all jobs post</a>
-          <img src={arrowRight} alt="" />
-          </div>
+          <Link to='/' target='_blank'>
+          <div className="group flex gap-[17px] justify-center items-center w-[233px] h-[66px] md:w-[345px] md:h-[72px] rounded-[28px] border border-[#0389FF] mx-auto hover:bg-[#0389FF] hover:text-white transition-colors duration-300">
+          <p className=''>See all jobs post</p>
+             
+          <img src={arrowRight} alt=""    className="transition-transform duration-300 group-hover:translate-x-1 group-hover:invert group-hover:brightness-0 group-hover:brightness-200"
+          />
+              </div>
+              </Link>
       </div>
   )
 }

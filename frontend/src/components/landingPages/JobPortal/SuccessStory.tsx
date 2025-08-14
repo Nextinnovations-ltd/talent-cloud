@@ -16,14 +16,14 @@ const SuccessStory = () => {
               <p className='text-[14px] md:text-[20px] font-[500] leading-[31px] mb-4'>Success Story</p>
               <div className="flex md:flex-row flex-col justify-between items-center">
                   <h1 className='max-w-full md:max-w-[524px] text-[24px] md:text-[40px] leading-[38px] md:leading-[51px] font-[500] mb-4'>
-                  ENGINNERFORCE SCALES EFFICIENTY  IN MYANMAR WITH EOR SERVICES
+                  ENGINEERFORCE SCALES EFFICIENTY  IN MYANMAR WITH EOR SERVICES
                   </h1>
                   <p className='max-w-full md:max-w-[665px] text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-black'>
                   <span className=' text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-[#0481EF]'> Client:</span> Engineerforce Inc. – Tokyo, Japan <br/>
                   <span className=' text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-[#0481EF]'> Industry:</span> Software Development and System Integrator (SIer)
                   <br/>
               <span className=' text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-[#0481EF]'> Provided EOR Services:</span>
-              HR Support, Payroll, Legal Compliance, Workplace,<br />
+              HR Support, Payroll, Legal Compliance, Workplace<br />
                   <span className=' text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-[#0481EF]'> Assets Roles Hired:</span> Software Engineers, Developers (Python, Django, React, Ruby)
              
                   </p>

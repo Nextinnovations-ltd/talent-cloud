@@ -18,13 +18,13 @@ const faqData = [
     },
     {
       question: " How do we manage Myanmar's electricity challenges? ",
-      answers: ["Next Innovations provides necessary support for electricity if needed"],
+      answers: ["Talent Cloud provides necessary support for electricity if needed."],
        subTitles:''
     },
     {
-      question: "How does Next Innovations handle employee onboarding and management?",
-      answers: ['Our comprehensive approach includes:',
-'        Conducting background checks and verifying qualifications.',
+      question: "How does Talent Cloud handle employee onboarding and management?",
+      answers: [
+        'Conducting background checks and verifying qualifications.',
         'Facilitating smooth onboarding processes.',
        ' Managing payroll, benefits, and compliance documentation.',
         '     Providing ongoing HR support and performance evaluations.'],
@@ -32,16 +32,18 @@ subTitles:'Our comprehensive approach includes:'
     },
     {
       question: " What support is available for employees regarding workplace challenges?",
-      answers: ["Yes, we support smooth transition planning."],
+      answers: ['  Regular check-ins and feedback sessions.'
+    ,' Assistance with conflict resolution and workplace issues.',
+     'Guidance on career development opportunities.'],
       subTitles:'We offer:'
   },
   {
-    question: "What HR services does Next Innovations provide?",
-  answers:  [' Employee onboarding & offboarding',
-      'Contract generation (in line with Myanmar labor law)',
-      ' Leave management and attendance tracking',
-      ' Performance monitoring and conflict resolution',
-     '  Employee engagement and welfare coordination'],
+    question: "What HR services does Talent Cloud provide?",
+  answers:  [' Employee onboarding & offboarding.',
+      'Contract generation (in line with Myanmar labor law).',
+      ' Leave management and attendance tracking.',
+      ' Performance monitoring and conflict resolution.',
+     '  Employee engagement and welfare coordination.'],
      subTitles:' We handle end-to-end HR management, including:'
     
     }
@@ -56,11 +58,11 @@ const FAQ = () => {
   return (
     <div className="w-full bg-[#F9FAFB]">
      <div className='max-w-[1240px] mx-auto gap-[30px] md:gap-[100px] flex flex-col md:flex-row items-start pt-[30px] pb-[100px] md:pt-[130px] md:pb-[200px] pr-5 pl-5'>
-          <div className="min-w-[394px]">
+          <div className="max-w-[394px]">
           <p className='text-[#575757] text-[12px] md:text-[20px] font-[500] leading-[31px]'>All Questions</p>
               <h1 className='mt-4 mb-3 md:mb-[20px] text-[#000] text-[24px] md:text-[40px] font-[500] leading-[37px] md:leading-[51px]'>FREQUENTLY <br></br>
                   ASKED QUESTIONS</h1>
-              <p className='max-w-full md:max-w-[370px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[28px]'>Here are some common questions along with their answer to help clear up any confusion.</p>
+              <p className=' text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[24px] md:leading-[28px]'>Here are some common questions along with their answers to help clear up any confusion.</p>
           </div>
           <div className="max-w-[822px] flex flex-col gap-[7px] md:gap-4">
           {faqData.map((faq, index) => {
