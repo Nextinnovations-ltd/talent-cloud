@@ -1,4 +1,3 @@
-import React from "react";
 
 const SvgAdminList = ({size=24,color='#1C1B1F'}) => {
   return (

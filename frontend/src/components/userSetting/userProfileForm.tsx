@@ -227,7 +227,7 @@ export const UserProfileForm = ({
         fieldName={'date_of_birth'}
         required={false}
         languageName={'userProfile'}
-        fieldHeight={cn(" w-full", fieldHeight)}
+        fieldHeight={cn(" max-w-[672px]  w-full", fieldHeight)}
         fieldWidth={""}
       />
 

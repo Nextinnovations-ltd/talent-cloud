@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form } from "@/components/ui/form";
 import InputField from "@/components/common/form/fields/input-field";
 import { SelectField } from "@/components/common/form/fields/select-field";
@@ -6,11 +7,11 @@ import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/Return
 import { JOB_TYPE_DATA, WORK_TYPE_DATA } from "@/constants/workTypeConstants";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { UseFormReturn, useWatch } from "react-hook-form";
-import { StepOneFormType } from "../CreateNewJob";
+
 import { useEffect, useRef } from "react";
 
 type StepOneFormProps = {
-  formMethods: UseFormReturn<StepOneFormType>;
+  formMethods: UseFormReturn<any>;
 };
 
 const StepOneForm = ({ formMethods }: StepOneFormProps) => {

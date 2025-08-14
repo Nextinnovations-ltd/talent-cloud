@@ -20,7 +20,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
 
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
-      navigate(`/auth/${routesMap.login.path}`, {
+      navigate(`/tc/lp`, {
         state: { from: location.pathname },
         replace: true,
       });

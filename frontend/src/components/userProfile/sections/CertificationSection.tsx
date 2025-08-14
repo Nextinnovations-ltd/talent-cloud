@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { motion } from "framer-motion"
 import { Title } from "../Title"
 import { CertificationCard } from "../components/CertificationCard";
@@ -66,6 +67,7 @@ const CertificationSection = ({
                     variants={containerVariants}
                 >
                     {CERTIIFICATIONS.data.map((e, index) => (
+                        //@ts-ignore
                         <motion.div variants={itemVariants} key={index}>
                             <CertificationCard
                                 url={e.url}

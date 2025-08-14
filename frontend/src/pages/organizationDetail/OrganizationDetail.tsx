@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import Slider from "@/components/common/Slider";
 import LINKEDIN from '@/assets/skill-icons_linkedin.png';
 import INSTAGRAM from '@/assets/skill-icons_instagram.png';

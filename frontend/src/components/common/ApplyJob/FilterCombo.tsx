@@ -31,7 +31,7 @@ interface FilterComboProps {
   filterKey: string;
 }
 
-export function FilterCombo({ title, data, onFilterChange, filterKey }: FilterComboProps) {
+export function FilterCombo({ title, data, onFilterChange, }: FilterComboProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 

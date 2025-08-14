@@ -1,23 +1,111 @@
-name: Deploy to VPS
+name: Talent-cloud CI/CD Pipeline
 
 on:
-     push:
-          branches:
-               - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-     deploy:
-          runs-on: ubuntu-latest
+  build-frontend-job:
+    name: Build frontend
+    runs-on: ubuntu-latest
 
-          steps:
-          -    name: Deploy to VPS via SSH
-               uses: appleboy/ssh-action@master
-               with:
-                    host: ${{ secrets.VPS_HOST }}
-                    username: ${{ secrets.VPS_USER }}
-                    key: ${{ secrets.VPS_SSH_KEY }}
-                    script: |
-                              cd /home/youruser/yourproject
-                              git pull origin main
-                              docker-compose down
-                              docker-compose up -d --build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Install dependencies and build
+        run: |
+          ls
+          cd frontend
+          npm ci
+          npm run build:staging
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist
+
+  deploy-job:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    needs: build-frontend-job
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist
+
+      - name: Zip all and list the structure
+        run: |
+            cd ..
+            tar -czf talent-cloud.tar.gz talent-cloud
+            mv talent-cloud.tar.gz talent-cloud/
+            cd talent-cloud
+            tar -czf configurations.tar.gz configurations
+            ls -lash 
+
+      - name: Copy talent-cloud.tar.gz over scp
+        uses: appleboy/scp-action@v0.1.7
+        with:
+            source: talent-cloud.tar.gz
+            target: /home/ubuntu/talentcloud-networks/
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+        
+
+      - name: Copy configurations.tgz over scp
+        uses: appleboy/scp-action@v0.1.7
+        with:
+            source: configurations.tar.gz
+            target: /home/ubuntu/talentcloud-networks/
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+            host: ${{ secrets.STAGING_HOST }}
+            username: ${{ secrets.STAGING_USER }}
+            key: ${{ secrets.STAGING_KEY }}
+            script: |
+                sudo tar -xf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf /home/ubuntu/talentcloud-networks/talent-cloud.tar.gz
+                sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
+                sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
+
+                sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
+
+
+                sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
+                sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
+
+                sudo systemctl restart nginx
+
+           
+        

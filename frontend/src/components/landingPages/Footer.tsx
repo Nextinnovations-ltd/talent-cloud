@@ -1,4 +1,3 @@
-import React from 'react'
 import TalentCloudLogo from "@/assets/Employee/Vector (3).svg";
 import footerIcon1 from "@/assets/Employee/Frame (1).svg";
 import footerIcon2 from "@/assets/Employee/Frame (3).svg";
@@ -14,15 +13,15 @@ const Footer = () => {
                   <p className='text-white text-[18px] font-[400] leading-[25.2px ] tracking-[0.36px]'>Unlock your next career journey  </p>
               </div>
               <div className="">
-                  <p className='text-white text-[20px] font-[700] leading-[28px ] tracking-[0.4px] text-left md:text-right'>Follow us on our socials</p>
-                  <div className="mt-4 mb-10 flex justify-start md:justify-end items-center gap-[42px]">
-                      <Link>
+                  <p className='text-white text-[20px] font-[700] leading-[28px ] tracking-[0.4px] text-right'>Follow us on our socials</p>
+                  <div className="mt-4 mb-10 flex justify-end items-center gap-[42px]">
+                      <Link to={""}>
                       <img src={footerIcon3} alt="" />
                       </Link>
-                      <Link>
+                      <Link to={""}>
                       <img src={footerIcon2} alt="" />
                       </Link>
-                      <Link>
+                      <Link to={""}>
                       <img src={footerIcon1} alt="" />
                       </Link>
                   </div>

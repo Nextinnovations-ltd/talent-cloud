@@ -1,4 +1,3 @@
-import React from 'react'
 import marqueeImg1 from '../../../assets/Employee/Rectangle 5668.png'
 import marqueeImg2 from '../../../assets/Employee/Rectangle 5671.png'
 import './WorkingEnviroment.css'

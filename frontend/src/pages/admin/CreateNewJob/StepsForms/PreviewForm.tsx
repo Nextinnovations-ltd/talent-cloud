@@ -26,9 +26,6 @@ const PreviewForm = () => {
             {
                 formData?.stepOne?.title && <h3 className="text-[20px] font-semibold">Our client is seeking a {formData?.stepOne?.title || ""} to join their team!</h3>
             }
-
-
-            
            
             <DescriptionsContent
                 title="Job Description : "

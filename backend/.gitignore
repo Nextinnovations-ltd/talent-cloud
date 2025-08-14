@@ -19,14 +19,22 @@ ENV/
 
 # Environment variables
 .env
+.env.*
+!.env.example
+!.env.gpg
+!.env.*.gpg
+
+# Additional security
+*.sec
+*-private-key.asc
 
 # Django static and media files (if generated locally)
 static/
 media/
 
 # Migrations (optional — you can track only empty folders or all except `__init__.py`)
-**/migrations/*.py
-!**/migrations/__init__.py
+# **/migrations/*.py
+# !**/migrations/__init__.py
 
 # IDE/editor settings
 .vscode/

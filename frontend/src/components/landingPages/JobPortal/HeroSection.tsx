@@ -1,42 +1,48 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useRef,useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import TalentCloudLogoImg  from "@/assets/JobPortal/Vector (3).svg";
-import exploreArrow from "@/assets/JobPortal/Group 2292.svg";
+import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import cloud1 from "@/assets/JobPortal/cloud1.png";
 import cloud2 from "@/assets/JobPortal/cloud2.png";
 import cloud3 from "@/assets/JobPortal/cloud3.png";
 import cloud4 from "@/assets/JobPortal/cloud4.png";
 import cloud5 from "@/assets/JobPortal/cloud5.png";
- import Matter from 'matter-js';
-import p5 from 'p5'; 
-import  CheckCircle from '@/assets/check-circle.svg'
-import upArrow from '@/assets/JobPortal/arrow-up-left.svg'
+import Matter from 'matter-js';
+ //@ts-expect-error
+import p5 from 'p5';
+import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
-import CommonButton from '../commonBtn/button'
+import CommonButton from "../commonBtn/button";
+
+
+
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
+  const navigate = useNavigate();
   const wordsToDisplay = [
     'Frontend Developer', 'Python Developer', 'UI/UX Designer', 
     'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
   ];
 
   const containerRef = useRef(null);
-  const matterContainerRef = useRef(null);
+  const matterContainerRef = useRef<HTMLDivElement | null>(null);
+
   const p5Ref = useRef(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current || !matterContainerRef.current) return;
 
-    let engine, runner, mouseConstraint;
-    let words = [];
+    let engine: Matter.Engine, runner: Matter.Runner, mouseConstraint: Matter.Composite | Matter.Body | Matter.Constraint | Matter.MouseConstraint | (Matter.Composite | Matter.Body | Matter.Constraint | Matter.MouseConstraint)[];
+    let words: any[] = [];
     let isTabActive = true;
-    let width = window.innerWidth <= 768 ? window.innerWidth - 60 : 413;
+    const width = window.innerWidth <= 768 ? window.innerWidth - 60 : 413;
 
-    let height = 312;
+    const height = 312;
     let isDragging = false;
 
     const initializedRefLocal = initializedRef;
@@ -56,13 +62,13 @@ const HeroSection = () => {
     document.head.appendChild(styleElement);
 
     const handleMouseLeave = () => {
-      matterContainerRef.current.classList.remove('grab', 'grabbing');
+      matterContainerRef.current?.classList.remove('grab', 'grabbing');
     };
 
     const handleMouseEnter = () => {
       if (!isDragging) {
-        matterContainerRef.current.classList.add('grab');
-        matterContainerRef.current.classList.remove('grabbing');
+        matterContainerRef.current?.classList.add('grab');
+        matterContainerRef.current?.classList.remove('grabbing');
       }
     };
 
@@ -79,21 +85,22 @@ const HeroSection = () => {
       if (initializedRefLocal.current) return;
       initializedRefLocal.current = true;
 
-      const sketch = (p) => {
+      const sketch = (p: { setup: () => void; createCanvas: (arg0: number, arg1: number) => any; random: (arg0: number, arg1: number) => any; push: () => void; translate: (arg0: any, arg1: any) => void; rotate: (arg0: any) => void; rectMode: (arg0: any) => void; CENTER: any; noStroke: () => void; fill: (arg0: string) => void; rect: (arg0: number, arg1: number, arg2: any, arg3: any, arg4: number) => void; noFill: () => void; stroke: (arg0: string) => void; strokeWeight: (arg0: number) => void; textSize: (arg0: number) => void; textAlign: (arg0: any, arg1: any) => void; text: (arg0: string, arg1: number, arg2: number) => void; pop: () => void; draw: () => void; clear: () => void; background: (arg0: string) => void; textStyle: (arg0: any) => void; NORMAL: any; textFont: (arg0: string) => void; LEFT: any; TOP: any; }) => {
         p.setup = () => {
           const canvas = p.createCanvas(width, height);
           canvas.parent(matterContainerRef.current);
           canvas.canvas.style.boxShadow = '0px 1px 3px 0px rgba(166, 175, 195, 0.40)';
           canvas.canvas.style.borderRadius = '12px';
           canvas.canvas.style.backgroundColor = '#FAFAFA';
-          matterContainerRef.current.classList.add('matter-cursor', 'grab');
+          matterContainerRef.current?.classList.add('matter-cursor', 'grab');
 
           initPhysics();
           createWords();
         };
 
         function initPhysics() {
-          engine = Matter.Engine.create({ 
+          engine = Matter.Engine.create({
+             //@ts-expect-error
             render: { visible: false },
             gravity: { x: 0, y: 0.5 },
             enableSleeping: true,
@@ -106,8 +113,8 @@ const HeroSection = () => {
           runner = Matter.Runner.create({ delta: 1000 / 60, isFixed: true });
           Matter.Runner.run(runner, engine);
 
-          const boundaryOptions = { 
-            isStatic: true, 
+          const boundaryOptions = {
+            isStatic: true,
             render: { visible: false },
             restitution: 0.7,
             friction: 0.05,
@@ -118,69 +125,78 @@ const HeroSection = () => {
           const boundaryGroup = Matter.Body.nextGroup(true);
 
           Matter.World.add(engine.world, [
-            Matter.Bodies.rectangle(width / 2, height + thickness/2, width + thickness*2, thickness, {
+            Matter.Bodies.rectangle(width / 2, height + thickness / 2, width + thickness * 2, thickness, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(width / 2, -thickness/2, width + thickness*2, thickness, {
+            Matter.Bodies.rectangle(width / 2, -thickness / 2, width + thickness * 2, thickness, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(-thickness/2, height / 2, thickness, height + thickness*2, {
+            Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height + thickness * 2, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             }),
-            Matter.Bodies.rectangle(width + thickness/2, height / 2, thickness, height + thickness*2, {
+            Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height + thickness * 2, {
               ...boundaryOptions,
               collisionFilter: { group: boundaryGroup }
             })
           ]);
-
+          //@ts-expect-error
           const mouse = Matter.Mouse.create(matterContainerRef.current);
           mouseConstraint = Matter.MouseConstraint.create(engine, {
             mouse,
             constraint: {
               stiffness: 0.7,
               damping: 0.6,
+               //@ts-expect-error
               angularStiffness: 0.8,
               render: { visible: false }
             }
           });
 
-          Matter.Events.on(mouseConstraint, "mousedown", function(event) {
+          Matter.Events.on(mouseConstraint, "mousedown", function (event) {
             if (event.source.body) {
               isDragging = true;
-              matterContainerRef.current.classList.remove('grab');
-              matterContainerRef.current.classList.add('grabbing');
+              matterContainerRef.current?.classList.remove('grab');
+              matterContainerRef.current?.classList.add('grabbing');
             }
           });
 
-          Matter.Events.on(mouseConstraint, "mouseup", function() {
+          Matter.Events.on(mouseConstraint, "mouseup", function () {
             isDragging = false;
-            matterContainerRef.current.classList.remove('grabbing');
-            matterContainerRef.current.classList.add('grab');
+            matterContainerRef.current?.classList.remove('grabbing');
+            matterContainerRef.current?.classList.add('grab');
           });
 
-          Matter.Events.on(mouseConstraint, "enddrag", function() {
+          Matter.Events.on(mouseConstraint, "enddrag", function () {
             isDragging = false;
-            matterContainerRef.current.classList.remove('grabbing');
-            matterContainerRef.current.classList.add('grab');
+            if (matterContainerRef.current) {
+              matterContainerRef.current?.classList.remove('grabbing');
+            }
+           
+            if (matterContainerRef.current) {
+              matterContainerRef.current?.classList.add('grab');
+            }
+            
           });
 
-          Matter.Events.on(mouseConstraint, "afterUpdate", function() {
+          Matter.Events.on(mouseConstraint, "afterUpdate", function () {
+             //@ts-expect-error
             if (mouseConstraint.body) {
+               //@ts-expect-error
               const body = mouseConstraint.body;
               const halfWidth = body.bounds.max.x - body.bounds.min.x;
               const halfHeight = body.bounds.max.y - body.bounds.min.y;
 
-              const newX = Math.max(halfWidth/2, Math.min(width - halfWidth/2, body.position.x));
-              const newY = Math.max(halfHeight/2, Math.min(height - halfHeight/2, body.position.y));
+              const newX = Math.max(halfWidth / 2, Math.min(width - halfWidth / 2, body.position.x));
+              const newY = Math.max(halfHeight / 2, Math.min(height - halfHeight / 2, body.position.y));
 
               if (newX !== body.position.x || newY !== body.position.y) {
                 Matter.Body.setPosition(body, { x: newX, y: newY });
-                Matter.Body.setVelocity(body, { 
-                  x: body.velocity.x * 0.7, 
-                  y: body.velocity.y * 0.7 
+                Matter.Body.setVelocity(body, {
+                  x: body.velocity.x * 0.7,
+                  y: body.velocity.y * 0.7
                 });
               }
             }
@@ -188,7 +204,7 @@ const HeroSection = () => {
 
           Matter.World.add(engine.world, mouseConstraint);
 
-          Matter.Events.on(engine, 'beforeUpdate', function() {
+          Matter.Events.on(engine, 'beforeUpdate', function () {
             const bodies = Matter.Composite.allBodies(engine.world);
             const correctionFactor = 0.3;
 
@@ -200,10 +216,10 @@ const HeroSection = () => {
               const halfHeight = (body.bounds.max.y - body.bounds.min.y) / 2;
 
               const correction = {
-                x: Math.max(0, halfWidth - body.position.x) - 
-                   Math.max(0, body.position.x - (width - halfWidth)),
-                y: Math.max(0, halfHeight - body.position.y) - 
-                   Math.max(0, body.position.y - (height - halfHeight))
+                x: Math.max(0, halfWidth - body.position.x) -
+                  Math.max(0, body.position.x - (width - halfWidth)),
+                y: Math.max(0, halfHeight - body.position.y) -
+                  Math.max(0, body.position.y - (height - halfHeight))
               };
 
               if (correction.x !== 0 || correction.y !== 0) {
@@ -228,8 +244,8 @@ const HeroSection = () => {
             }
           });
 
-          matterContainerRef.current.addEventListener('mouseleave', handleMouseLeave);
-          matterContainerRef.current.addEventListener('mouseenter', handleMouseEnter);
+          matterContainerRef.current?.addEventListener('mouseleave', handleMouseLeave);
+          matterContainerRef.current?.addEventListener('mouseenter', handleMouseEnter);
           document.addEventListener("visibilitychange", handleVisibilityChange);
         }
 
@@ -247,19 +263,25 @@ const HeroSection = () => {
         }
 
         class Word {
-          constructor(x, y, txt) {
+          constructor(x: number, y: number, txt: string) {
             const w = 142;
             const h = 30;
+
+             //@ts-expect-error
             this.txt = txt;
+             //@ts-expect-error
             this.w = w;
+             //@ts-expect-error
             this.h = h;
 
+             //@ts-expect-error
             this.isSpecial = [
-              'Frontend Developer', 
-              'Python Developer', 
+              'Frontend Developer',
+              'Python Developer',
               'UI UX Designer'
             ].includes(txt);
 
+             //@ts-expect-error
             this.body = Matter.Bodies.rectangle(
               x, y, w, h,
               {
@@ -277,25 +299,31 @@ const HeroSection = () => {
                 slop: 0.05
               }
             );
+             //@ts-expect-error
             Matter.World.add(engine.world, this.body);
           }
 
           show() {
+             //@ts-expect-error
             const { x, y } = this.body.position;
             p.push();
             p.translate(x, y);
+             //@ts-expect-error
             p.rotate(this.body.angle);
             p.rectMode(p.CENTER);
 
+             //@ts-expect-error
             if (this.isSpecial) {
               p.noStroke();
               p.fill('#000000');
+               //@ts-expect-error
               p.rect(0, 0, this.w, this.h, 16);
               p.fill('#ffffff');
             } else {
               p.noFill();
               p.stroke('#037DE8');
               p.strokeWeight(1.5);
+               //@ts-expect-error
               p.rect(0, 0, this.w, this.h, 16);
               p.noStroke();
               p.fill('#000000');
@@ -303,6 +331,7 @@ const HeroSection = () => {
 
             p.textSize(12);
             p.textAlign(p.CENTER, p.CENTER);
+             //@ts-expect-error
             p.text(this.txt, 0, 0);
             p.pop();
           }
@@ -353,9 +382,11 @@ const HeroSection = () => {
       }
       if (runner) Matter.Runner.stop(runner);
       if (engine && engine.world) {
+         //@ts-expect-error
         Matter.World.clear(engine.world);
         Matter.Engine.clear(engine);
       }
+       //@ts-expect-error
       p5Ref.current?.remove();
       document.head.removeChild(styleElement);
       observer.disconnect();
@@ -363,61 +394,58 @@ const HeroSection = () => {
   }, []);
 
   return (
-      <div>
-          <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
+    <div>
+      <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
         <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
-        <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[24px] pb-[24px] relative z-10 pr-5 pl-5 ">
-                {/* logo SVG here */}
-             <img src={TalentCloudLogoImg} alt="" className="w-[118px] md:w-[198px]"/>
-                   <ul className=" gap-[48px] hidden md:flex">
-                      <li><Link to="">Why us</Link></li>
-                      <li><Link to="">About us</Link></li>
-                      <li><Link to="">Blog</Link></li>
-                    </ul>
-                    <Button className="hidden md:flex relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
-                      <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-                        Sign up
-                      </span>
-                      <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
-                        Sign up
-                      </span>
-                </Button>
+          <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[24px] pb-[24px] relative z-10 pr-5 pl-5 ">
+            {/* logo SVG here */}
+            <img src={TalentCloudLogoImg} alt="" className="w-[118px] md:w-[198px]" />
+            <ul className=" gap-[48px] hidden md:flex">
+              <li><Link to="">Why us</Link></li>
+              <li><Link to="">About us</Link></li>
+              <li><Link to="">Blog</Link></li>
+            </ul>
+            <Button onClick={() => navigate('/auth/login')} className="hidden md:flex relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
+              <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+                Sign up
+              </span>
+              <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+                Sign up
+              </span>
+            </Button>
             {/* responsive toggle */}
             <div
-                  className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
-                  onClick={() => setNavIsOpen(!navIsOpen)}
-                >
-                  {/* Top bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "rotate-45 translate-y-[4px]" : ""
-                    }`}
-                  ></div>
+              className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
+              onClick={() => setNavIsOpen(!navIsOpen)}
+            >
+              {/* Top bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "rotate-45 translate-y-[4px]" : ""
+                  }`}
+              ></div>
 
-                  {/* Middle bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "opacity-0" : ""
-                    }`}
-                  ></div>
+              {/* Middle bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "opacity-0" : ""
+                  }`}
+              ></div>
 
-                  {/* Bottom bar */}
-                  <div
-                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
-                      navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
-                    }`}
-                  ></div>
+              {/* Bottom bar */}
+              <div
+                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
+                  }`}
+              ></div>
             </div>
           </nav>
-         </div> 
- 
-       
-    
+        </div>
+
+
+
         <div className="max-w-[1240px] mx-auto ">
-            <div className="">
-        
+          <div className="">
+
             {/* responsive menu */}
-       
+
 
             <div className={`flex md:hidden flex-col items-center bg-[#fafafa40] rounded-b-[20px] fixed z-[100] w-[40%] right-0 top-0 py-[24px] gap-6 overflow-hidden
                                 transition-all duration-500 
@@ -425,97 +453,97 @@ const HeroSection = () => {
                               `}>
 
 
-                              <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                                <li><Link to="">Why us</Link></li>
-                                <li><Link to="">About us</Link></li>
-                                <li><Link to="">Blog</Link></li>
-                              </ul>
+              <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
+                <li><Link to="">Why us</Link></li>
+                <li><Link to="">About us</Link></li>
+                <li><Link to="">Blog</Link></li>
+              </ul>
 
-                              <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
-                                <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-                                  Sign up
-                                </span>
-                                <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
-                                  Sign up
-                                </span>
-                              </Button>
-                </div>
-                <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
-                  <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
-                  Global Possibilities for 
-
-<br/>
-Myanmar Professionals
-                  </h1>
-                <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
-                Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
-                  </p>
-                  <div className="flex justify-center md:mt-[80px] mt-[40px]">
-           
-      <CommonButton/>
-
-
-
-
-
-
-
-
-                  </div>
-                </div>
-                <div className="cloud ">
-                  <img src={cloud1} alt="" style={{ "--i": 1 }} />
-                  <img src={cloud2} alt="" style={{ "--i": 2 }} />
-                  <img src={cloud3} alt="" style={{ "--i": 3 }} />
-                  <img src={cloud4} alt="" style={{ "--i": 4 }} />
-                  <img src={cloud5} alt="" style={{ "--i": 5 }} />
-                </div>
-      
-              </div>
-     
+              <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
+                <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+                  Sign up
+                </span>
+                <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+                  Sign up
+                </span>
+              </Button>
             </div>
-           </div>
-           <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
-              <section className="canvas-section h-full " ref={containerRef}>
-              <div id="matter-container" ref={matterContainerRef} />
-                </section>
-                <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
-                <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
-                 </h1>
-                  <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
-                </div>
-                <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-                    <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
-                 </h1>
-                  <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
-                </div>
-        
-               </div>
-                <div className="md:w-[409px] w-[100%]
+            <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
+              <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
+                Global Possibilities for
+
+                <br />
+                Myanmar Professionals
+              </h1>
+              <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
+                Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
+              </p>
+              <div className="flex justify-center md:mt-[80px] mt-[40px]">
+
+                <CommonButton login />
+
+
+
+
+
+
+
+
+              </div>
+            </div>
+            <div className="cloud ">
+              <img src={cloud1} alt="" style={{ ["--i" as any]: 1 }} />
+              <img src={cloud2} alt="" style={{ ["--i" as any]: 2 }} />
+              <img src={cloud3} alt="" style={{ ["--i" as any]: 3 }} />
+              <img src={cloud4} alt="" style={{ ["--i" as any]: 4 }} />
+              <img src={cloud5} alt="" style={{ ["--i" as any]: 5 }} />
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
+        <section className="canvas-section h-full " ref={containerRef}>
+          <div id="matter-container" ref={matterContainerRef} />
+        </section>
+        <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
+          <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+            <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
+            </h1>
+            <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
+          </div>
+          <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
+            <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
+            </h1>
+            <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
+          </div>
+
+        </div>
+        <div className="md:w-[409px] w-[100%]
                 h-[313px]  bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]
         ">
-         
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  Legal Compliance Guarantee</p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  Full HR & Payroll Management</p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] ">  IT Talent Specialization </p>
-                  </div>
-                  <div className="flex gap-[24px] items-center">
-                   <img src={CheckCircle} alt="" />
-                  <p className="text-[#0389FF] "> Stable & Productive Work Environment</p>
-                  </div>
-    
 
-               </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  Legal Compliance Guarantee</p>
           </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  Full HR & Payroll Management</p>
+          </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] ">  IT Talent Specialization </p>
+          </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF] "> Stable & Productive Work Environment</p>
+          </div>
+
+
+        </div>
+      </div>
     </div>
   )
 }

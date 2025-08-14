@@ -27,18 +27,7 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
     error,
   } = useGetDetailJobApplyCardQuery(selectedJob?.id);
 
-
-
-
   const jobDetails = data?.data;
-
-
-  console.log({ jobDetails })
-
-
-
-
-
 
 
   if (isLoading) {

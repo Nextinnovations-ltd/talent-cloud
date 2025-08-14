@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Home } from "./pages/home/Home";
 import routesMap from "./constants/routesMap";
 import { AuthLayout } from "./layouts/AuthLayout";
@@ -28,7 +28,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
-import EmployeePage from './pages/LandingPages/EmployeePage';
+
 import SelectedProject from "./pages/profile/subPages/SelectedProject";
 import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
@@ -49,24 +49,29 @@ import CreateNewJob from "./pages/admin/CreateNewJob/CreateNewJob";
 import AllJobsDetails from "./pages/admin/AllJobs/AllJobsDetails";
 import CandidateApplicants from "./pages/admin/Candidates/CandidateApplicants";
 import AllJobsEditJobs from "./pages/admin/AllJobs/AllJobsEditJobs";
+import EmployeePage from "./pages/LandingPages/EmployeePage";
 
 
 
 export const router = createBrowserRouter([
   {
+    path: "/",
+    element: <Navigate to="/employee/lp" replace />,
+  },
+  {
     path: "/test-design",
     element: <Index/>
   },
   {
-   path:"/jobseeker/lp",
+   path:"/emp/lp",
    element:<JobSeekerLandingPage/>
   },
   {
-    path:"/employee/lp",
+    path:"/tc/lp",
     element:<EmployeePage/>
    },
   {
-    path: "/",
+   path: "/",
    element: <MainLayout />,
     children: [
       {

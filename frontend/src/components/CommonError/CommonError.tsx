@@ -9,6 +9,7 @@ interface CommonErrorProps {
   action?: boolean;
   handleAction?: () => void;
   actionText?: string;
+  width?:number
 }
 
 const CommonError = ({
@@ -17,7 +18,8 @@ const CommonError = ({
   description = "Try adjusting your search to find what you are looking for",
   action =false,
   handleAction = ()=>{},
-  actionText = ''
+  actionText = '',
+  width = 240
   
 }: CommonErrorProps) => {
   return (
@@ -27,7 +29,7 @@ const CommonError = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <img src={image} width={240} />
+      <img src={image} width={width} />
       <h3 className="text-[28px] text-black font-semibold mt-[10px] mb-[15px]">{title}</h3>
       <p>{description}</p>
       {

@@ -61,8 +61,6 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['NotificationList']
         }),
-
-
     })
 });
 

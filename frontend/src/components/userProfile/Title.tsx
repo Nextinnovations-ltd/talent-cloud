@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { motion } from 'framer-motion';
 import CRYSTAL from '@/assets/Login/Vector.svg';
 import ActiveActionsButtons from './ActiveActionsButtons';
@@ -81,6 +82,7 @@ export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true,
                 isTitle && <div className='flex items-center gap-4'>
                     <motion.h3
                         className="text-[40px] font-[600]"
+                        //@ts-ignore
                         variants={textVariants}
                     >
                         {title}
@@ -90,6 +92,7 @@ export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true,
                         src={CRYSTAL}
                         alt="Crystal"
                         className="translate-y-[-30px]"
+                        //@ts-ignore
                         variants={crystalVariants}
                         initial="hidden"
                         animate={["visible", "pulse"]}

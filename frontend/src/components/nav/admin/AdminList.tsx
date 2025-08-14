@@ -5,7 +5,7 @@ import { useState } from 'react'; // Import useState hook
 
 const AdminList = () => {
   // Add state to track whether the panel is visible
-  const [isPanelVisible, setIsPanelVisible] = useState(true);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
 
   // Function to toggle panel visibility
   const togglePanelVisibility = () => {

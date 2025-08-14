@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Job } from '../../jobApply/ApplyJobCard';
 import CLOCK from '@/assets/clock.svg';
 import LOCATION from '@/assets/location.svg';
 import LOCK from '@/assets/lock.svg';
@@ -10,7 +10,7 @@ import InfoItem from './InfoItem';
 import { formatDistanceToNow } from 'date-fns';
 
 interface JobInfoGridProps {
-  job: Job | undefined;
+  job: any | undefined;
 }
 
 export const JobInfoGrid: React.FC<JobInfoGridProps> = ({ job }) => (

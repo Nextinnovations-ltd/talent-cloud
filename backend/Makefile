@@ -123,11 +123,21 @@ run-daphne: all
 
 run-celery: all
 	@echo "Starting Celery worker..."
-	@$(VENV_DIR)/bin/celery -A main worker -l info
+	@$(VENV_DIR)/bin/celery -A celery_app worker -l info
 
 run-celery-beat: all
 	@echo "Starting Celery beat..."
-	@$(VENV_DIR)/bin/celery -A main beat -l info
+	@$(VENV_DIR)/bin/celery -A celery_app beat -l info
+
+run-celery-flower: all
+	@echo "\n\033[1;34m=== Starting Celery Flower Monitor ===\033[0m"
+	@echo "\033[0;33mMonitoring on: \033[1;33mhttp://localhost:5555\033[0m"
+	@echo "\033[0;36mPress Ctrl+C to stop Flower\033[0m\n"
+	@$(VENV_DIR)/bin/celery -A celery_app flower --port=5555
+
+celery-status: all
+	@echo "\n\033[1;34m=== Celery Status ===\033[0m"
+	@$(VENV_DIR)/bin/celery -A celery_app status
 
 # Import Data
 import-location-data: all
@@ -153,6 +163,58 @@ clean: all
 	find . -name "*.pyc" -exec rm -f {} \;
 	find . -name "__pycache__" -exec rm -rf {} \;
 	@echo "Cleanup complete."
+
+## Environment Management
+encrypt:
+	@echo "\033[1;34m=== Environment Encryption ===\033[0m"
+	@if [ ! -x "scripts/encrypt_env.sh" ]; then \
+		echo "\033[1;33m🔧 Setting script permissions...\033[0m"; \
+		chmod +x scripts/encrypt_env.sh; \
+	fi
+	@./scripts/encrypt_env.sh
+
+decrypt:
+	@echo "\033[1;34m=== Easy Environment Decryption ===\033[0m"
+	@if [ ! -x "scripts/decrypt_env.sh" ]; then \
+		echo "\033[1;33m🔧 Setting script permissions...\033[0m"; \
+		chmod +x scripts/decrypt_env.sh; \
+	fi
+	@./scripts/decrypt_env.sh
+
+env-status:
+	@echo "\033[1;34m=== Environment Files Status ===\033[0m"
+	@for env in .env .env.development .env.staging .env.production; do \
+		if [ -f "$$env" ] && [ -f "$$env.gpg" ]; then \
+			echo "\033[1;32m✅ $$env (local + encrypted)\033[0m"; \
+		elif [ -f "$$env" ]; then \
+			echo "\033[1;31m⚠️  $$env (local only - run 'make sync-env')\033[0m"; \
+		elif [ -f "$$env.gpg" ]; then \
+			echo "\033[1;33m🔒 $$env.gpg (encrypted only - run 'make decrypt')\033[0m"; \
+		else \
+			echo "\033[1;37m❌ $$env (not found)\033[0m"; \
+		fi \
+	done
+
+sync-env:
+	@echo "\033[1;34m=== Sync Environment Files ===\033[0m"
+	@echo "\033[1;33m🔄 Syncing environment files for development...\033[0m"
+	@if ls .env*.gpg >/dev/null 2>&1; then \
+		echo "\033[1;33m🔓 Decrypting encrypted files...\033[0m"; \
+		make decrypt; \
+	else \
+		echo "\033[1;33m⚠️  No encrypted files found to decrypt\033[0m"; \
+	fi
+	@echo "\033[1;32m✅ Environment files ready for development!\033[0m"
+	@echo "\033[1;36m💡 All .env files are now available for local development\033[0m"
+
+setup-env:
+	@echo "\033[1;34m=== Setup Environment (New Team Member) ===\033[0m"
+	@echo "\033[1;33m🚀 Setting up environment for development...\033[0m"
+	@make sync-env
+	@make env-status
+	@echo "\033[1;32m✅ Environment setup complete!\033[0m"
+	@echo "\033[1;36m💡 You can now run: make runserver\033[0m"
+
 
 help:
 	@echo "\n\033[1;34mTalentCloud Project Management\033[0m"
@@ -189,6 +251,13 @@ help:
 	@echo "\033[1;33mMaintenance:\033[0m"
 	@echo "  \033[1;32mclean\033[0m             - Clean Python cache files"
 	@echo "  \033[1;32mhelp\033[0m              - Show this help message\n"
+
+	@echo "\033[1;33mEnvironment Management:\033[0m"
+	@echo "  \033[1;32msetup-env\033[0m         - Setup environment files (new team members)"
+	@echo "  \033[1;32msync-env\033[0m          - Sync/decrypt files for development"
+	@echo "  \033[1;32menv-status\033[0m        - Check environment file status"
+	@echo "  \033[1;32mencrypt\033[0m           - Encrypt environment files"
+	@echo "  \033[1;32mdecrypt\033[0m           - Decrypt environment files\n"
 	
 	@echo "\033[0;36mNote: Set ENV=prod for production commands (e.g. ENV=prod make migrate)\033[0m"
 	@echo "\033[0;36mCurrent default environment: \033[1;36m$(SETTINGS)\033[0m\n"

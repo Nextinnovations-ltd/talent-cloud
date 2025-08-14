@@ -1,6 +1,6 @@
-import React from 'react'
 import CTOImg from '../../../assets/Employee/Rectangle 5676.png'
 import arrowRight from '../../../assets/Employee/arrow-right.svg'
+
 const TalentCloudSay = () => {
   return (
       <div className='max-w-[1240px] mx-auto mt-[67px] mb-6 md:mb-[67px] flex flex-col gap-[24px] md:gap-[48px] items-center justify-center pl-6 pr-6'>

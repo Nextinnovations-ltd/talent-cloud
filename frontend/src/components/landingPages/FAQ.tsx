@@ -1,6 +1,5 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
-import closeBtn from '@/assets/JobPortal/ic_round-add.svg'
 import circle from '@/assets/JobPortal/Ellipse 1088.svg'
 import plusBtn from '@/assets/JobPortal/plus.svg'
 
@@ -52,7 +51,7 @@ subTitles:'Our comprehensive approach includes:'
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(null);
 
-    const toggleIndex = (index) => {
+    const toggleIndex = (index:any) => {
       setOpenIndex(openIndex === index ? null : index);
     };
   return (
