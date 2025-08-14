@@ -11,9 +11,16 @@ def get_or_create_parent_company(name):
           
           print("Parent Company already exists!")
      except Company.DoesNotExist:
+          from apps.users.models import Address
+          
           print("Creating Company - Next Innovaion...")
           
           industry, created = Industry.objects.get_or_create(name=PARENT_COMPANY.industry)
+          address = Address.objects.create(
+               country_id=PARENT_COMPANY.country,
+               city_id=PARENT_COMPANY.city,
+               address=PARENT_COMPANY.address
+          )
           
           company_data = {
                'name': PARENT_COMPANY.name,
@@ -23,7 +30,7 @@ def get_or_create_parent_company(name):
                'industry': industry,
                'size': PARENT_COMPANY.size,
                'tagline': PARENT_COMPANY.tagline,
-               'address': PARENT_COMPANY.address,
+               'address': address,
                'contact_email': PARENT_COMPANY.contact_email,
                'contact_phone': PARENT_COMPANY.contact_phone,
                'founded_date': PARENT_COMPANY.founded_date,
