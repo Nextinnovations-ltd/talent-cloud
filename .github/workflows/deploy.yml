@@ -120,10 +120,8 @@ jobs:
                 export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
                 bash scripts/decrypt_staging.sh
 
-               
-
                 source /home/ubuntu/venv/bin/activate
-                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py migrate  &&  make import-talent-cloud-data && python manage.py create_superuser  && python manage.py collectstatic --noinput --clear && cd -
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py migrate && python manage.py create_superuser  && python manage.py collectstatic --noinput --clear && cd -
 
 
                 sudo systemctl start  supervisor.service
