@@ -1,16 +1,29 @@
 from .base import *
-from decouple import Config, RepositoryEnv
+from decouple import config as decouple_config, Config, RepositoryEnv
 import os
 
-# Load only staging-specific environment file
-staging_env = os.path.join(BASE_DIR, '.env.staging')
+# Load only development-specific environment file
+dev_env = os.path.join(BASE_DIR, '.env.staging')
 
-if os.path.exists(staging_env):
-    config = Config(RepositoryEnv(staging_env))
-    print(f"🔧 Staging: Loaded .env.staging")
-else:
-    config = Config()
-    print(f"⚠️ Staging: .env.staging not found, using system environment")
+# Use a flag to prevent duplicate loading messages
+_LOADED_FLAG = f"_DEV_ENV_LOADED_{id(dev_env)}"
+
+try:
+     if os.path.exists(dev_env):
+          config = Config(RepositoryEnv(dev_env))
+          if _LOADED_FLAG not in os.environ:
+               print(f"🔧 Staging: Loaded .env.staging")
+               os.environ[_LOADED_FLAG] = "true"
+     else:
+          # Use the default decouple config function for system environment
+          config = decouple_config
+          if _LOADED_FLAG not in os.environ:
+               print(f"⚠️ Staging: .env.staging not found, using system environment")
+               os.environ[_LOADED_FLAG] = "true"
+except Exception as e:
+     print(f"❌ Error loading environment configuration: {e}")
+     # Fallback to system environment using decouple_config
+     config = decouple_config
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 ENVIRONMENT = 'staging'
