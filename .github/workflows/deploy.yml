@@ -110,7 +110,7 @@ jobs:
                 sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/configurations
 
                 echo ":unlock: Decrypting staging environment..."
-                cd /home/ubuntu/talentcloud_networks/talent-cloud/backend
+                cd /home/ubuntu/talentcloud_networks/talent-cloud/backend/scripts
             
                 export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
                 bash scripts/decrypt_staging.sh
