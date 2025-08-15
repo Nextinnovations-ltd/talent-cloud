@@ -30,7 +30,7 @@ jobs:
           ls
           cd frontend
           npm ci
-          npm run build:staging
+          npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -99,6 +99,11 @@ jobs:
                 sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
                 sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
 
+                sudo supervisorctl stop talent-cloud-celery
+                sudo supervisorctl stop talent-cloud-beat
+                sudo supervisorctl stop talent-cloud-daphne
+
+                sudo rm -rf /var/www/dist
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
 
                 sudo systemctl restart nginx
@@ -120,8 +125,6 @@ jobs:
                 export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
                 bash scripts/decrypt_staging.sh
 
-               
-
                 source /home/ubuntu/venv/bin/activate
                 cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py migrate  &&  make import-talent-cloud-data && python manage.py create_superuser  && python manage.py collectstatic --noinput --clear && cd -
 
@@ -133,9 +136,6 @@ jobs:
                 sudo supervisorctl start talent-cloud-daphne
 
                 sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
-
-
-
                 echo ":unlock: Staging environment deployed successfully!"
 
                 
