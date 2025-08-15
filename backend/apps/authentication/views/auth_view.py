@@ -84,7 +84,8 @@ class SuperAdminLoginAPIView(views.APIView):
         with transaction.atomic():
             user = AuthenticationService.is_authenticated(email, password, ROLES.SUPERADMIN)
             
-            AuthEmailService.verify_user_loggedin(email)
+            # Will use later
+            # AuthEmailService.verify_user_loggedin(email)
             
             result = AuthenticationService.generate_login_success_response(user)
         
