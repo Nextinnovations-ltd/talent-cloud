@@ -25,7 +25,7 @@ const AdminLayout = () => {
       Notification.requestPermission();
     }
 
-    const wsUrl = `ws://localhost:8000/ws/notifications/?token=${token}`;
+    const wsUrl = `ws://staging.locaboo.jp/ws/notifications/?token=${token}`;
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
