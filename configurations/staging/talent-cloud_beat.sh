@@ -3,7 +3,7 @@ NAME="talent-cloud"
 DIR=home/ubuntu/talentcloud-networks/talent-cloud/backend   # Directory where project is located
 USER=ubuntu   #User to run this script as
 GROUP=ubuntu  #Group to run this script as
-DJANGO_WSGI_MODULE=celery_app
+DJANGO_CELERY_APP=celery_app
 DJANGO_SETTINGS_MODULE=main.config.settings.staging
 
 cd $DIR
@@ -12,6 +12,6 @@ export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DIR:$PYTHONPATH
 
 #Command to run the progam under supervisord
-exec /home/ubuntu/venv/bin/celery -A ${DJANGO_WSGI_MODULE} \
+exec /home/ubuntu/venv/bin/celery -A ${DJANGO_CELERY_APP} \
 beat \
 --loglevel=info

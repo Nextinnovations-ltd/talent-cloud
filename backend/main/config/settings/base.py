@@ -21,7 +21,6 @@ INSTALLED_APPS = [
     'django_filters',
     
     #External App
-    'debug_toolbar',
     'corsheaders',
     'drf_spectacular',
     'django_celery_beat',
@@ -44,7 +43,6 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware', # External middleware
     'whitenoise.middleware.WhiteNoiseMiddleware', # External middleware
     'corsheaders.middleware.CorsMiddleware', # External middleware
     'django.contrib.sessions.middleware.SessionMiddleware',

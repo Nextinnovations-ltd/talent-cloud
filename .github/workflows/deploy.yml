@@ -122,24 +122,44 @@ jobs:
                 cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
                 ls
             
+                echo "Exporting GPG PASSPHRASE..."
                 export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
+                
+                echo "Decrypting Staging Environment Secrets..."
                 bash scripts/decrypt_staging.sh
 
+                echo "Activating virtual environment..."
                 source /home/ubuntu/venv/bin/activate
-                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend && export DJANGO_SETTINGS_MODULE=main.config.settings.staging && python -m pip install -r requirements.txt && python manage.py migrate  &&  make import-talent-cloud-data && python manage.py create_superuser  && python manage.py collectstatic --noinput --clear && cd -
+                
+                echo "Entering into server directory..."
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
+                
+                export DJANGO_SETTINGS_MODULE=main.config.settings.staging
 
+                echo "📦 Installing dependencies..."
+                python -m pip install -r requirements.txt
+                
+                echo "Performing migrate..."
+                python manage.py migrate
+                
+                echo "Importing Initial App Data..."
+                python manage.py import_initial_data
+                
+                echo "Creating Superuser..."
+                python manage.py create_superuser 
+                
+                echo "Collecting Staticfiles..."
+                python manage.py collectstatic --noinput --clear
+                cd -
 
+                echo "⚙️ Starting services..."
                 sudo systemctl start  supervisor.service
                 sudo supervisorctl reread && sudo supervisorctl update
                 sudo supervisorctl start talent-cloud-celery
                 sudo supervisorctl start talent-cloud-beat
                 sudo supervisorctl start talent-cloud-daphne
-
-                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
-                echo ":unlock: Staging environment deployed successfully!"
-
                 
-
-              
-           
-        
+                echo "🔧 Setting socket permissions..."
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
+                
+                echo "✅ Staging environment deployed successfully!"
