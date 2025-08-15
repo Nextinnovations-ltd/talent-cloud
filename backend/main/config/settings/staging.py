@@ -32,7 +32,6 @@ STAGING_SERVER_IP = config('STAGING_SERVER_IP', default='STAGING_SERVER_IP')
 ALLOWED_HOSTS = [
      STAGING_SERVER_IP,
      'staging.talent-cloud.asia',
-     'staging-api.talent-cloud.asia',
      'localhost',
      '127.0.0.1',
 ]
@@ -43,7 +42,6 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
      "http://staging.talent-cloud.asia",
      "https://staging.talent-cloud.asia",
-     "https://staging-app.talent-cloud.asia", 
      
      # IP-based origins for staging server
      f"https://{STAGING_SERVER_IP}",
