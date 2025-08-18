@@ -25,7 +25,7 @@ const CustomCheckbox = ({
       render={({ field }) => (
         <FormItem>
           <FormControl>
-            <div className={clsx("flex justify-start items-start gap-2")}>
+            <div className={clsx("flex justify-start items-center gap-2")}>
               <Checkbox
                  {...field}
                 checked={field.value}

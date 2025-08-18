@@ -25,9 +25,9 @@ export const SignUp = () => {
   const onSubmitHandler = async (credentials: any) => {
     try {
       const res = await executeApiCall(credentials);
-      console.log(res);
+
       if (res.success) {
-        navigate(`/auth/${routesMap.verifyEmail.path}`);
+        navigate(`/auth/${routesMap.verifyEmail.path}?token=${res?.data?.data?.data?.token}`);
       }
     } catch (error) {
       const typedError = error as SignUpApiError;

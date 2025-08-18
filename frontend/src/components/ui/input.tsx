@@ -77,7 +77,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type === "password" && !isPasswordVisible ? "password" : "text"
             }
             className={cn(
-              "flex h-12 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-colors file:border-0 file:bg-transparent file:text-base file:font-medium file:text-foreground focus:outline-none focus-visible:p-[calc(0.75rem-1.5px)] placeholder:text-base placeholder:font-normal placeholder:text-[#CFD1D4]  shadow-none disabled:cursor-not-allowed disabled:opacity-50 absolute bg-white",
+              "flex h-12 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-colors file:border-0 file:bg-transparent file:text-base file:font-medium file:text-foreground focus:outline-none focus-visible:p-[calc(0.75rem-1.5px)] placeholder:text-base placeholder:font-normal placeholder:text-[#CFD1D4]  shadow-none disabled:cursor-not-allowed disabled:opacity-50 absolute  bg-white",
               isError
                 ? "focus-visible:border-error focus-visible:border-[2px]"
                 : "border-bg-border focus-visible:border-bg-primary focus-visible:border-[2px]",
@@ -103,7 +103,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type="button"
               variant={"ghost"}
               onClick={handleTogglePassword}
-              className="flex items-center absolute right-0 justify-center"
+              className="flex items-center absolute right-0 top-[10px] justify-center"
             >
               {isPasswordVisible ? hidePasswordIcon : showPasswordIcon}
             </Button>
