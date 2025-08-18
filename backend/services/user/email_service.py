@@ -19,7 +19,7 @@ class AuthEmailService:
           """
           verification_code = TokenUtil.generate_verification_code()
           token = TokenUtil.generate_encoded_token(value=email)
-          expired_at = TokenUtil.generate_expiration_time(60)
+          expired_at = TokenUtil.generate_expiration_time(settings.VERIFICATION_EXPIRATION_TIME)
           
           VerifyRegisteredUser.objects.create(email=email, token=token, verification_code=verification_code, expired_at=expired_at)
           

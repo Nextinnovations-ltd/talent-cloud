@@ -30,7 +30,7 @@ jobs:
           ls
           cd frontend
           npm ci
-          npm run build:staging
+          npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -99,13 +99,68 @@ jobs:
                 sudo tar -xf /home/ubuntu/talentcloud-networks/configurations.tar.gz -C /home/ubuntu/talentcloud-networks
                 sudo rm -rf /home/ubuntu/talentcloud-networks/configurations.tar.gz
 
-                sudo cp -r /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_nginx    /etc/nginx/sites-available/talent-cloud_nginx
+                sudo supervisorctl stop talent-cloud-celery
+                sudo supervisorctl stop talent-cloud-beat
+                sudo supervisorctl stop talent-cloud-daphne
 
-
+                sudo rm -rf /var/www/dist
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
-                sudo ln -s /etc/nginx/sites-available/talent-cloud_nginx /etc/nginx/sites-enabled/
 
                 sudo systemctl restart nginx
 
-           
-        
+                sudo virtualenv -p python3 /home/ubuntu/venv
+
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/venv
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/talent-cloud
+                sudo chown -R ubuntu:ubuntu /home/ubuntu/talentcloud-networks/configurations/staging
+
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_beat.sh
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_celery.sh
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/talent-cloud_daphne.sh
+
+                echo ":unlock: Decrypting staging environment..."
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
+                ls
+            
+                echo "Exporting GPG PASSPHRASE..."
+                export GPG_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
+                
+                echo "Decrypting Staging Environment Secrets..."
+                bash scripts/decrypt_staging.sh
+
+                echo "Activating virtual environment..."
+                source /home/ubuntu/venv/bin/activate
+                
+                echo "Entering into server directory..."
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
+                
+                export DJANGO_SETTINGS_MODULE=main.config.settings.staging
+                export ENV=staging
+
+                echo "📦 Installing dependencies..."
+                python -m pip install -r requirements.txt
+                
+                echo "Performing migrate..."
+                python manage.py migrate
+                
+                echo "Importing Initial App Data..."
+                python manage.py import_initial_data
+                
+                echo "Creating Superuser..."
+                python manage.py create_superuser 
+                
+                echo "Collecting Staticfiles..."
+                python manage.py collectstatic --noinput --clear
+                cd -
+
+                echo "⚙️ Starting services..."
+                sudo systemctl start  supervisor.service
+                sudo supervisorctl reread && sudo supervisorctl update
+                sudo supervisorctl start talent-cloud-celery
+                sudo supervisorctl start talent-cloud-beat
+                sudo supervisorctl start talent-cloud-daphne
+                
+                echo "🔧 Setting socket permissions..."
+                sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
+                
+                echo "✅ Staging environment deployed successfully!"

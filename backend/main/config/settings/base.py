@@ -21,7 +21,6 @@ INSTALLED_APPS = [
     'django_filters',
     
     #External App
-    'debug_toolbar',
     'corsheaders',
     'drf_spectacular',
     'django_celery_beat',
@@ -44,7 +43,6 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware', # External middleware
     'whitenoise.middleware.WhiteNoiseMiddleware', # External middleware
     'corsheaders.middleware.CorsMiddleware', # External middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -179,17 +177,6 @@ CACHES = {
     }
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
-
 # Static Configuration
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -232,6 +219,10 @@ ADMINS = [
     ('Admin Name', 'admin@tc.io'),
 ]
 
+# Registration Verification
+VERIFICATION_EXPIRATION_TIME=86400
+
+
 # Serialization & Timezone
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -243,6 +234,7 @@ CELERY_AUTODISCOVER_TASKS = True
 
 CELERY_IMPORTS = (
     'celery_app.tasks.sample_tasks',
+    'celery_app.tasks.job_tasks'
 )
 
 # Beat Scheduler

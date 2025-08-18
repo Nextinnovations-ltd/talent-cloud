@@ -89,11 +89,12 @@ migrate: all
 	@$(VENV_DIR)/bin/python manage.py migrate --settings=$(SETTINGS)
 	@echo "\n\033[1;32m✓ Migrations applied successfully\033[0m\n"
 
-migrate-cities: all
-	@echo "\n\033[1;34m=== Applying City Migrations ===\033[0m"
-	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m\n"
-	@$(VENV_DIR)/bin/python manage.py cities_light
-	@echo "\n\033[1;32m✓ City Migrations applied successfully\033[0m\n"
+import-talent-cloud-data: all
+	@echo "\n\033[1;34m=== Importing All Initial Data ===\033[0m"
+	@echo "\033[0;33mEnvironment: \033[1;33m$(ENV)\033[0m"
+	@echo "\033[0;33mDatabase: \033[1;33m$(DB_NAME)\033[0m"
+	@$(VENV_DIR)/bin/python manage.py import_initial_data --settings=$(SETTINGS)
+	@echo "\n\033[1;32m✓ All initial data imported successfully.\033[0m\n"
 
 ## User Management
 createsuperuser: all
@@ -230,7 +231,8 @@ help:
 	@echo "  \033[1;32mcreate-db\033[0m         - Create database and user"
 	@echo "  \033[1;32mreset-db\033[0m          - Reset database (drop & recreate)"
 	@echo "  \033[1;32mmigrations\033[0m        - Generate database migrations"
-	@echo "  \033[1;32mmigrate\033[0m           - Apply database migrations\n"
+	@echo "  \033[1;32mmigrate\033[0m           - Apply database migrations"
+	@echo "  \033[1;32mimport-talent-cloud-data\033[0m - Import All initial Talent Cloud Data\n"
 	
 	@echo "\033[1;33mUser Management:\033[0m"
 	@echo "  \033[1;32mcreatesuperuser\033[0m   - Create admin superuser"
