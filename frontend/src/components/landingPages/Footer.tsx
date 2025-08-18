@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
       <div className='bg-[#191B1D] w-full '>
-          <div className="max-w-[1240px] mx-auto pt-[50px]  flex flex-col md:flex-row justify-between items-start md:items-center pl-6 md:pl-0 gap-[92px] md:gap-0">
+          <div className="max-w-[1240px] mx-auto pt-[50px]  flex flex-col md:flex-row justify-between items-start md:items-start pl-6 md:pl-0 gap-[92px] md:gap-0">
           <div className="flex flex-col gap-6 md:gap-8 justify-center">
                   <img src={TalentCloudLogo} alt="" className='w-[186px] md:w-[293px]'/>
                   <p className='text-white text-[18px] font-[400] leading-[25.2px ] tracking-[0.36px]'>Unlock your next career journey  </p>
