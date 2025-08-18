@@ -177,17 +177,6 @@ CACHES = {
     }
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
-
 # Static Configuration
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -229,6 +218,10 @@ SEND_ERROR_NOTIFICATIONS = True
 ADMINS = [
     ('Admin Name', 'admin@tc.io'),
 ]
+
+# Registration Verification
+VERIFICATION_EXPIRATION_TIME=86400
+
 
 # Serialization & Timezone
 CELERY_ACCEPT_CONTENT = ['json']
