@@ -24,8 +24,8 @@ const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const navigate = useNavigate();
   const wordsToDisplay = [
-    'Frontend Developer', 'Python Developer', 'UI UX Designer',
-    'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer', 'QA Engineers'
+    'Frontend Developer', 'Python Developer', 'UI/UX Designer', 
+    'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
   ];
 
   const containerRef = useRef(null);

@@ -10,10 +10,10 @@ const WhoCanApply = () => {
     <h1 className="text-black text-[20px] md:text-[40px] font-[600] text-center">
     WHO CAN APPLY?
           </h1>
-          <div className="w-full md:w-[80%] lg:w-full   grid grid-cols-2 gap-4 lg:flex items-center justify-between">
+          <div className="w-full md:w-[80%] lg:w-full   grid grid-cols-1 md:grid-cols-2 gap-4 lg:flex items-center justify-between">
               <div className="">
                   <img src={designerImg} alt="" className='mx-auto max-w-[200px]' />
-                  <p className='text-[16px] md:text-[24px] text-center font-[500]'>UI UX Designer</p>
+                  <p className='text-[16px] md:text-[24px] text-center font-[500]'>UI/UX Designer</p>
               </div>
               <div className="">
                   <img src={frontendDeveloperImg} alt="" className='mx-auto max-w-[200px]' />

@@ -2,6 +2,7 @@ import './index.css'
 import FAQ from '@/components/landingPages/FAQ'
 import Whatugot from '@/components/landingPages/Employee/Whatugot'
 import Footer from '@/components/landingPages/Footer'
+import UpdatedFooter from '@/components/landingPages/UpdatedFooter'
 import HeroSection from '@/components/landingPages/Employee/HeroSection'
 import WhyJoinTC from '@/components/landingPages/Employee/WhyJoinTC'
 import WhoCanApply from '@/components/landingPages/Employee/WhoCanApply'
@@ -30,7 +31,8 @@ const EmployeePage = () => {
       <HowWork />
       <JoinBanner />
       <FAQ />
-      <Footer />
+    {/*   <Footer /> */}
+     <UpdatedFooter />
     </div>
   )
 }

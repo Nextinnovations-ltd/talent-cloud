@@ -6,6 +6,7 @@ import './index.css';
 import EorSection from "@/components/landingPages/JobPortal/EorSection";
 import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
 import FAQ from "@/components/landingPages/FAQ";
+import { Footer } from "react-day-picker";
 const JobSeekerLandingPage = () => {
   
   return (
@@ -15,7 +16,8 @@ const JobSeekerLandingPage = () => {
       <SeeMore />
       <EorSection />
       <SuccessStory />
-      <FAQ/>
+      <FAQ />
+      <Footer/>
 </div>
   );
 };
