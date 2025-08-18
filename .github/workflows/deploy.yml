@@ -135,6 +135,7 @@ jobs:
                 cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
                 
                 export DJANGO_SETTINGS_MODULE=main.config.settings.staging
+                export ENV=staging
 
                 echo "📦 Installing dependencies..."
                 python -m pip install -r requirements.txt

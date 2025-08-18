@@ -99,6 +99,14 @@ REDIS_URL=config('REDIS_URL', default='redis://localhost:6379/0')
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
 
 # S3 Configuration
 AWS_ACCESS_KEY = config('AWS_ACCESS_KEY')
