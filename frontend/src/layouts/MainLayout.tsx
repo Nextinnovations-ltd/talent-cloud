@@ -24,7 +24,7 @@ export const MainLayout = () => {
       Notification.requestPermission();
     }
 
-    const wsUrl = `ws://staging.talent-cloud.asia/api/ws/notifications/?token=${token}`;
+    const wsUrl = `ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`;
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
