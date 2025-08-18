@@ -5,7 +5,8 @@ import upArrow from "@/assets/JobPortal/arrow-up-left.svg";
 interface CommonButtonProps {
   title?: string;         // Text to display (optional — defaults applied below)
   smallIcon?: boolean;    // Whether to use small icon size
-  login?: boolean;        // Whether button navigates to login
+  login?: boolean;   
+  url?:string     // Whether button navigates to login
 }
 
 const CommonButton: FC<CommonButtonProps> = ({ title, smallIcon = false, login = false }) => {

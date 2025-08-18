@@ -66,16 +66,8 @@ const AdminLayout = () => {
       console.log('❌ WebSocket disconnected');
     };
 
-    const interval = setInterval(() => {
-      if (socketRef.current?.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, 30000);
+    
 
-    return () => {
-      clearInterval(interval);
-      socketRef.current?.close();
-    };
   }, [RefetchIsRead, refetch, showNotification, token]);
 
   return (

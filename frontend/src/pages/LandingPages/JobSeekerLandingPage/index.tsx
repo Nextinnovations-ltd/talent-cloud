@@ -6,7 +6,8 @@ import './index.css';
 import EorSection from "@/components/landingPages/JobPortal/EorSection";
 import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
 import FAQ from "@/components/landingPages/FAQ";
-import { Footer } from "react-day-picker";
+import Footer from "@/components/landingPages/Footer";
+
 const JobSeekerLandingPage = () => {
   
   return (

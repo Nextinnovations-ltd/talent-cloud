@@ -2,8 +2,8 @@ import {
   FacebookIcon,
   GoogleIcon,
   LinkedinIcon,
-  TalentCloudLogoImg,
 } from "@/assets/svgs/svgs";
+import TalentCloudLogo from "@/assets/Employee/Vector (3).svg";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { SocialButton } from "../SocialButton";
@@ -58,7 +58,7 @@ export const AuthFormFrame: React.FC<AuthFormFrameType> = ({ form, type }) => {
     <div className=" px-[10px] md:mx-0 min-h-[100svh] flex items-center justify-center bg-slate-100 ">
       <Card className="text-text-primary mt-10 mb-5 mx-auto px-5 pb-4 border border-bg-border rounded-[15px] sm:w-[500px] sm:px-10 bg-white drop-shadow-sm">
         <div className="mt-10 flex flex-col items-center justify-center  ">
-          <TalentCloudLogoImg />
+        <img src={TalentCloudLogo} width={220} height={60}/>
           <div className="mt-4 text-center font-[500] text-[18px] text-[#686C73]">
             {t("talentDes")}
           </div>
