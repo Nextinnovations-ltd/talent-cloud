@@ -141,7 +141,7 @@ class UserInvitation(TimeStampModel):
 class FileUpload(models.Model):
      FILE_TYPES = [
           ('resume', 'Resume'),
-          ('profile_photo', 'Profile Photo'),
+          ('profile_image', 'profile_image'),
           ('cover_letter', 'Cover Letter'),
           ('company_logo', 'Company Logo'),
           ('job_attachment', 'Job Attachment'),
