@@ -22,17 +22,17 @@ const HeroSection = () => {
           <img
             src={TalentCloudLogoImg}
             alt=""
-            className="w-[185px] md:w-[206px] h-[40px] md:h-[60px] object-cover"
+            className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover"
           />
           <ul className=" gap-[48px] hidden md:flex">
             <li>
-              <HashLink smooth to="#why-us">Why us</HashLink>
+              <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink>
             </li>
             <li>
-               <HashLink smooth to="#what-you-get">What You Get</HashLink>
+               <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink>
             </li>
             <li>
-               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+               <HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink>
             </li>
           </ul>
           <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
@@ -68,24 +68,24 @@ const HeroSection = () => {
           </div>
 
 
-          <div className={`flex md:hidden flex-col items-center bg-[#fafafa40] rounded-b-[20px] fixed z-[100] w-[40%] right-0 top-0 py-[24px] gap-6 overflow-hidden
+          <div className={`flex md:hidden flex-col items-center bg-[#fff] shadow-[0_1px_3px_0_#A6AFC366]  rounded-bl-[20px] fixed z-[100] w-[60%] right-0 top-0 py-[24px] gap-6 overflow-hidden
                           transition-all duration-500 
                           ${navIsOpen ? "max-h-screen mt-[70px] animate-bouncy-drop " : "max-h-0 mt-0 animate-bouncy-close "}
                         `}>
 
 
                         <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                          <li><HashLink smooth to="#why-us">Why us</HashLink></li>
-                          <li> <HashLink smooth to="#what-you-get">What You Get</HashLink></li>
-                          <li><HashLink smooth to="#find-jobs">Find Jobs</HashLink></li>
-                          <li><Link target="_blank"  to={'/emp/lp'}>For Employee</Link></li>
+                          <li><HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
+                          <li> <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink></li>
+                          <li><HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink></li>
+                          <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#0389FF] ">For Employee</Link></li>
                         </ul>
-<Link to='/' target="_blank">
-                        <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
-                          <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+<Link to='/emp/lp' target="_blank">
+                        <Button className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
+                          <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
                             Get Started
                           </span>
-                          <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+                          <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[30px] transition-transform duration-300">
                             Get Started
                           </span>
               </Button>

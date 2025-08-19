@@ -55,7 +55,7 @@ const FAQ = () => {
       setOpenIndex(openIndex === index ? null : index);
     };
   return (
-    <div className="w-full bg-[#F9FAFB]">
+    <div id='faq' className="w-full bg-[#F9FAFB]">
      <div className='max-w-[1240px] mx-auto gap-[30px] md:gap-[100px] flex flex-col md:flex-row items-start pt-[30px] pb-[100px] md:pt-[130px] md:pb-[200px] pr-5 pl-5'>
           <div className="max-w-[394px]">
           <p className='text-[#575757] text-[12px] md:text-[20px] font-[500] leading-[31px]'>All Questions</p>

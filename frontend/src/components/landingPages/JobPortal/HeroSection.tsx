@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { HashLink } from 'react-router-hash-link';
 import { Button } from "@/components/ui/button";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import cloud1 from "@/assets/JobPortal/cloud1.png";
@@ -399,17 +399,17 @@ const HeroSection = () => {
         <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-none md:rounded-[25px] mt-0 md:mt-[22px]">
           <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
             {/* logo SVG here */}
-            <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[206px] h-[40px] md:h-[60px] object-cover" />
+            <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover" />
             <ul className=" gap-[48px] hidden md:flex">
-              <li><Link to="">Why us</Link></li>
-              <li><Link to="">About us</Link></li>
-              <li><Link to="">Blog</Link></li>
+              <li> <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
+              <li> <HashLink smooth to="#about-us" className="hover:text-[#0389FF] transition-colors duration-300">About us</HashLink></li>
+              <li><HashLink smooth to="#faq" className="hover:text-[#0389FF] transition-colors duration-300">FAQ</HashLink></li>
             </ul>
-            <Button onClick={() => navigate('/auth/login')} className="hidden md:flex relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
-              <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+            <Button onClick={() => navigate('/auth/login')} className="hidden md:flex relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
+              <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
                 Sign up
               </span>
-              <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+              <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
                 Sign up
               </span>
             </Button>
@@ -447,33 +447,32 @@ const HeroSection = () => {
             {/* responsive menu */}
 
 
-            <div className={`flex md:hidden flex-col items-center bg-[#fafafa40] rounded-b-[20px] fixed z-[100] w-[40%] right-0 top-0 py-[24px] gap-6 overflow-hidden
+            <div className={`flex md:hidden flex-col items-center shadow-[0_1px_3px_0_#A6AFC366] bg-white rounded-bl-[20px] fixed z-[100] w-[60%] right-0 top-0 py-[24px] gap-6 overflow-hidden
                                 transition-all duration-500 
-                                ${navIsOpen ? "max-h-screen mt-[100px] animate-bouncy-drop " : "max-h-0 mt-0 animate-bouncy-close "}
+                                ${navIsOpen ? "max-h-screen mt-[70px] animate-bouncy-drop " : "max-h-0 mt-0 animate-bouncy-close "}
                               `}>
 
 
               <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                <li><Link to="">Why us</Link></li>
-                <li><Link to="">About us</Link></li>
-                <li><Link to="">Blog</Link></li>
+                <li >  <HashLink smooth to="#why-us" className="hover:text-[#0389FF] transition-colors duration-300" >Why us</HashLink></li>
+                <li>  <HashLink smooth to="#about-us" className="hover:text-[#0389FF] transition-colors duration-300">About us</HashLink></li>
+                <li><HashLink smooth to="#faq" className="hover:text-[#0389FF] transition-colors duration-300">FAQ</HashLink></li>
               </ul>
 
-              <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
-                <span className="block text-[16px] text-white font-[600] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+              <Button onClick={() => navigate('/auth/login')}  className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
+                <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
                   Sign up
                 </span>
-                <span className="block text-[16px] text-[#fff] font-[600] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[24px] transition-transform duration-300">
+                <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
                   Sign up
                 </span>
-              </Button>
+                </Button>
+          
             </div>
             <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
               <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
-                Global Possibilities for
-
-                <br />
-                Myanmar Professionals
+                Global Possibilities for 
+                <br className="hidden md:block" /> Myanmar Professionals
               </h1>
               <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
                 Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.

@@ -98,7 +98,7 @@ const EorSection = () => {
   return (
 
     <div className="bg-white">
-    <div className="max-w-[1271px] mx-auto pt-[38px] pb-[30px] md:pb-[71px]">
+    <div className="max-w-[1271px] mx-auto pt-[38px] pb-[30px] md:pb-[71px] p-4">
       <h1 className="text-[16px] md:text-[32px] font-[600] leading-[14px] md:leading-[56px] text-right md:mb-[30px] mb-[38px]">
         WHAT WE OFFER?
       </h1>
@@ -120,13 +120,13 @@ const EorSection = () => {
                 index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
-              <div className="flex gap-4  md:gap-[110px] p-4 lg:flex-row flex-col">
+              <div className="flex gap-4  md:gap-[110px]  lg:flex-row flex-col">
                 {/* Text */}
                 <div className="max-w-[714px] flex flex-col gap-2">
                   <h1 className="text-[#0481EF] text-[14px] md:text-[36px] font-[600] leading-[14px] md:leading-[34px]">
                     {slide.title}
                   </h1>
-                  <p className="text-[#575757] text-[12px] md:text-[32px] font-[500] leading-[26px] md:leading-[43px]">
+                  <p className="text-[#575757] text-[12px] md:text-[20px] font-[500] leading-[26px] md:leading-[43px] h-[110px]">
                     {slide.text}
                   </p>
                 </div>

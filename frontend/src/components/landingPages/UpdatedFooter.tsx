@@ -36,22 +36,22 @@ const UpdatedFooter = () => {
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Blog</p>
           
           </div>
-          <div className="max-w-[289px]">
+          <div className="max-w-[289px] flex flex-col items-start md:items-end">
             <h1 className="text-white text-[40px] font-[500] leading-[64px] mb-[15px] md:mb-[44px] ml-[0px] md:ml-[40px] mt-[75px] md:mt-0">Get in touch</h1>
             <p className=' text-white text-[16px] font-[500] leading-[26px ] text-left md:text-right '>No.(602), Gandamar Residence,<br/> Gandamar Road, Yangon.</p>
-            <p className='text-white text-[16px] font-[500] leading-[25px ] mt-4 text-left md:text-right'>+95 980 971-24-19</p>
-             
+           <a href="tel:+959451663606" target='_blank' className='text-white text-[16px] font-[500] leading-[25px ] mt-4 text-left md:text-right'>+95 945 166 3606</a>
+
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-[64px] md:mt-[166px] gap-[25px] md:gap-0">
-        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud, 2025</p>
+        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud 2025</p>
           <div className="flex gap-[18px]">
 <img src={icon1} alt="" />
 <img src={icon2} alt="" />
 <img src={icon3} alt="" />
           </div>
           <div className="flex gap-[30px] md:gap-4 flex-wrap ">
-          <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Cookie Sitting</p>
+
           <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Privacy Policy</p>
           <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </p>
 

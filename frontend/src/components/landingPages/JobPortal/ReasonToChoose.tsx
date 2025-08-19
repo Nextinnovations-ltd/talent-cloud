@@ -6,7 +6,7 @@ import icon3 from '../../../assets/JobPortal/Frame 36109.svg'
 import icon4 from '../../../assets/JobPortal/Frame 36110.svg'
 const ReasonToChoose = () => {
     return (
-        <div className="bg-[#F9FAFB] md:mt-[96px] mt-[31px] pl-[20px] pr-[20px] ">
+        <div id='why-us' className="bg-[#F9FAFB] md:mt-[96px] mt-[31px] pl-[20px] pr-[20px] ">
       <div className='max-w-[1240px] mx-auto md:pt-[83px] pt-[26px] pb-[61px] '>
           <h1 className='md:text-[40px] text-[16px] leading-[57px] font-[600] md:mb-[81px] mb-[35px]'>WHY CHOOSE TALENT CLOUD ?</h1>
           <div className="flex md:flex-row flex-col-reverse gap-[46px] md:gap-[100px] justify-center items-center flex-wrap lg:flex-nowrap">

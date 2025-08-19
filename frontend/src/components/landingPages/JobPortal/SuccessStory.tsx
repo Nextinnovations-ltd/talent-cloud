@@ -21,18 +21,8 @@ const SuccessStory = () => {
              
                   </p>
               </div>
-            {/*   <div className="flex flex-col md:flex-row justify-between items-center mt-[38px] md:mt-[168px]">
-                  <img src={successStoryImage} alt=""/>
-                  <div className="flex flex-col gap-4  md:gap-[48px] max-w-full md:max-w-[675px] mt-4 md:mt-0">
-                      <p className='text-[14px] md:text-[24px] font-[500] leading-[20px] md:leading-[40px]'>What They Say About Us</p>
-                      <p className='text-[14px] md:text-[24px] font-[500] leading-[20px] md:leading-[40px]'>
-                      “We highly recommend <span  style={gradientStyle}>Next Innovations</span> to companies seeking a comprehensive and effective solution to our recruitment need. “
-                      </p>
-                      <p className='text-[14px] md:text-[24px]  font-[500] leading-[20px] md:leading-[40px]'>
-                          <span className='text-[#0481EF]'>Iida-san, CEO, Engineerforce Inc</span>. </p>
-                  </div>
-              </div> */}
-          <div className="flex flex-col md:flex-row max-w-[1240px] mx-auto gap-[72px] justify-center items-center mt-[116px]">
+       
+          <div className="flex flex-col md:flex-row max-w-[1240px] mx-auto gap-[48px] justify-center items-center mt-[116px]">
             <div className="max-w-[597px] w-full md:w-[50%] bg-white rounded-[16px] px-[20px] py-[40px] md:p-[59px]">
               <img src={profile1} alt="" className='w-[80px] h-[80px]  md:w-[112px] md:h-[112px]' />
               <p className='text-black text-[18px] md:text-[24px] font-[500] leading-[32px] md:leading-[40px] mt-[16px] md:mt-[32px]'>

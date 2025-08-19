@@ -3,7 +3,7 @@ import arrowIncrease from '../../../assets/JobPortal/streamline_graph-arrow-incr
 const SeeMore = () => {
     const [showmore, setShowMore] = useState(false);  
   return (
-      <div className='bg-[#F7F7F7] pr-[20px] pl-[20px]'>
+      <div id='about-us' className='bg-[#F7F7F7] pr-[20px] pl-[20px]'>
           <div className="max-w-[1240px] mx-auto flex lg:flex-row flex-col justify-between items-start pt-[119px] pb-[36px] bg-[#F7F7F7] gap-[64px]">
               <div className="md:max-w-[772px] max-w-full">
             
