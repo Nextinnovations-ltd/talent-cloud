@@ -4,6 +4,7 @@ import icon1 from "@/assets/linkedin.svg";
 import icon2 from "@/assets/facebook.svg";
 import icon3 from "@/assets/viber.svg";
 import TalentCloudImg from "@/assets/Talent Cloud.png";
+import { HashLink } from 'react-router-hash-link';
 const UpdatedFooter = () => {
   return (
     <div className='bg-[#000] w-full relative '>
@@ -12,9 +13,16 @@ const UpdatedFooter = () => {
           <div className="w-[203px]">
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">Explore</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[20px] md:mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">What You Get</p>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Why us</p>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-[45px] md:mb-0">Find Jobs</p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
+              <HashLink smooth to="#what-you-get">What You Get</HashLink>
+            
+            </p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
+              <HashLink smooth to="#why-us">Why us</HashLink>
+            </p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-[45px] md:mb-0">
+               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+            </p>
           </div>
           <div className="w-[203px]">
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
@@ -36,7 +44,7 @@ const UpdatedFooter = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-[64px] md:mt-[166px] gap-[25px] md:gap-0">
-        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright @Talent Cloud, 2025</p>
+        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud, 2025</p>
           <div className="flex gap-[18px]">
 <img src={icon1} alt="" />
 <img src={icon2} alt="" />

@@ -17,7 +17,7 @@ const JobMatch = () => {
   })) ?? [];
 
   return (
-    <div className='w-full bg-[#EEF4FF] pt-[74px] pb-[74px] flex flex-col gap-[69px]'>
+    <div id='find-jobs' className='w-full bg-[#EEF4FF] pt-[74px] pb-[74px] flex flex-col gap-[69px]'>
       <h1 className='text-black text-[40px] font-[600] text-center mb-[48px]'>
         FIND YOUR JOB MATCH
       </h1>

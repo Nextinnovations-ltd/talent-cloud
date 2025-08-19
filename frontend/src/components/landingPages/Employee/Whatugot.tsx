@@ -68,7 +68,7 @@ const Whatugot = () => {
   }, [])
 
   return (
-    <div className="max-w-[1240px] mx-auto px-4 pt-[48px] pb-0 md:py-20">
+    <div id='what-you-get' className="max-w-[1240px] mx-auto px-4 pt-[48px] pb-0 md:py-20">
      
       <h1 className="text-black text-[20px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[100px]">
         WHAT YOU GET
