@@ -9,55 +9,28 @@ import { Link } from 'react-router-dom';
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice';
 import StarBorder from '../common/StarBorder';
 
-
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      when: "beforeChildren"
-    }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.2, when: "beforeChildren" } }
 };
 
 const itemVariants = {
   hidden: { y: 30, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1]
-    }
-  }
+  visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } }
 };
 
 const fadeIn = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.8,
-      ease: "easeOut"
-    }
-  }
+  visible: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
 };
 
 const scaleUp = {
   hidden: { scale: 0.9, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      ease: "backOut"
-    }
-  }
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.5, ease: "backOut" } }
 };
 
-// Utility function to calculate age from date string
+// Utility function to calculate age
 function calculateAge(dateString: string): number | null {
   if (!dateString) return null;
   const today = new Date();
@@ -71,23 +44,10 @@ function calculateAge(dateString: string): number | null {
 }
 
 export const UserProfile = () => {
-
-  const {
-    data: profileData,
-    isLoading: isProfileLoading,
-  } = useGetJobSeekerProfileQuery();
-
+  const { data: profileData, isLoading: isProfileLoading } = useGetJobSeekerProfileQuery();
   const userData = profileData?.data;
 
-  // Skeleton/placeholder for loading state
-  if (isProfileLoading) {
-    return (
-    <></>
-    );
-  }
-
-  // Handle missing user data
-  if (!userData) {
+  if (!userData && !isProfileLoading) {
     return (
       <div className="flex flex-col items-center mt-[80px]">
         <p className="text-lg text-gray-500">User profile not found.</p>
@@ -116,7 +76,7 @@ export const UserProfile = () => {
         <motion.img
           src={SHADOWRIGHT}
           className='absolute right-0 z-50 top-[-170px]'
-            //@ts-expect-error
+          //@ts-expect-error
           variants={fadeIn}
           initial={{ x: 50 }}
           animate={{ x: 0 }}
@@ -125,7 +85,7 @@ export const UserProfile = () => {
 
         <motion.div
           className='absolute bottom-0 right-0 left-0 z-20'
-            //@ts-expect-error
+          //@ts-expect-error
           variants={fadeIn}
         >
           <BackGroundGrid />
@@ -133,11 +93,15 @@ export const UserProfile = () => {
 
         {/* Main content with staggered animations */}
         <motion.p
-          className='text-[84px] poppins-semibold  font-extrabold z-30 uppercase'
-            //@ts-expect-error
+          className="text-[84px] poppins-semibold font-extrabold z-30 uppercase"
+          //@ts-expect-error
           variants={scaleUp}
         >
-          {userData?.name || '--'}
+          {isProfileLoading ? (
+            <div className="w-28 h-4 mt-[100px] mb-[30px] rounded bg-gray-200 animate-pulse" />
+          ) : (
+            userData?.name
+          )}
         </motion.p>
 
         <motion.div
@@ -146,142 +110,168 @@ export const UserProfile = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <AvatarProfile
-            size='w-[164px] z-30 h-[164px] border-[5px] border-white'
+          {isProfileLoading ? (
+            <div className="w-[164px] h-[164px] border-[5px] border-white rounded-full bg-gray-200 animate-pulse z-30" />
+          ) : (
+            <AvatarProfile
+              size='w-[164px] z-30 h-[164px] border-[5px] border-white'
               //@ts-expect-error
-            status={false}
-          />
+              status={false}
+            />
+          )}
         </motion.div>
 
         <motion.h3
           className='text-[20px] mt-[30px] font-[500] z-30'
-            //@ts-expect-error
+          //@ts-expect-error
           variants={itemVariants}
         >
-          {userData?.tagline || '--'}
+          {isProfileLoading ? <div className="w-60 h-4 rounded bg-gray-200 animate-pulse mx-auto" /> : userData?.tagline || '--'}
         </motion.h3>
 
         <motion.div
           className='gap-[14px] mt-[30px] flex justify-center items-center z-30'
-            //@ts-expect-error
+          //@ts-expect-error
           variants={itemVariants}
         >
-          {/* <IconPreviewButton /> */}
-          <IconButton />
+          {isProfileLoading ? <div className="w-[118px] h-[48px] rounded bg-gray-200 animate-pulse" /> : <IconButton />}
         </motion.div>
       </motion.div>
-    {
-      userData?.is_open_to_work ?   <motion.h3
-      className="mt-[60px] text-center flex justify-center items-center gap-2"
-        //@ts-expect-error
-      variants={itemVariants}
-    >
-      <motion.div
-        className="w-[25px] h-[25px] bg-[#0DDE3433] rounded-full flex items-center justify-center"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [1, 0.8, 1],
-          rotate: [0, 5, -5, 0],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "anticipate",
-          repeatType: "reverse",
-          times: [0, 0.5, 1],
-        }}
-      >
-        <motion.div
-          className="w-[8px] h-[8px] bg-[#0DDE34] rounded-full"
-          animate={{
-            scale: [1, 0.9, 1],
-            opacity: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </motion.div>
-      Available for work
-    </motion.h3>:   <motion.h3
-        className="mt-[60px] text-center flex justify-center items-center gap-2"
+
+      {isProfileLoading ? (
+        <motion.h3 className="mt-[60px] text-center flex justify-center items-center gap-2" variants={itemVariants}>
+          <div className="w-[150px] h-6 rounded bg-gray-200 animate-pulse" />
+        </motion.h3>
+      ) : userData?.is_open_to_work ? (
+        <motion.h3
+          className="mt-[60px] text-center flex justify-center items-center gap-2"
           //@ts-expect-error
-        variants={itemVariants}
-      >
-        <motion.div
-          className="w-[25px] h-[25px] bg-[#f92b2b33] rounded-full flex items-center justify-center"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [1, 0.8, 1],
-            rotate: [0, 5, -5, 0],
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "anticipate",
-            repeatType: "reverse",
-            times: [0, 0.5, 1],
-          }}
+          variants={itemVariants}
         >
           <motion.div
-            className="w-[8px] h-[8px] bg-red-500 rounded-full"
+            className="w-[25px] h-[25px] bg-[#0DDE3433] rounded-full flex items-center justify-center"
             animate={{
-              scale: [1, 0.9, 1],
-              opacity: [1, 0.9, 1],
+              scale: [1, 1.3, 1],
+              opacity: [1, 0.8, 1],
+              rotate: [0, 5, -5, 0],
             }}
             transition={{
               duration: 1.5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: "anticipate",
+              repeatType: "reverse",
+              times: [0, 0.5, 1],
             }}
-          />
-        </motion.div>
-      Not available for work
-      </motion.h3>
-    }
-      
+          >
+            <motion.div
+              className="w-[8px] h-[8px] bg-[#0DDE34] rounded-full"
+              animate={{
+                scale: [1, 0.9, 1],
+                opacity: [1, 0.9, 1],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+          Available for work
+        </motion.h3>
+      ) : (
+        <motion.h3
+          className="mt-[60px] text-center flex justify-center items-center gap-2"
+          //@ts-expect-error
+          variants={itemVariants}
+        >
+          <motion.div
+            className="w-[25px] h-[25px] bg-[#f92b2b33] rounded-full flex items-center justify-center"
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [1, 0.8, 1],
+              rotate: [0, 5, -5, 0],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "anticipate",
+              repeatType: "reverse",
+              times: [0, 0.5, 1],
+            }}
+          >
+            <motion.div
+              className="w-[8px] h-[8px] bg-red-500 rounded-full"
+              animate={{
+                scale: [1, 0.9, 1],
+                opacity: [1, 0.9, 1],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </motion.div>
+          Not available for work
+        </motion.h3>
+      )}
+
       <motion.div
         className='flex max-w-[1104px] mx-auto gap-[24px] mt-[40px] mb-[50px]'
-          //@ts-expect-error
+        //@ts-expect-error
         variants={itemVariants}
       >
-        <StarBorder as="button" color="#0389FF" speed="4s">
-          <h1 className='text-[30px] font-[500]'>
-            {userData?.experience_level?.level || "--"}
-          </h1>
-          <p className='text-[14px]'>Experience Level</p>
-        </StarBorder>
-        <StarBorder as="button" color="#0389FF" speed="4s">
-          <h1 className='text-[30px] font-[500]'>
-            {userData?.experience_years ?? "--"}
-          </h1>
-          <p className='text-[14px]'>Years of Experience</p>
-        </StarBorder>
-        <StarBorder as="button" color="#0389FF" speed="4s">
-          <h1 className='text-[30px] font-[500]'>
-            {userData?.role?.name || "--"}
-          </h1>
-          <p className='text-[14px]'>Specialization Type</p>
-        </StarBorder>
-        <StarBorder as="button" color="#0389FF" speed="4s">
-          <h1 className='text-[30px] font-[500]'>
-            {userData?.date_of_birth ? calculateAge(userData.date_of_birth) : "--"}
-          </h1>
-          <p className='text-[14px]'>Age</p>
-        </StarBorder>
+        {isProfileLoading ? (
+          <>
+            <div className="w-[275px] h-28 rounded bg-gray-200 animate-pulse" />
+            <div className="w-[275px] h-28 rounded bg-gray-200 animate-pulse" />
+            <div className="w-[275px] h-28 rounded bg-gray-200 animate-pulse" />
+            <div className="w-[275px] h-28 rounded bg-gray-200 animate-pulse" />
+          </>
+        ) : (
+          <>
+            <StarBorder as="button" color="#0389FF" speed="4s">
+              <h1 className='text-[30px] font-[500]'>
+                {userData?.experience_level?.level || "--"}
+              </h1>
+              <p className='text-[14px]'>Experience Level</p>
+            </StarBorder>
+            <StarBorder as="button" color="#0389FF" speed="4s">
+              <h1 className='text-[30px] font-[500]'>
+                {userData?.experience_years ?? "--"}
+              </h1>
+              <p className='text-[14px]'>Years of Experience</p>
+            </StarBorder>
+            <StarBorder as="button" color="#0389FF" speed="4s">
+              <h1 className='text-[30px] font-[500]'>
+                {userData?.role?.name || "--"}
+              </h1>
+              <p className='text-[14px]'>Specialization Type</p>
+            </StarBorder>
+            <StarBorder as="button" color="#0389FF" speed="4s">
+              <h1 className='text-[30px] font-[500]'>
+                {userData?.date_of_birth ? calculateAge(userData.date_of_birth) : "--"}
+              </h1>
+              <p className='text-[14px]'>Age</p>
+            </StarBorder>
+          </>
+        )}
       </motion.div>
+
       <motion.h3
         className='text-[24px] text-center max-w-[1104px] mx-auto mb-[70px]'
-          //@ts-expect-error
+        //@ts-expect-error
         variants={itemVariants}
       >
-        {userData?.bio || 'No bio provided.'}
+        {isProfileLoading ? (
+          <div className="w-full h-6 rounded bg-gray-200 animate-pulse mx-auto" />
+        ) : (
+          userData?.bio || 'No bio provided.'
+        )}
       </motion.h3>
     </>
   );
-}
+};
 
 const avatarData = [
   {
@@ -306,8 +296,7 @@ const ToolTips = () => {
           key={index}
           whileHover={{ scale: 1.2, zIndex: 10 }}
           transition={{ type: 'spring', stiffness: 300 }}
-          className={`w-[32px] h-[32px] rounded-full object-cover border-2 hover:scale-110 ${index !== 0 ? 'ml-[-20px]' : ''
-            }`}
+          className={`w-[32px] h-[32px] rounded-full object-cover border-2 hover:scale-110 ${index !== 0 ? 'ml-[-20px]' : ''}`}
           src={avatar.src}
           title={avatar.title}
           alt={`Avatar ${index + 1}`}
@@ -330,7 +319,7 @@ const IconButton = () => {
       >
         <img src={EDITPEN} />
         Edit
-      </motion.button></Link>
+      </motion.button>
+    </Link>
   )
 }
-

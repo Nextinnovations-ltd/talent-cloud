@@ -2,8 +2,8 @@ import React from "react";
 
 const ApplyJobCardSkeleton: React.FC = () => {
   return (
-    <div className="animate-pulse bg-white border rounded-lg p-[30px] w-[396px] h-[496px] mx-auto">
-      <div className="w-[64px] h-[64px] bg-gray-300 rounded mb-6"></div>
+    <div className="animate-pulse bg-white border rounded-[17px] p-[30px] w-[396px] h-[496px] mx-auto">
+      <div className="w-[64px] h-[64px] bg-gray-300 rounded-full mb-6"></div>
       <div className="h-6 bg-gray-300 rounded w-3/4 mb-4"></div>
       <div className="h-5 bg-gray-200 rounded w-2/4 mb-6"></div>
 
