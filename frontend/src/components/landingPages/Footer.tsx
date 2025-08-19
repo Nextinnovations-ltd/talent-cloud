@@ -30,7 +30,7 @@ const Footer = () => {
              
               </div>
          </div>
-          <p  className='text-white text-[14px] font-[400] leading-[25px ] tracking-[0.56px] text-left md:text-center pt-[46px] md:pt-[72px] pb-[30px]'>Copyright @Talent Cloud, 2025</p>
+          <p  className='text-white text-[14px] font-[400] leading-[25px ] tracking-[0.56px] text-left md:text-center pt-[46px] md:pt-[72px] pb-[30px]'>Copyright © Talent Cloud, 2025</p>
       </div>
       
   )

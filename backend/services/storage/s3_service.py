@@ -17,6 +17,19 @@ class S3Service:
           )
           self.bucket_name = settings.AWS_BUCKET_NAME
 
+     @staticmethod
+     def get_public_url(file_path):
+          """
+          Get public URL for S3 file (if bucket allows public access)
+          """
+          if not file_path:
+               return None
+               
+          bucket_name = settings.AWS_BUCKET_NAME
+          region = settings.AWS_S3_REGION_NAME
+          
+          return f"https://{bucket_name}.s3.{region}.amazonaws.com/{file_path}"
+
      @classmethod
      def get_content_type_from_filename(cls, filename):
           """Get proper content type from filename"""
@@ -143,8 +156,8 @@ class S3Service:
           
           # Organize by file type and user
           path_mapping = {
-               'resume': f'resumes/{user_id}/{timestamp}/{unique_id}.{extension}',
-               'profile_photo': f'profiles/{user_id}/photos/{unique_id}.{extension}',
+               'resume': f'resumes/{user_id}/{unique_id}.{extension}',
+               'profile_image': f'profiles/{user_id}/{unique_id}.{extension}',
                'cover_letter': f'cover-letters/{user_id}/{timestamp}/{unique_id}.{extension}',
                'company_logo': f'companies/{user_id}/logos/{unique_id}.{extension}',
                'job_attachment': f'jobs/{user_id}/attachments/{timestamp}/{unique_id}.{extension}',

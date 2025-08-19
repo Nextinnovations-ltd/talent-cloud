@@ -1,30 +1,39 @@
 
 import './Footer.css'
-import icon1 from "@/assets/Group 2339.svg";
-import icon2 from "@/assets/Group 2340.svg";
-import icon3 from "@/assets/Group 2341.svg";
+import icon1 from "@/assets/linkedin.svg";
+import icon2 from "@/assets/facebook.svg";
+import icon3 from "@/assets/viber.svg";
+import TalentCloudImg from "@/assets/Talent Cloud.png";
+import { HashLink } from 'react-router-hash-link';
 const UpdatedFooter = () => {
   return (
-    <div className='bg-[#000] w-full '>
+    <div className='bg-[#000] w-full relative '>
         <div className="max-w-[1240px] mx-auto pt-[40px] md:pt-[77px] pl-5 pr-5">
-        <div className="flex flex-col justify-start md:flex-row md:justify-between">
-          <div className="max-w-[172px]">
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ml-[14px] md:ml-[40px]">Explore</h1>
+        <div className="flex flex-col justify-start md:flex-row md:justify-between gap-5">
+          <div className="w-[203px]">
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">Explore</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[20px] md:mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ml-[14px] md:ml-[40px]">What You Get</p>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ml-[14px] md:ml-[40px]">Why us</p>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] ml-[14px] md:ml-[40px] mb-[45px] md:mb-0">Find Jobs</p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
+              <HashLink smooth to="#what-you-get">What You Get</HashLink>
+            
+            </p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
+              <HashLink smooth to="#why-us">Why us</HashLink>
+            </p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-[45px] md:mb-0">
+               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+            </p>
           </div>
-          <div className="max-w-[172px]">
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ml-[14px] md:ml-[40px]">About</h1>
+          <div className="w-[203px]">
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ml-[14px] md:ml-[40px]">Contact us</p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</p>
 
           </div>
-          <div className="max-w-[172px]">
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] md:mb-[75px] ml-[14px] md:ml-[40px]  mt-[57px] mt-0">Upcoming</h1>
+          <div className="w-[203px]">
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] md:mb-[15px] mb-[15px]  mt-[57px]  md:mt-0">Upcoming</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ml-[14px] md:ml-[40px]">Blog</p>
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Blog</p>
           
           </div>
           <div className="max-w-[289px]">
@@ -35,7 +44,7 @@ const UpdatedFooter = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-[64px] md:mt-[166px] gap-[25px] md:gap-0">
-        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright @Talent Cloud, 2025</p>
+        <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud, 2025</p>
           <div className="flex gap-[18px]">
 <img src={icon1} alt="" />
 <img src={icon2} alt="" />
@@ -49,7 +58,8 @@ const UpdatedFooter = () => {
           </div>
         </div>
        </div>
-        <p  className='text-[#0389FF] whitespace-nowrap text-[14.4vw] font-[500] leading-[160%] text-center uppercase font-[Pridi]'>Talent Cloud</p>
+      {/*  <span  className='text-[#0389FF] whitespace-nowrap text-[14.4vw] font-[500] leading-[160%] text-center uppercase font-[Pridi] '>Talent Cloud</span> */}
+      <img src={TalentCloudImg} alt="" className='mt-[44px] md:mt-[132px]' />
     </div>
     
 )
