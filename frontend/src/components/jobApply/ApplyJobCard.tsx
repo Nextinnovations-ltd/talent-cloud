@@ -57,7 +57,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
     <div className="relative w-[400px] 2xl:w-[400px] flex items-center justify-center mx-auto">
       <div
         ref={cardRef}
-        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[480px] h-full w-[350px] md:w-[360px]  xl:w-[400px] lg:w-[300px]   rounded-[17px] transition-colors flex flex-col ${
+        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[480px] h-full w-[350px] md:w-[360px]  2xl:w-[450px] xl:w-[400px] lg:w-[300px]   rounded-[17px] transition-colors flex flex-col ${
           isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
         } ${job?.is_expired && 'opacity-100'}`}
         onClick={() => onClick(job)}
