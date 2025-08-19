@@ -106,7 +106,9 @@ jobs:
 
 
                 sudo rm -rf /var/www/dist
+                sudo rm -rf /etc/supervisor/conf.d/talent-cloud_supervisord.conf
                 sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/frontend/dist /var/www/dist
+                sudo cp -r /home/ubuntu/talentcloud-networks/talent-cloud/configurations/staging/talent-cloud_supervisord.conf /etc/supervisor/conf.d/
 
                 sudo systemctl restart nginx
 

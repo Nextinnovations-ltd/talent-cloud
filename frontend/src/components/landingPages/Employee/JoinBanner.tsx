@@ -1,10 +1,8 @@
 import linearBg from '../../../assets/Employee/Frame 36553.png'
-import { useNavigate } from "react-router-dom";
 import CommonButton from '../commonBtn/button';
 
 const JoinBanner = () => {
 
-  const navigate = useNavigate();
 
   return (
     <div style={{

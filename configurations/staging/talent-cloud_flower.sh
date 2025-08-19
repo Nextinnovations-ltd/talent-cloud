@@ -11,4 +11,4 @@ export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DIR:$PYTHONPATH
 
 #Command to run the progam under supervisord
-exec celery -A ${DJANGO_CELERY_APP} flower --port=5555  
+exec celery -A ${DJANGO_CELERY_APP} flower --port=5555  --url_prefix=/flower

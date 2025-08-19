@@ -139,7 +139,11 @@ export const UserProfile = () => {
       </motion.div>
 
       {isProfileLoading ? (
-        <motion.h3 className="mt-[60px] text-center flex justify-center items-center gap-2" variants={itemVariants}>
+       
+        <motion.h3 className="mt-[60px] text-center flex justify-center 
+        items-center gap-2"
+         //@ts-ignore
+         variants={itemVariants}>
           <div className="w-[150px] h-6 rounded bg-gray-200 animate-pulse" />
         </motion.h3>
       ) : userData?.is_open_to_work ? (
