@@ -4,7 +4,7 @@ import brainstormImg from '../../../assets/Employee/Team Brainstorming 5.png';
 import teamSuccessImg from '../../../assets/Employee/Team Success 3.png';
 const WhyJoinTC = () => {
   return (
-      <div className='max-w-[1240px] mx-auto pt-12 lg:pt-[67px]  flex flex-col items-center justify-center pl-6 pr-6'>
+      <div id='why-us' className='max-w-[1240px] mx-auto pt-12 lg:pt-[67px]  flex flex-col items-center justify-center pl-6 pr-6'>
           <h1 className='text-black text-[20px] lg:text-[40px] font-[600] text-center leading-normal lg:leading-[76px] uppercase'>WHY JOIN TALENT CLOUD ?</h1>
           <div className="mt-8 lg:mt-[48px] flex flex-col lg:flex-row gap-6 lg:gap-8 w-full justify-center items-center">
               <div className="w-full max-w-full md:max-w-[80%] lg:w-[60%] lg:max-w-[697px] px-4 py-[42px] lg:p-6 bg-[#F1F7FF] rounded-[25px] shadow-[0_1px_3px_0_#A6AFC366] h-[534px] lg:h-[400px] flex flex-col lg:flex-row items-center gap-3">

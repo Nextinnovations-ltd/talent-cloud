@@ -143,10 +143,10 @@ export const Home: React.FC = () => {
   }, [data?.data.next, isFetching, isLoadingMore]);
 
   return (
-    <div>
+    <div className="container mx-auto" >
       <ApplyJobFilters onFiltersChange={handleFiltersChange} />
 
-      <div className="container mx-auto mb-[50px] items-center p-4 flex justify-between">
+      <div className="container mx-auto mb-[50px] 2xl:px-[100px] items-center p-4 flex justify-between">
         <h3>{data?.data.count || 0} job opportunities waiting.</h3>
         <PostUploadedCombo
           ordering={filters.ordering}

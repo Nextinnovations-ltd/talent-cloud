@@ -396,10 +396,10 @@ const HeroSection = () => {
   return (
     <div>
       <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
-        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-[25px] mt-[22px]">
-          <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[24px] pb-[24px] relative z-10 pr-5 pl-5 ">
+        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-none md:rounded-[25px] mt-0 md:mt-[22px]">
+          <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
             {/* logo SVG here */}
-            <img src={TalentCloudLogoImg} alt="" className="w-[118px] md:w-[198px]" />
+            <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[206px] h-[40px] md:h-[60px] object-cover" />
             <ul className=" gap-[48px] hidden md:flex">
               <li><Link to="">Why us</Link></li>
               <li><Link to="">About us</Link></li>

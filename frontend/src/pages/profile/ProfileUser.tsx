@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DialogBox } from "@/components/common/DialogBox";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PageInitialLoading } from "@/components/common/PageInitialLoading";
 import { ProfileTitle } from "@/components/common/ProfileTitle";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { UserProfileForm } from "@/components/userSetting/userProfileForm";
 import { useApiCaller } from "@/hooks/useApicaller";
@@ -174,20 +172,8 @@ export const ProfileUser = () => {
             setPreview={setPreview}
             preview={preview}
             setIsOpen={setIsOpen}
+            isSubmitting={isSubmitting}
             />
-         
-          <div className="mt-[60px] ">
-            <div className="max-w-[672px] flex items-center justify-end">
-              <Button
-                type="submit"
-                title="Save Button"
-                className="w-[155px] disabled:bg-[#78acda] mt-[30px] h-[48px] bg-[#0389FF] text-white rounded-[30px]"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? <LoadingSpinner /> : "Save Profile"}
-              </Button>
-            </div>
-          </div>
         </form>
       </Form>
       <DialogBox

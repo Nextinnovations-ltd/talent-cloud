@@ -97,7 +97,7 @@ export const ApplyJobFilters: React.FC<ApplyJobFiltersProps> = ({ onFiltersChang
                 scale,
                 boxShadow,
             }}
-            className="sticky top-[100px] z-[99] container h-[64px] bg-[#F3F4F6] rounded-[10px] mx-auto mb-[50px] items-center gap-[8px] p-4 flex justify-start"
+            className="sticky top-[100px] z-[99] container h-[64px] bg-[#F3F4F6] rounded-[10px] mx-auto mb-[50px] items-center gap-[8px] p-4 flex  justify-start"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{

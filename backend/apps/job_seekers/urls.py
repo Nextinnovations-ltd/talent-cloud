@@ -4,6 +4,7 @@ from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, JobSee
 from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
 from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
+from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, GetProfileFilesAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
 from .views.certification_view import CertificationViewSet
 from .views.education_view import EducationViewSet
 from .views.experience_view import ExperienceViewSet
@@ -44,6 +45,11 @@ urlpatterns = [
      path('jobseeker/profile-score/', ProfileScoreAPIView.as_view(), name='jobseeker-profile-score'),
      path('jobseeker/setting/', JobSeekerSettingAPIView.as_view(), name='jobseeker-setting'),
      path('s3/upload/', S3UploadAPIView.as_view(), name='s3-upload'),
+     
+     path('job-seekers/profile/upload/image/', ProfileImageUploadAPIView.as_view(), name='profile-image-upload'),
+     path('job-seekers/profile/upload/resume/', ProfileResumeUploadAPIView.as_view(), name='profile-resume-upload'),
+     path('job-seekers/profile/upload/confirm/', ConfirmProfileUploadAPIView.as_view(), name='confirm-profile-upload'),
+     path('job-seekers/profile/files/', GetProfileFilesAPIView.as_view(), name='get-profile-files'),
 ]
 
 urlpatterns += router.urls

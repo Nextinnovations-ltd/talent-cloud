@@ -3,11 +3,13 @@ import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import { Link } from "react-router-dom";
 import HeroImg from "@/assets/Employee/Frame 36555.png";
 import bgImage from "@/assets/Employee/Frame 1618873013.png";
+import { HashLink } from 'react-router-hash-link';
 
 
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { Button } from "@/components/ui/button";
+
 
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
@@ -15,25 +17,25 @@ const HeroSection = () => {
   return (
     <div>
       <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]">
-        <nav className="max-w-[1240px] mx-auto flex justify-between items-center pt-[20px] pb-[20px] relative z-10 pr-5 pl-5 ">
+        <nav className="max-w-[1240px] mx-auto flex justify-between items-center  relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
           {/* logo SVG here */}
           <img
             src={TalentCloudLogoImg}
             alt=""
-            className="w-[118px] md:w-[198px]"
+            className="w-[185px] md:w-[206px] h-[40px] md:h-[60px] object-cover"
           />
           <ul className=" gap-[48px] hidden md:flex">
             <li>
-              <Link to="">Why us</Link>
+              <HashLink smooth to="#why-us">Why us</HashLink>
             </li>
             <li>
-              <Link to="">What You Get</Link>
+               <HashLink smooth to="#what-you-get">What You Get</HashLink>
             </li>
             <li>
-              <Link to="">Find Jobs</Link>
+               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
             </li>
           </ul>
-          <Link to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
+          <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
           <div className=" hidden md:flex">
           <CommonButton title="Get Started" url='/jobseeker/lp'/>
           </div>
@@ -73,10 +75,10 @@ const HeroSection = () => {
 
 
                         <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                          <li><Link to="">Why us</Link></li>
-                          <li><Link to="">What You Get</Link></li>
-                          <li><Link to="">Find Jobs</Link></li>
-                          <li><Link to="">For Employee</Link></li>
+                          <li><HashLink smooth to="#why-us">Why us</HashLink></li>
+                          <li> <HashLink smooth to="#what-you-get">What You Get</HashLink></li>
+                          <li><HashLink smooth to="#find-jobs">Find Jobs</HashLink></li>
+                          <li><Link target="_blank"  to={'/emp/lp'}>For Employee</Link></li>
                         </ul>
 <Link to='/' target="_blank">
                         <Button className="relative bg-[#0481EF] text-white rounded-[12px] p-[10px] w-[110px] h-[38px] border-2 border-[#0481EF] overflow-hidden group">
@@ -106,7 +108,7 @@ const HeroSection = () => {
           <div className="max-w-[641px] flex flex-col justify-center items-start gap-6 md:gap-8">
             <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px ] md:leading-[66.7px] uppercase text-black">
               Your Next Big <br></br> Opportunity
-              <Link to=''><span className="text-[#0481EF]"> Starts Here</span></Link>
+              <Link to='/emp/lp'><span className="text-[#0481EF]"> Starts Here</span></Link>
               
             </h1>
             <p className="md:max-w-[532px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[22.8px] md:leading-[30.4px]">
