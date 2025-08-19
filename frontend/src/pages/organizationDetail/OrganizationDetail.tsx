@@ -96,7 +96,7 @@ const OrganizationDetail = () => {
       <div 
         className="w-full pt-[200px] h-[400px] bg-[url('https://en.idei.club/uploads/posts/2023-03/1679223637_en-idei-club-p-office-background-image-dizain-krasivo-1.jpg')] bg-cover bg-center"
       >
-        <div className="bg-white container flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
+        <div className="bg-white container 2xl:px-[50px] flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
           <div className="">
             <img src={organization.image_url} width={160} className="rounded-full"/>
             <div className="flex gap-[32px] mt-[48px]">
@@ -133,7 +133,7 @@ const OrganizationDetail = () => {
           </div>
         </div>
       </div>
-      <div className="mt-[280px] container rounded-lg mx-auto">
+      <div className="mt-[280px] container 2xl:px-[50px] rounded-lg mx-auto">
         <div>
           <h3 className="text-[26px] font-semibold">About Company</h3>
           <p className="mt-[20px] text-[#6B6B6B] text-[18px]">{organization.description}</p>

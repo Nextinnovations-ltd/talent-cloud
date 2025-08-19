@@ -10,6 +10,7 @@ import SKILLS from '@/assets/Skills.svg'
 import DOT from '@/assets/Ellipse.svg'
 import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import DescriptionSplit from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit";
 
 export type Job = {
   id: number;
@@ -54,10 +55,10 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
 
 
   return (
-    <div className="relative w-[400px] mx-auto">
+    <div className="relative w-[400px] 2xl:w-[400px] flex items-center justify-center mx-auto">
       <div
         ref={cardRef}
-        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[429px] h-full w-[400px] rounded-[17px] transition-colors flex flex-col ${
+        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[480px] h-full w-[350px] md:w-[360px]  2xl:w-[450px] xl:w-[400px] lg:w-[300px]   rounded-[17px] transition-colors flex flex-col ${
           isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
         } ${job?.is_expired && 'opacity-100'}`}
         onClick={() => onClick(job)}
@@ -130,9 +131,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           </div>
         </div>
 
-        <div className="flex-grow mt-4">
-          <h3 className="text-[14px] line-clamp-3">{job.description}</h3>
-        </div>
+        <DescriptionSplit content={job?.description}/>
 
         <div className="border-t-[1px] border-slate-300 my-[20px]"></div>
 

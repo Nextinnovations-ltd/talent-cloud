@@ -22,13 +22,15 @@ const JobMatch = () => {
         FIND YOUR JOB MATCH
       </h1>
 
-      <div className="max-w-[1240px] mx-auto grid grid-cols-3 gap-6">
+      <div className="max-w-[1240px] mx-auto  flex flex-col justify-center items-center  md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
           recentJobs?.map((job: any) => (
             <ApplyJobCard
               key={job.id}
               job={job}
-              onClick={() => { }}
+              onClick={() => {
+                navigate(`/auth/login`)
+              }}
               isSelected={false}
             />
           ))

@@ -46,7 +46,7 @@ const AdminLayout = () => {
           type: "success",
         });
         
-        // Add a small delay before refetching to ensure backend update is complete
+        // Add a small delay before refetching to ensure backenbbbd update is complete
         setTimeout(() => {
           refetch();
           RefetchIsRead()
@@ -66,8 +66,16 @@ const AdminLayout = () => {
       console.log('❌ WebSocket disconnected');
     };
 
-    
+    const interval = setInterval(() => {
+      if (socketRef.current?.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({ type: 'ping' }));
+      }
+    }, 30000);
 
+    return () => {
+      clearInterval(interval);
+      socketRef.current?.close();
+    };
   }, [RefetchIsRead, refetch, showNotification, token]);
 
   return (

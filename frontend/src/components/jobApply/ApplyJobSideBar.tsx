@@ -8,6 +8,7 @@ import { CompanyAbout } from '../common/ApplyJob/CompanyAbout';
 import AboutJob from '../common/ApplyJob/AboutJob';
 import { useGetDetailJobApplyCardQuery } from '@/services/slices/jobApplySlice';
 import { X } from 'lucide-react';
+import DescriptionSplit from '@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit';
 
 
 type ApplyJobSideBarProps = {
@@ -64,13 +65,16 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
         {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
         <JobInfoGrid job={selectedJob} />
-        <SkillsSection skills={jobDetails?.skills || []} />
+        {
+          (jobDetails?.skills?.length ?? 0) > 0 && <SkillsSection skills={jobDetails?.skills || []} />
+        }
         <ActionButtons
           alreadyApplied={jobDetails?.is_applied}
           jobId={selectedJob?.id}
           isBookmarked={jobDetails?.is_bookmarked}
         />
-        <p className="mt-2">{jobDetails?.description}</p>
+
+        <DescriptionSplit content={jobDetails?.description || ""}/>
         {
           jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
         }

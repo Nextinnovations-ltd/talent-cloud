@@ -9,7 +9,7 @@ interface JobCardGridProps {
 }
 
 const JobCardGrid: React.FC<JobCardGridProps> = ({ jobs, onJobClick, selectedJobId }) => (
-  <div className="grid mx-auto justify-center items-center transition-all gap-[30px] duration-300 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+  <div className="max-w-[1240px] mx-auto  flex flex-col justify-center items-center  md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
     {jobs.map((job) => (
      <Link to={job?.is_expired ? `/user/expiredJobDetails/${job.id}`:`/?jobId=${job.id}`}>
       <ApplyJobCard
