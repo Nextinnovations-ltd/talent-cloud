@@ -10,7 +10,6 @@ import SKILLS from '@/assets/Skills.svg'
 import DOT from '@/assets/Ellipse.svg'
 import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import DescriptionsContent from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionsContent";
 import DescriptionSplit from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit";
 
 export type Job = {
