@@ -105,7 +105,6 @@ export type JobSeekerAppliedResponse = {
   is_expired: boolean,
 };
 
-
 // bookmarked jobs
 export type JobSeekerBookMarkedJobsResponse = {
   status: boolean;
@@ -123,28 +122,26 @@ export type JobSeekerBookMarkedJobsDataResponse = {
 export const extendedJobApplySlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getJobApplyCard: builder.query<JobApplyCardResponse, JobApplyCardParams>({
-      query: (params) => ({
-        url: '/job-posts/discover/',
-        params: {
-          page: params.page,
-          job_type: params.job_type,
-          work_type: params.work_type,
-          project_duration: params.project_duration,
-          salary_rate: params.salary_rate,
-          ordering: params?.ordering,
-          search:params.search
-        },
-      }),
+      query: (params) => {
+        // Remove undefined / null keys
+        const filteredParams = Object.fromEntries(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        );
+    
+        return {
+          url: '/job-posts/discover/',
+          params: filteredParams,
+        };
+      },
       providesTags: ['JobList'],
       keepUnusedDataFor: 0,
     }),
-
     getDetailJobApplyCard: builder.query<JobDetailJobApplyCardResponse, number |  string>({
     query: (id) => `/job-posts/${id}/`,
       providesTags: ['JobList','bookmarked'],
       keepUnusedDataFor: 0,
     }),
-
     bookMarkedJob: builder.mutation<BookmarkedJobResponse, number>({
       query: (jobId) => ({
         url: `/job-posts/${jobId}/bookmark/`,
