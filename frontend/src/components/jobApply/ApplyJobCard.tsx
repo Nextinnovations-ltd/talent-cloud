@@ -10,6 +10,8 @@ import SKILLS from '@/assets/Skills.svg'
 import DOT from '@/assets/Ellipse.svg'
 import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import DescriptionsContent from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionsContent";
+import DescriptionSplit from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit";
 
 export type Job = {
   id: number;
@@ -130,9 +132,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           </div>
         </div>
 
-        <div className="flex-grow mt-4">
-          <h3 className="text-[14px] line-clamp-3">{job.description}</h3>
-        </div>
+        <DescriptionSplit content={job?.description}/>
 
         <div className="border-t-[1px] border-slate-300 my-[20px]"></div>
 
