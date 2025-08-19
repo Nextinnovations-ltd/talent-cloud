@@ -7,6 +7,7 @@ import EorSection from "@/components/landingPages/JobPortal/EorSection";
 import SuccessStory from "@/components/landingPages/JobPortal/SuccessStory";
 import FAQ from "@/components/landingPages/FAQ";
 import { Footer } from "react-day-picker";
+import UpdatedFooter from "@/components/landingPages/UpdatedFooter";
 const JobSeekerLandingPage = () => {
   
   return (
@@ -17,7 +18,8 @@ const JobSeekerLandingPage = () => {
       <EorSection />
       <SuccessStory />
       <FAQ />
-      <Footer/>
+      {/*       <Footer/> */}
+      <UpdatedFooter/>
 </div>
   );
 };
