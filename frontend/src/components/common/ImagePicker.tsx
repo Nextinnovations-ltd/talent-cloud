@@ -137,6 +137,7 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
   className={`object-contain w-full h-full opacity-50`}
 />
 )}
+
 </div>
       <div className="flex ">
         <Button
@@ -144,6 +145,7 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
           className="p-0 w-[139px] text-white h-[45px] bg-[#0389FF]"
           disabled={isUploading}
         >
+          
           <div {...getRootProps({ noDrag: true })} className="p-0">
             Change photo
             <input type="file" {...getInputProps()} className="hidden" />

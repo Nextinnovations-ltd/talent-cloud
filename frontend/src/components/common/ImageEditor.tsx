@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogFooter } from "../ui/dialog";
 import "./imageEditor.css";
 import { RotateCwIcon } from "lucide-react";
 import { PrimaryButton } from "./PrimaryButton";
+import { Skeleton } from "../ui/skeleton";
 
 export interface ImageEditorProps {
   isModalOpen: boolean;
@@ -34,8 +35,11 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   };
 
   return (
-    <Dialog  open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent className="w-[90%] rounded-[15px]  md:w-full" >
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DialogContent onInteractOutside={(e) => {
+        e.preventDefault();
+      }}
+        className="w-[90%] rounded-[15px]  md:w-full" >
         <h3 className=" mx-auto font-[600] text-[28px]">Adjust Photo</h3>
         <div className="flex flex-col  items-center">
           {preview && (
@@ -52,42 +56,46 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
             </div>
           )}
 
-          <div className="flex px-[30px] flex-row mt-4 justify-center w-full items-cente gap-4">
-            {/* Zoom Slider */}
-            <div className="flex w-full items-center">
-              <input
-                id="scale"
-                type="range"
-                min="0.5"
-                max="2"
-                step="0.1"
-                value={scale}
-                onChange={handleScaleChange}
-                className="w-full h-2 bg-[#CBD5E1] rounded-lg appearance-none cursor-pointer"
+          {
+            isUploading && <Skeleton className="h-[20px] w-[87%] mt-4 bg-slate-200 " />
+          }
+          {
+            !isUploading && <div className="flex px-[30px] flex-row mt-4 justify-center w-full items-cente gap-4">
+              {/* Zoom Slider */}
+              <div className="flex w-full items-center">
+                <input
+                  id="scale"
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.1"
+                  value={scale}
+                  onChange={handleScaleChange}
+                  className="w-full h-2 bg-[#CBD5E1] rounded-lg appearance-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #0389FF 0%, #0389FF ${((scale - 0.5) * 100) / 1.5
+                      }%, #CBD5E1 ${((scale - 0.5) * 100) / 1.5}%, #CBD5E1 100%)`,
+                  }}
+                />
+                {/* <span className="text-sm">{scale.toFixed(1)}x</span> */}
+              </div>
+
+              {/* Rotation Button */}
+              <Button
+                type="button"
+                variant={"ghost"}
+                onClick={handleRotateClick}
                 style={{
-                  background: `linear-gradient(to right, #0389FF 0%, #0389FF ${
-                    ((scale - 0.5) * 100) / 1.5
-                  }%, #CBD5E1 ${((scale - 0.5) * 100) / 1.5}%, #CBD5E1 100%)`,
+                  transform: `rotate(${rotation}deg)`,
+                  transition: "transform 0.5s ease",
                 }}
-              />
-              {/* <span className="text-sm">{scale.toFixed(1)}x</span> */}
+              >
+                <RotateCwIcon />
+              </Button>
+
+              {/* Chosen Button */}
             </div>
-
-            {/* Rotation Button */}
-            <Button
-              type="button"
-              variant={"ghost"}
-              onClick={handleRotateClick}
-              style={{
-                transform: `rotate(${rotation}deg)`,
-                transition: "transform 0.5s ease",
-              }}
-            >
-              <RotateCwIcon />
-            </Button>
-
-            {/* Chosen Button */}
-          </div>
+          }
           <DialogFooter className="w-full mt-[10px] px-[30px]">
             <div className="flex w-full flex-col">
               <PrimaryButton
