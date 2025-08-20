@@ -154,7 +154,6 @@ class JobSeekerService:
           
           with transaction.atomic():
                # Update job seeker profile
-               job_seeker.profile_image_url = OnboardingConstants.DEFAULT_PROFILE_IMAGE
                job_seeker.name = name
                job_seeker.tagline = tagline
                job_seeker.onboarding_step = 2
@@ -278,7 +277,6 @@ class JobSeekerService:
                job_seeker.date_of_birth = data.get("date_of_birth", job_seeker.date_of_birth)
                job_seeker.tagline = data.get("tagline", None)
                job_seeker.bio = data.get("bio", None)
-               job_seeker.resume_url = data.get("resume_url", None)
 
                # Address Create, Update
                address_data = data.get("address", None)
