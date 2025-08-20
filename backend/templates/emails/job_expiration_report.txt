@@ -1,4 +1,4 @@
-TalentCloud Job Expiration Report
+Talent Cloud Job Expiration Report
 ================================
 
 Date: {{ execution_date }}
@@ -28,4 +28,4 @@ EXPIRED JOBS DETAILS
 {{ message }}
 
 ---
-This is an automated report from TalentCloud Job Management System.
+This is an automated report from Talent Cloud Job Management System.

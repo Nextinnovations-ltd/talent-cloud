@@ -50,7 +50,7 @@ def test_notification_templates():
                context = {
                     'name': 'John Doe',
                     'maintenance_info': 'System will be down for 2 hours',
-                    'platform_name': 'TalentCloud'
+                    'platform_name': 'Talent Cloud'
                }
                
                subject = template.render_subject(context)
@@ -99,7 +99,7 @@ def test_notification_templates():
                     channel=NotificationChannel.WEBSOCKET,  # Only websocket for testing
                     template_context={
                          'user_name': test_user.name or test_user.email,
-                         'platform_name': 'TalentCloud'
+                         'platform_name': 'Talent Cloud'
                     }
                )
                print(f"✅ Sent {len(notifications)} direct templated notifications to {test_user.email}")
