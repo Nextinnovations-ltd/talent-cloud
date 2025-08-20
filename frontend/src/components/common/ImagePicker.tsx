@@ -4,11 +4,17 @@ import { useState,useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/button";
 import { ImageEditor } from "./ImageEditor";
+import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
+
+ type FormLike = {
+    setValue: (name: string, value: unknown) => void;
+    clearErrors: (name?: string) => void;
+ };
 
  const ImagePicker = ({setPreview,preview,form,setIsOpen, type = "circle"}:{
     setPreview: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>;
     preview: string | ArrayBuffer | null;
-    form: any;
+    form: FormLike;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     type?: "circle" | "square";
  }) => {
@@ -16,6 +22,8 @@ import { ImageEditor } from "./ImageEditor";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleScaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScale(parseFloat(event.target.value));
@@ -52,10 +60,23 @@ import { ImageEditor } from "./ImageEditor";
 
       setPreview(canvas.toDataURL("image/png"));
 
-      canvas.toBlob((blob) => {
-        if (blob) setIsModalOpen(false);
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+
+        const originalName = selectedFile?.name || "image";
+        const baseName = originalName.replace(/\.[^/.]+$/, "");
+        const rotatedFile = new File([blob], `${baseName}-edited.png`, { type: "image/png" });
+
+        try {
+          setIsUploading(true);
+          await UploadToS3({ file: rotatedFile });
+          setIsModalOpen(false);
+        } finally {
+          setIsUploading(false);
+        }
       }, "image/png");
     };
+
   };
 
     const onDrop = useCallback(
@@ -65,11 +86,17 @@ import { ImageEditor } from "./ImageEditor";
           const reader = new FileReader();
           reader.onload = () => setPreview(reader.result);
           reader.readAsDataURL(acceptedFiles[0]);
+
+
+        
+
+
           form.setValue("profile_image_url", acceptedFiles[0]);
           form.clearErrors("profile_image_url");
+          setSelectedFile(acceptedFiles[0]);
           setIsModalOpen(true);
         },
-        [form]
+        [form, setPreview]
       );
   const rotateImage = () => setRotation((prev) => prev + 90);
 
@@ -115,6 +142,7 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
         <Button
           type="button"
           className="p-0 w-[139px] text-white h-[45px] bg-[#0389FF]"
+          disabled={isUploading}
         >
           <div {...getRootProps({ noDrag: true })} className="p-0">
             Change photo
@@ -125,6 +153,7 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
           type="button"
           className="p-0 w-[139px] shadow-none h-[45px] bg-white text-black"
           onClick={() => setIsOpen(true)}
+          disabled={isUploading}
         >
           <h3 className="font-bold">Remove</h3>
         </Button>
@@ -139,6 +168,7 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
   handleScaleChange={handleScaleChange}
   saveEditedImage={saveEditedImage}
   rotateImage={rotateImage}
+  isUploading={isUploading}
 />    
   </>
 )

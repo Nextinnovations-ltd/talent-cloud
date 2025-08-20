@@ -5,7 +5,7 @@ import "./imageEditor.css";
 import { RotateCwIcon } from "lucide-react";
 import { PrimaryButton } from "./PrimaryButton";
 
-interface ImageEditorProps {
+export interface ImageEditorProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   preview: any;
@@ -14,6 +14,7 @@ interface ImageEditorProps {
   rotateImage: () => void;
   handleScaleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   saveEditedImage: () => void;
+  isUploading?: boolean;
 }
 
 export const ImageEditor: React.FC<ImageEditorProps> = ({
@@ -25,6 +26,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   rotateImage,
   handleScaleChange,
   saveEditedImage,
+  isUploading = false,
 }) => {
   // This function will trigger the rotation and animation for the button
   const handleRotateClick = () => {
@@ -92,7 +94,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 handleClick={saveEditedImage}
                 title="Choose"
                 width={"w-full"}
-                isButtonDisabled={false}
+                isButtonDisabled={isUploading}
+                loading={isUploading}
               />
               {/* <Button className="bg-green-500 text-white">Chosen</Button> */}
               <Button
@@ -100,6 +103,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 variant={"ghost"}
                 onClick={() => setIsModalOpen(false)}
                 className="mt-[16px] text-[#0389FF] font-bold"
+                disabled={isUploading}
               >
                 Close
               </Button>
