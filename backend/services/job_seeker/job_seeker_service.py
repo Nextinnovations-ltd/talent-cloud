@@ -25,6 +25,21 @@ class JobSeekerService:
           return None
      
      @staticmethod
+     def get_job_seeker_resume_url(user):
+          """
+          Retrieves the job seeker resume url and uploaded time.
+          """
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
+
+          return {
+               'message': "Successfully fetched job seeker resume.",
+               'data': {
+                    'resume_url': S3Service.get_public_url(job_seeker.resume_url),
+                    'resume_uploaded_time': job_seeker.resume_upload_time,
+               }
+          }
+     
+     @staticmethod
      def modify_jobseeker_username(user, username):
           """
           Modifies the jobseeker's username to be auto-generated.

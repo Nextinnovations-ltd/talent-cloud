@@ -155,7 +155,7 @@ class ProfileImageUploadAPIView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
 
-@extend_schema(tags=["Profile Upload"])
+@extend_schema(tags=["Resume Upload"])
 class ProfileResumeUploadAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -301,6 +301,150 @@ class ProfileResumeUploadAPIView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
 
+@extend_schema(tags=["Cover Upload"])
+class CoverLetterUploadAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Generate presigned URL for cover upload",
+          request={
+               'application/json': {
+                    'type': 'object',
+                    'properties': {
+                         'filename': {'type': 'string', 'description': 'Original filename'},
+                         'file_size': {'type': 'integer', 'description': 'File size in bytes'},
+                         'content_type': {'type': 'string', 'description': 'MIME type (optional)'},
+                    },
+                    'required': ['filename', 'file_size']
+               }
+          }
+     )
+     def post(self, request):
+          """
+          Generate presigned URL when user confirms resume upload
+          """
+          try:
+               filename = request.data.get('filename')  # Changed from query_params
+               file_size = request.data.get('file_size')
+               content_type = request.data.get('content_type')
+               
+               # Validation
+               if not filename:
+                    raise ValidationError("filename is required")
+               if not file_size:
+                    raise ValidationError("file_size is required")
+               
+               # Convert file_size to integer and validate
+               try:
+                    file_size = int(file_size)
+                    if file_size > 10 * 1024 * 1024:  # 10MB limit for resumes
+                         raise ValidationError("File size cannot exceed 10MB")
+                    if file_size < 1:
+                         raise ValidationError("File size must be greater than 0")
+               except ValueError:
+                    raise ValidationError("Invalid file_size format")
+               
+               # Auto-detect content type if not provided
+               if not content_type:
+                    content_type = S3Service.get_content_type_from_filename(filename)
+               
+               # Validate document content type
+               allowed_doc_types = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'text/plain'
+               ]
+               if content_type not in allowed_doc_types:
+                    raise ValidationError(f"Only document files are allowed. Supported: PDF, DOC, DOCX, TXT")
+               
+               # Cancel any pending resume uploads
+               pending_upload = FileUpload.objects.filter(
+                    user=request.user,
+                    file_type='resume',
+                    upload_status='pending'
+               ).first()
+               
+               if pending_upload:
+                    pending_upload.upload_status = 'cancelled'
+                    pending_upload.save()
+                    logger.info(f"Cancelled pending resume upload {pending_upload.id} for user {request.user.id}")
+               
+               # Delete previous uploaded resume
+               previous_resumes = FileUpload.objects.filter(
+                    user=request.user,
+                    file_type='resume',
+                    upload_status='uploaded'
+               )
+               
+               for prev_resume in previous_resumes:
+                    S3Service.delete_file(prev_resume.file_path)
+                    prev_resume.upload_status = 'deleted'
+                    prev_resume.save()
+                    logger.info(f"Deleted previous resume {prev_resume.id} for user {request.user.id}")
+               
+               # Generate unique file path
+               file_path = S3Service.generate_unique_file_path(
+                    user_id=request.user.id,
+                    file_type='resume',
+                    original_filename=filename
+               )
+               
+               # Generate presigned URL
+               upload_data = S3Service.generate_presigned_upload_url(
+                    file_path=file_path,
+                    file_type=content_type,
+                    file_size=file_size,
+                    expiration=3600
+               )
+               
+               if not upload_data:
+                    raise ValidationError("Failed to generate upload URL")
+               
+               # Create tracking record
+               file_upload = FileUpload.objects.create(
+                    user=request.user,
+                    file_type='resume',
+                    original_filename=filename,
+                    file_path=file_path,
+                    file_size=file_size,
+                    content_type=content_type,
+                    upload_status='pending',
+                    upload_url_expires_at=datetime.now() + timedelta(hours=1)
+               )
+               
+               response_data = {
+                    'upload_id': str(file_upload.id),
+                    'upload_url': upload_data['upload_url'],
+                    'fields': upload_data['fields'],
+                    'file_path': file_path,
+                    'expires_in': 3600,
+                    'max_file_size': '10MB',
+                    'allowed_types': allowed_doc_types
+               }
+               
+               logger.info(f"Generated resume upload URL for user {request.user.id}, upload_id: {file_upload.id}")
+               
+               return Response(
+                    CustomResponse.success("Resume upload URL generated", response_data),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in resume upload: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error generating resume upload URL: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to generate upload URL"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
+
+
 @extend_schema(tags=["Profile Upload"])
 class ConfirmProfileUploadAPIView(APIView):
      authentication_classes = [TokenAuthentication]
@@ -407,73 +551,5 @@ class ConfirmProfileUploadAPIView(APIView):
                logger.error(f"Error confirming profile upload: {str(e)}")
                return Response(
                     CustomResponse.error("Failed to confirm upload"),
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-               )
-
-@extend_schema(tags=["Profile Upload"])
-class GetProfileFilesAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-     
-     @extend_schema(
-          summary="Get user's current profile files (image and resume)"
-     )
-     def get(self, request):
-          """
-          Get user's current profile files (image and resume)
-          """
-          try:
-               if not request.user or not request.user.is_authenticated:
-                    raise ValidationError("User not authenticated")
-               
-               profile_files = {}
-               
-               # Get profile image
-               profile_image = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='profile_image',
-                    upload_status='uploaded'
-               ).order_by('-uploaded_at').first()
-               
-               if profile_image:
-                    profile_files['profile_image'] = {
-                         'upload_id': str(profile_image.id),
-                         'filename': profile_image.original_filename,
-                         'file_size': profile_image.file_size,
-                         'uploaded_at': profile_image.uploaded_at.isoformat(),
-                         'download_url': S3Service.generate_presigned_download_url(
-                         profile_image.file_path, expiration=3600
-                         )
-                    }
-               
-               # Get resume
-               resume = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='resume',
-                    upload_status='uploaded'
-               ).order_by('-uploaded_at').first()
-               
-               if resume:
-                    profile_files['resume'] = {
-                         'upload_id': str(resume.id),
-                         'filename': resume.original_filename,
-                         'file_size': resume.file_size,
-                         'uploaded_at': resume.uploaded_at.isoformat(),
-                         'download_url': S3Service.generate_presigned_download_url(
-                         resume.file_path, expiration=3600
-                         )
-                    }
-               
-               logger.info(f"Retrieved profile files for user {request.user.id}")
-               
-               return Response(
-                    CustomResponse.success("Profile files retrieved", profile_files),
-                    status=status.HTTP_200_OK
-               )
-               
-          except Exception as e:
-               logger.error(f"Error getting profile files: {str(e)}")
-               return Response(
-                    CustomResponse.error("Failed to get profile files"),
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
