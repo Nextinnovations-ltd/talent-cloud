@@ -219,7 +219,7 @@ class AuthenticationViewSet(viewsets.ModelViewSet):
         
         message = AuthenticationService.resend_activation_token(token)
         
-        return Response(CustomResponse.success(message), status=status.HTTP_200_OK)
+        return Response(CustomResponse.success(message, { 'token': token }), status=status.HTTP_200_OK)
 
     #Request the code when the user forget the password
     @action(detail=False, methods=['post'], url_path='forget-password')

@@ -7,6 +7,7 @@ from utils.token.jwt import TokenUtil
 from utils.user.user import check_auto_generated_username
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
+from django.conf import settings
 from services.user.email_service import AuthEmailService
 
 class AuthenticationService:
@@ -204,15 +205,14 @@ class AuthenticationService:
           if TokenUtil.is_expired(verify_request.expired_at):
                with transaction.atomic():
                     email = TokenUtil.decode_user_token(token)
-                    verify_request.expired_at = TokenUtil.generate_expiration_time(60)
+                    verify_request.expired_at = TokenUtil.generate_expiration_time(settings.VERIFICATION_EXPIRATION_TIME)
                     verify_request.verification_code = TokenUtil.generate_verification_code()
                     verify_request.save()
                     
-                    from utils.user.custom_mail_types import send_verification_email
-                    send_verification_email(email, token, verify_request.verification_code)
+                    AuthEmailService.send_verify_registration_email_with_template(email, verify_request.verification_code, token)
                return 'Verification code is sent back to user.'
           else:
-               return 'Token is still valid.'
+               raise ValidationError('Token is still valid.')
 
      @staticmethod
      def generate_login_success_response(user):

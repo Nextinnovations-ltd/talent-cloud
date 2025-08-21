@@ -220,7 +220,7 @@ ADMINS = [
 ]
 
 # Registration Verification
-VERIFICATION_EXPIRATION_TIME=86400
+VERIFICATION_EXPIRATION_TIME=120
 
 
 # Serialization & Timezone
