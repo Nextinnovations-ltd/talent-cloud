@@ -10,7 +10,6 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.openapi import OpenApiTypes
 from apps.authentication.models import FileUpload
 from datetime import datetime, timedelta
-import uuid
 import logging
 
 logger = logging.getLogger(__name__)

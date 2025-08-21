@@ -229,7 +229,16 @@ interface JobSeekerSkillsResponse {
 }
 
 
+// resume url
 
+interface ResumeUrlResponse {
+  status: boolean;
+  message: string;
+  data: {
+    resume_url: string,
+    resume_uploaded_time:string
+  }
+}   
 
 
 
@@ -411,8 +420,9 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       query: () => "/jobseeker/skill/",
     
     }),
-
-   
+    getJobSeekerResume:builder.query<ResumeUrlResponse,void>({
+      query:()=>'/jobseeker/profile/resume/',
+    })
   }),
 });
 
@@ -446,4 +456,5 @@ export const {
   useGetJobSeekerSkillsOptionsQuery,
   useAddVideoIndroductionMutation,
   useGetVideoIntroductionQuery,
+  useGetJobSeekerResumeQuery
 } = extendedJobSeekerSlice;

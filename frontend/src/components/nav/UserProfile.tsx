@@ -7,6 +7,7 @@ import {
   removeTokenFromSessionStorage,
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
+import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice'
 
 
 
@@ -15,6 +16,9 @@ export const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { data: profileData} = useGetJobSeekerProfileQuery();
+
+  const userData = profileData?.data;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -41,10 +45,10 @@ export const UserProfile = () => {
 
   return (
     <div className='relative flex items-center gap-2' ref={dropdownRef}>
-      <Link className='flex items-center gap-3' to={`user/${routesMap?.mainProfile?.path}`}>
-        <AvatarProfile />
+      <Link className='flex  items-center gap-3' to={`user/${routesMap?.mainProfile?.path}`}>
+        <AvatarProfile src={userData?.profile_image_url} />
       </Link>
-      <button type="button" onClick={() => setOpen((prev) => !prev)}>
+      <button type="button"  onClick={() => setOpen((prev) => !prev)}>
         {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
       </button>
       {open && (

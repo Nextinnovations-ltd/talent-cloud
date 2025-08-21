@@ -17,8 +17,8 @@ import { AlignCenterHorizontal, Briefcase, FileClock } from 'lucide-react';
     <AdminCreateJobItems />
   <div className="mt-[24px] flex flex-col gap-[16px]">
   <AdminMenuItems  targetPath="/admin/dashboard/allJobs" icon={<Briefcase/>} text="All Jobs"/>
-  <AdminMenuItems  targetPath="/admin/dashboard/activeJobs" icon={<AlignCenterHorizontal/>} text="Active Jobs"/>
-  <AdminMenuItems  targetPath="/admin/dashboard/expiredJobs" icon={<FileClock/>} text="Expired Jobs"/>
+  <AdminMenuItems  targetPath="/admin/dashboard/activeJobs" icon={<AlignCenterHorizontal/>} text="Active Jobs"/> 
+   <AdminMenuItems  targetPath="/admin/dashboard/expiredJobs" icon={<FileClock/>} text="Expired Jobs"/> 
   </div>
 </div>
   )

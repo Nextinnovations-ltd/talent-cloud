@@ -1,6 +1,5 @@
 import { LogOut } from "lucide-react"
 import AdminJobManagement from "./AdminJobManagement"
-import AdminList from "./AdminList"
 import AdminLogo from "./AdminLogo"
 import AdminMenu from "./AdminMenu"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -49,7 +48,7 @@ const AdminSideBar = () => {
       
       {/* Scrollable middle section */}
       <ScrollArea className="px-2 py-4">
-        <AdminList/>
+        {/* <AdminList/> */}
         <div className="border-t border-[#F2F2F2] mt-[16px]"></div>
         <AdminMenu/>
         <AdminJobManagement/>
