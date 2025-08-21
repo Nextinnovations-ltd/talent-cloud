@@ -9,7 +9,7 @@ import { Skeleton } from "../ui/skeleton";
 export interface ImageEditorProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  preview: any;
+  preview: string | ArrayBuffer | null;
   rotation: number;
   scale: number;
   rotateImage: () => void;
@@ -42,12 +42,12 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
         className="w-[90%] rounded-[15px]  md:w-full" >
         <h3 className=" mx-auto font-[600] text-[28px]">Adjust Photo</h3>
         <div className="flex flex-col  items-center">
-          {preview && (
+          {typeof preview === "string" && (
             <div className="relative md:w-[396px] md:h-[342px] rounded-[10px] border-2 overflow-hidden">
               <img
                 src={preview}
                 alt="Preview"
-                className="w-full h-full object-cover rounded-[10px]"
+                className="w-full h-full object-contain rounded-[10px] bg-slate-100"
                 style={{
                   transform: `rotate(${rotation}deg) scale(${scale})`,
                   transition: "transform 0.3s ease",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import SelectedProjectSchema from "@/lib/SelectedProjectSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -159,6 +160,7 @@ const SelectedProject = () => {
           <ImagePicker
         setIsOpen={() => {}}
         preview={preview}
+        //@ts-ignore
         form={form}
         type="square"
         setPreview={setPreview} />

@@ -1,6 +1,5 @@
 import { LogOut } from "lucide-react"
 import AdminJobManagement from "./AdminJobManagement"
-import AdminList from "./AdminList"
 import AdminLogo from "./AdminLogo"
 import AdminMenu from "./AdminMenu"
 import { ScrollArea } from "@/components/ui/scroll-area"

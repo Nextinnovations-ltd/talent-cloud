@@ -19,7 +19,7 @@ export async function ComfirmUpload({uploadId,fileSize}:ConfirmUploadProps):Prom
         const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
 
          await axios.post(
-            `${URL}job-seekers/profile/upload/confirm/`,
+            `${URL}jobseeker/profile/upload/confirm/`,
             {
               upload_id: uploadId,
               file_size: fileSize

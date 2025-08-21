@@ -33,7 +33,7 @@ export const ProfileUser = () => {
 
  
   const form = useForm<UserProfile>({
-    //@ts-expect-error
+    //@ts-ignore
     resolver: yupResolver(UserProfileSchema),
     defaultValues: {
       profile_image_url: profileData?.data?.profile_image_url || "",

@@ -3,18 +3,25 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 import { RadioGroupItem,RadioGroup } from "../ui/radio-group";
 import ApplyJobUploadResume from "./ApplyJobUploadResume";
-import ApplyJobResumeItem from "./ApplyJobResumeItem";
+import ApplyJobResumeItemContainer from "./ApplyJobResumeItemContainer";
+import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
 
 
 const ApplyJobResume = () => {
 
-  const [radioValue,setRadioValue] = useState("choose");
+  const { data } = useGetJobSeekerResumeQuery();
+  const [radioValue,setRadioValue] = useState("upload");
+
+  const resumeData = data?.data?.resume_url;
+
+  
+
 
   return (
     <div className="mt-[20px]">
         <h3 className="text-[22px]">Resume</h3>
         <p className="text-[14px] my-[10px]">Choose how you'd like to submit your resume</p>
-        <RadioGroup onValueChange={(e)=>setRadioValue(e)} className="mt-[40px]" defaultValue="choose">
+        <RadioGroup onValueChange={(e)=>setRadioValue(e)} className="mt-[40px]" defaultValue={resumeData ? 'choose' : 'upload'}>
       <div className="flex items-center cursor-pointer gap-3">
         <RadioGroupItem  value="upload" id="r1" />
         <Label className="font-medium cursor-pointer" htmlFor="r1">
@@ -37,7 +44,7 @@ const ApplyJobResume = () => {
       </div>
     </RadioGroup>
     <div className="ml-8">
-    <ApplyJobResumeItem/>
+    <ApplyJobResumeItemContainer/>
     </div>
     </div>
   )

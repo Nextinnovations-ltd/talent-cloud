@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
+
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -26,6 +28,8 @@ const ApplyJobUploadResume = () => {
     const [isUploading, setIsUploading] = useState<boolean>(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [__, setUploadedUrl] = useState<string | null>(null); // optional: store result
+
+    const { refetch } = useGetJobSeekerResumeQuery();
 
     const {
         acceptedFiles,
@@ -92,6 +96,7 @@ const ApplyJobUploadResume = () => {
                 }
             } finally {
                 if (!cancelled) setIsUploading(false);
+                refetch(); // refetch resume data after upload
             }
         };
 
@@ -102,19 +107,7 @@ const ApplyJobUploadResume = () => {
         };
     }, [file]);
 
-    //   const handleRemove = () => {
-    //     // clear selected file & any state
-    //     setError("");
-    //     setRejections([]);
-    //     setUploadedUrl(null);
-    //     // Accepted files come from react-dropzone internal state.
-    //     // To clear acceptedFiles you can use a trick by resetting the input value.
-    //     // We'll access the input via document query here (safe if only one input); you can instead use a ref.
-    //     const input = document.querySelector<HTMLInputElement>('input[type="file"]');
-    //     if (input) {
-    //       input.value = "";
-    //     }
-    //   };
+
 
     return (
         <>
@@ -145,32 +138,6 @@ const ApplyJobUploadResume = () => {
                         {friendlyAllowed} · Max 10MB
                     </p>
                 </div>
-
-                {/* {file && (
-          <aside className="mt-3 ml-8 flex items-start gap-4">
-            <div>
-              <h4 className="text-sm font-medium mb-1">Selected file</h4>
-              <p className="text-sm">
-                {file.name} — {(file.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-              {uploadedUrl && (
-                <p className="text-xs text-green-600 mt-1">Uploaded ✓</p>
-              )}
-              {isUploading && <p className="text-xs text-gray-600 mt-1">Uploading...</p>}
-            </div>
-
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="ml-auto p-1 rounded-md hover:bg-gray-100"
-              aria-label="Remove file"
-              disabled={isUploading}
-            >
-              <X size={16} />
-            </button>
-          </aside>
-        )} */}
-
                 {!!(rejections.length || fileRejections.length) && (
                     <aside className="mt-3 ml-8">
                         <h4 className="text-sm font-medium text-red-600 mb-1">Rejected</h4>

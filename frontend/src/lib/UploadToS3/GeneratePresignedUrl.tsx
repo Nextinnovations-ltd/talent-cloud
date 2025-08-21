@@ -31,7 +31,7 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
 
 
   const response = await axios.post(
-    `${URL}job-seekers/${uploadEndpoint}`,
+    `${URL}jobseeker/${uploadEndpoint}`,
     {
       filename: file.name,
       file_size: file.size,
