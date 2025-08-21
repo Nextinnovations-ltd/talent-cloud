@@ -9,7 +9,17 @@ from services.job_seeker.profile_score_service import ProfileScoreService
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 
-# region Profile Section One
+@extend_schema(tags=["Job Seeker Profile"])
+class JobSeekerResumeAPIView(APIView):
+     """Retrieve job seeker resume"""
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     def get(self, request):
+          response = JobSeekerService.get_job_seeker_resume_url(request.user)
+          
+          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+
 
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerProfileSelectionOptionsAPIView(APIView):
@@ -48,9 +58,6 @@ class JobSeekerProfileAPIView(APIView):
 
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
-# endregion Profile Section One
-
-# region Profile Video
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerVideoAPIView(APIView):
      authentication_classes = [TokenAuthentication]
@@ -67,10 +74,6 @@ class JobSeekerVideoAPIView(APIView):
 
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
-# endregion Profile Video
-
-
-# region Profile Section Two
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerSkillAPIView(APIView):
      authentication_classes = [TokenAuthentication]

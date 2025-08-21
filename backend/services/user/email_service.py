@@ -24,8 +24,6 @@ class AuthEmailService:
           VerifyRegisteredUser.objects.create(email=email, token=token, verification_code=verification_code, expired_at=expired_at)
           
           # Send Mail to user
-          from utils.user.custom_mail_types import send_verification_email
-          # send_verification_email(email, token, verification_code)
           AuthEmailService.send_verify_registration_email_with_template(email, verification_code, token)
           
           return token
