@@ -420,7 +420,7 @@ class JobSeekerService:
                'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
                'resume_url': resume_url,
-               
+               'resume_uploaded_time': job_seeker.resume_upload_time,
                # Address
                'address': JobSeekerService._get_extracted_address(job_seeker),
                

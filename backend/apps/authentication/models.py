@@ -157,7 +157,7 @@ class FileUpload(models.Model):
      ]
      
      id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE)
+     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE, related_name="uploaded_files")
      file_type = models.CharField(max_length=20, choices=FILE_TYPES)
      original_filename = models.CharField(max_length=255)
      file_path = models.CharField(max_length=500)

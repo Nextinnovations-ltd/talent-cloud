@@ -13,7 +13,13 @@ class JobSeeker(TalentCloudUser):
 
      def __str__(self):
           return f'{self.user.username} - {self.user.email}'
-
+     
+     @property
+     def resume_upload_time(self):
+         """Get the upload time of the resume"""
+         resume_upload = self.uploaded_files.filter(file_type='resume').first()
+         return resume_upload.updated_at if resume_upload else None
+     
 # region PROFILE DETAILS
 class JobSeekerExperience(TimeStampModel):
      WORK_TYPE_CHOICES = (
