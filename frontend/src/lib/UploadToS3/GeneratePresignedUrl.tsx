@@ -8,20 +8,30 @@ import { URL } from '@/services/api/apiurls';
 import { PresignedUrlResponse } from '@/types/file-upload-types';
 
 type GeneratePresignedUrlProps = {
-  file: File
+  file: File,
+  type: "profile" | "resume"
 }
 
 
 
 
-export async function generatePresignedUrl({ file }: GeneratePresignedUrlProps): Promise<PresignedUrlResponse> {
+export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlProps): Promise<PresignedUrlResponse> {
 
   const correctMimeType = filesTypes.getCorrectMimeType(file);
 
   const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
 
+  let uploadEndpoint = '';
+
+  if (type === 'profile') {
+    uploadEndpoint = 'profile/upload/image/';
+  } else if (type === 'resume') {
+    uploadEndpoint = 'profile/upload/resume/';
+  }
+
+
   const response = await axios.post(
-    `${URL}job-seekers/profile/upload/image/`,
+    `${URL}job-seekers/${uploadEndpoint}`,
     {
       filename: file.name,
       file_size: file.size,

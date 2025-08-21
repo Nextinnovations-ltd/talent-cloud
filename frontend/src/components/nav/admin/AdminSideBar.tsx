@@ -49,7 +49,7 @@ const AdminSideBar = () => {
       
       {/* Scrollable middle section */}
       <ScrollArea className="px-2 py-4">
-        <AdminList/>
+        {/* <AdminList/> */}
         <div className="border-t border-[#F2F2F2] mt-[16px]"></div>
         <AdminMenu/>
         <AdminJobManagement/>

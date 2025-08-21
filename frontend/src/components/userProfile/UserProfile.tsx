@@ -47,6 +47,8 @@ export const UserProfile = () => {
   const { data: profileData, isLoading: isProfileLoading } = useGetJobSeekerProfileQuery();
   const userData = profileData?.data;
 
+  console.log(userData?.profile_image_url)
+
   if (!userData && !isProfileLoading) {
     return (
       <div className="flex flex-col items-center mt-[80px]">
@@ -117,6 +119,7 @@ export const UserProfile = () => {
               size='w-[164px] z-30 h-[164px] border-[5px] border-white'
               //@ts-expect-error
               status={false}
+              src={userData?.profile_image_url}
             />
           )}
         </motion.div>
@@ -216,7 +219,7 @@ export const UserProfile = () => {
               }}
             />
           </motion.div>
-          Not available for work
+          Unavailable for work
         </motion.h3>
       )}
 

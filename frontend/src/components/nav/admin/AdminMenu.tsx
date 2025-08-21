@@ -22,11 +22,11 @@ const AdminMenu = () => {
                     text="Dashboard"
                     exactMatch
                 />
-                <AdminMenuItems
+                {/* <AdminMenuItems
                     targetPath="/admin/dashboard/candidates"
                     icon={<Users />}
                     text="Candidates"
-                />
+                /> */}
 
             </div>
         </div>

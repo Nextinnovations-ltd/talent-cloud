@@ -4,13 +4,14 @@ import { generatePresignedUrl } from './GeneratePresignedUrl';
 import { uploadToCloud } from './UploadData';
 
 type UploadToS3Props = {
-    file:File
+    file:File,
+    type: "profile" | "resume"
 }
 
-export async function uploadToS3({ file }: UploadToS3Props): Promise<boolean> {
+export async function uploadToS3({ file,type }: UploadToS3Props): Promise<boolean> {
     try {
         // Generate presigned URL using the dedicated function
-        const presignedUrlData = await generatePresignedUrl({ file });
+        const presignedUrlData = await generatePresignedUrl({ file,type });
 
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
 

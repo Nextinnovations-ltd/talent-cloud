@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "../ui/button";
 import { ImageEditor } from "./ImageEditor";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
+import { useGetJobSeekerProfileQuery } from "@/services/slices/jobSeekerSlice";
 
  type FormLike = {
     setValue: (name: string, value: unknown) => void;
@@ -24,6 +25,7 @@ import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
   const [scale, setScale] = useState(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { refetch } = useGetJobSeekerProfileQuery();
 
   const handleScaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScale(parseFloat(event.target.value));
@@ -69,10 +71,11 @@ import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 
         try {
           setIsUploading(true);
-          await UploadToS3({ file: rotatedFile });
+          await UploadToS3({ file: rotatedFile,type:'profile' });
           setIsModalOpen(false);
         } finally {
           setIsUploading(false);
+          refetch();
         }
       }, "image/png");
     };
@@ -123,7 +126,6 @@ className={`cursor-pointer bg-slate-200/50 flex items-center justify-center  tra
     src={preview as string}
     width={110}
     height={110}
-    alt="Uploaded"
     className={`object-cover w-full h-full ${
       type === "circle" ? "rounded-full" : "rounded-[16px]"
     }`}

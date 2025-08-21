@@ -92,6 +92,7 @@ export const ProfileUser = () => {
         address: profileData?.data?.address?.address || "",
       });
     }
+    setPreview(profileData?.data?.profile_image_url || "")
   }, [profileData, isProfileLoading, form]);
 
 

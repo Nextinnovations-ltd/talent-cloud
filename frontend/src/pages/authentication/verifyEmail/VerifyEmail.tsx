@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import CountUp from "react-countup";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import {
@@ -31,10 +30,18 @@ import { useApiCaller } from "@/hooks/useApicaller";
 
 type OTPFormValues = yup.InferType<typeof OTPSchema>;
 
+// Constants
+const RESEND_COOLDOWN = 120; // 2 minutes in seconds
+const STORAGE_KEYS = {
+  RESEND_TIMESTAMP: 'verifyEmailResendTimestamp'
+};
+
 export const VerifyEmail = () => {
   const { t } = useTranslation("verifyEmail");
   const [end, setEnd] = useState(false);
-  const countRef = useRef<any>(null);
+  const [timeRemaining, setTimeRemaining] = useState(RESEND_COOLDOWN);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const { executeApiCall, isLoading: resendLoading } = useApiCaller(
     useReactiavateTokenMutation
@@ -52,6 +59,65 @@ export const VerifyEmail = () => {
   });
 
   const formDisabled = resendLoading || registerLoading || verifyLoading;
+
+  // Timer function
+  const startTimer = (initialTime: number) => {
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    setTimeRemaining(initialTime);
+    setEnd(initialTime <= 0);
+    
+    if (initialTime > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(prevTime => {
+          const newTime = prevTime - 1;
+          
+          if (newTime <= 0) {
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+            }
+            setEnd(true);
+            localStorage.removeItem(STORAGE_KEYS.RESEND_TIMESTAMP);
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+    }
+  };
+
+  // Load saved timer state from localStorage on component mount
+  useEffect(() => {
+    const savedResendTimestamp = localStorage.getItem(STORAGE_KEYS.RESEND_TIMESTAMP);
+    
+    if (savedResendTimestamp) {
+      const timestamp = parseInt(savedResendTimestamp);
+      const currentTime = Math.floor(Date.now() / 1000);
+      const elapsed = currentTime - timestamp;
+      const newRemaining = Math.max(0, RESEND_COOLDOWN - elapsed);
+      
+      startTimer(newRemaining);
+    } else {
+      // If no timestamp in storage, start with full cooldown
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      localStorage.setItem(STORAGE_KEYS.RESEND_TIMESTAMP, currentTimestamp.toString());
+      startTimer(RESEND_COOLDOWN);
+    }
+    
+    setIsInitialLoad(false);
+  }, []);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const verifyToken = async (token: string | null) => {
@@ -74,7 +140,13 @@ export const VerifyEmail = () => {
     try {
       await executeApiCall({ token });
       setEnd(false);
-      countRef.current?.start(); // Restart timer
+      
+      // Save the timestamp to localStorage
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      localStorage.setItem(STORAGE_KEYS.RESEND_TIMESTAMP, currentTimestamp.toString());
+      
+      // Start the timer
+      startTimer(RESEND_COOLDOWN);
     } catch (error: any) {
       console.log(error);
     }
@@ -89,6 +161,12 @@ export const VerifyEmail = () => {
       }).unwrap();
 
       if (res?.status) {
+        // Clear the timer storage on successful verification
+        localStorage.removeItem(STORAGE_KEYS.RESEND_TIMESTAMP);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+        
         showNotification({ message: res?.message, type: "success" });
         navigate(`/auth/${routesMap.login.path}`);
       }
@@ -99,6 +177,19 @@ export const VerifyEmail = () => {
       });
     }
   };
+
+  // Don't show anything until initial load is complete
+  if (isInitialLoad) {
+    return (
+      <div className="md:mx-0 h-[100svh] flex items-center justify-center bg-slate-100">
+        <Card className="md:w-[506px] w-[90%]">
+          <CardContent className="text-center p-8">
+            <div className="animate-pulse">Loading...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="md:mx-0 h-[100svh] flex items-center justify-center bg-slate-100">
@@ -142,16 +233,8 @@ export const VerifyEmail = () => {
               ) : (
                 <h3 className="text-[#686C73] flex items-center justify-end">
                   Resent code in:&nbsp;
-                  <div className="w-[25px] text-center">
-                    <CountUp
-                    //@ts-expect-error
-                      ref={countRef}
-                      onEnd={() => setEnd(true)}
-                      end={60}
-                      start={0}
-                      duration={60}
-                      useEasing={false}
-                    />
+                  <div className="w-[40px] text-center">
+                    {timeRemaining}
                   </div>
                   &nbsp;sec
                 </h3>
