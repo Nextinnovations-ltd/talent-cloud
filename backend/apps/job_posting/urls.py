@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     BookmarkDeleteAPIView,
     CompanyJobListView,
+    CoverLetterUploadUrlAPIView,
     JobDiscoveryAPIView,
     JobPostEditDetailAPIView,
     JobPostCreateAPIView,
@@ -36,9 +37,10 @@ urlpatterns = [
     path('job-posts/', CompanyJobListView.as_view(), name='company-jobpost-list'), # GET only for superadmin and admins
     path('job-posts/<int:job_post_id>/applications/', CompanyJobApplicationsListView.as_view(), name='jobpost-applications-list'), # GET only for superadmins and admins
     path('applications/<int:pk>/', CompanyApplicationDetailView.as_view(), name='application-detail'),
-   
+    
     # Job Seeker Application Endpoints
     path('job-posts/<int:job_post_id>/apply/', JobApplicationCreateView.as_view(), name='jobpost-applications-create'), # POST only for seekers
+    path('application/upload/cover-letter/', CoverLetterUploadUrlAPIView.as_view(), name='get-cover-letter-upload-url'),
     path('my-applications/', JobSeekerApplicationListView.as_view(), name='my-applications-list'),
     path('my-applications/<int:pk>/', JobSeekerApplicationDetailView.as_view(), name='my-applications-detail'),
     

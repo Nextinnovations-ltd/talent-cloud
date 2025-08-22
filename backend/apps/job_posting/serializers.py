@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from django.utils import timezone
 from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType
 from apps.companies.serializers import CompanyDetailSerializer
+from services.storage.s3_service import S3Service
 from utils.job_posting.job_posting_utils import format_salary
 
 class JobPostDisplayMixin:
@@ -214,16 +214,30 @@ class JobPostDetailSerializer(serializers.ModelSerializer):
 
 class JobApplicationSerializer(ModelSerializer):
      job_post = JobPostListSerializer()
+     resume_url = serializers.SerializerMethodField()
+     cover_letter_url = serializers.SerializerMethodField()
      
      class Meta:
           model = JobApplication
-          fields = ['id', 'job_post', 'job_seeker', 'application_status', 'cover_letter', 'application_resume_url', 'created_at']
+          fields = ['id', 'job_post', 'job_seeker', 'application_status', 'cover_letter_url', 'resume_url', 'created_at']
           read_only_fields = ['id', 'job_post', 'job_seeker', 'application_status', 'created_at']
 
+     def get_resume_url(self, obj):
+        """Generate public URL for resume using S3Service"""
+        if obj.resume_url:
+            return S3Service.get_public_url(obj.resume_url)
+        return None
+    
+     def get_cover_letter_url(self, obj):
+          """Generate public URL for cover letter using S3Service"""
+          if obj.cover_letter_url:
+               return S3Service.get_public_url(obj.cover_letter_url)
+          return None
+     
 class JobApplicationCreateSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
-          fields = ['cover_letter', 'application_resume_url']
+          fields = ['cover_letter_url', 'resume_url']
 
      def create(self, validated_data):
           return JobApplication.objects.create(**validated_data)

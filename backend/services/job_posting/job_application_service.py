@@ -1,7 +1,8 @@
-from amqp import NotFound
+from datetime import datetime
 from django.shortcuts import get_object_or_404
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.job_seekers.models import JobSeeker
+from apps.authentication.models import FileUpload
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class JobApplicationService:
      @staticmethod
-     def perform_application_submission(user, job_post_id, application_data):
+     def perform_application_submission(user, job_post_id, cover_letter_upload_id):
           try:
                # Get required objects
                job_post = get_object_or_404(JobPost, id=job_post_id)
@@ -23,11 +24,14 @@ class JobApplicationService:
                JobApplicationService._validate_application_eligibility(job_post, job_seeker)
                
                with transaction.atomic():
+                    # Update File Upload
+                    file_upload = JobApplicationService.update_cover_upload_status(user, cover_letter_upload_id)
+                    
                     # Create application
                     application = JobApplicationService._create_application(
                          job_post,
                          job_seeker,
-                         application_data
+                         file_upload.file_path
                     )
                     
                     # Send notification about the new application
@@ -40,8 +44,42 @@ class JobApplicationService:
                logger.error(f"Job Post Not found.")
                raise ValidationError("Job post not found.")
           except Exception as e:
-               logger.error(f"Failted to create job application: str{e}")
+               logger.error(f"Failed to create job application: str{e}")
                raise
+
+     @staticmethod
+     def _create_application(job_post: JobPost, job_seeker: JobSeeker, cover_letter_file_path):
+          """Create the job application instance"""
+          
+          application = JobApplication.objects.create(
+               job_post=job_post,
+               job_seeker=job_seeker,
+               application_status=ApplicationStatus.APPLIED,
+               cover_letter_url = cover_letter_file_path,
+               resume_url=job_seeker.resume_url
+          )
+          
+          return application
+
+     @staticmethod
+     def update_cover_upload_status(user, upload_id) -> FileUpload:
+          try:
+               file_upload = FileUpload.objects.get(
+                    id=upload_id,
+                    user=user,
+                    upload_status='pending'
+               )
+          except FileUpload.DoesNotExist:
+               raise ValidationError("Invalid upload_id or upload already processed")
+
+          # Update upload record
+          file_upload.upload_status = 'uploaded'
+          file_upload.uploaded_at = datetime.now()
+          file_upload.save()
+          
+          return file_upload
+               
+
      @staticmethod
      def _validate_application_eligibility(job_post: JobPost, job_seeker: JobSeeker):
           """Validate if job seeker can apply for this job"""
@@ -66,19 +104,6 @@ class JobApplicationService:
           # Check if positions are available
           if job_post.number_of_positions <= 0:
                raise ValidationError("No positions are currently available for this job.")
-     
-     @staticmethod
-     def _create_application(job_post, job_seeker, application_data):
-          """Create the job application instance"""
-          
-          application = JobApplication.objects.create(
-               job_post=job_post,
-               job_seeker=job_seeker,
-               application_status=ApplicationStatus.APPLIED,
-               **application_data
-          )
-          
-          return application
 
      @staticmethod
      def _send_application_notifications(application, job_post, user):
