@@ -5,7 +5,7 @@ import { uploadToCloud } from './UploadData';
 
 type UploadToS3Props = {
     file:File,
-    type: "profile" | "resume"
+    type: "profile" | "resume" | "coverLetter"
 }
 
 export async function uploadToS3({ file,type }: UploadToS3Props): Promise<boolean> {
@@ -15,7 +15,15 @@ export async function uploadToS3({ file,type }: UploadToS3Props): Promise<boolea
 
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
 
-        await ComfirmUpload({uploadId:presignedUrlData?.data?.upload_id,fileSize:file.size});
+        if (type === 'profile' || 'resume' ) {
+            await ComfirmUpload({uploadId:presignedUrlData?.data?.upload_id,fileSize:file.size});
+        }
+
+        if (type === 'coverLetter') {
+            
+        }
+
+       
 
         // TODO: Use the presigned URL to actually upload the file to S3
         // const uploadResponse = await axios.put(presignedUrlData.upload_url, file, {

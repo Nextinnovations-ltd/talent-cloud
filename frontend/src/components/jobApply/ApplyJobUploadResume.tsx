@@ -22,7 +22,12 @@ const ACCEPTED_TYPES = {
 
 const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
 
-const ApplyJobUploadResume = () => {
+type applyJobUploadResumeProps =  {
+   type:"profile" | "resume" | "coverLetter"
+}
+
+
+const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
     const [error, setError] = useState<string>("");
     const [rejections, setRejections] = useState<FileRejection[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -75,7 +80,7 @@ const ApplyJobUploadResume = () => {
 
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
-                const result = await UploadToS3({ file, type: "resume" });
+                const result = await UploadToS3({ file, type: type });
 
                 if (cancelled) return;
 

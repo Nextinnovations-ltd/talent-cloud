@@ -27,6 +27,8 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
     uploadEndpoint = 'profile/upload/image/';
   } else if (type === 'resume') {
     uploadEndpoint = 'profile/upload/resume/';
+  } else if (type === 'coverLetter') {
+    uploadEndpoint = 'application/upload/cover-letter/ '
   }
 
 
