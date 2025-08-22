@@ -20,7 +20,7 @@ export const StepTwoFormYupSchema = yup.object({
 
 
 export const StepThreeFormYupSchema = yup.object({
-    salary_mode: yup.string().optional(),  // Added .optional() to match the type
+    salary_mode: yup.string().optional(),
     salary_type: yup.string().required("Salary type is required"),
     salary_min: yup.string().optional(),
     salary_max: yup.string().optional(),
@@ -30,6 +30,10 @@ export const StepThreeFormYupSchema = yup.object({
     experience_level: yup.string().optional(),
     experience_years: yup.string().optional(),
     salary_fixed: yup.string().optional(),
-    number_of_positions: yup.number().default(0),
+    number_of_positions: yup
+      .number()
+      .max(999, "Number of positions cannot exceed 3 digits")
+      .default(0),
     last_application_date: yup.string().required('Last applications date is required'),
-});
+  });
+  

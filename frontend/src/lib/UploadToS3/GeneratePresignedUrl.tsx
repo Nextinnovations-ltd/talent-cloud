@@ -9,7 +9,7 @@ import { PresignedUrlResponse } from '@/types/file-upload-types';
 
 type GeneratePresignedUrlProps = {
   file: File,
-  type: "profile" | "resume"
+  type: "profile" | "resume" | "coverLetter"
 }
 
 

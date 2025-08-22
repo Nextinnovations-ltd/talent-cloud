@@ -48,7 +48,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       } else if (inputRef?.current?.value.length === 0) {
         setLength(false)
       }
-      console.log("kdkdk")
     }, [inputRef?.current?.value?.length]);
 
     return (
@@ -89,12 +88,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {showLetterCount && maxLength && inputRef.current && (
-            <span className="flex text-[#B9BABC] items-center absolute right-3 justify-center">
+            <span className="flex text-[#B9BABC] items-center absolute top-[14px] right-3 justify-center">
               {inputRef.current.value.length}/{maxLength}
             </span>
           )}
           {showLetterCount && maxLength && !inputRef.current && (
-            <span className="flex text-[#B9BABC] items-center absolute right-3 justify-center">
+            <span className="flex text-[#B9BABC] items-center absolute top-[14px] right-3 justify-center">
               0/{maxLength}
             </span>
           )}

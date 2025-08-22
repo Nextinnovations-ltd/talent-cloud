@@ -161,7 +161,7 @@ const CreateNewJob = () => {
                 experience_level: '',
                 experience_years: '',
                 salary_fixed: '',
-                number_of_positions: 0,
+                number_of_positions: 1,
                 last_application_date: ''
             });
             
@@ -192,7 +192,7 @@ const CreateNewJob = () => {
             {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
             {currentStep === 3 && <PreviewForm />}
 
-            <div className="flex justify-between pr-[20px] mt-[50px]">
+            <div className="flex justify-between max-w-[700px] items-center   mt-[50px]">
                 <Button
                     className="text-[#000000] text-[16px] w-[150px] h-[53px]"
                     variant="outline"
@@ -204,7 +204,7 @@ const CreateNewJob = () => {
                 
                 {currentStep === steps.length - 1 ? (
                     <Button
-                        className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px]"
+                        className="bg-[#0481EF] text-white  text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
                         onClick={handlePublish}
                         disabled={isLoading}
                     >
@@ -212,7 +212,7 @@ const CreateNewJob = () => {
                     </Button>
                 ) : (
                     <Button
-                        className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px] flex items-center justify-center gap-2"
+                        className="bg-[#0481EF] text-white text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
                         onClick={handleNext}
                     >
                         Next <ChevronRight size={16} />

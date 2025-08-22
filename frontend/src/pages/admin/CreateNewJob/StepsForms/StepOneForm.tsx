@@ -85,6 +85,8 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
             lableName="Job Title"
             required
             placeholder="e.g UI/UX designer"
+            maxLength={100}
+            showLetterCount
           />
           <div className="mt-[25px] gap-[72px] flex items-center w-full">
             {
@@ -160,6 +162,8 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
             lableName="Location"
             required
             placeholder="e.g., City, State"
+            maxLength={100}
+            showLetterCount
           />
           <TextAreaField
             disabled={false}
