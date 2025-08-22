@@ -15,7 +15,7 @@ import SHIELD from '@/assets/shield-check.svg';
 import { Skeleton } from "@/components/ui/skeleton";
 import JobCardGrid from "@/components/jobApply/JobCardGrid";
 import { useGetOrganizationDetailQuery } from "@/services/slices/organizationSlice";
-
+import OFFICEONE from "@/assets/Employee/Rectangle 5668.png";
 
 const OrganizationDetail = () => {
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,10 @@ const OrganizationDetail = () => {
   if (isLoading || loading) {
     return (
       <>
-        <div className="w-full pt-[200px] h-[400px] bg-[url('https://en.idei.club/uploads/posts/2023-03/1679223637_en-idei-club-p-office-background-image-dizain-krasivo-1.jpg')] bg-cover bg-center">
+        <div
+      className="w-full pt-[200px] h-[400px] bg-cover bg-center"
+      style={{ backgroundImage: `url(${OFFICEONE})` }}
+    >
           <div className="bg-white container flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
             <div>
               <Skeleton className="w-[160px] h-[160px] rounded-full" />
@@ -93,9 +96,10 @@ const OrganizationDetail = () => {
 
   return (
     <>
-      <div 
-        className="w-full pt-[200px] h-[400px] bg-[url('https://en.idei.club/uploads/posts/2023-03/1679223637_en-idei-club-p-office-background-image-dizain-krasivo-1.jpg')] bg-cover bg-center"
-      >
+      <div
+      className="w-full pt-[200px] h-[400px] bg-cover bg-center"
+      style={{ backgroundImage: `url(${OFFICEONE})` }}
+    >
         <div className="bg-white container 2xl:px-[50px] flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
           <div className="">
             <img src={organization.image_url} width={160} className="rounded-full"/>
@@ -140,7 +144,7 @@ const OrganizationDetail = () => {
         </div>
         <div className="mt-[50px]">
           <h3 className="text-[26px] font-semibold">Our working environments</h3>
-          <Slider images={organization.company_image_urls ?? []} />
+          <Slider  />
         </div>
         <div className="mt-[50px] pb-[100px]">
           <h3 className="text-[26px] font-semibold">Why Join Us</h3>

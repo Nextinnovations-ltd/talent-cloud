@@ -19,7 +19,7 @@ export const JobSeekerSkillSection = () => {
             isLoading ? (
               <div>Loading...</div>
             ) : (
-              data?.data?.map((e,index)=><Badge key={index} className='p-[13px] bg-[#EDEDED] capitalize text-[16px] rounded-[46px] font'>{e.title}</Badge>)
+              data?.data?.map((e,index)=><Badge key={index} className='p-[13px] px-[20px] shadow-none bg-[#EDEDED] capitalize text-[16px] rounded-[46px] font'>{e.title}</Badge>)
             )
         }
        </div>

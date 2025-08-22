@@ -46,7 +46,7 @@ type StepTwoFormProps = {
           />
            <TextAreaField
             disabled={false}
-            lableName="Offered Benefits"
+            lableName="What we offer"
             fieldName={'offered_benefits'}
             placeholder={'Highlight the perks—salary, remote work, learning support, career growth, or other benefits.'}
             isError={!!formMethods.formState.errors.requirements}

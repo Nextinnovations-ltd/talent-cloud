@@ -81,7 +81,7 @@ export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true,
             {
                 isTitle && <div className='flex items-center gap-4'>
                     <motion.h3
-                        className="text-[40px] font-[600]"
+                        className="text-[32px] font-[600]"
                         //@ts-ignore
                         variants={textVariants}
                     >

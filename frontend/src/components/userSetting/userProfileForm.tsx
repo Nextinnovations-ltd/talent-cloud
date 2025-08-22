@@ -103,7 +103,7 @@ export const UserProfileForm = ({
             onCheckedChange={(checked: boolean) => form.setValue("is_open_to_work", checked)}
           />
           <label htmlFor="is_open_to_work" className="text-sm font-medium">
-          Avaliable to work
+          Avaliable for work
           </label>
         </div>
 

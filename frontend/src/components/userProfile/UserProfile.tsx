@@ -250,7 +250,7 @@ export const UserProfile = () => {
               <p className='text-[14px]'>Years of Experience</p>
             </StarBorder>
             <StarBorder as="button" color="#0389FF" speed="4s">
-              <h1 className='text-[30px] font-[500]'>
+              <h1 className='text-[18px] font-[500]'>
                 {userData?.role?.name || "--"}
               </h1>
               <p className='text-[14px]'>Specialization Type</p>
@@ -319,13 +319,14 @@ const IconButton = () => {
   return (
     <Link to={'/user/edit/profile'}>
       <motion.button
-        className='w-[118px] h-[48px] bg-[#0389FF] flex items-center justify-center gap-[5px] rounded-[8px] text-[16px] font-[600] text-white z-40'
+        className='w-[118px] h-[48px] bg-[#0389FF] flex items-center justify-center gap-[12px] rounded-[8px] text-[16px] font-[600] text-white z-40'
         whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(3, 137, 255, 0.3)" }}
         whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
-        <img src={EDITPEN} />
+         <img src={EDITPEN} />
         Edit
+       
       </motion.button>
     </Link>
   )

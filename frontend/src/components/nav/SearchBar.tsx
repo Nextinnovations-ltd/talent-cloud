@@ -87,7 +87,6 @@ export const SearchBar = ({
         className={clsx(
           `h-[54px] bg-[#F3F4F6] p-2 rounded-[25px] flex items-center justify-between transition-all duration-300`,
           width === "lg" && "w-[500px]",
-          isFocused && "shadow-lg"
         )}
       >
         <Input
@@ -95,8 +94,7 @@ export const SearchBar = ({
           width={"w-full"}
           placeholder="What are you looking for?"
           className={clsx(
-            "border-none bg-[#F3F4F6] outline-none transition-all duration-300",
-            isFocused ? "w-[350px]" : "w-[300px]"
+            "border-none bg-[#F3F4F6] outline-none transition-all duration-300 w-[300px]"
           )}
           value={value}
           onChange={(e) => setValue(e.target.value)}

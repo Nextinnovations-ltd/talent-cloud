@@ -24,6 +24,7 @@ import SvgDockExperiences from '@/assets/svgs/docks/SvgDockExperiences';
 import SvgDockEducation from '@/assets/svgs/docks/SvgDockEducation';
 import { JobSeekerSkillSection } from './sections/JobSeekerSkillSection';
 import { SvgDockCertification } from '@/assets/svgs/docks/SvgDockCertification';
+import { useGetJobSeekerResumeQuery } from '@/services/slices/jobSeekerSlice';
 
 // Animation variants
 const containerVariants = {
@@ -107,6 +108,51 @@ export const UserInfoSec = () => {
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
     const [isVideoIntroductionEdit, setIsVideoIntroductionEdit] = useState(false);
+    const {data,isLoading} = useGetJobSeekerResumeQuery();
+
+
+    const resume_url = data?.data?.resume_url || "";
+    const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
+
+
+    const handleDownload = async () => {
+        if (!resume_url) return;
+
+        // Try to fetch the file and force a download from blob (works around download attribute for cross-origin links).
+        try {
+            const res = await fetch(resume_url, { mode: "cors" });
+            if (!res.ok) {
+                // fallback: open original url in new tab
+                window.open(resume_url, "_blank", "noopener,noreferrer");
+                return;
+            }
+
+            const blob = await res.blob();
+            const objectUrl = URL.createObjectURL(blob);
+
+            // Create a temporary anchor to trigger download
+            const a = document.createElement("a");
+            a.href = objectUrl;
+            a.download = fileName;
+            // append -> click -> remove
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            // Also open the file in a new tab for preview (object URL is same-origin so it will open)
+            window.open(objectUrl, "_blank", "noopener,noreferrer");
+
+            // Revoke object URL after a short delay to allow download/open to start
+            setTimeout(() => {
+                URL.revokeObjectURL(objectUrl);
+            }, 1000 * 10); // 10s
+        } catch (err) {
+            // If fetch fails (CORS, network), fallback to opening the url in new tab
+            // Note: some browsers won't honor download attribute for cross-origin URLs.
+            console.error("Download failed, falling back to open in new tab:", err);
+            window.open(resume_url, "_blank", "noopener,noreferrer");
+        }
+    };
 
 
 
@@ -233,8 +279,10 @@ export const UserInfoSec = () => {
             >
                 <div className="flex items-center gap-4 bg-[#525252]/10 backdrop-blur-md rounded-full px-4 py-2 border border-[#525252]/20">
                     <FloatingDock items={links} />
-                    <button className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors">
-                        Download CV
+                    <button onClick={handleDownload} disabled={!!resume_url} className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors">
+                     {
+                        isLoading ? "Loading..." : resume_url ? "Download Resume" : "No Resume"
+                     }
                     </button>
                 </div>
             </motion.div>
