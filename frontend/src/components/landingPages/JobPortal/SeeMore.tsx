@@ -33,7 +33,7 @@ const SeeMore = () => {
                   </span>
 
                   {/* Bottom text (next state) */}
-                  <span className="block absolute top-full left-0 w-full text-white transition-transform duration-300 group-hover:-translate-y-[45px] z-0">
+                  <span className="block absolute top-full left-0 w-full text-white transition-transform duration-300 group-hover:-translate-y-[26px] md:group-hover:-translate-y-[45px] z-0">
                     {showmore ? 'Show less' : 'See more'}
                   </span>
                 </button>
