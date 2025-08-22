@@ -1,6 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from datetime import datetime, timedelta
-from backend.apps.authentication.models import FileUpload
+from apps.authentication.models import FileUpload
+from core.constants.s3.constants import FILE_TYPES
 from services.storage.s3_service import S3Service
 import logging
 
@@ -8,60 +9,48 @@ logger = logging.getLogger(__name__)
 
 class FileUploadService:
      @staticmethod
-     def upload_file(user, filename, file_size, upload_file_type = 'resume'):
-          # Convert file_size to integer and validate
+     def upload_file(user, filename, file_size, content_type, file_type = FILE_TYPES.PROFILE_IMAGE):
           try:
+               # Convert file_size to integer and validate
                file_size = int(file_size)
-               if file_size > 10 * 1024 * 1024:  # 10MB limit for resumes
-                    raise ValidationError("File size cannot exceed 10MB")
-               if file_size < 1:
-                    raise ValidationError("File size must be greater than 0")
+               
+               if not content_type:
+                    content_type = S3Service.get_content_type_from_filename(filename)
+                    
+               allowed_content_types, max_size = S3Service.validate_file_upload(content_type, file_size, file_type)
           except ValueError:
                raise ValidationError("Invalid file_size format")
-          
-          # Auto-detect content type if not provided
-          if not content_type:
-               content_type = S3Service.get_content_type_from_filename(filename)
-          
-          # Validate document content type
-          allowed_doc_types = [
-               'application/pdf',
-               'application/msword',
-               'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-               'text/plain'
-          ]
-          if content_type not in allowed_doc_types:
-               raise ValidationError(f"Only document files are allowed. Supported: PDF, DOC, DOCX, TXT")
           
           # Cancel any pending resume uploads
           pending_upload = FileUpload.objects.filter(
                user=user,
-               file_type='resume',
+               file_type=file_type,
                upload_status='pending'
           ).first()
           
           if pending_upload:
                pending_upload.upload_status = 'cancelled'
                pending_upload.save()
-               logger.info(f"Cancelled pending resume upload {pending_upload.id} for user {user.id}")
+               logger.info(f"Cancelled pending file upload {pending_upload.id} for user {user.id}")
           
-          # Delete previous uploaded resume
-          previous_resumes = FileUpload.objects.filter(
-               user=user,
-               file_type='resume',
-               upload_status='uploaded'
-          )
-          
-          for prev_resume in previous_resumes:
-               S3Service.delete_file(prev_resume.file_path)
-               prev_resume.upload_status = 'deleted'
-               prev_resume.save()
-               logger.info(f"Deleted previous resume {prev_resume.id} for user {user.id}")
+          if file_type != FILE_TYPES.COVER_LETTER:
+               # Delete previous uploaded file
+               previous_files = FileUpload.objects.filter(
+                    user=user,
+                    file_type=file_type,
+                    upload_status='uploaded'
+               )
+               
+               for file in previous_files:
+                    S3Service.delete_file(file.file_path)
+                    file.upload_status = 'deleted'
+                    file.save()
+                    logger.info(f"Deleted previous file {file.id} for user {user.id}")
           
           # Generate unique file path
           file_path = S3Service.generate_unique_file_path(
                user_id=user.id,
-               file_type='resume',
+               file_type=file_type,
                original_filename=filename
           )
           
@@ -79,7 +68,7 @@ class FileUploadService:
           # Create tracking record
           file_upload = FileUpload.objects.create(
                user=user,
-               file_type='resume',
+               file_type=file_type,
                original_filename=filename,
                file_path=file_path,
                file_size=file_size,
@@ -94,6 +83,8 @@ class FileUploadService:
                'fields': upload_data['fields'],
                'file_path': file_path,
                'expires_in': 3600,
-               'max_file_size': '10MB',
-               'allowed_types': allowed_doc_types
+               'max_file_size': max_size,
+               'allowed_types': allowed_content_types
           }
+          
+          return response_data
