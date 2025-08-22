@@ -4,16 +4,17 @@ import upArrow from "@/assets/JobPortal/arrow-up-left.svg";
 
 interface CommonButtonProps {
   title?: string;         // Text to display (optional — defaults applied below)
-  smallIcon?: boolean;    // Whether to use small icon size
+
   login?: boolean;   
   url?:string     // Whether button navigates to login
 }
 
-const CommonButton: FC<CommonButtonProps> = ({ title, smallIcon = false, login = false }) => {
+const CommonButton: FC<CommonButtonProps> = ({ title, login = true }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(login ? "/auth/login" : "/emp/lp");
+    const url = (login ? "/auth/login" : "/emp/lp");
+    window.open(url, "_blank"); // opens in new tab
   };
 
   return (
@@ -26,7 +27,7 @@ const CommonButton: FC<CommonButtonProps> = ({ title, smallIcon = false, login =
         <img
           src={upArrow}
           alt="arrow icon"
-          className={smallIcon ? "w-[16px] h-[16px]" : "w-[24px] h-[24px]"}
+          className={ "w-[24px] h-[24px]"}
         />
       </div>
     </button>

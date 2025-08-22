@@ -17,6 +17,7 @@ import p5 from 'p5';
 import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -393,17 +394,26 @@ const HeroSection = () => {
     };
   }, []);
 
+
+
+  const location = useLocation();
+
+  const linkClass = (hash) =>
+    `transition-colors duration-300 hover:text-[#0389FF] ${
+      location.hash === hash ? "text-[#0389FF]" : ""
+    }`;
+
   return (
-    <div>
+    <div onClick={() => setNavIsOpen(!navIsOpen)}>
       <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
         <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-none md:rounded-[25px] mt-0 md:mt-[22px]">
           <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
             {/* logo SVG here */}
             <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover" />
             <ul className=" gap-[48px] hidden md:flex">
-              <li> <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
-              <li> <HashLink smooth to="#about-us" className="hover:text-[#0389FF] transition-colors duration-300">About us</HashLink></li>
-              <li><HashLink smooth to="#faq" className="hover:text-[#0389FF] transition-colors duration-300">FAQ</HashLink></li>
+              <li> <HashLink smooth to="#why-us"  className={linkClass("#why-us")}>Why us</HashLink></li>
+              <li> <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
+              <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
             </ul>
             <Button onClick={() => navigate('/auth/login')} className="hidden md:flex relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
               <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
@@ -454,9 +464,9 @@ const HeroSection = () => {
 
 
               <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                <li >  <HashLink smooth to="#why-us" className="hover:text-[#0389FF] transition-colors duration-300" >Why us</HashLink></li>
-                <li>  <HashLink smooth to="#about-us" className="hover:text-[#0389FF] transition-colors duration-300">About us</HashLink></li>
-                <li><HashLink smooth to="#faq" className="hover:text-[#0389FF] transition-colors duration-300">FAQ</HashLink></li>
+                <li >  <HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
+                <li>  <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
+                <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
               </ul>
 
               <Button onClick={() => navigate('/auth/login')}  className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">

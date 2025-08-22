@@ -50,6 +50,7 @@ import AllJobsDetails from "./pages/admin/AllJobs/AllJobsDetails";
 import CandidateApplicants from "./pages/admin/Candidates/CandidateApplicants";
 import AllJobsEditJobs from "./pages/admin/AllJobs/AllJobsEditJobs";
 import EmployeePage from "./pages/LandingPages/EmployeePage";
+import Contact from "./pages/LandingPages/ContactPage/Contact";
 
 
 
@@ -69,7 +70,12 @@ export const router = createBrowserRouter([
   {
     path:"/tc/lp",
     element:<EmployeePage/>
-   },
+  },
+  {
+    path:"/contact-us",
+    element:<Contact/>
+  },
+   
   {
    path: "/",
    element: <MainLayout />,

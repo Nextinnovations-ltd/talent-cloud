@@ -80,8 +80,9 @@ const Whatugot = () => {
             key={index}
             //@ts-ignore
             ref={(el) => (cardsRef.current[index] = el)}
-            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row justify-center items-center gap-[24px] md:gap-[50px] sticky min-h-[414px] top-[15%] py-6 shadow-[0_1px_3px_0_#A6AFC366] "
-          >
+            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row  justify-end md:justify-center items-center gap-[24px] md:gap-[50px] sticky  md:h-[414px] h-[680px] top-[15%] py-[40px] md:py-6 shadow-[0_1px_3px_0_#A6AFC366] "
+          >           
+
             <div className="max-w-[345px] md:max-w-[506px]">
               <h2 className="mb-4 text-[#000] text-[20px] md:text-[32px] font-[600] leading-[31px] md:leading-[50px]">
                 {card.title}
