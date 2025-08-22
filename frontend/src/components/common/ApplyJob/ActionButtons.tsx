@@ -65,7 +65,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ jobId, alreadyAppl
     
       <Button
         onClick={() => (isBookmarked ? handleDeleteBookmark(jobId) : handleBookmark(jobId))}
-        className={` rounded-[12px] text-[16px] h-[48px]  w-[100px] text-[#0481EF] gap-2 bg-[#E6F3FF]   `}
+        className={` rounded-[12px] shadow-none text-[16px] h-[48px]  w-[100px] text-[#0481EF] gap-2 bg-[#E6F3FF]   `}
         disabled={JOBBOOKLOADING || DELETELOADING}
       >
         {(JOBBOOKLOADING || DELETELOADING) ? <LoadingSpinner /> : <>{isBookmarked ? 'Unsave' : 'Save'}</>}
@@ -74,7 +74,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ jobId, alreadyAppl
      {
         !alreadyApplied ? (
           <Link to={`user/job_apply/${jobId}`}>
-            <Button className='bg-blue-500 text-[16px] h-[48px] px-[20px]   rounded-[12px] text-white'>Quick Apply</Button>
+            <Button className='bg-blue-500 shadow-none text-[16px] h-[48px] px-[20px]   rounded-[12px] text-white'>Quick Apply</Button>
           </Link>
         ) : (
           <p  className='text-blue-500   text-[16px]   rounded-[12px]'>Already applied</p>

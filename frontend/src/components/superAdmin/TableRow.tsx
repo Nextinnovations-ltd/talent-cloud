@@ -103,7 +103,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
                 }`}
             />
             <p className="text-[14px] font-medium">
-              {data.is_open_to_work ? 'Available for Work' : 'Not Available'}
+              {data.is_open_to_work ? 'Available for Work' : 'unvailable'}
             </p>
           </div>
         </td>

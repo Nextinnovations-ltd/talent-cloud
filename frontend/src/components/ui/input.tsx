@@ -60,7 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         >
           {startIcon && (
-            <div className={cn("flex text-[#979FA9] duration-300 items-center z-50 absolute left-[20px] justify-center", length && "text-black")}>
+            <div className={cn("flex text-[#979FA9] duration-300 mt-2 items-center z-50 absolute left-[20px] justify-center", length && "text-black")}>
               {startIcon}
             </div>
           )}

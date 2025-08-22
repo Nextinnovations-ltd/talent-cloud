@@ -21,6 +21,7 @@ from core.constants.constants import ROLES
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.utils import timezone
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -385,7 +386,7 @@ class NotificationService:
         enhanced_context = {
             'user_name': user.name or user.email,
             'user_email': user.email,
-            'platform_name': 'TalentCloud',
+            'platform_name': 'Talent Cloud',
             **context
         }
         
@@ -432,7 +433,7 @@ class NotificationService:
         enhanced_context = {
             'user_name': user.name or user.email,
             'user_email': user.email,
-            'platform_name': 'TalentCloud',
+            'platform_name': 'Talent Cloud',
             **context
         }
         
@@ -593,7 +594,7 @@ class NotificationHelpers:
             'job_created_at': job.created_at,
             'company_name': company.name,
             'posted_by_name': user.name or user.email,
-            'job_url': 'http://localhost:5173',
+            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={job.id}",
             'job_description': getattr(job, 'description', ''),
         }
         
@@ -637,7 +638,7 @@ class NotificationHelpers:
             'company_name': job.get_company_name,
             'applied_date': application.created_at,
             'application_id': application.id,
-            'job_url': f'http://localhost:5173/jobs/{job.id}',
+            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={job.id}",
         }
         
         job_seeker: JobSeeker = application.job_seeker
@@ -654,12 +655,12 @@ class NotificationHelpers:
         """Notify job seeker when application status changes"""
         context = {
             'user_name': application.job_seeker.name or application.job_seeker.email,
-            'platform_name': 'TalentCloud',
+            'platform_name': 'Talent Cloud',
             'job_title': application.job_post.title,
             'company_name': application.job_post.get_company_name,
             'application_status': new_status.lower(),  # Ensure lowercase
             'status_changed_date': timezone.now(),
-            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
+            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={application.job_post.id}",
             'application_id': application.id,
         }
         
@@ -677,12 +678,12 @@ class NotificationHelpers:
         """Notify job seeker when application shortlist"""
         context = {
             'user_name': application.job_seeker.name or application.job_seeker.email,
-            'platform_name': 'TalentCloud',
+            'platform_name': 'Talent Cloud',
             'job_title': application.job_post.title,
             'company_name': application.job_post.get_company_name,
             'application_status': new_status,
             'status_changed_date': timezone.now(),
-            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
+            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={application.job_post.id}",
             'application_id': application.id,
         }
         
@@ -700,11 +701,11 @@ class NotificationHelpers:
         """Notify job seeker when application shortlist"""
         context = {
             'user_name': application.job_seeker.name or application.job_seeker.email,
-            'platform_name': 'TalentCloud',
+            'platform_name': 'Talent Cloud',
             'job_title': application.job_post.title,
             'company_name': application.job_post.get_company_name,
             'status_changed_date': timezone.now(),
-            'job_url': f'http://localhost:5173/jobs/{application.job_post.id}',
+            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={application.job_post.id}",
             'application_id': application.id,
         }
         
@@ -728,10 +729,10 @@ class NotificationHelpers:
                     'title': job.title,
                     'company': job.company.name,
                     'location': job.location,
-                    'job_url': f'http://localhost:5173/jobs/{job.id}'
+                    'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={job.id}"
                 } for job in matched_jobs[:5]  # Limit to 5 jobs
             ],
-            'view_all_url': 'http://localhost:5173/jobs',
+            'view_all_url': f"{settings.FRONTEND_BASE_URL}",
         }
         
         return NotificationService.send_notification_with_template(
@@ -748,7 +749,7 @@ class NotificationHelpers:
             'job_seeker_name': job_seeker.name,
             'missing_fields': missing_fields,
             'profile_completion_percentage': job_seeker.get_profile_completion_percentage(),
-            'profile_url': 'http://localhost:5173/profile',
+            'profile_url': f"{settings.FRONTEND_BASE_URL}/user/mainProfile",
         }
         
         return NotificationService.send_notification_with_template(
@@ -765,7 +766,7 @@ class NotificationHelpers:
             'job_seeker_name': job_seeker.name,
             'company_name': company.name,
             'view_count': view_count,
-            'profile_url': 'http://localhost:5173/profile',
+            'profile_url': f"{settings.FRONTEND_BASE_URL}/user/mainProfile",
         }
         
         return NotificationService.send_notification_with_template(
@@ -826,7 +827,7 @@ class NotificationHelpers:
                     'title': job.title,
                     'company': job.company.name,
                     'expires_in_days': (job.deadline - timezone.now().date()).days,
-                    'job_url': f'http://localhost:5173/jobs/{job.id}'
+                    'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={job.id}"
                 } for job in saved_jobs
             ],
         }
@@ -847,7 +848,7 @@ class NotificationHelpers:
             'trending_jobs': trending_jobs[:5],
             'week_start': (timezone.now() - timedelta(days=7)).strftime('%B %d'),
             'week_end': timezone.now().strftime('%B %d, %Y'),
-            'browse_jobs_url': 'http://localhost:5173/jobs',
+            'browse_jobs_url': f"{settings.FRONTEND_BASE_URL}",
         }
         
         return NotificationService.send_notification_with_template(

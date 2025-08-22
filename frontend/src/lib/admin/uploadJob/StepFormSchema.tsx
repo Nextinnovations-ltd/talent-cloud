@@ -15,7 +15,7 @@ export const StepOneFormYupSchema = yup.object({
 export const StepTwoFormYupSchema = yup.object({
     responsibilities:yup.string().required("Responsibilities is required"),
     requirements:yup.string().required("Requirements is required"),
-    offered_benefits:yup.string().required("Offered benefits is required"),
+    offered_benefits:yup.string().required("Offer is required"),
 });
 
 

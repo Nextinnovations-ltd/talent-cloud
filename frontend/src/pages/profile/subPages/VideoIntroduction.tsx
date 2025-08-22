@@ -112,9 +112,9 @@ const VideoIntroduction = () => {
               fieldName={`title`}
               languageName=""
               isError={!!form.formState.errors?.title}
-              lableName="Youtube embedded iframe"
+              lableName="YouTube embedded iframe"
               required={true}
-              placeholder="Paste YouTube embed iframe here"
+              placeholder="Paste YouTube embedded iframe here"
 
               fieldHeight={'h-[300px]'}
               description={true}

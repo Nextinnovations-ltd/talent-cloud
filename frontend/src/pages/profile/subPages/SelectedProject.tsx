@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import SelectedProjectSchema from "@/lib/SelectedProjectSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -159,6 +160,7 @@ const SelectedProject = () => {
           <ImagePicker
         setIsOpen={() => {}}
         preview={preview}
+        //@ts-ignore
         form={form}
         type="square"
         setPreview={setPreview} />
@@ -267,7 +269,7 @@ const SelectedProject = () => {
               placeholder="Please describe your learning experience."
               required={true}
               fieldHeight={"h-[128px]"}
-              maxLength={250}
+              maxLength={1000}
               showLetterCount
             />
           </div>

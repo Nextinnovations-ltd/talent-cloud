@@ -119,7 +119,7 @@ export const Education = () => {
               languageName=""
               isError={!!form.formState.errors?.institution}
               lableName="School/University"
-              required={false}
+              required={true}
               placeholder="School"
               maxLength={60}
               showLetterCount
@@ -129,7 +129,7 @@ export const Education = () => {
               languageName=""
               isError={!!form.formState.errors?.degree}
               lableName="Degree"
-              required={false}
+              required={true}
               placeholder="Degree"
               maxLength={60}
               showLetterCount
@@ -143,6 +143,7 @@ export const Education = () => {
                 labelName="Start Date"
                 data={generateYearData()}
                 width="w-[50%]"
+                isRequired
               />
               <SelectField
                 name={`endDate`}
@@ -152,6 +153,7 @@ export const Education = () => {
                 labelName="End Date (Or Expected) "
                 data={generateYearData()}
                 width="w-[50%]"
+                isRequired
               />
             </div>
             <TextAreaField
@@ -161,7 +163,7 @@ export const Education = () => {
               fieldName={`description`}
               languageName={""}
               placeholder="Please describe your learning experience."
-              required={false}
+              required={true}
               fieldHeight={"h-[128px]"}
               maxLength={250}
               showLetterCount

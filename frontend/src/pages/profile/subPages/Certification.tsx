@@ -154,7 +154,7 @@ export const Certification = () => {
               languageName=""
               isError={!!form.formState.errors?.certificationName}
               lableName="Name of Certification"
-              required={false}
+              required={true}
               placeholder="Name"
               maxLength={60}
               showLetterCount
@@ -164,7 +164,7 @@ export const Certification = () => {
               languageName=""
               isError={!!form.formState.errors?.organizationIssue}
               lableName="Issuing organization"
-              required={false}
+              required={true}
               placeholder="Organization"
               maxLength={60}
               showLetterCount
@@ -178,6 +178,7 @@ export const Certification = () => {
                 labelName="Issue Date"
                 data={generateYearData()}
                 width="w-[50%]"
+                isRequired
               />
               <SelectField
                 name={`issueMonth`}
@@ -208,6 +209,7 @@ export const Certification = () => {
                   labelName="Expiration Date"
                   data={generateYearData()}
                   width="w-[50%]"
+                  isRequired
                 />
                 <SelectField
                   name={`expirationMonth`}
@@ -239,7 +241,7 @@ export const Certification = () => {
               languageName=""
               isError={!!form.formState.errors?.credentialURL}
               lableName="Credential URL"
-              required={false}
+              required={true}
               placeholder="URL"
             />
             <div className="max-w-[672px] flex items-center justify-end">

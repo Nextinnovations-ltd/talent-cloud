@@ -17,6 +17,7 @@ import useToast from "@/hooks/use-toast";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
 import { OnBoardingStepTwoSchema } from "@/lib/OnBoardingStepTwoSchema";
+import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 
 
 type OnBoardingStepTwoType = {
@@ -32,6 +33,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
   // Remove useApiCaller and use useOnBoardingMutation directly
   const [onBoardingMutation] = useOnBoardingMutation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -42,7 +44,6 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
     resolver: yupResolver(OnBoardingStepTwoSchema) as unknown as import("react-hook-form").Resolver<OnBoardingStepTwoType, any>,
     mode: "onBlur",
     defaultValues: {
-      image: null,
       name: "",
       tagline: "",
       level: "",
@@ -52,13 +53,15 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
 
   const formValues = form.watch();
 
+
   useEffect(() => {
     // Type-safe required fields check
+    console.log(formValues)
     const isFormValid =
       !!formValues.name &&
       !!formValues.workExperience &&
       !!formValues.tagline &&
-      !!formValues.level;
+      !!formValues.level 
     setIsButtonDisabled(!isFormValid);
   }, [formValues]);
 
@@ -101,6 +104,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
   }
 
   const onSubmit = async (values: OnBoardingStepTwoType) => {
+    console.log(values)
     if (!isButtonDisabled) {
       setIsModalOpen(false);
       const formData = new FormData();
@@ -115,8 +119,6 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
       // Call mutation directly with FormData (cast as unknown then any for mutation)
       //@ts-ignore
       const res = await onBoardingMutation(formData);
-
-
 
       // @ts-expect-error: dynamic response shape
       if (res?.data?.status) {
@@ -166,8 +168,19 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
       setPreview(editedImageUrl);
       const file = dataURLtoFile(editedImageUrl, "profile.png");
       form.setValue("image", file);
-      canvas.toBlob((blob) => {
-        if (blob) {
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+
+        const originalName = file?.name || "image";
+        const baseName = originalName.replace(/\.[^/.]+$/, "");
+        const rotatedFile = new File([blob], `${baseName}-edited.png`, { type: "image/png" });
+
+        try {
+          setIsUploading(true);
+          await UploadToS3({ file: rotatedFile,type:'profile' });
+        
+        } finally {
+          setIsUploading(false);
           setIsModalOpen(false);
         }
       }, "image/png");
@@ -221,10 +234,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                   fieldHeight={""}
                   fieldWidth={""}
                 />
-         
-
             </div>
-
             {/* Image Uploader */}
             <div className="md:w-[50%]  flex flex-col items-center justify-start">
               <div
@@ -306,6 +316,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
         handleScaleChange={handleScaleChange}
         saveEditedImage={saveEditedImage}
         rotateImage={rotateImage}
+        isUploading={isUploading}
       />
     </div>
   );

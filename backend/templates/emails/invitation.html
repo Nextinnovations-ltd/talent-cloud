@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Invitation to TalentCloud</title>
+    <title>Invitation to Talent Cloud</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -23,18 +23,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>You're Invited to TalentCloud!</h1>
+            <h1>You're Invited to Talent Cloud!</h1>
         </div>
         
         <div class="content">
             <p>Hello,</p>
             
-            <p>{{ invited_by }} has invited you to join <strong>{{ company_name }}</strong> as a <strong>{{ invitation.get_invitation_type_display }}</strong> on TalentCloud.</p>
+            <p>{{ invited_by }} has invited you to join <strong>{{ company_name }}</strong> as a <strong>{{ invitation.get_invitation_type_display }}</strong> on Talent Cloud.</p>
             
             {% if invitation.target_company %}
             <p>You've been invited to manage <strong>{{ invitation.target_company.name }}</strong>'s job postings and applications.</p>
             {% else %}
-            <p>You've been invited to help manage the TalentCloud platform.</p>
+            <p>You've been invited to help manage the Talent Cloud platform.</p>
             {% endif %}
             
             <p>To complete your registration, please click the button below:</p>
@@ -52,7 +52,7 @@
             
             <p>If you have any questions, please contact {{ invited_by }}.</p>
             
-            <p>Best regards,<br>The TalentCloud Team</p>
+            <p>Best regards,<br>The Talent Cloud Team</p>
         </div>
         
         <div class="footer">

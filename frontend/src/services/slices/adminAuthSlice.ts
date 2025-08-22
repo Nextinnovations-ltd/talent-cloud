@@ -67,9 +67,6 @@ const adminAuthSlice = createSlice({
       extendedAdminAuthSlice.endpoints?.adminLogin.matchFulfilled,
       (state, action: PayloadAction<LoginResponse>) => {
 
-        console.log("kdkdk from auth slice")
-        console.log(action.payload.data)
-        console.log("kdkdk from auth slice")
 
 
         if (action.payload.data.token) {

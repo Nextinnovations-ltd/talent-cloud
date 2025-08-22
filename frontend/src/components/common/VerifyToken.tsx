@@ -20,7 +20,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
 
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
-      navigate(`/tc/lp`, {
+      navigate(`/emp/lp`, {
         state: { from: location.pathname },
         replace: true,
       });

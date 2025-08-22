@@ -78,7 +78,7 @@ class EmailService:
             
             # Enhance context with common variables
             enhanced_context = {
-                'platform_name': getattr(settings, 'PLATFORM_NAME', 'TalentCloud'),
+                'platform_name': getattr(settings, 'PLATFORM_NAME', 'Talent Cloud'),
                 'frontend_url': getattr(settings, 'FRONTEND_URL', ''),
                 'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@talentcloud.com'),
                 'contact_url': f"{getattr(settings, 'FRONTEND_URL', '')}/contact",

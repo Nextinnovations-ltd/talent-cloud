@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 import { Button } from "@/components/ui/button";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";

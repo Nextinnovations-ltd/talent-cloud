@@ -233,16 +233,17 @@ class JobApplication(TimeStampModel):
           default=ApplicationStatus.APPLIED,
           help_text="The current status of the application."
      )
-     cover_letter = models.TextField(
-          null=True,
-          blank=True,
-          help_text="Optional cover letter submitted with the application."
-     )
-     application_resume_url = models.URLField(
+     cover_letter_url = models.URLField(
           max_length=2048,
           null=True,
           blank=True,
-          help_text="URL of the resume submitted for this specific application (optional). If not provided, the seeker's current resume_url is typically used."
+          help_text="URL of the cover letter submitted for this specific application."
+     )
+     resume_url = models.URLField(
+          max_length=2048,
+          null=True,
+          blank=True,
+          help_text="URL of the job seeker resume."
      )
 
      class Meta:

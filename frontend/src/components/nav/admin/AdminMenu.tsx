@@ -1,5 +1,5 @@
 import AdminMenuItems from "@/components/common/Admin/AdminMenuItems";
-import { LayoutDashboard, Users } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 
 
 
@@ -22,11 +22,11 @@ const AdminMenu = () => {
                     text="Dashboard"
                     exactMatch
                 />
-                <AdminMenuItems
+                {/* <AdminMenuItems
                     targetPath="/admin/dashboard/candidates"
                     icon={<Users />}
                     text="Candidates"
-                />
+                /> */}
 
             </div>
         </div>

@@ -107,7 +107,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
               
             </>
           </FormControl>
-          <FormMessage />
+          <FormMessage className=" translate-y-2" />
           {description && (
           <h3 className="text-[#686C73] font-normal mt-[10px] text-[14px]">
             {descriptionText}

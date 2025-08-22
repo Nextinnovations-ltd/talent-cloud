@@ -2,6 +2,7 @@ import secrets, uuid
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
+from django.conf import settings
 from apps.users.models import TalentCloudUser
 from core.constants.constants import ROLES
 from services.models import TimeStampModel
@@ -135,7 +136,7 @@ class UserInvitation(TimeStampModel):
           self.invitation_status = self.InvitationStatus.REVOKED
           self.save()
      
-     def get_registration_url(self, base_url="http://localhost:3000"):
+     def get_registration_url(self, base_url=f"{settings.FRONTEND_BASE_URL}"):
           """Generate registration URL with token"""
           return f"{base_url}/register/admin?token={self.token}"
 class FileUpload(models.Model):
@@ -156,7 +157,7 @@ class FileUpload(models.Model):
      ]
      
      id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE)
+     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE, related_name="uploaded_files")
      file_type = models.CharField(max_length=20, choices=FILE_TYPES)
      original_filename = models.CharField(max_length=255)
      file_path = models.CharField(max_length=500)

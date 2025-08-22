@@ -155,7 +155,7 @@ class ProfileImageUploadAPIView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
 
-@extend_schema(tags=["Profile Upload"])
+@extend_schema(tags=["Resume Upload"])
 class ProfileResumeUploadAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
@@ -410,70 +410,80 @@ class ConfirmProfileUploadAPIView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
 
-@extend_schema(tags=["Profile Upload"])
-class GetProfileFilesAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudUserPermission]
      
      @extend_schema(
-          summary="Get user's current profile files (image and resume)"
+          summary="Confirm cover letter upload and update job application",
+          request={
+               'application/json': {
+                    'type': 'object',
+                    'properties': {
+                         'upload_id': {'type': 'string', 'description': 'Upload ID from generate URL endpoint'},
+                         'file_size': {'type': 'integer', 'description': 'Actual uploaded file size (optional)'},
+                    },
+                    'required': ['upload_id']
+               }
+          }
      )
-     def get(self, request):
+     def post(self, request):
           """
-          Get user's current profile files (image and resume)
+          Confirm cover letter file upload and update job application
           """
           try:
-               if not request.user or not request.user.is_authenticated:
-                    raise ValidationError("User not authenticated")
+               upload_id = request.data.get('upload_id')
+               file_size = request.data.get('file_size')
                
-               profile_files = {}
+               if not upload_id:
+                    raise ValidationError("upload_id is required")
                
-               # Get profile image
-               profile_image = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='profile_image',
-                    upload_status='uploaded'
-               ).order_by('-uploaded_at').first()
+               # Get upload record
+               try:
+                    file_upload = FileUpload.objects.get(
+                         id=upload_id,
+                         user=request.user,
+                         upload_status='pending'
+                    )
+               except FileUpload.DoesNotExist:
+                    raise ValidationError("Invalid upload_id or upload already processed")
                
-               if profile_image:
-                    profile_files['profile_image'] = {
-                         'upload_id': str(profile_image.id),
-                         'filename': profile_image.original_filename,
-                         'file_size': profile_image.file_size,
-                         'uploaded_at': profile_image.uploaded_at.isoformat(),
-                         'download_url': S3Service.generate_presigned_download_url(
-                         profile_image.file_path, expiration=3600
-                         )
-                    }
+               # Update upload record
+               file_upload.upload_status = 'uploaded'
+               file_upload.uploaded_at = datetime.now()
+               if file_size:
+                    file_upload.file_size = file_size
+               file_upload.save()
                
-               # Get resume
-               resume = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='resume',
-                    upload_status='uploaded'
-               ).order_by('-uploaded_at').first()
+               # Generate URL for response
+               public_url = S3Service.get_public_url(
+                    file_upload.file_path
+               )
+            
+               response_data = {
+                    'upload_id': str(file_upload.id),
+                    'file_type': file_upload.file_type,
+                    'file_path': file_upload.file_path,
+                    'url': public_url,
+                    'uploaded_at': file_upload.uploaded_at.isoformat(),
+                    'upload_status': 'uploaded',
+               }
                
-               if resume:
-                    profile_files['resume'] = {
-                         'upload_id': str(resume.id),
-                         'filename': resume.original_filename,
-                         'file_size': resume.file_size,
-                         'uploaded_at': resume.uploaded_at.isoformat(),
-                         'download_url': S3Service.generate_presigned_download_url(
-                         resume.file_path, expiration=3600
-                         )
-                    }
-               
-               logger.info(f"Retrieved profile files for user {request.user.id}")
+               logger.info(f"Confirmed upload {file_upload.id} for user {request.user.id}")
                
                return Response(
-                    CustomResponse.success("Profile files retrieved", profile_files),
+                    CustomResponse.success("Profile file uploaded and profile updated", response_data),
                     status=status.HTTP_200_OK
                )
                
-          except Exception as e:
-               logger.error(f"Error getting profile files: {str(e)}")
+          except ValidationError as e:
+               logger.warning(f"Validation error in upload confirmation: {str(e)}")
                return Response(
-                    CustomResponse.error("Failed to get profile files"),
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error confirming profile upload: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to confirm upload"),
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )

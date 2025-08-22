@@ -13,8 +13,7 @@ const CommonButton: FC<CommonButtonProps> = ({ title, login = true }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    const url = (login ? "/auth/login" : "/emp/lp");
-    window.open(url, "_blank"); // opens in new tab
+    navigate(login ? "/auth/login" : "/tc/lp");
   };
 
   return (

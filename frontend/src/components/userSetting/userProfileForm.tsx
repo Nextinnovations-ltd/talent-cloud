@@ -95,7 +95,7 @@ export const UserProfileForm = ({
           descriptionText={"* Username can only be changed once per 7 days"}
         />
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           <Switch
             id="is_open_to_work"
             className=""
@@ -103,7 +103,7 @@ export const UserProfileForm = ({
             onCheckedChange={(checked: boolean) => form.setValue("is_open_to_work", checked)}
           />
           <label htmlFor="is_open_to_work" className="text-sm font-medium">
-            Open to work
+          Avaliable for work
           </label>
         </div>
 
@@ -221,7 +221,7 @@ export const UserProfileForm = ({
               requiredLabel={false}
               type={'text'}
               languageName={"stepTwo"}
-              fieldWidth="w-full max-w-[497px]"
+              fieldWidth={`w-full max-w-[497px] mt-[4px]  ${form.formState.errors?.phone_number && 'mt-[30px]'}`}
               fieldHeight={""}
             />
 

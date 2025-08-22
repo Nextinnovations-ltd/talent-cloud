@@ -1,10 +1,10 @@
 from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
-from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, JobSeekerVideoAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, ProfileScoreAPIView
+from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, JobSeekerResumeAPIView, JobSeekerVideoAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, ProfileScoreAPIView
 from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
 from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
-from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, GetProfileFilesAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
+from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
 from .views.certification_view import CertificationViewSet
 from .views.education_view import EducationViewSet
 from .views.experience_view import ExperienceViewSet
@@ -32,24 +32,42 @@ urlpatterns = [
      path('location/country-list/', CountryAPIView.as_view(), name='country-data'),
      path('location/city-list/<int:country_id>/', CityAPIView.as_view(), name='city-data'),
      
+     # Special Skill
      path('jobseeker/special-skills/', JobSeekerSpecialSkillListAPIView.as_view(), name='special-skills-list'),
      path('jobseeker/special-skills/<int:skill_id>/', JobSeekerSpecialSkillDetailAPIView.as_view(), name='special-skills-detail'),     # Retrieve, update, or delete a specific special skill
+     
+     # Project
      path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
      path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),
+     
+     # Profile
      path('jobseeker/profile/', JobSeekerProfileAPIView.as_view(), name='jobseeker-profile'),
      path('jobseeker/skill/', JobSeekerSkillAPIView.as_view(), name='jobseeker-skill'),
-     path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
-     path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),     # Retrieve, update, or delete a specific project
+     
+     # Language
      path('jobseeker/language/', JobSeekerLanguageAPIView.as_view(), name='jobseeker-language'),
+     
+     # Video
      path('jobseeker/video-introduction/', JobSeekerVideoAPIView.as_view(), name='jobseeker-video'),
+     
+     # Profile Score
      path('jobseeker/profile-score/', ProfileScoreAPIView.as_view(), name='jobseeker-profile-score'),
+     
+     # Setting
      path('jobseeker/setting/', JobSeekerSettingAPIView.as_view(), name='jobseeker-setting'),
+     
+     # S3 Upload Test
      path('s3/upload/', S3UploadAPIView.as_view(), name='s3-upload'),
      
-     path('job-seekers/profile/upload/image/', ProfileImageUploadAPIView.as_view(), name='profile-image-upload'),
-     path('job-seekers/profile/upload/resume/', ProfileResumeUploadAPIView.as_view(), name='profile-resume-upload'),
-     path('job-seekers/profile/upload/confirm/', ConfirmProfileUploadAPIView.as_view(), name='confirm-profile-upload'),
-     path('job-seekers/profile/files/', GetProfileFilesAPIView.as_view(), name='get-profile-files'),
+     # Resume
+     path('jobseeker/profile/resume/', JobSeekerResumeAPIView.as_view(), name='profile-resume-info'),
+     path('jobseeker/profile/upload/resume/', ProfileResumeUploadAPIView.as_view(), name='profile-resume-upload'),
+     
+     # Profile Image
+     path('jobseeker/profile/upload/image/', ProfileImageUploadAPIView.as_view(), name='profile-image-upload'),
+     
+     # S3 Upload Confirm
+     path('jobseeker/profile/upload/confirm/', ConfirmProfileUploadAPIView.as_view(), name='confirm-profile-upload'),
 ]
 
 urlpatterns += router.urls
