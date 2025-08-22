@@ -4,10 +4,11 @@ import contactImg from '@/assets/Employee/Frame 1618873031.png'
 import mail from '@/assets/Employee/mail.svg';
 import map from '@/assets/Employee/map.svg';
 import phone from '@/assets/Employee/phone.svg';
+import SendEmailForm from './SendEmailForm';
 
 const Form = () => {
   return (
-    <div className='h-screen pt-[233px]' style={{
+    <div className='h-screen  pt-[233px]' style={{
         backgroundImage: `url(${gradientImg})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -25,7 +26,7 @@ const Form = () => {
 
       </div>
       
-      <div className="max-w-[1440px] h-[734px] mx-auto mt-[60px] py-[70px] px-[54px] border rounded-[18px] bg-white shadow-[0_4px_12px_0_#0D0A2C0F]">
+      <div className="max-w-[1440px] flex h-[734px] mx-auto mt-[60px] py-[70px] px-[54px] border rounded-[18px] bg-white shadow-[0_4px_12px_0_#0D0A2C0F]">
         <div className="p-[40px] max-w-[425px]" style={{
             backgroundImage: `url(${contactImg})`,
             backgroundPosition: 'center',
@@ -51,6 +52,7 @@ const Form = () => {
            </div>
           </div>
         </div>
+        <SendEmailForm/>
       </div>
     </div>
 
