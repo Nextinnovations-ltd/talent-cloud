@@ -269,7 +269,7 @@ const SelectedProject = () => {
               placeholder="Please describe your learning experience."
               required={true}
               fieldHeight={"h-[128px]"}
-              maxLength={250}
+              maxLength={1000}
               showLetterCount
             />
           </div>

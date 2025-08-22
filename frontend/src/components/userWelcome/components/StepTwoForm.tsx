@@ -53,7 +53,6 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
 
   const formValues = form.watch();
 
-  console.log(form.formState.errors);
 
   useEffect(() => {
     // Type-safe required fields check

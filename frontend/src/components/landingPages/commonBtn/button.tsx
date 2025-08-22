@@ -13,7 +13,7 @@ const CommonButton: FC<CommonButtonProps> = ({ title, smallIcon = false, login =
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(login ? "/auth/login" : "/emp/lp");
+    navigate(login ? "/auth/login" : "/tc/lp");
   };
 
   return (

@@ -44,7 +44,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
   if (status === 401 || status === 403 || status === 500) {
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
-    window.location.href = "/tc/lp";
+    window.location.href = "/emp/lp";
   }
 
   return result;

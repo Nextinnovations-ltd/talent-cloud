@@ -64,11 +64,11 @@ export const router = createBrowserRouter([
   },
   {
    path:"/emp/lp",
-   element:<JobSeekerLandingPage/>
+   element:<EmployeePage/>
   },
   {
     path:"/tc/lp",
-    element:<EmployeePage/>
+    element:<JobSeekerLandingPage/>
    },
   {
    path: "/",
