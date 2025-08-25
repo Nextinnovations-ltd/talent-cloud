@@ -510,6 +510,9 @@ class JobSeekerService:
                skill_data = data.get("skill_list", [])
                skill_ids = []
                created_skills = []
+               
+               if len(skill_data) < 5:
+                    raise ValidationError("You must add at least 5 skills.")
 
                for skill_item in skill_data:
                     if isinstance(skill_item, dict):

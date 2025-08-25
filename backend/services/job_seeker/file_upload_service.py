@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from datetime import datetime, timedelta
 from apps.authentication.models import FileUpload
-from core.constants.s3.constants import FILE_TYPES
+from core.constants.s3.constants import FILE_TYPES, OVERRIDE_FILE_TYPES
 from services.storage.s3_service import S3Service
 import logging
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class FileUploadService:
      @staticmethod
-     def upload_file(user, filename, file_size, content_type, file_type = FILE_TYPES.PROFILE_IMAGE):
+     def generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.PROFILE_IMAGE):
           try:
                # Convert file_size to integer and validate
                file_size = int(file_size)
@@ -33,7 +33,7 @@ class FileUploadService:
                pending_upload.save()
                logger.info(f"Cancelled pending file upload {pending_upload.id} for user {user.id}")
           
-          if file_type != FILE_TYPES.COVER_LETTER:
+          if file_type in OVERRIDE_FILE_TYPES:
                # Delete previous uploaded file
                previous_files = FileUpload.objects.filter(
                     user=user,

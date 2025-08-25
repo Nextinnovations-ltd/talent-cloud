@@ -4,6 +4,7 @@ class FILE_TYPES:
      COVER_LETTER = 'cover_letter'
      COMPANY_LOGO = 'company_logo'
      COMPANY_ENVIRONMENT = 'company_environment'
+     PROJECT_IMAGE = 'project_image'
      
 class ALLOWED_CONTENT_TYPES:
      DOCUMENT = [
@@ -37,9 +38,10 @@ class ALLOWED_CONTENT_TYPES:
 
 class FILE_SIZE_LIMITS:
     # Sizes in bytes (1 MB = 1024 * 1024)
-    PROFILE_IMAGE = 3 * 1024 * 1024        # 3 MB
-    RESUME = 5 * 1024 * 1024     # 5 MB
-    COVER_LETTER = 5 * 1024 * 1024     # 5 MB
+    PROFILE_IMAGE = 3 * 1024 * 1024     # 3 MB
+    PROJECT_IMAGE = 3 * 1024 * 1024     # 3 MB
+    RESUME = 5 * 1024 * 1024            # 5 MB
+    COVER_LETTER = 5 * 1024 * 1024      # 5 MB
 
 class UPLOAD_MAPPER:     
      TYPE_MAP = {
@@ -54,5 +56,14 @@ class UPLOAD_MAPPER:
           FILE_TYPES.COVER_LETTER: {
                'content_types': ALLOWED_CONTENT_TYPES.DOCUMENT,
                'max_size': FILE_SIZE_LIMITS.COVER_LETTER
-          }
+          },
+          FILE_TYPES.PROJECT_IMAGE: {
+               'content_types': ALLOWED_CONTENT_TYPES.IMAGE,
+               'max_size': FILE_SIZE_LIMITS.PROJECT_IMAGE
+          },
      }
+
+OVERRIDE_FILE_TYPES = [
+     FILE_TYPES.PROFILE_IMAGE,
+     FILE_TYPES.RESUME
+]
