@@ -8,7 +8,7 @@ import SendEmailForm from './SendEmailForm';
 
 const Form = () => {
   return (
-    <div className='h-screen  pt-[233px]' style={{
+    <div className='  pt-[233px] pb-[104px]' style={{
         backgroundImage: `url(${gradientImg})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -26,7 +26,7 @@ const Form = () => {
 
       </div>
       
-      <div className="max-w-[1440px] flex h-[734px] mx-auto mt-[60px] py-[70px] px-[54px] border rounded-[18px] bg-white shadow-[0_4px_12px_0_#0D0A2C0F]">
+      <div className="max-w-[1170px] flex justify-center  gap-[50px] h-[734px] mx-auto mt-[60px]  py-[70px] px-[54px] border rounded-[18px] bg-white shadow-[0_4px_12px_0_#0D0A2C0F]">
         <div className="p-[40px] max-w-[425px]" style={{
             backgroundImage: `url(${contactImg})`,
             backgroundPosition: 'center',

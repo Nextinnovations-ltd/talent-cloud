@@ -9,8 +9,8 @@ const TalentCloudDone = () => {
     <div className='mx-auto max-w-[1240px] mt-[34px] pl-6 pr-6'>
       <h1 className='text-black text-[20px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[48px]'>  WHAT OUR TALENT DONE ?</h1>
       <div className="flex flex-col md:flex-row gap-[16px] md:gap-[13px] justify-center items-center">
-          <Link to='http://staging.locaboo.jp/' target="_blank">
-            <div className="img-container w-full md:w-[50%]">
+          <Link to='http://staging.locaboo.jp/' target="_blank" className="img-container w-full md:w-[50%]">
+            <div >
                 <img src={project1} alt="" className=' w-full' />
                 <div className='hover-img flex flex-col justify-center items-start px-[20px]'>
                   <h1 className='text-white text-[16px] md:text-[25.82px] font-[600]'>LocaBoo – Web Print Service</h1>
@@ -22,8 +22,8 @@ const TalentCloudDone = () => {
                </div>
             </div>
           </Link>
-          <Link to='https://kg-m.jp/' target="_blank">
-             <div className="img-container w-full md:w-[50%]">
+          <Link to='https://kg-m.jp/' target="_blank" className="img-container w-full md:w-[50%]">
+             <div >
                 <img src={project2} alt="" className=' w-full' />
                 <div className='hover-img flex flex-col justify-center items-start px-[20px]'>
                   <h1 className='text-white text-[16px] md:text-[25.82px] font-[600]'>KG Motors, Sale Order Project</h1>
@@ -56,8 +56,8 @@ const TalentCloudDone = () => {
               <button className='text-[#0481EF] text-[12px] font-[600] leading-[21.48px ] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] border border-1 border-[#767676] max-w-[80px]'>Visit site</button>
             </div>
           </div>
-          <Link to='https://hosono.ai/ja' target="_blank">
-              <img src={project3} alt="" className='w-full md:w-[50%] lg:max-w-[447px]' />
+          <Link to='https://hosono.ai/ja' target="_blank"  className='w-full md:w-[50%] lg:max-w-[447px]'>
+              <img src={project3} alt=""  />
 
             </Link>
         </div>

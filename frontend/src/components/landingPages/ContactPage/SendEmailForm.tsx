@@ -17,30 +17,53 @@ const SendEmailForm = () => {
     }
 
     return (
-        <div className='border-2 w-full'>
+        <div className=' w-full'>
             <Form {...form} >
                 <form onSubmit={form.handleSubmit(handleSubmit)} >
-                    <InputField
-                        fieldName={'name'}
-                        lableName='Name'
-                        placeholder='Name'
-                        languageName={''}
-                        required={false}
-                        //styling here
-                        fieldWidth='w-[200px]'
-                    />
+                    <div className="flex flex-col gap-[32px]">
+                          <div className="flex w-full gap-[44px]">
+                        <InputField
+                            fieldName={'name'}
+                            lableName='Your Name *'
+                            placeholder='Name'
+                            languageName={''}
+                            required={false}
+                            //styling here
+                            fieldWidth='w-[270px]'
+                        />
+                         <InputField
+                            fieldName={'name'}
+                            lableName='Your Email *'
+                            placeholder='Name'
+                            languageName={''}
+                            required={false}
+                            //styling here
+                            fieldWidth='w-[270px]'
+                        /></div> 
+                           <InputField
+                            fieldName={'name'}
+                            lableName='Your Name *'
+                            placeholder='Name'
+                            languageName={''}
+                            required={false}
+                            //styling here
+                            fieldWidth='w-full'
+                        />
 
-                    <TextAreaField
-                        fieldName={'description'}
-                        lableName='Description'
-                        placeholder='Description'
-                        languageName={''}
-                        required={false}
-                         //styling here
-                        fieldWidth='w-[200px]'
-                    />
+                        <TextAreaField
+                            fieldName={'description'}
+                            lableName='Message'
+                            placeholder='Description'
+                            languageName={''}
+                            required={false}
+                           //styling here
+                        fieldWidth='w-full '
+                        />
 
-                    <Button className='bg-bg-primary mt-[50px]' type='submit'>Send email</Button>
+                    </div>
+                  
+
+                    <Button className='bg-[#0481EF] mt-[38px] w-full text-white text-[18px] font-[500] leading-[20px] py-[25px]' type='submit'>Next</Button>
                 </form>
             </Form>
         </div>
