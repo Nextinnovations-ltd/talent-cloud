@@ -1,6 +1,6 @@
 const ExpiredJobs = () => {
   return (
-    <div>ExpiredJobs</div>
+    <div>Expired Jobs</div>
   )
 }
 

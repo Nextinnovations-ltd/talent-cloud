@@ -9,13 +9,19 @@ import { HashLink } from 'react-router-hash-link';
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { Button } from "@/components/ui/button";
-
+import { useLocation } from 'react-router-dom';
 
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
+  const location = useLocation();
+
+  const linkClass = (hash: string) =>
+    `transition-colors duration-300 hover:text-[#0389FF] ${
+      location.hash === hash ? "text-[#0389FF]" : ""
+    }`;
 
   return (
-    <div>
+    <div onClick={() => setNavIsOpen(!navIsOpen)}>
       <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]">
         <nav className="max-w-[1240px] mx-auto flex justify-between items-center  relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
           {/* logo SVG here */}
@@ -24,7 +30,7 @@ const HeroSection = () => {
             alt=""
             className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover"
           />
-          <ul className=" gap-[48px] hidden md:flex">
+{/*           <ul className=" gap-[48px] hidden md:flex">
             <li>
               <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink>
             </li>
@@ -34,8 +40,25 @@ const HeroSection = () => {
             <li>
                <HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink>
             </li>
-          </ul>
-          <Link target="_blank" to={'/tc/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
+          </ul> */}
+           <ul className="gap-[48px] hidden md:flex">
+          <li>
+            <HashLink smooth to="#why-us" className={linkClass("#why-us")}>
+              Why us
+            </HashLink>
+          </li>
+          <li>
+            <HashLink smooth to="#what-you-get" className={linkClass("#what-you-get")}>
+              What You Get
+            </HashLink>
+          </li>
+          <li>
+            <HashLink smooth to="#find-jobs" className={linkClass("#find-jobs")}>
+              Find Jobs
+            </HashLink>
+            </li>
+            </ul>
+          <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
           <div className=" hidden md:flex">
           <CommonButton title="Get Started" url='/tc/lp'/>
           </div>
@@ -75,9 +98,9 @@ const HeroSection = () => {
 
 
                         <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                          <li><HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
-                          <li> <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink></li>
-                          <li><HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink></li>
+                          <li><HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
+                          <li> <HashLink smooth to="#what-you-get"  className={linkClass("#what-you-get")}>What You Get</HashLink></li>
+                          <li><HashLink smooth to="#find-jobs" className={linkClass("#find-jobs")}>Find Jobs</HashLink></li>
                           <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#0389FF] ">For Employee</Link></li>
                         </ul>
 <Link to='/emp/lp' target="_blank">
@@ -108,7 +131,7 @@ const HeroSection = () => {
           <div className="max-w-[641px] flex flex-col justify-center items-start gap-6 md:gap-8">
             <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px ] md:leading-[66.7px] uppercase text-black">
               Your Next Big <br></br> Opportunity
-              <Link to='/emp/lp'><span className="text-[#0481EF]"> Starts Here</span></Link>
+              <Link to='/emp/lp' target="_blank"><span className="text-[#0481EF]"> Starts Here</span></Link>
               
             </h1>
             <p className="md:max-w-[532px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[22.8px] md:leading-[30.4px]">
@@ -127,7 +150,7 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] md:gap-8 max-w-[1240px] mx-auto pt-[50px] pb-[48px] md:pt-[200px] md:pb-[145px] pl-[45px] pr-[24px]">
           <div className="flex flex-col gap-2 front-line  max-w-full md:max-w-[330px]">
             <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[38.4px ]">
-              Talent Cloud, powered by Next Innovations. Ltd,
+              Talent Cloud, powered by Next Innovations Ltd.
             </h1>
             <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[25.6px ]">
               Your gateway to international tech careers—no visa or overseas legal

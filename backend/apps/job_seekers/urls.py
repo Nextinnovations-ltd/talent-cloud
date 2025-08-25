@@ -2,7 +2,7 @@ from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
 from apps.job_seekers.views.profile_view import JobSeekerLanguageAPIView, JobSeekerResumeAPIView, JobSeekerVideoAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, ProfileScoreAPIView
 from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
-from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView
+from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView, ProjectImageUploadUrlAPIView
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
 from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
 from .views.certification_view import CertificationViewSet
@@ -37,6 +37,7 @@ urlpatterns = [
      path('jobseeker/special-skills/<int:skill_id>/', JobSeekerSpecialSkillDetailAPIView.as_view(), name='special-skills-detail'),     # Retrieve, update, or delete a specific special skill
      
      # Project
+     path('jobseeker/projects/upload/project-image/', ProjectImageUploadUrlAPIView.as_view(), name='get-project-image-upload-url'),
      path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
      path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),
      

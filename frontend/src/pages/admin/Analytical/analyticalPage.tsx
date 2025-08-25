@@ -10,7 +10,7 @@ const AnalyticalPage = () => {
   return (
     <div className=" py-[44px] w-[calc(100svw-300px)]">
       <h3 className="text-[24px] font-semibold">Welcome Back!</h3>
-      <p className="text-[#575757]">Here What happening with yours jobs</p>
+      <p className="text-[#575757]">Here What Happening With Your Jobs.</p>
       <AnalyticalCharts />
       <div className="flex gap-5 mt-[38px] ">
         <RecentJobsLists/>

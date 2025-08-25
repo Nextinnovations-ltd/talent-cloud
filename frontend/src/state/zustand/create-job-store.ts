@@ -67,7 +67,7 @@ export const useJobFormStore = create<JobFormStore>((set) => ({
       experience_level: '',
       experience_years: '',
       salary_fixed: '',
-      number_of_positions:0,
+      number_of_positions:1,
       last_application_date:''
     }
   },
@@ -101,7 +101,7 @@ export const useJobFormStore = create<JobFormStore>((set) => ({
         experience_level: '',
         experience_years: '',
         salary_fixed: '',
-        number_of_positions:0,
+        number_of_positions:1,
         last_application_date:''
       }
     }

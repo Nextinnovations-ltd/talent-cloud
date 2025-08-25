@@ -7,7 +7,7 @@ const SuccessStory = () => {
       <div className="bg-[#E8F1FC] pl-5 pr-5">
            <div className='max-w-[1240px] mx-auto pt-[53px] md:pt-[83px] pb-[30px] md:pb-[139px] '>
               <p className='text-[14px] md:text-[20px] font-[500] leading-[31px] mb-4'>Success Story</p>
-              <div className="flex md:flex-row flex-col justify-between items-center">
+              <div className="flex md:flex-row flex-col justify-between items-start">
                   <h1 className='max-w-full md:max-w-[524px] text-[24px] md:text-[40px] leading-[38px] md:leading-[51px] font-[500] mb-4'>
                   ENGINEERFORCE SCALES EFFICIENTY  IN MYANMAR WITH EOR SERVICES
                   </h1>

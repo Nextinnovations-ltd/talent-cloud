@@ -11,7 +11,7 @@
 
 <div class="info-box">
     <h3>{{ company_name }}</h3>
-    <p><strong>Registration Date:</strong> {{ registration_date|date:"F d, Y at g:i A" }}</p>
+    <p><strong>Registration Date:</strong> {{ registration_date|date:"F d, Y \\a\\t g:i A" }}</p>
     {% if company_website %}
     <p><strong>Website:</strong> <a href="{{ company_website }}" target="_blank">{{ company_website }}</a></p>
     {% endif %}

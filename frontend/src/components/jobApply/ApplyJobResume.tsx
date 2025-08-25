@@ -26,13 +26,13 @@ const ApplyJobResume = () => {
         <RadioGroupItem  value="upload" id="r1" />
         <Label className="font-medium cursor-pointer" htmlFor="r1">
             <h3 className="text-[16px]">Upload New Resume</h3>
-            <p className="text-[12px] mt-[10px] font-light">Upload a personalized cover letter</p>
+            <p className="text-[12px] mt-[10px] font-light">Upload a resume</p>
         </Label>
       </div>
       {
         radioValue === "upload" && 
         <div className="mt-[20px]">
-         <ApplyJobUploadResume/>
+         <ApplyJobUploadResume type="resume"/>
         </div>
       }
       <div className="flex items-center cursor-pointer gap-3 mt-[40px]">

@@ -1,9 +1,12 @@
-import boto3, uuid
-import mimetypes
-from botocore.exceptions import ClientError
+import mimetypes, boto3, uuid
 from datetime import datetime
 from django.conf import settings
+from botocore.exceptions import ClientError
+from rest_framework.exceptions import ValidationError
+from apps.authentication.models import FileUpload
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_MAPPER
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +52,34 @@ class S3Service:
                }
                content_type = content_type_map.get(extension, 'application/octet-stream')
           return content_type
+
+     @classmethod
+     def get_allowed_content_types(cls, file_type=FILE_TYPES.PROFILE_IMAGE):
+          return UPLOAD_MAPPER.TYPE_MAP.get(file_type, {}).get("content_types", [])
+
+     @classmethod
+     def get_max_size(cls, file_type=FILE_TYPES.PROFILE_IMAGE):
+          return UPLOAD_MAPPER.TYPE_MAP.get(file_type, {}).get("max_size", 0)
+
+     @classmethod
+     def validate_file_upload(cls, content_type, file_size, file_type):
+          allowed_types = cls.get_allowed_content_types(file_type)
+          
+          # check allowed content_types
+          if content_type not in allowed_types:
+               raise ValidationError(
+                    f"Invalid file type. Allowed: {', '.join(allowed_types)}"
+               )
+
+          # check size limit
+          max_size = cls.get_max_size(file_type)
+          
+          if file_size > max_size:
+               raise ValidationError(
+                    f"File too large. Max allowed size: {max_size // (1024 * 1024)} MB"
+               )
+          
+          return allowed_types, max_size
 
      @classmethod
      def generate_presigned_upload_url(cls, file_path, file_type=None, file_size=None, expiration=3600):
@@ -145,26 +176,57 @@ class S3Service:
      @classmethod
      def generate_unique_file_path(cls, user_id, file_type, original_filename=None):
           """Generate organized file path structure"""
-          timestamp = datetime.now().strftime('%Y/%m/%d')
-          unique_id = str(uuid.uuid4())
+          timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+          unique_id = str(uuid.uuid4())[:8]
           
           # Extract file extension
           if original_filename:
                extension = original_filename.split('.')[-1].lower()
+               base_name = original_filename.split('.')[0].lower()
+               base_name = ''.join(c for c in base_name if c.isalnum() or c in '_-') # Clean the base name for filename safety
           else:
                extension = 'unknown'
+               base_name = 'file'
+          
+          print(f"Generated timestamp: {timestamp}")
+          
+          # Filename with timestamp
+          file_name = f'{base_name}_{timestamp}_{unique_id}'
           
           # Organize by file type and user
           path_mapping = {
-               'resume': f'resumes/{user_id}/{unique_id}.{extension}',
-               'profile_image': f'profiles/{user_id}/{unique_id}.{extension}',
-               'cover_letter': f'cover-letters/{user_id}/{timestamp}/{unique_id}.{extension}',
-               'company_logo': f'companies/{user_id}/logos/{unique_id}.{extension}',
-               'job_attachment': f'jobs/{user_id}/attachments/{timestamp}/{unique_id}.{extension}',
-               'document': f'documents/{user_id}/{timestamp}/{unique_id}.{extension}'
+               'resume': f'resumes/{file_name}.{extension}',
+               'profile_image': f'profiles/{file_name}.{extension}',
+               'cover_letter': f'cover-letters/{file_name}.{extension}',
+               'project_image': f'projects/{file_name}.{extension}',
+               'company_logo': f'companies/logos/{file_name}.{extension}',
+               'job_attachment': f'jobs/attachments/{file_name}.{extension}',
+               'document': f'documents/{file_name}.{extension}'
           }
           
-          return path_mapping.get(file_type, f'misc/{user_id}/{timestamp}/{unique_id}.{extension}')
+          return path_mapping.get(file_type, f'misc/{file_name}.{extension}')
+
+     @staticmethod
+     def update_upload_status(user, upload_id) -> FileUpload:
+          """
+          General method for all types of file upload for changing the upload 
+          status after success
+          """
+          try:
+               file_upload = FileUpload.objects.get(
+                    id=upload_id,
+                    user=user,
+                    upload_status='pending'
+               )
+          except FileUpload.DoesNotExist:
+               raise ValidationError("Invalid upload_id or upload already processed")
+
+          # Update upload record
+          file_upload.upload_status = 'uploaded'
+          file_upload.uploaded_at = datetime.now()
+          file_upload.save()
+          
+          return file_upload
 
      @classmethod
      def setup_bucket_cors(cls):

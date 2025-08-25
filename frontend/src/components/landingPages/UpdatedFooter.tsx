@@ -5,7 +5,11 @@ import icon2 from "@/assets/facebook.svg";
 import icon3 from "@/assets/viber.svg";
 import TalentCloudImg from "@/assets/Talent Cloud.png";
 import { HashLink } from 'react-router-hash-link';
+import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 const UpdatedFooter = () => {
+  const location = useLocation();
+  const isEmpLp = location.pathname === "/emp/lp";
   return (
     <div className='bg-[#000] w-full relative '>
         <div className="max-w-[1240px] mx-auto pt-[40px] md:pt-[77px] pl-5 pr-5">
@@ -13,15 +17,21 @@ const UpdatedFooter = () => {
           <div className="w-[203px]">
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">Explore</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[20px] md:mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
-              <HashLink smooth to="#what-you-get">What You Get</HashLink>
-            
+            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
+              {isEmpLp ? (
+                <HashLink smooth to="#about-us">About Us</HashLink>
+              ) : (
+                <HashLink smooth to="#what-you-get">What You Get</HashLink>
+              )}
             </p>
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
               <HashLink smooth to="#why-us">Why us</HashLink>
             </p>
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-[45px] md:mb-0">
-               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+              
+              {!isEmpLp && (
+              <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+              ) }
             </p>
           </div>
           <div className="w-[203px]">
@@ -45,12 +55,23 @@ const UpdatedFooter = () => {
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-[64px] md:mt-[166px] gap-[25px] md:gap-0">
         <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud 2025</p>
-          <div className="flex gap-[18px]">
-<img src={icon1} alt="" />
-<img src={icon2} alt="" />
-<img src={icon3} alt="" />
+          <div className="flex gap-[18px] order-[-1] md:order-[0]">
+            <Link to='https://www.linkedin.com/company/99166393/admin/inbox/' target='_blank'>
+            
+              <img src={icon1} alt="" className='w-[48px] h-[48px] ' />
+
+            </Link>
+ <Link to='https://www.facebook.com/profile.php?id=61578628769861' target='_blank'>
+              <img src={icon2} alt="" className='w-[48px] h-[48px] '/>
+
+            </Link>
+ <Link to='tel:+959451663606' target='_blank'>
+
+              <img src={icon3} alt="" className='w-[48px] h-[48px] '/>
+
+            </Link>
           </div>
-          <div className="flex gap-[30px] md:gap-4 flex-wrap ">
+          <div className="flex md:flex-row flex-col gap-[30px] md:gap-4 flex-wrap ">
 
           <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Privacy Policy</p>
           <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </p>

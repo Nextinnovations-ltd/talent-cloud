@@ -19,6 +19,7 @@ export const UserProfile = () => {
   const { data: profileData} = useGetJobSeekerProfileQuery();
 
   const userData = profileData?.data;
+  
 
   // Close dropdown when clicking outside
   useEffect(() => {

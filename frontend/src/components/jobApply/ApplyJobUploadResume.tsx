@@ -4,6 +4,7 @@ import { Upload } from "lucide-react";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
+import { useParams } from "react-router-dom";
 
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
@@ -22,7 +23,12 @@ const ACCEPTED_TYPES = {
 
 const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
 
-const ApplyJobUploadResume = () => {
+type applyJobUploadResumeProps =  {
+   type:"profile" | "resume" | "coverLetter"
+}
+
+
+const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
     const [error, setError] = useState<string>("");
     const [rejections, setRejections] = useState<FileRejection[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -30,6 +36,8 @@ const ApplyJobUploadResume = () => {
     const [__, setUploadedUrl] = useState<string | null>(null); // optional: store result
 
     const { refetch } = useGetJobSeekerResumeQuery();
+    const { id } = useParams();
+
 
     const {
         acceptedFiles,
@@ -75,7 +83,7 @@ const ApplyJobUploadResume = () => {
 
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
-                const result = await UploadToS3({ file, type: "resume" });
+                const result = await UploadToS3({ file, type: type,postId:id });
 
                 if (cancelled) return;
 

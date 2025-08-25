@@ -70,7 +70,7 @@ export const NavBar = () => {
               />
             ) : (
               // Placeholder to maintain layout when search bar is hidden
-              <div style={{ width: 360, height: 40 }} />
+              <div style={{ width: 354, height: 40 }} />
             )}
           </form>
           <NavigationMenuDemo />

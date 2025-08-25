@@ -84,7 +84,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                         <InputField
                             fieldName='number_of_positions'
                             languageName=""
-                            fieldWidth="w-[50%]"
+                            fieldWidth={clsx("w-[50%]",!!formMethods.formState.errors?.number_of_positions && "mt-[30px]")}
                             type="number"
                             labelSize="text-[20px] mb-3 font-[500]"
                             fieldHeight="border-[#6B6B6B] rounded-[12px]"
@@ -96,17 +96,17 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                     </div>
 
                     <SelectField
-                                    name={"salary_type"}
-                                    labelName={"Salary Type"}
-                                    labelStyle="text-[20px] font-[500]"
-                                    error={!!formMethods.formState.errors.salary_type}
-                                    isRequired={true}
-                                    showRequiredLabel={true}
-                                    height="border-[#6B6B6B] rounded-[12px] mt-2 h-12"
-                                    placeholder={"Monthly"}
-                                    data={PER_SALARY_TYPE_DATA}
-                                    width="w-[calc(50%-36px)] mt-[40px]"
-                                />
+                        name={"salary_type"}
+                        labelName={"Salary Type"}
+                        labelStyle="text-[20px] font-[500]"
+                        error={!!formMethods.formState.errors.salary_type}
+                        isRequired={true}
+                        showRequiredLabel={true}
+                        height="border-[#6B6B6B] rounded-[12px] mt-2 h-12"
+                        placeholder={"Monthly"}
+                        data={PER_SALARY_TYPE_DATA}
+                        width="w-[calc(50%-36px)] mt-[40px]"
+                    />
 
                     <RadioField
                         fieldName={"is_salary_negotiable"}
@@ -116,17 +116,17 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                         labelName={"If Salary negotiation"}
                         required={false}
                     />
-                    
+
                     {!formMethods.watch('is_salary_negotiable') && (
                         <>
                             <div className="gap-[72px] flex items-center w-full mt-[40px]">
-                               
+
                                 <SelectField
                                     name={"salary_mode"}
                                     labelName={"Salary Rate"}
                                     labelStyle="text-[20px] font-[500]"
                                     error={!!formMethods.formState.errors.salary_mode}
-                                    isRequired={false}
+                                    isRequired={true}
                                     height="border-[#6B6B6B] rounded-[12px] mt-2 h-12"
                                     showRequiredLabel={true}
                                     placeholder={"Select the salary mode"}
@@ -143,9 +143,9 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     type="number"
                                     labelSize="text-[20px] mb-3 font-[500]"
                                     fieldHeight="border-[#6B6B6B] rounded-[12px]"
-                                    isError={!!formMethods.formState.errors?.salary_min}
+                                    isError={formMethods?.watch('salary_mode') === 'range' ? !!formMethods.formState.errors?.salary_min : !!formMethods.formState.errors?.salary_fixed}
                                     lableName={clsx(formMethods?.watch('salary_mode') === 'range' ? 'Minimum Salary' : 'Fixed Salary')}
-                                    required={false}
+                                    required={true}
                                     placeholder="00.00 MMK"
                                 />
                                 {formMethods.watch('salary_mode') === 'range' && (
@@ -158,7 +158,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                         fieldHeight="border-[#6B6B6B] rounded-[12px]"
                                         isError={!!formMethods.formState.errors?.salary_max}
                                         lableName="Maximum Salary"
-                                        required={false}
+                                        required={true}
                                         placeholder="00.00 MMK"
                                     />
                                 )}

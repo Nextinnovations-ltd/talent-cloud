@@ -33,6 +33,9 @@ from core.middleware.permission import (
     IsOwnerOfApplication,
     IsCompanyAdminOrSuperadminForApplication
 )
+from core.constants.s3.constants import FILE_TYPES
+from services.job_seeker.file_upload_service import FileUploadService
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -457,6 +460,65 @@ class CompanyJobListView(CustomListAPIView):
 
 # region Job Application Views
 
+
+@extend_schema(tags=["Cover Upload"])
+class CoverLetterUploadUrlAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Generate presigned URL for cover upload",
+          request={
+               'application/json': {
+                    'type': 'object',
+                    'properties': {
+                         'filename': {'type': 'string', 'description': 'Original filename'},
+                         'file_size': {'type': 'integer', 'description': 'File size in bytes'},
+                         'content_type': {'type': 'string', 'description': 'MIME type (optional)'},
+                    },
+                    'required': ['filename', 'file_size']
+               }
+          }
+     )
+     def post(self, request):
+          """
+          Generate presigned URL when user confirms cover letter upload
+          """
+          try:
+               filename = request.data.get('filename')
+               file_size = request.data.get('file_size')
+               content_type = request.data.get('content_type')
+               
+               # Validation
+               if not filename:
+                    raise ValidationError("filename is required")
+               if not file_size:
+                    raise ValidationError("file_size is required")
+               if len(filename.strip()) == 0:
+                    raise ValidationError("filename cannot be empty")
+               
+               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.COVER_LETTER)
+               
+               logger.info(f"Generated cover letter upload URL for user {request.user.id}")
+               
+               return Response(
+                    CustomResponse.success("Cover letter upload URL generated", response_data),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in cover letter upload: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error generating cover letter upload URL: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to generate upload URL"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
+
 @extend_schema(tags=["Job Post-Application"])
 class JobApplicationCreateView(APIView):
      """
@@ -476,19 +538,20 @@ class JobApplicationCreateView(APIView):
           }
      )
      def post(self, request, job_post_id):
-          # Validate input data
-          serializer = JobApplicationCreateSerializer(data=request.data)
-          if not serializer.is_valid():
-               return Response(
-                    CustomResponse.error("Invalid application data.", serializer.errors),
-                    status=status.HTTP_400_BAD_REQUEST
-               )
+          cover_letter_upload_id = request.data.get('cover_letter_upload_id')
+          
+          # Validation
+          if not job_post_id:
+               raise ValidationError("Job post cannot be empty")
+          if not cover_letter_upload_id:
+               raise ValidationError("Cover letter is required")
+
           
           # Create application using service
           application = JobApplicationService.perform_application_submission(
                user=request.user,
                job_post_id=job_post_id,
-               application_data=serializer.validated_data
+               cover_letter_upload_id=cover_letter_upload_id
           )
           
           # Return success response
@@ -620,29 +683,12 @@ class BookmarkJobView(APIView):
 
           # Check if already bookmarked
           if BookmarkedJob.objects.filter(job_post=job_post, job_seeker=job_seeker).exists():
-               return Response(CustomResponse.error("Job is already bookmarked."), status=status.HTTP_400_BAD_REQUEST)
+               return Response(CustomResponse.error("Job is already saved."), status=status.HTTP_400_BAD_REQUEST)
 
           bookmarked_job = BookmarkedJob.objects.create(job_post=job_post, job_seeker=job_seeker)
           serializer = BookmarkedJobSerializer(bookmarked_job, context={'request': request})
           
-          return Response(CustomResponse.success("Bookmarked the job.", serializer.data), status=status.HTTP_201_CREATED)
-
-@extend_schema(tags=["Job Post-Bookmark"])
-class BookmarkJobDeleteAPIView(APIView):
-     """
-     API endpoint for Job Seekers to delete a bookmarked job.
-     URL: /api/my-bookmarks/bookmark_id/ (DELETE)
-     """
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-
-     def delete(self, request, bookmark_id):
-          job_seeker = get_object_or_404(JobSeeker, user=request.user)
-          
-          bookmark = get_object_or_404(BookmarkedJob, id=bookmark_id, job_seeker=job_seeker)
-          bookmark.delete()
-
-          return Response(CustomResponse.success("Successfully deleted the job post bookmark."), status=status.HTTP_204_NO_CONTENT)
+          return Response(CustomResponse.success("Successfully saved the job post.", serializer.data), status=status.HTTP_201_CREATED)
 
 @extend_schema(tags=["Job Post-Bookmark"])
 class BookmarkDeleteAPIView(APIView):
@@ -659,7 +705,7 @@ class BookmarkDeleteAPIView(APIView):
           bookmark = get_object_or_404(BookmarkedJob, job_post_id=job_post_id, job_seeker=job_seeker)
           bookmark.delete()
 
-          return Response(CustomResponse.success("Successfully deleted the job post bookmark."), status=status.HTTP_200_OK)
+          return Response(CustomResponse.success("Job removed from bookmarks."), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Post-Bookmark"])
 class JobSeekerBookmarkedJobListView(CustomListAPIView):

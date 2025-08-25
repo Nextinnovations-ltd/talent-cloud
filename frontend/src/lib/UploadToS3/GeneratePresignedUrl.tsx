@@ -9,7 +9,7 @@ import { PresignedUrlResponse } from '@/types/file-upload-types';
 
 type GeneratePresignedUrlProps = {
   file: File,
-  type: "profile" | "resume"
+  type: "profile" | "resume" | "coverLetter"
 }
 
 
@@ -24,14 +24,16 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
   let uploadEndpoint = '';
 
   if (type === 'profile') {
-    uploadEndpoint = 'profile/upload/image/';
+    uploadEndpoint = 'jobseeker/profile/upload/image/';
   } else if (type === 'resume') {
-    uploadEndpoint = 'profile/upload/resume/';
+    uploadEndpoint = 'jobseeker/profile/upload/resume/';
+  } else if (type === 'coverLetter') {
+    uploadEndpoint = 'application/upload/cover-letter/ '
   }
 
 
   const response = await axios.post(
-    `${URL}jobseeker/${uploadEndpoint}`,
+    `${URL}${uploadEndpoint}`,
     {
       filename: file.name,
       file_size: file.size,
