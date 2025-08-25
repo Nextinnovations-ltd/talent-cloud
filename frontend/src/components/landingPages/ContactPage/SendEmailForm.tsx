@@ -1,5 +1,4 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import React from 'react'
 import { useForm } from 'react-hook-form'
 import { SendEmailSchema } from './SendEmailSchema'
 import { Form } from '@/components/ui/form'

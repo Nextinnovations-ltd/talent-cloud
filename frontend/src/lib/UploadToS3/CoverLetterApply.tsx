@@ -11,10 +11,12 @@ type CoverLetterUploadProps = {
     postId:string
 }
 
-export async function ComfirmUpload({uploadId,postId}:CoverLetterUploadProps):Promise<unknown>{
+export async function CoverLetterApply({uploadId,postId}:CoverLetterUploadProps):Promise<unknown>{
     try {
 
-        const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
+       // const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
+
+        console.log(uploadId,postId)
 
 
 

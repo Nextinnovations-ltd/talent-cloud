@@ -1,7 +1,9 @@
 
+import ApplyCoverLetter from '@/components/jobApply/ApplyCoverletter';
 import { ComfirmUpload } from './ConfirmUpload';
 import { generatePresignedUrl } from './GeneratePresignedUrl';
 import { uploadToCloud } from './UploadData';
+import { CoverLetterApply } from './CoverLetterApply';
 
 type UploadToS3Props = {
     file:File,
@@ -15,12 +17,16 @@ export async function uploadToS3({ file,type }: UploadToS3Props): Promise<boolea
 
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
 
-        if (type === 'profile' || 'resume' ) {
+
+        // eslint-disable-next-line no-constant-condition
+        if (type === 'profile' || 'resume'){
             await ComfirmUpload({uploadId:presignedUrlData?.data?.upload_id,fileSize:file.size});
         }
 
+        console.log(presignedUrlData)
+
         if (type === 'coverLetter') {
-            
+            await CoverLetterApply({uploadId:presignedUrlData?.data?.upload_id,postId:presignedUrlData?.data?.post_id});
         }
 
        
