@@ -29,9 +29,6 @@ import { Link, useParams } from "react-router-dom"
     const jobDetails = JOBDETAILDATA?.data;
 
 
-
-
-
     const handleApply = async()=>{
         if (!numericJobId || isNaN(numericJobId)) {
             showNotification({

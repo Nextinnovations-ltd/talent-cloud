@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { SendEmailSchema } from './SendEmailSchema'
@@ -12,7 +13,7 @@ const SendEmailForm = () => {
         resolver: yupResolver(SendEmailSchema)
     });
 
-    const handleSubmit = async (value) => {
+    const handleSubmit = async (value: any) => {
         console.log(value)
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Stepper } from "@/components/ui/stepper";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ const CreateNewJob = () => {
 
     // Step Three Form
     const stepThreeForm = useForm({
+        //@ts-ignore
         resolver: yupResolver(StepThreeFormYupSchema),
         defaultValues: formData.stepThree
     });
