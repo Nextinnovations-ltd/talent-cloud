@@ -3,6 +3,7 @@ from datetime import datetime
 from django.conf import settings
 from botocore.exceptions import ClientError
 from rest_framework.exceptions import ValidationError
+from apps.authentication.models import FileUpload
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_MAPPER
 import logging
 
@@ -197,12 +198,35 @@ class S3Service:
                'resume': f'resumes/{file_name}.{extension}',
                'profile_image': f'profiles/{file_name}.{extension}',
                'cover_letter': f'cover-letters/{file_name}.{extension}',
+               'project_image': f'projects/{file_name}.{extension}',
                'company_logo': f'companies/logos/{file_name}.{extension}',
                'job_attachment': f'jobs/attachments/{file_name}.{extension}',
                'document': f'documents/{file_name}.{extension}'
           }
           
           return path_mapping.get(file_type, f'misc/{file_name}.{extension}')
+
+     @staticmethod
+     def update_upload_status(user, upload_id) -> FileUpload:
+          """
+          General method for all types of file upload for changing the upload 
+          status after success
+          """
+          try:
+               file_upload = FileUpload.objects.get(
+                    id=upload_id,
+                    user=user,
+                    upload_status='pending'
+               )
+          except FileUpload.DoesNotExist:
+               raise ValidationError("Invalid upload_id or upload already processed")
+
+          # Update upload record
+          file_upload.upload_status = 'uploaded'
+          file_upload.uploaded_at = datetime.now()
+          file_upload.save()
+          
+          return file_upload
 
      @classmethod
      def setup_bucket_cors(cls):

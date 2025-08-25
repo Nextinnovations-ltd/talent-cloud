@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from apps.job_seekers.models import JobSeekerProject
+from services.storage.s3_service import S3Service
 from django.utils import timezone
+
 
 class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
     """Serializer for displaying project details"""
+    project_image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = JobSeekerProject
@@ -15,9 +18,12 @@ class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def get_project_image_url(self, obj: JobSeekerProject):
+        return S3Service.get_public_url(obj.project_image_url)
 
 class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating projects"""
+    project_image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = JobSeekerProject
@@ -112,6 +118,9 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("End date cannot be in the future for completed projects.")
         
         return attrs
+    
+    def get_project_image_url(self, obj: JobSeekerProject):
+        return S3Service.get_public_url(obj.project_image_url)
     
     def create(self, validated_data):
         """Create a new project"""
