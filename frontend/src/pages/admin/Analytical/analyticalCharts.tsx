@@ -10,7 +10,7 @@ const AnalyticalCharts = () => {
     const { data: dashboardAnalytics, isLoading: isAnalyticsLoading } = useGetDashboardAnalyticsQuery();
 
     return (
-        <div className="mt-[66px] flex w-full gap-5">
+        <div className="mt-[66px] pr-5 flex w-full gap-5">
             <div className="w-[50%]">
                 <AnalyticalChartsCardsContainer loading={isAnalyticsLoading} data={dashboardAnalytics} />
                 <div className="border border-[#CBD5E1] rounded-[12px] mt-4">

@@ -29,7 +29,7 @@ export const StepThreeFormYupSchema = yup.object({
     is: false,
     then: (schema) =>
       schema
-        .required("Salary mode is required"),
+        .required("Salary Rate is required"),
     otherwise: (schema) => schema.optional(),
   }),
 
@@ -39,7 +39,7 @@ export const StepThreeFormYupSchema = yup.object({
     is: "range",
     then: (schema) =>
       schema
-        .required("Salary minimum is required")
+        .required("Minimum Salary is required.")
         .test(
           "min-lte-max",
           "Minimum salary cannot be greater than maximum salary",
@@ -56,7 +56,7 @@ export const StepThreeFormYupSchema = yup.object({
     is: "range",
     then: (schema) =>
       schema
-        .required("Salary maximum is required")
+        .required("Maximum Salary is required.")
         .test(
           "max-gte-min",
           "Maximum salary must be greater than or equal to minimum salary",
@@ -71,7 +71,7 @@ export const StepThreeFormYupSchema = yup.object({
 
   salary_fixed: yup.string().when("salary_mode", {
     is: "fixed",
-    then: (schema) => schema.required("Fixed salary is required"),
+    then: (schema) => schema.required("Fixed Salary is required"),
     otherwise: (schema) => schema.optional(),
   }),
 

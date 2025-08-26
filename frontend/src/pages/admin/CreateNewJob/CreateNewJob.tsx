@@ -15,6 +15,8 @@ import { useApiCaller } from "@/hooks/useApicaller";
 import { useCreateJobMutation } from "@/services/slices/adminSlice";
 import { useJobFormStore } from "@/state/zustand/create-job-store";
 
+import { useNavigate } from "react-router-dom";
+
 const steps = [
     { title: "Basic Information ", description: "Job title, Company, Location" },
     { title: "Job Details", description: "Description, requirements, type" },
@@ -35,6 +37,7 @@ const CreateNewJob = () => {
         resetForm 
     } = useJobFormStore();
     const { executeApiCall, isLoading } = useApiCaller(useCreateJobMutation);
+    const navigate = useNavigate();
 
     // Step One Form 
     const stepOneForm = useForm({
@@ -168,7 +171,9 @@ const CreateNewJob = () => {
             });
             
             setCurrentStep(0);
+            
             console.log("Job created successfully!");
+            navigate("/admin/dashboard/allJobs");
         } catch (error) {
             console.error("Error creating job:", error);
         }

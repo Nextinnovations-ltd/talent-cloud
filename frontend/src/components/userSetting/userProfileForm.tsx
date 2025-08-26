@@ -64,7 +64,7 @@ export const UserProfileForm = ({
           setIsOpen={setIsOpen}
           preview={preview}
           form={form}
-          setPreview={setPreview} />
+          setPreview={setPreview} imageUploadType={"profile"} />
 
         <InputField
           fieldName="name"

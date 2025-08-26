@@ -57,8 +57,8 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
                     )}
                     <AllJobsAction onClick={() => {
                         navigation(`/admin/dashboard/allJobs/editJobs/${id}`)
-                    }} icon={<SvgPencil />} label="Edit Job Post" />
-                    <AllJobsAction onClick={() => setIsDialogOpen(true)} icon={<SvgTrash />} label="Delete Post" />
+                    }} icon={<SvgPencil />} label="Edit Job" />
+                    <AllJobsAction onClick={() => setIsDialogOpen(true)} icon={<SvgTrash />} label="Delete Job" />
                 </nav>
             </div>
             <ConfirmationDialog
@@ -66,8 +66,8 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
                 onOpenChange={setIsDialogOpen}
                 onConfirm={handleDelete}
                 isLoading={isLoading}
-                title="Confirm Action"
-                description="Are you sure you want to perform this action?"
+                title="Are you sure you want to delete?"
+                description="Are you sure you want to delete?"
             />
         </>
     );

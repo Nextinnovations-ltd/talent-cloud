@@ -95,7 +95,6 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
 
     const handleDelete = () => {
 
-        console.log("Delete resume:", resume_url);
     };
 
     return (

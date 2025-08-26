@@ -55,9 +55,6 @@ export const SelectField: React.FC<SelectFieldProps> = ({
       name={name}
       render={({ field }) => {
 
-       console.log("Role data")
-       console.log(field?.value)
-       console.log("Role data")
 
         return (
           <FormItem className={cn(width, "")}>
@@ -86,7 +83,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                   >
                  <SelectValue  placeholder={placeholder} />
                   </SelectTrigger>
-                  <SelectContent className="h-[200px] p-2">
+                  <SelectContent className="h-[200px] w-[95%] p-2">
                     {data.map((item) => (
                       <SelectItem value={item.value?.toString()}>{item.label}</SelectItem>
                     ))}

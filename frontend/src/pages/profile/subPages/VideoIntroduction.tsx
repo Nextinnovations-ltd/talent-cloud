@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import { Button } from "@/components/ui/button";
 import { VideoSchema } from "@/lib/VideoSchema";
@@ -27,6 +28,7 @@ const VideoIntroduction = () => {
   }
 
   const form = useForm<VideoIntroduction>({
+    //@ts-ignore
     resolver: yupResolver(VideoSchema),
     defaultValues: {
       title: undefined,
@@ -107,7 +109,7 @@ const VideoIntroduction = () => {
       <ProfileTitle title="Video Introduction" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-4 space-y-[30px]">
+          <div className="mb-4 space-y-[15px]">
             <TextAreaField
               fieldName={`title`}
               languageName=""
@@ -122,7 +124,7 @@ const VideoIntroduction = () => {
               showLetterCount
             />
             {form.watch('title') && !isValidIframe && (
-              <div className="text-red-500 mt-4">Invalid YouTube embed iframe. Please check your input.</div>
+              <div className="text-red-500 ">Invalid YouTube embed iframe. Please check your input.</div>
             )}
           </div>
           <div className="max-w-[672px] flex items-center justify-end space-x-4">

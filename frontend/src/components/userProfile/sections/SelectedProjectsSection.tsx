@@ -21,7 +21,6 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
 }) => {
   const { data } = useGetSelectedProjectsQuery();
   const navigate = useNavigate();
-  console.log(data)
   const PROJECTS = data?.data;
 
   return (

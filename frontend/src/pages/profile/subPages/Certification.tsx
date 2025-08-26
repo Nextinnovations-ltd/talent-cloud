@@ -24,7 +24,7 @@ type CertificationFormType = {
   expirationYear?: string;
   expirationMonth?: string;
   noExpired: boolean;
-  credentialURL: string;
+  credentialURL?: string;
 };
 
 
@@ -241,7 +241,7 @@ export const Certification = () => {
               languageName=""
               isError={!!form.formState.errors?.credentialURL}
               lableName="Credential URL"
-              required={true}
+              required={false}
               placeholder="URL"
             />
             <div className="max-w-[672px] flex items-center justify-end">
