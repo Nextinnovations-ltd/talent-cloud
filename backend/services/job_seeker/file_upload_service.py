@@ -87,3 +87,24 @@ class FileUploadService:
           }
           
           return response_data
+     
+     @staticmethod
+     def soft_delete_upload_file(user, file_path):
+          try:
+               uploaded_file = FileUpload.objects.filter(
+                    user=user,
+                    file_path=file_path,
+                    upload_status='uploaded'
+               ).first()
+               
+               if not uploaded_file:
+                    raise ValidationError("File record not found.")
+
+               # Update upload record
+               uploaded_file.upload_status = 'deleted'
+               uploaded_file.save()
+               
+               logger.info(f"Soft-deleted file {uploaded_file.id} for user {user.id}")
+          except Exception as e:
+               logger.error(f"Error soft-deleting file: {str(e)}")
+               raise ValidationError(f"Error soft-deleting file: {str(e)}")
