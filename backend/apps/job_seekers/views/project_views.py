@@ -19,24 +19,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@extend_schema(tags=["Cover Upload"])
+@extend_schema(tags=["Project Image Upload"])
 class ProjectImageUploadUrlAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [TalentCloudUserPermission]
     
     @extend_schema(
-        summary="Generate presigned URL for project image upload",
-        request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                        'filename': {'type': 'string', 'description': 'Original filename'},
-                        'file_size': {'type': 'integer', 'description': 'File size in bytes'},
-                        'content_type': {'type': 'string', 'description': 'MIME type (optional)'},
-                },
-                'required': ['filename', 'file_size']
-            }
-        }
+        summary="Generate presigned URL for project image upload"
     )
     def post(self, request):
         """
@@ -77,6 +66,54 @@ class ProjectImageUploadUrlAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+@extend_schema(tags=["Project Image Delete"])
+class ProjectImageDeleteAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [TalentCloudUserPermission]
+    
+    @extend_schema(
+        summary="Delete the uploaded project image.",
+    )
+    def get_object(self, request, project_id):
+        """Get project object ensuring it belongs to the authenticated user"""
+        try:
+            job_seeker = request.user.jobseeker
+        except AttributeError:
+            return None
+
+        return get_object_or_404(
+            JobSeekerProject,
+            id=project_id,
+            user=job_seeker
+        )
+    
+    def post(self, request, project_id):
+        """
+        Delete the uploaded project image
+        """
+        project = self.get_object(request, project_id)
+
+        if not project:
+            return Response(
+                CustomResponse.error("Job seeker profile not found."),
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            ProjectService.performed_project_image_deletion(request.user, project)
+            
+            return Response(
+                CustomResponse.success("Project image deleted successfully."),
+                status=status.HTTP_200_OK
+            )
+            
+        except Exception as e:
+            logger.error(f"Error deleting project image of project {project_id}: {str(e)}")
+            return Response(
+                CustomResponse.error("Failed to delete project image"),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            
 @extend_schema(tags=["Job Seeker Projects"])
 class JobSeekerProjectListAPIView(APIView):
     """
@@ -115,14 +152,6 @@ class JobSeekerProjectListAPIView(APIView):
     
     def post(self, request):
         """Create a new project"""
-        try:
-            job_seeker = request.user.jobseeker
-        except AttributeError:
-            return Response(
-                CustomResponse.error("Job seeker profile not found."),
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
         upload_id = request.data.get('project_image_upload_id')
         
         if not upload_id:
@@ -135,7 +164,7 @@ class JobSeekerProjectListAPIView(APIView):
         
         if serializer.is_valid():
             # serializer.save()
-            project_data = ProjectService.performed_project_creation(job_seeker, serializer.validated_data, upload_id)
+            project_data = ProjectService.performed_project_creation(request.user, serializer.validated_data, upload_id)
             
             return Response(
                 CustomResponse.success(
@@ -152,7 +181,6 @@ class JobSeekerProjectListAPIView(APIView):
             ),
             status=status.HTTP_400_BAD_REQUEST
         )
-
 
 @extend_schema(tags=["Job Seeker Projects"])
 class JobSeekerProjectDetailAPIView(APIView):
@@ -208,6 +236,8 @@ class JobSeekerProjectDetailAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         
+        upload_id = request.data.get('project_image_upload_id')
+        
         serializer = JobSeekerProjectCreateUpdateSerializer(
             instance=project,
             data=request.data,
@@ -216,14 +246,57 @@ class JobSeekerProjectDetailAPIView(APIView):
         )
         
         if serializer.is_valid():
-            serializer.save()
-            return Response(
-                CustomResponse.success(
-                    "Project updated successfully.",
-                    serializer.data
-                ),
-                status=status.HTTP_200_OK
-            )
+            try:
+                # If upload_id is provided, update with new image
+                if upload_id:
+                    logger.info(f"Updating project {project_id} with new image (upload_id: {upload_id})")
+                    
+                    # Use the project service to handle the update with new image
+                    project_data = ProjectService.performed_project_update(
+                        request.user,
+                        project, 
+                        serializer.validated_data, 
+                        upload_id
+                    )
+                    
+                    return Response(
+                        CustomResponse.success(
+                            "Project updated successfully with new image.",
+                            project_data
+                        ),
+                        status=status.HTTP_200_OK
+                    )
+                else:
+                    # Regular update without image change
+                    logger.info(f"Updating project {project_id} without image change")
+                    
+                    # Use the project service for regular update
+                    project_data = ProjectService.performed_project_update(
+                        request.user,
+                        project, 
+                        serializer.validated_data
+                    )
+                    
+                    return Response(
+                        CustomResponse.success(
+                            "Project updated successfully.",
+                            project_data
+                        ),
+                        status=status.HTTP_200_OK
+                    )
+                    
+            except ValidationError as e:
+                logger.warning(f"Validation error in project update: {str(e)}")
+                return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            except Exception as e:
+                logger.error(f"Error updating project {project_id}: {str(e)}")
+                return Response(
+                    CustomResponse.error("Failed to update project"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
         
         return Response(
             CustomResponse.error(
