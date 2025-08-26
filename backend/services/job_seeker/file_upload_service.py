@@ -49,7 +49,6 @@ class FileUploadService:
           
           # Generate unique file path
           file_path = S3Service.generate_unique_file_path(
-               user_id=user.id,
                file_type=file_type,
                original_filename=filename
           )

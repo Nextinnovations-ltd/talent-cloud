@@ -1,12 +1,11 @@
 import mimetypes, boto3, uuid
-from datetime import datetime
+from typing import List, Dict, Any
+from datetime import datetime, timedelta
 from django.conf import settings
 from botocore.exceptions import ClientError
 from rest_framework.exceptions import ValidationError
-from apps.authentication.models import FileUpload
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_MAPPER
 import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +116,7 @@ class S3Service:
                response = s3_service.s3_client.generate_presigned_post(
                     Bucket=s3_service.bucket_name,
                     Key=file_path,
-                    Fields=fields,  # This was missing in your original code
+                    Fields=fields,
                     Conditions=conditions,
                     ExpiresIn=expiration
                )
@@ -130,13 +129,13 @@ class S3Service:
                     'fields': response['fields'],
                     'file_path': file_path,
                     'expires_in': expiration,
-                    'content_type': file_type  # Return the expected content type
+                    'content_type': file_type
                }
                
           except ClientError as e:
                logger.error(f"Error generating presigned URL: {str(e)}")
                raise Exception(f"Failed to generate upload URL: {str(e)}")
-          
+
      @classmethod
      def generate_presigned_download_url(cls, file_path, expiration=3600):
           """Generate presigned URL for downloading files from S3"""
@@ -151,7 +150,7 @@ class S3Service:
           except ClientError as e:
                logger.error(f"Error generating download URL: {str(e)}")
                raise Exception("Failed to generate download URL")
-          
+     
      @classmethod
      def check_file_exists(cls, file_path):
           """Check if file exists in S3"""
@@ -174,7 +173,7 @@ class S3Service:
                return False
      
      @classmethod
-     def generate_unique_file_path(cls, user_id, file_type, original_filename=None):
+     def generate_unique_file_path(cls, file_type, original_filename=None):
           """Generate organized file path structure"""
           timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
           unique_id = str(uuid.uuid4())[:8]
@@ -207,11 +206,12 @@ class S3Service:
           return path_mapping.get(file_type, f'misc/{file_name}.{extension}')
 
      @staticmethod
-     def update_upload_status(user, upload_id) -> FileUpload:
+     def update_upload_status(user, upload_id):
           """
           General method for all types of file upload for changing the upload 
           status after success
           """
+          from apps.authentication.models import FileUpload
           try:
                file_upload = FileUpload.objects.get(
                     id=upload_id,
@@ -227,6 +227,233 @@ class S3Service:
           file_upload.save()
           
           return file_upload
+
+
+     # Bulk File Operations
+     
+     @classmethod
+     def generate_bulk_presigned_upload_urls(cls, files_data: List[Dict], user, expiration=3600) -> Dict[str, Any]:
+          """
+          Generate presigned URLs for multiple files
+          
+          Args:
+               files_data: List of dicts with keys: 'filename', 'file_size', 'content_type', 'file_type'
+               user_id: User ID for file path generation
+               expiration: URL expiration time in seconds
+               
+          Returns:
+               Dict with success/failed uploads and their respective data
+          """
+          results = {
+               'successful_uploads': [],
+               'failed_uploads': [],
+               'total_files': len(files_data),
+               'success_count': 0,
+               'error_count': 0,
+               'upload_records': []
+          }
+          
+          for file_data in files_data:
+               try:
+                    # Validate required fields
+                    required_fields = ['filename', 'file_size', 'file_type']
+                    for field in required_fields:
+                         if field not in file_data:
+                              raise ValidationError(f"Missing required field: {field}")
+                    
+                    filename = file_data['filename']
+                    file_size = file_data['file_size']
+                    file_type = file_data['file_type']
+                    content_type = file_data.get('content_type') or cls.get_content_type_from_filename(filename)
+                    
+                    # Validate file upload
+                    cls.validate_file_upload(content_type, file_size, file_type)
+                    
+                    # Generate unique file path
+                    file_path = cls.generate_unique_file_path(file_type, filename)
+                    
+                    # Generate presigned URL
+                    presigned_data = cls.generate_presigned_upload_url(
+                         file_path=file_path,
+                         file_type=content_type,
+                         file_size=file_size,
+                         expiration=expiration
+                    )
+                    
+                    data = {
+                         'filename': filename,
+                         'file_type': file_type,
+                         'file_size': file_size,
+                         'file_path': file_path,
+                         'upload_url': presigned_data['upload_url'],
+                         'expires_in': expiration
+                    }
+                    
+                    results['successful_uploads'].append(data)
+                    results['success_count'] += 1
+                    
+                    logger.info(f"Generated presigned URL for bulk upload: {filename}")
+               except Exception as e:
+                    error_data = {
+                         'filename': file_data.get('filename', 'unknown'),
+                         'error': str(e),
+                         'file_data': file_data
+                    }
+                    results['failed_uploads'].append(error_data)
+                    results['error_count'] += 1
+                    
+                    logger.error(f"Failed to generate presigned URL for {file_data.get('filename', 'unknown')}: {str(e)}")
+          
+          # Create upload records for successful uploads only
+          if results['successful_uploads']:
+               try:
+                    upload_records = cls._create_bulk_upload_record(
+                         user,
+                         uploads=results['successful_uploads']
+                    )
+                    
+                    # Add upload_ids to the success data
+                    for i, upload_record in enumerate(upload_records):
+                         if i < len(results['successful_uploads']):
+                              results['successful_uploads'][i]['upload_id'] = upload_record.id
+                    
+                    results['upload_records'] = [
+                         {
+                              'id': record.id,
+                              'filename': record.original_filename,
+                              'file_path': record.file_path,
+                              'upload_status': record.upload_status
+                         }
+                         for record in upload_records
+                    ]
+                    
+                    logger.info(f"Created {len(upload_records)} upload records for bulk upload")
+                    
+               except Exception as e:
+                    logger.error(f"Failed to create upload records: {str(e)}")
+                    # If database creation fails, mark all as failed
+                    for success_data in results['successful_uploads']:
+                         error_data = {
+                              'filename': success_data['filename'],
+                              'error': f"Database record creation failed: {str(e)}",
+                              'file_data': success_data
+                         }
+                         results['failed_uploads'].append(error_data)
+                    
+                    # Clear successful uploads since database creation failed
+                    results['error_count'] += results['success_count']
+                    results['success_count'] = 0
+                    results['successful_uploads'] = []
+          
+          
+          return results
+
+     @classmethod
+     def validate_bulk_upload_completion(cls, user, upload_ids: List[int]) -> Dict[str, Any]:
+          """
+          Validate and update status for multiple completed uploads
+          
+          Args:
+               upload_ids: List of upload IDs to validate
+               user_id: User ID for security validation
+               
+          Returns:
+               Dict with validation results
+          """
+          total_record_count = len(upload_ids)
+          
+          results = {
+               'success_records': [],
+               'total_uploads': total_record_count,
+               'success_count': 0,
+               'error_count': 0
+          }
+          
+          updated_record_count = 0
+          
+          try:
+               # Update upload status in bulk
+               updated_records = cls.bulk_update_upload_status(user, upload_ids)
+          
+               if not updated_records['success_ids']:
+                    results['error_count'] = len(upload_ids)
+                    
+                    return results
+               
+               results['success_records'] = updated_records['updated_records']
+               
+               # Verify file exists in S3
+               # file_exists = cls.check_file_exists(file_upload.file_path)
+               # cls.get_public_url(file_upload.file_path),
+               
+               logger.info(f"Successfully validated bulk upload.")
+          except Exception as e:
+               logger.error(f"Failed to validate upload operations: {str(e)}")
+
+          results['success_count'] = updated_record_count
+          results['error_count'] = total_record_count - updated_record_count
+     
+          return results
+     
+     @staticmethod
+     def _create_bulk_upload_record(user, uploads):
+          """
+          Helper method to create upload record in database
+          """
+          from apps.authentication.models import FileUpload
+          
+          upload_objects = []
+    
+          for upload_data in uploads:
+               upload_obj = FileUpload(
+                    user=user,
+                    original_filename=upload_data['filename'],
+                    file_size=upload_data.get('file_size', 0),  # Add file_size to your upload_data
+                    file_type=upload_data['file_type'],
+                    file_path=upload_data['file_path'],
+                    content_type=upload_data.get('content_type', 'application/octet-stream'),
+                    upload_status='pending',
+                    upload_url_expires_at=datetime.now() + timedelta(minutes=5)
+               )
+               
+               upload_objects.append(upload_obj)
+          
+          created_records = FileUpload.objects.bulk_create(upload_objects)
+          
+          logger.info(f"Bulk created {len(created_records)} upload records for user {user.id}")
+
+          return created_records
+
+     @staticmethod
+     def bulk_update_upload_status(user, upload_ids):
+          """
+          General method for all types of file upload for changing the upload 
+          status after success in bulk
+          """
+          from apps.authentication.models import FileUpload
+          
+          # Filter valid ids
+          valid_ids = list(
+               FileUpload.objects.filter(
+                    id__in=upload_ids,
+                    user=user,
+                    upload_status='pending'
+               ).values_list("id", flat=True)
+          )
+          
+          # Bulk update
+          FileUpload.objects.filter(id__in=valid_ids).update(
+               upload_status='uploaded',
+               uploaded_at=datetime.now()
+          )
+          
+          # Get updated records
+          updated_records = FileUpload.objects.filter(id__in=valid_ids, user=user)
+          
+          return {
+               "updated_records": updated_records,
+               "success_ids": valid_ids
+          }
 
      @classmethod
      def setup_bucket_cors(cls):

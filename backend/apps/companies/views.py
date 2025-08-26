@@ -1,15 +1,17 @@
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from django.http import Http404
 from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import extend_schema
 from apps.companies.serializers import CompanySerializer, IndustrySerializer, CompanyWithJobsSerializer
 from apps.users.models import TalentCloudUser
-from .models import Company, Industry
+from services.company.company_service import BulkUploadService
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudAdminOrSuperAdminPermission, TalentCloudAllPermission, TalentCloudSuperAdminPermission
-from drf_spectacular.utils import extend_schema
+from core.middleware.permission import TalentCloudAdminOrSuperAdminPermission, TalentCloudAllPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
+from .models import Company, Industry
 import logging
 
 logger = logging.getLogger(__name__)
@@ -222,3 +224,83 @@ class CompanyDetailAPIView(views.APIView):
           
           # Return a 204 No Content status for successful deletion
           return Response(CustomResponse.success("Deleted successfully."), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Company - Bulk Upload"])
+class BulkUploadInitiateAPIView(views.APIView):
+     """API endpoint to initiate bulk file uploads"""
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Initiate bulk file upload"
+     )
+     def post(self, request):
+          """Initiate bulk upload process"""
+          try:
+               files_data = request.data.get('files', [])
+               
+               if not files_data:
+                    raise ValidationError("files array is required")
+               
+               result = BulkUploadService.initiate_bulk_upload(
+                    user=request.user,
+                    files_data=files_data
+               )
+               
+               return Response(
+                    CustomResponse.success("Bulk upload initiated successfully", result),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in bulk upload initiation: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error initiating bulk upload: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to initiate bulk upload"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
+
+@extend_schema(tags=["Bulk Upload"])
+class BulkUploadCompleteAPIView(views.APIView):
+     """API endpoint to complete bulk file uploads"""
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Complete bulk file upload"
+     )
+     def post(self, request):
+          """Complete bulk upload process"""
+          try:
+               upload_ids = request.data.get('upload_ids', [])
+               
+               if not upload_ids:
+                    raise ValidationError("upload_ids array is required")
+               
+               result = BulkUploadService.complete_bulk_upload(
+                    user=request.user,
+                    upload_ids=upload_ids
+               )
+               
+               return Response(
+                    CustomResponse.success("Bulk upload completed successfully", result['data']),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in bulk upload completion: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error completing bulk upload: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to complete bulk upload"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )

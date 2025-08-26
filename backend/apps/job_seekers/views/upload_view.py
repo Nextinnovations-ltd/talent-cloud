@@ -97,7 +97,6 @@ class ProfileImageUploadAPIView(APIView):
                
                # Generate unique file path for profile image
                file_path = S3Service.generate_unique_file_path(
-                    user_id=request.user.id,
                     file_type='profile_image',
                     original_filename=filename
                )
@@ -243,7 +242,6 @@ class ProfileResumeUploadAPIView(APIView):
                
                # Generate unique file path
                file_path = S3Service.generate_unique_file_path(
-                    user_id=request.user.id,
                     file_type='resume',
                     original_filename=filename
                )
