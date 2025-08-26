@@ -9,7 +9,7 @@ import { PresignedUrlResponse } from '@/types/file-upload-types';
 
 type GeneratePresignedUrlProps = {
   file: File,
-  type: "profile" | "resume" | "coverLetter"
+  type: "profile" | "resume" | "coverLetter" | "project",
 }
 
 
@@ -29,6 +29,8 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
     uploadEndpoint = 'jobseeker/profile/upload/resume/';
   } else if (type === 'coverLetter') {
     uploadEndpoint = 'application/upload/cover-letter/ '
+  }else if (type === 'project'){
+    uploadEndpoint = 'jobseeker/projects/upload/project-image/'
   }
 
 

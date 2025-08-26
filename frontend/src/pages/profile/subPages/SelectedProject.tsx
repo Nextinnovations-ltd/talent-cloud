@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ProfileTitle } from "@/components/common/ProfileTitle";
 import SelectedProjectSchema from "@/lib/SelectedProjectSchema";
@@ -18,6 +19,7 @@ import useToast from "@/hooks/use-toast";
 import { useEffect } from "react";
 import TagInputField from "@/components/common/form/fields/tag-input-field";
 import type { ProjdctsWithIdResponse } from '@/services/slices/jobSeekerSlice';
+import uploadToS3 from "@/lib/UploadToS3/UploadToS3";
 
 
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
@@ -70,26 +72,28 @@ const SelectedProject = () => {
       is_ongoing: false,
       team_size: undefined
     }
-  })
+  });
+
+
 
   useEffect(() => {
+    form.reset({
+      title: projectData?.data.title || '',
+      description: projectData?.data.description || '',
+      tags: projectData?.data.tags || [],
+      project_url: projectData?.data.project_url || '',
+      project_image_url: projectData?.data.project_image_url || '',
+      startDateYear: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[0] : '',
+      startDateMonth: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[1] : '',
+      endDateYear: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[0] : ''),
+      endDateMonth: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[1] : ''),
+      is_ongoing: projectData?.data.is_ongoing || false,
+      team_size: projectData?.data.team_size || undefined,
+    });
 
-  
-      form.reset({
-        title: projectData?.data.title || '',
-        description: projectData?.data.description || '',
-        tags: projectData?.data.tags || [],
-        project_url: projectData?.data.project_url || '',
-        project_image_url: projectData?.data.project_image_url || '',
-        startDateYear: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[0] : '',
-        startDateMonth: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[1] : '',
-        endDateYear: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[0] : ''),
-        endDateMonth: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[1] : ''),
-        is_ongoing: projectData?.data.is_ongoing || false,
-        team_size: projectData?.data.team_size || undefined,
-      });
+    setPreview(projectData?.data.project_image_url! || null);
 
-  }, [ projectData, form]);
+  }, [projectData, form]);
 
   const isOngoing = useWatch({
     control: form.control,
@@ -99,6 +103,9 @@ const SelectedProject = () => {
 
 
   const onSubmit = async (data: SelectedProjectForm) => {
+
+
+
     const start_date = `${data.startDateYear}-${data.startDateMonth}-01`;
     const end_date = (!data.is_ongoing && data.endDateYear && data.endDateMonth)
       ? `${data.endDateYear}-${data.endDateMonth}-01`
@@ -108,7 +115,6 @@ const SelectedProject = () => {
       description: data.description || '',
       tags: data.tags || [],
       project_url: data.project_url,
-      project_image_url: 'https://cdn.prod.website-files.com/63e230081c53f7989f5e0f64/65856bd55be1304ca16eab25_Portfolio.jpg', //might fix later
       start_date,
       end_date,
       is_ongoing: data.is_ongoing,
@@ -117,8 +123,26 @@ const SelectedProject = () => {
     try {
       let response;
       if (id) {
+
+        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+
+
+        if(result){
+          //@ts-ignore
+          payload.project_image_upload_id = result;
+        }
+
         response = await updateSelectedProject({ id, credentials: payload });
       } else {
+        
+        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+
+
+        if(result){
+            //@ts-ignore
+          payload.project_image_upload_id = result;
+        }
+
         response = await addSelectedProject(payload);
       }
       // Type assertion for response
@@ -149,7 +173,7 @@ const SelectedProject = () => {
     }
   }
 
-  if(isFetching) return <div><p>Loading...</p></div>
+  if (isFetching) return <div><p>Loading...</p></div>
 
   return (
     <div className=" mb-[120px]">
@@ -157,13 +181,14 @@ const SelectedProject = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 space-y-[30px]  max-w-[672px] ">
-          <ImagePicker
-        setIsOpen={() => {}}
-        preview={preview}
-        //@ts-ignore
-        form={form}
-        type="square"
-        setPreview={setPreview} />
+            <ImagePicker
+              setIsOpen={() => { }}
+              preview={preview}
+              //@ts-ignore
+              form={form}
+              type="square"
+              imageUploadType="project"
+              setPreview={setPreview} />
             <InputField
               fieldName={`title`}
               languageName=""
@@ -193,7 +218,7 @@ const SelectedProject = () => {
               placeholder="Type here"
             />
             <p className="text-xs text-gray-500 mt-1 mb-2">Type a tag and press Enter or comma to add. Click × to remove a tag. Max 20 tags, 20 characters each.</p>
-             <InputField
+            <InputField
               fieldName={`team_size`}
               languageName=""
               isError={!!form.formState.errors?.team_size}
@@ -251,7 +276,7 @@ const SelectedProject = () => {
 
             {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
               <div className="text-red-500 text-sm mt-1">
-               - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
+                - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
               </div>
             )}
             <CustomCheckbox
