@@ -1,6 +1,8 @@
 from django.urls import path
 from apps.ni_dashboard.views import CompanyApprovalAPIView
 from .views import (
+    BulkUploadCompleteAPIView,
+    BulkUploadInitiateAPIView,
     CompanyCreateAPIView,
     CompanyListAPIView,
     CompanyDetailAPIView,
@@ -17,4 +19,8 @@ urlpatterns = [
     path('company/list/', CompanyListAPIView.as_view(), name='company-list'),
     path('company/<slug:slug>/approve/', CompanyApprovalAPIView.as_view(), name='company-approval-by-admin'),
     path('company/<slug:slug>/', CompanyDetailAPIView.as_view(), name='company-detail'),
+    
+    # Company Image Files Upload
+    path('company/bulk-upload/images/', BulkUploadInitiateAPIView.as_view(), name='bulk-upload-initiate'),
+    path('company/bulk-upload/complete/', BulkUploadCompleteAPIView.as_view(), name='bulk-upload-complete'),
 ]

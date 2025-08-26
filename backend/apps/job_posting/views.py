@@ -539,19 +539,20 @@ class JobApplicationCreateView(APIView):
      )
      def post(self, request, job_post_id):
           cover_letter_upload_id = request.data.get('cover_letter_upload_id')
+          is_skipped = request.data.get('is_skipped', False)
           
           # Validation
           if not job_post_id:
                raise ValidationError("Job post cannot be empty")
-          if not cover_letter_upload_id:
+          if not is_skipped and not cover_letter_upload_id:
                raise ValidationError("Cover letter is required")
 
-          
           # Create application using service
           application = JobApplicationService.perform_application_submission(
                user=request.user,
                job_post_id=job_post_id,
-               cover_letter_upload_id=cover_letter_upload_id
+               cover_letter_upload_id=cover_letter_upload_id,
+               is_skipped=is_skipped
           )
           
           # Return success response

@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.conf import settings
-from apps.users.models import TalentCloudUser
 from core.constants.constants import ROLES
 from services.models import TimeStampModel
 
@@ -140,9 +139,11 @@ class UserInvitation(TimeStampModel):
           """Generate registration URL with token"""
           return f"{base_url}/register/admin?token={self.token}"
 class FileUpload(models.Model):
+     from apps.users.models import TalentCloudUser
      FILE_TYPES = [
           ('resume', 'Resume'),
           ('profile_image', 'profile_image'),
+          ('project_image', 'project_image'),
           ('cover_letter', 'Cover Letter'),
           ('company_logo', 'Company Logo'),
           ('job_attachment', 'Job Attachment'),
