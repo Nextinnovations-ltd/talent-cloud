@@ -5,16 +5,25 @@ export const CertificationYupSchema = yup.object({
   organizationIssue: yup.string().required("Issuing Organization is required"),
   issueYear: yup.string().required("Issue Date is required"),
   issueMonth: yup.string().required("Issue Date is required"),
-  expirationYear: yup.string().when("noExpired", (noExpired, schema) => {
-    if (!noExpired) return schema.required("Expiration Date is required");
-    return schema;
+  noExpired: yup.boolean().required("Expiration status is required"),
+
+  expirationYear: yup.string().when('noExpired', {
+   is:false,
+   then:(schema)=>
+    schema
+      .required("Expiration Year is required"),
+    otherwise:(schema)=>schema.optional(),
   }),
-  expirationMonth: yup.string().when("noExpired", (noExpired, schema) => {
-    if (!noExpired) return schema.required("Expiration Month is required");
-    return schema;
-  }),
-  noExpired: yup.boolean().required(),
-  credentialURL: yup.string().required("Credential URL is required"),
+
+
+  expirationMonth: yup.string().when('noExpired', {
+    is:false,
+    then:(schema)=>
+     schema
+       .required("Expiration Month is required"),
+     otherwise:(schema)=>schema.optional(),
+   }),
+  credentialURL: yup.string().url("Credential URL must be a valid URL"),
 }).test(
   "end-date-after-start-date",
   "End date cannot be earlier than start date.",

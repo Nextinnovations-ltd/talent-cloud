@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 const RecentApplicant = ({ data }: { data?: Applicant }) => {
   const navigate = useNavigate();
   // Fallback values if data is not provided
+
+
   if (!data) {
     return (
       <div className='w-full px-[24px] py-[36px] border border-bg-hr rounded-xl'>
@@ -68,7 +70,7 @@ const RecentApplicant = ({ data }: { data?: Applicant }) => {
         </div>
         <div className='w-[102px]'>
           <button onClick={() => {
-            navigate(`/admin/dashboard/allJobs/details/applicants/${data.job_post_id}`)
+            navigate(`/admin/dashboard/allJobs/${data.job_post_id}`)
           }} className='bg-white w-full rounded-[12px] border border-[#CBD5E1] p-[10px] text-[12px] font-semibold  text-blue-500   hover:shadow-md duration-300'>
             View Job
           </button>

@@ -1,4 +1,3 @@
-import React from 'react'
 import Form from '@/components/landingPages/ContactPage/Form'
 import Navbar from '@/components/landingPages/ContactPage/Nav'
 

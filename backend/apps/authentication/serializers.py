@@ -170,4 +170,4 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model=UserInvitation
-        fields= [ 'email', 'token', 'invited_by', 'target_company', 'invitation_status', 'expires_at']
+        fields=[ 'email', 'token', 'invited_by', 'target_company', 'invitation_status', 'expires_at']

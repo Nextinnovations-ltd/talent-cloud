@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+
+const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
+
+
   // File type configurations
   const fileTypeConfig = {
     resume: {
@@ -90,6 +94,22 @@ const validateFile = (file:File) => {
     return true;
   };
 
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
-  export default {fileTypeConfig,getCorrectMimeType,validateFile};
+// Allowed MIME types + extensions
+const ACCEPTED_TYPES = {
+    "application/pdf": [".pdf"],
+    "application/msword": [".doc"],
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+    "text/plain": [".txt"],
+    "application/vnd.ms-excel": [".xls"],
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+    "application/vnd.ms-powerpoint": [".ppt"],
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
+} as const;
+
+
+  export default {fileTypeConfig,getCorrectMimeType,validateFile,MAX_SIZE,ACCEPTED_TYPES,friendlyAllowed};
+
+
 

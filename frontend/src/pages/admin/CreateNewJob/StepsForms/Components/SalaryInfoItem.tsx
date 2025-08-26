@@ -8,6 +8,7 @@ const formatSalary = (amount: string | undefined) => {
 const SalaryInfoItem = () => {
   const { formData } = useJobFormStore();
 
+
   // If salary is negotiable, only show "Negotiable"
   if (formData?.stepThree?.is_salary_negotiable) {
     return (
@@ -25,13 +26,13 @@ const SalaryInfoItem = () => {
       <h3>
         {formData?.stepThree?.salary_fixed ? (
           <>
-            <span className="font-bold">{formatSalary(formData?.stepThree.salary_fixed)}</span> MMK/month
+            <span className="font-bold">{formatSalary(formData?.stepThree.salary_fixed)}</span>MMK/ <span >{formData?.stepThree?.salary_type === 'hourly' ? "hour" : 'month'}</span>
           </>
         ) : (
           <>
             <span className="font-bold">
               {formatSalary(formData?.stepThree?.salary_min)}-{formatSalary(formData?.stepThree?.salary_max)}
-            </span> MMK/month
+            </span> MMK/ <span >{formData?.stepThree?.salary_type === 'hourly' ? "hour" : 'month'}</span>
           </>
         )}
       </h3>

@@ -126,7 +126,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     labelName={"Salary Rate"}
                                     labelStyle="text-[20px] font-[500]"
                                     error={!!formMethods.formState.errors.salary_mode}
-                                    isRequired={false}
+                                    isRequired={true}
                                     height="border-[#6B6B6B] rounded-[12px] mt-2 h-12"
                                     showRequiredLabel={true}
                                     placeholder={"Select the salary mode"}
@@ -143,9 +143,9 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     type="number"
                                     labelSize="text-[20px] mb-3 font-[500]"
                                     fieldHeight="border-[#6B6B6B] rounded-[12px]"
-                                    isError={!!formMethods.formState.errors?.salary_min}
+                                    isError={formMethods?.watch('salary_mode') === 'range' ? !!formMethods.formState.errors?.salary_min : !!formMethods.formState.errors?.salary_fixed}
                                     lableName={clsx(formMethods?.watch('salary_mode') === 'range' ? 'Minimum Salary' : 'Fixed Salary')}
-                                    required={false}
+                                    required={true}
                                     placeholder="00.00 MMK"
                                 />
                                 {formMethods.watch('salary_mode') === 'range' && (
@@ -158,7 +158,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                         fieldHeight="border-[#6B6B6B] rounded-[12px]"
                                         isError={!!formMethods.formState.errors?.salary_max}
                                         lableName="Maximum Salary"
-                                        required={false}
+                                        required={true}
                                         placeholder="00.00 MMK"
                                     />
                                 )}

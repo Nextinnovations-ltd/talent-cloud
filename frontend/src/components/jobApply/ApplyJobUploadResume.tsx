@@ -1,33 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDropzone, FileRejection } from "react-dropzone";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
-
-
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-
-// Allowed MIME types + extensions
-const ACCEPTED_TYPES = {
-    "application/pdf": [".pdf"],
-    "application/msword": [".doc"],
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-    "text/plain": [".txt"],
-    "application/vnd.ms-excel": [".xls"],
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-    "application/vnd.ms-powerpoint": [".ppt"],
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
-} as const;
-
-const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
+import { useParams } from "react-router-dom";
+import filesTypes from "@/lib/filesTypes";
 
 type applyJobUploadResumeProps =  {
-   type:"profile" | "resume" | "coverLetter"
+   type:"profile" | "resume" | "coverLetter",
+   setFileData?:Dispatch<SetStateAction<any>>
 }
 
-
-const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
+const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type,setFileData}) => {
     const [error, setError] = useState<string>("");
     const [rejections, setRejections] = useState<FileRejection[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -35,6 +21,8 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
     const [__, setUploadedUrl] = useState<string | null>(null); // optional: store result
 
     const { refetch } = useGetJobSeekerResumeQuery();
+    const { id } = useParams();
+
 
     const {
         acceptedFiles,
@@ -44,8 +32,8 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
         isDragActive,
         isDragReject,
     } = useDropzone({
-        accept: ACCEPTED_TYPES,
-        maxSize: MAX_SIZE,
+        accept: filesTypes.ACCEPTED_TYPES,
+        maxSize: filesTypes.MAX_SIZE,
         multiple: false, // single file only
         disabled: isUploading, // disable while uploading
         onDropAccepted: () => {
@@ -59,7 +47,7 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
                 first?.code === "file-too-large"
                     ? "File size must be less than 10MB."
                     : first?.code === "file-invalid-type"
-                        ? `Unsupported file type. Allowed: ${friendlyAllowed}.`
+                        ? `Unsupported file type. Allowed: ${filesTypes.friendlyAllowed}.`
                         : "File rejected. Please check the file type and size.";
             setError(msg);
         },
@@ -71,6 +59,14 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
     useEffect(() => {
         if (!file) return;
 
+        if(type === 'coverLetter' ){
+            if(setFileData){
+                setFileData(acceptedFiles[0] ?? null);
+            }
+ 
+            return;
+        }
+
         let cancelled = false;
 
         const doUpload = async () => {
@@ -80,7 +76,7 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
 
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
-                const result = await UploadToS3({ file, type: type });
+                const result = await UploadToS3({ file, type: type,postId:id });
 
                 if (cancelled) return;
 
@@ -140,7 +136,7 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type}) => {
                         }
                     </div>
                     <p className="text-xs text-gray-600 text-center mt-2">
-                        {friendlyAllowed} · Max 10MB
+                        {filesTypes.friendlyAllowed} · Max 10MB
                     </p>
                 </div>
                 {!!(rejections.length || fileRejections.length) && (

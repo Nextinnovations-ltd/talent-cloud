@@ -1,4 +1,3 @@
-import React from 'react'
 import gradientImg from '@/assets/Employee/Contact us.png'
 import contactImg from '@/assets/Employee/Frame 1618873031.png'
 import mail from '@/assets/Employee/mail.svg';

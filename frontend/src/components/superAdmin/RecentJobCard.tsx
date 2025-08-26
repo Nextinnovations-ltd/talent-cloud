@@ -17,6 +17,12 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
     const date = new Date(isoDate);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+
+    console.log("------")
+    console.log(data)
+    console.log("------")
+
    
     
     // Calculate time differences
@@ -75,9 +81,7 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
         </div>
 
         <div className='w-[102px]'>
-          <button
-          onClick={()=>{navigate(`/admin/dashboard/allJobs`)}}
-          className='bg-[#0481EF] w-full py-[4px] text-[12px] font-semibold rounded-md text-[#FFFFFF] shadow-[0px_4px_6px_0px_rgba(0,0,0,0.09)] hover:shadow-none transition-shadow'>
+        <button onClick={() => {navigate(`/admin/dashboard/allJobs/${data?.id}`)}} className='bg-white w-full rounded-[12px] border border-[#CBD5E1] p-[10px] text-[12px] font-semibold  text-blue-500   hover:shadow-md duration-300'>
             View Details
           </button>
         </div>

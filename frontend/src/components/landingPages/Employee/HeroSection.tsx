@@ -15,7 +15,7 @@ const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const location = useLocation();
 
-  const linkClass = (hash) =>
+  const linkClass = (hash: string) =>
     `transition-colors duration-300 hover:text-[#0389FF] ${
       location.hash === hash ? "text-[#0389FF]" : ""
     }`;

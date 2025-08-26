@@ -6,8 +6,6 @@ const ApplyJobResumeItemContainer: React.FC = () => {
   const { data, isLoading, isFetching, isError } = useGetJobSeekerResumeQuery();
   const resumeData = data?.data;
 
-  console.log(data)
-
 
   if (isLoading || isFetching) {
     return (

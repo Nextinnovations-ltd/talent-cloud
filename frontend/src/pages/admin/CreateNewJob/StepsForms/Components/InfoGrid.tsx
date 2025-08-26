@@ -11,6 +11,7 @@ import SkillsSection from "./SkillsSection";
 const InfoGrid = () => {
     const { formData } = useJobFormStore();
 
+
    
 
     // Helper function to get label from value
@@ -40,7 +41,7 @@ const InfoGrid = () => {
             />
             <InfoItem 
                 icon={CONTACT} 
-                text={`${formData?.stepThree?.experience_level || 0} Years of Experience`} 
+                text={`${formData?.stepThree?.experience_years || 0} Years of Experience`} 
                 alt="Experience" 
             />
         </div>

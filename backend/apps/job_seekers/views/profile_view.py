@@ -20,7 +20,6 @@ class JobSeekerResumeAPIView(APIView):
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
-
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerProfileSelectionOptionsAPIView(APIView):
      """Retrieve selection option for specialization and experience level in profile section"""

@@ -4,6 +4,7 @@ import {
     getTokenFromSessionStorage,
   } from "@/helpers/operateBrowserStorage";
 import { URL } from "@/services/api/apiurls";
+import axios from "axios";
 
 
 type CoverLetterUploadProps = {
@@ -11,10 +12,23 @@ type CoverLetterUploadProps = {
     postId:string
 }
 
-export async function ComfirmUpload({uploadId,postId}:CoverLetterUploadProps):Promise<unknown>{
+export async function CoverLetterApply({uploadId,postId}:CoverLetterUploadProps):Promise<unknown>{
     try {
 
-        const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
+      const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
+
+         await axios.post(
+            `${URL}job-posts/${postId}/apply/`,
+            {
+              cover_letter_upload_id: uploadId,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            }
+          );
 
 
 

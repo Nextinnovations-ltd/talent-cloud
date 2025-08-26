@@ -67,10 +67,10 @@ export const SelectedProjects = ({
         </div>
       )}
       {project_image_url && (
-        <img className="h-[230px] w-full object-cover rounded-lg mb-2" src={project_image_url} alt={title} />
+        <img className="h-[230px] w-full object-contain  rounded-lg mb-2" src={project_image_url} alt={title} />
       )}
        {!project_image_url && (
-        <img className="h-[230px] w-full object-cover rounded-lg mb-2" src={DEFAULT_EMPTY} alt={title} />
+        <img className="h-[230px] w-full object-contain rounded-lg mb-2" src={DEFAULT_EMPTY} alt={title} />
       )}
       <div className="flex flex-col gap-2">
         <h3 className="text-[22px] font-bold text-[#05060F]">{title}</h3>

@@ -15,7 +15,7 @@ import { useJobFormStore } from "@/state/zustand/create-job-store";
 import StepThreeForm from "../CreateNewJob/StepsForms/StepThreeForm";
 import PreviewForm from "../CreateNewJob/StepsForms/PreviewForm";
 import useToast from "@/hooks/use-toast";
-
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -27,11 +27,12 @@ const steps = [
 const AllJobsEditJobs = () => {
   const { id } = useParams<{ id: string }>();
   const { showNotification } = useToast();
+  const navigation = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const {
     formData, 
     setStepOneData,
-    setStepTwoData,
+  setStepTwoData,
     setStepThreeData,
     resetForm
   } = useJobFormStore();
@@ -255,6 +256,7 @@ const AllJobsEditJobs = () => {
        
        setCurrentStep(0);
        console.log("Job created successfully!");
+       navigation('/admin/dashboard/allJobs');
 
     } catch (error){
       console.error("Error creating job",error)
