@@ -131,7 +131,7 @@ const HeroSection = () => {
           <div className="max-w-[641px] flex flex-col justify-center items-start gap-6 md:gap-8">
             <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px ] md:leading-[66.7px] uppercase text-black">
               Your Next Big <br></br> Opportunity
-              <Link to='/emp/lp' target="_blank"><span className="text-[#0481EF]"> Starts Here</span></Link>
+              <Link to='/tc/lp' target="_blank"><span className="text-[#0481EF]"> Starts Here</span></Link>
               
             </h1>
             <p className="md:max-w-[532px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[22.8px] md:leading-[30.4px]">

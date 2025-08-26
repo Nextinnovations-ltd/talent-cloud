@@ -74,21 +74,21 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={clsx(fieldWidth,'translate-y-[-4px]')}>
           {requiredLabel && (
-            <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelSize)}>
+            <FormLabel className={clsx('font-[500] text-[14px] md:text-[16px] text-[#05060F] ',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}
             </FormLabel>
           )}
           <FormControl>
-            <>
+            < >
               <Input
                 type={type}
                 disabled={disabled}
                 isError={isError}
                 className={cn(
                  
-                  "text-[14px] mt-2  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
+                  "text-[14px] disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
                   
                   fieldHeight
 
@@ -107,9 +107,9 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
               
             </>
           </FormControl>
-          <FormMessage className=" translate-y-2" />
+          <FormMessage className="absolute " />
           {description && (
-          <h3 className="text-[#686C73] font-normal mt-[10px] text-[14px]">
+          <h3 className="text-[#686C73] font-normal text-[14px]">
             {descriptionText}
           </h3>
         )}

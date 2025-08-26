@@ -57,7 +57,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={fieldWidth}>
           {requiredLabel && (
-            <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelSize)}>
+            <FormLabel className={clsx('font-[500] text-[14px] md:text-[16px] text-[#05060F]',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}
@@ -70,7 +70,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
                 isError={isError}
                 className={cn(
                   fieldHeight,
-                  "text-[14px] disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] "
+                  "text-[14px] disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] resize-none"
                 )}
                 placeholder={placeholder}
                 showLetterCount={showLetterCount}
@@ -79,7 +79,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
               />
             </>
           </FormControl>
-          <FormMessage />
+          <FormMessage className="absolute "/>
         </FormItem>
       )}
     />
