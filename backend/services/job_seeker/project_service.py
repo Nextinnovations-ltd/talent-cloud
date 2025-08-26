@@ -86,7 +86,7 @@ class ProjectService:
                     try:
                          S3Service.delete_file(image_path)
                          
-                         # FileUploadService.soft_delete_upload_file(user, image_path)
+                         FileUploadService.soft_delete_upload_file(user, image_path)
                          
                          project.project_image_url=None
                          project.save()
