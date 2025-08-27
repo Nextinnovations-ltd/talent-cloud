@@ -12,7 +12,11 @@ import logging
 
 logger = logging.getLogger('dashboard_service')
 
-class DashboardService:
+class NIDashboardService:
+     @staticmethod
+     def get_ni_admin_profile_information(user):
+          pass
+     
      @staticmethod
      def get_percent(count, total):
           try:
@@ -57,22 +61,22 @@ class DashboardService:
                     unverified_users = JobSeeker.objects.filter(is_verified=False).count()
                     
                     # Calculate completed profiles with chunking for performance
-                    completed_profile_count = DashboardService._calculate_completed_profiles()
+                    completed_profile_count = NIDashboardService._calculate_completed_profiles()
                except Exception as e:
                     logger.error(f"Error fetching job seeker statistics: {str(e)}")
                     raise ValidationError("Failed to retrieve job seeker statistics")
                
                job_post_active = {
                     'count': job_post_active_count,
-                    'percent': DashboardService.get_percent(job_post_active_count, job_posts_count)
+                    'percent': NIDashboardService.get_percent(job_post_active_count, job_posts_count)
                }
                job_post_draft = {
                     'count': job_post_draft_count,
-                    'percent': DashboardService.get_percent(job_post_draft_count, job_posts_count)
+                    'percent': NIDashboardService.get_percent(job_post_draft_count, job_posts_count)
                }
                job_post_expired = {
                     'count': job_post_expired_count,
-                    'percent': DashboardService.get_percent(job_post_expired_count, job_posts_count)
+                    'percent': NIDashboardService.get_percent(job_post_expired_count, job_posts_count)
                }
                
                logger.info(f"Successfully generated statistics for company {company.id}")
@@ -197,7 +201,7 @@ class DashboardService:
                               'email': user.email,
                               'name': user.name,
                               'username': user.username,
-                              'status': DashboardService._get_user_status(user),
+                              'status': NIDashboardService._get_user_status(user),
                               'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
                               'registered_date': user.created_at,
                          }
@@ -261,7 +265,7 @@ class DashboardService:
                for role_stat in role_statistics:
                     try:
                          count = role_stat['job_seeker_count']
-                         percentage = DashboardService.get_percent(count, total_job_seekers_with_roles)
+                         percentage = NIDashboardService.get_percent(count, total_job_seekers_with_roles)
                          
                          formatted_statistics.append({
                               'role_id': role_stat['role__id'],
