@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.job_posting.models import JobApplication, JobPost
 from apps.job_seekers.models import JobSeeker
+from services.storage.s3_service import S3Service
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
      company = serializers.SerializerMethodField()
@@ -35,7 +36,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      role = serializers.SerializerMethodField()
      is_open_to_work = serializers.BooleanField(source='job_seeker.is_open_to_work')
      address = serializers.SerializerMethodField()
-     profile_image_url = serializers.CharField(source='job_seeker.profile_image_url')
+     profile_image_url = serializers.SerializerMethodField()
      applied_date = serializers.DateTimeField(source='created_at', read_only=True)
      
      class Meta:
@@ -69,3 +70,8 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           
      def get_address(self, obj: JobApplication):
           return obj.job_seeker.get_address
+     
+     def get_profile_image_url(self, obj: JobApplication):
+          if obj.job_seeker.profile_image_url:
+               return S3Service.get_public_url(obj.job_seeker.profile_image_url)
+          return None
