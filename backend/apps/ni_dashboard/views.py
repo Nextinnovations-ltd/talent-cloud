@@ -262,6 +262,7 @@ class RecentJobListAPIView(CustomListAPIView):
 
 # endregion Job Post Listing
 
+
 # region Company Approval Process
 
 @extend_schema(tags=["NI Dashboard"])
@@ -290,6 +291,7 @@ class CompanyApprovalAPIView(APIView):
           )
 
 # endregion Company Approval Process
+
 
 @extend_schema(tags=["NI Dashboard"])
 class ToggleJobPostStatusAPIView(APIView):

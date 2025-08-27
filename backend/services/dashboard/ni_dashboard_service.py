@@ -3,6 +3,7 @@ from apps.job_seekers.models import JobSeeker
 from apps.users.models import TalentCloudUser
 from apps.job_posting.models import JobPost
 from apps.job_posting.models import StatusChoices
+from services.storage.s3_service import S3Service
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import ROLES
 from core.middleware.chunk_optimizer import chunked_queryset
@@ -156,7 +157,7 @@ class DashboardService:
                          'username': user.username,
                          'phone_number': f"{user.country_code}{user.phone_number}" if user.country_code is not None and user.phone_number is not None else None,
                          'address': user.address if user.address is not None else None,
-                         'profile_image_url': user.profile_image_url,
+                         'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
                          'is_verified': user.is_verified,
                          'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
                          'profile_completion_score': profile_completion_score,
@@ -197,7 +198,7 @@ class DashboardService:
                               'name': user.name,
                               'username': user.username,
                               'status': DashboardService._get_user_status(user),
-                              'profile_image_url': user.profile_image_url,
+                              'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
                               'registered_date': user.created_at,
                          }
                          
