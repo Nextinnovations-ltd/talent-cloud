@@ -22,6 +22,7 @@ import type { ProjdctsWithIdResponse } from '@/services/slices/jobSeekerSlice';
 import uploadToS3 from "@/lib/UploadToS3/UploadToS3";
 
 
+
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
   return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
     const year = startYear + index;
@@ -49,6 +50,7 @@ const SelectedProject = () => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const [addSelectedProject, { isLoading: isAdding }] = useAddSelectedProjectsMutation();
   const [updateSelectedProject, { isLoading: isUpdating }] = useUpdateSelectedProjectsMutation();
+  const [isLoading,setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { showNotification } = useToast();
@@ -104,6 +106,8 @@ const SelectedProject = () => {
 
   const onSubmit = async (data: SelectedProjectForm) => {
 
+    setIsLoading(true);
+
 
 
     const start_date = `${data.startDateYear}-${data.startDateMonth}-01`;
@@ -123,6 +127,11 @@ const SelectedProject = () => {
     try {
       let response;
       if (id) {
+
+        console.log("-----")
+        console.log(form.getValues('project_image_url'))
+        console.log("-----")
+
 
         const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
 
@@ -164,11 +173,14 @@ const SelectedProject = () => {
         });
         showNotification({ message: id ? "Project updated successfully" : "Project added successfully", type: "success" });
         navigate('/user/mainProfile');
+        setIsLoading(false);
       } else {
         showNotification({ message: 'Failed to save project', type: "danger" });
+        setIsLoading(false);
       }
     } catch (error) {
       showNotification({ message: 'Failed to save project', type: "danger" });
+      setIsLoading(false);
       console.error('Failed to save project:', error);
     }
   }
@@ -304,7 +316,7 @@ const SelectedProject = () => {
               className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 "
               disabled={isAdding || isUpdating || isFetching}
             >
-              {(isAdding || isUpdating || isFetching) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
+              {(isAdding || isUpdating || isFetching || isLoading) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
             </button>
           </div>
         </form>

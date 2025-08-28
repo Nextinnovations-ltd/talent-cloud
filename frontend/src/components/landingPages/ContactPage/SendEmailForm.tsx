@@ -9,7 +9,8 @@ import TextAreaField from '@/components/common/form/fields/text-area-field'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import emailjs from "emailjs-com";
-const SendEmailForm = ({ step, setStep }) => {
+
+const SendEmailForm = ({ step, setStep }:{step:any,setStep:any}) => {
 
   const [formData, setFormData] = useState<any>(null);
 
@@ -63,28 +64,24 @@ const SendEmailForm = ({ step, setStep }) => {
                   fieldName={'name'}
                   lableName='Your Name *'
                   placeholder='Type Here'
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]'
-                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
                 <InputField
                   fieldName={'email'}
                   lableName='Your Email *'
                   placeholder='Email Address'
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]'
-                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
               </div>
               <InputField
                 fieldName={'subject'}
                 lableName='Your Subject *'
                 placeholder='Type Here'
-                fieldWidth='w-full'
-              />
+                fieldWidth='w-full' languageName={''} required={false}              />
               <TextAreaField
                 fieldName={'description'}
                 lableName='Message'
                 placeholder='Type Here'
                 fieldWidth='w-full'
-                fieldHeight='h-[200px]'
-              />
+                fieldHeight='h-[200px]' languageName={''} required={false}              />
             </div>
             <Button
               className='bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]'
@@ -107,28 +104,24 @@ const SendEmailForm = ({ step, setStep }) => {
                   fieldName={'name'}
                   lableName='Your Name *'
                   placeholder={formData.name}
-                  fieldWidth='w-[270px]'
-                />
+                  fieldWidth='w-[270px]' languageName={''} required={false}                />
                 <InputField
                   fieldName={'email'}
                   lableName='Your Email *'
                   placeholder={formData.email}
-                  fieldWidth='w-[270px]'
-                />
+                  fieldWidth='w-[270px]' languageName={''} required={false}                />
               </div>
               <InputField
                 fieldName={'subject'}
                 lableName='Your Subject *'
                 placeholder={formData.subject}
-                fieldWidth='w-full'
-              />
+                fieldWidth='w-full' languageName={''} required={false}              />
               <TextAreaField
                 fieldName={'description'}
                 lableName='Message *'
-                placeholder= {formData.description}
+                placeholder={formData.description}
                 fieldWidth='w-full'
-                fieldHeight='h-[200px]'
-              />
+                fieldHeight='h-[200px]' languageName={''} required={false}              />
                       </div>
          
       
