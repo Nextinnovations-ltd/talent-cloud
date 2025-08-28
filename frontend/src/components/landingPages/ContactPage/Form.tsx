@@ -12,7 +12,7 @@ const Form = () => {
   return (
     <div className="">
   
-     <div className='pt-[107px] md:pt-[233px] md:pb-[104px] px-6' style={{
+     <div className='pt-[107px] md:pt-[233px] pb-[120px] md:pb-[104px] px-6' style={{
         backgroundImage: `url(${gradientImg})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -32,10 +32,10 @@ const Form = () => {
       </div>
      </div>
       
-        <div className="max-w-[1170px] flex flex-col-reverse lg:flex-row justify-center gap-[76px]  md:gap-[50px] min-h-[753px] mx-auto mt-[60px]  md:pb-[70px] md:px-[54px] pb-[24px] px-[0px]  rounded-[18px] bg-transparent md:bg-white shadow-none md:shadow-[0_4px_12px_0_#0D0A2C0F]">
-          <div className="w-full lg:max-w-[425px] pt-0 md:pt-[28px]">
-          <Link to=''
-            className='hidden lg:flex gap-3  justify-start items-center text-black text-[18px] font-[500] leading-[20px] mb-[48px] '
+        <div className="max-w-[1170px] flex flex-col-reverse lg:flex-row justify-center gap-[76px]  md:gap-[50px] min-h-[753px] mx-auto mt-[60px]  md:pb-[70px] md:px-[54px] pb-[0px] px-[0px]  rounded-[18px] bg-transparent md:bg-white shadow-none md:shadow-[0_4px_12px_0_#0D0A2C0F]">
+          <div className={`w-full lg:max-w-[425px] pt-0 ${step === 3 ?'md:pt-[98px]':'md:pt-[28px]'}`}>
+        <Link to=''
+            className={`hidden ${step === 3 ? 'lg:hidden' : 'lg:flex'} gap-3  justify-start items-center text-black text-[18px] font-[500] leading-[20px] mb-[48px]`}
             onClick={() => setStep(1)}
             type="button"
             >
@@ -44,7 +44,7 @@ const Form = () => {
               <path d="M12 19L5 12L12 5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Back
-          </Link>
+          </Link> 
           <div className="p-[32px] md:p-[40px] w-full rounded-[24px] lg:h-[594px] h-[378px]" style={{
               backgroundImage: `url(${contactImg})`,
               backgroundPosition: 'center',

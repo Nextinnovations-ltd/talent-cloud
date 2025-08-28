@@ -51,6 +51,8 @@ import CandidateApplicants from "./pages/admin/Candidates/CandidateApplicants";
 import AllJobsEditJobs from "./pages/admin/AllJobs/AllJobsEditJobs";
 import EmployeePage from "./pages/LandingPages/EmployeePage";
 import Contact from "./pages/LandingPages/ContactPage/Contact";
+import PrivacyPolicy from "./pages/LandingPages/PrivacyPolicy/PrivacyPolicy";
+import TermsConditions from "./pages/LandingPages/TermsConditions/TermsConditions";
 
 
 
@@ -76,6 +78,16 @@ export const router = createBrowserRouter([
     path:"/contact-us",
     element:<Contact/>
   },
+  {
+    path:"/privacy-policy",
+    element:<PrivacyPolicy/>
+  },
+   {
+    path:"/terms-conditions",
+    element:<TermsConditions/>
+  },
+
+   
    
   {
    path: "/",
