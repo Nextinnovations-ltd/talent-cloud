@@ -2,7 +2,7 @@ from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, 
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import NotFound, ValidationError
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, Max, F
 
 class SharedDashboardService:
      @staticmethod
@@ -122,9 +122,17 @@ class SharedDashboardService:
                
           if application_status:
                filters['application_status'] = application_status
-               
+
+          subquery = (
+               JobApplication.objects
+               .filter(**filters)
+               .values("job_seeker")  # group by job_seeker
+               .annotate(latest_created_at=Max("created_at"))  # get most recent
+          )
+
           return JobApplication.objects.filter(
-               **filters
+               **filters,
+               created_at__in=subquery.values("latest_created_at")
           ).select_related(
                'job_post', 
                'job_post__posted_by', 

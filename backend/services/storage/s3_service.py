@@ -194,13 +194,13 @@ class S3Service:
           
           # Organize by file type and user
           path_mapping = {
-               'resume': f'resumes/{file_name}.{extension}',
-               'profile_image': f'profiles/{file_name}.{extension}',
-               'cover_letter': f'cover-letters/{file_name}.{extension}',
-               'project_image': f'projects/{file_name}.{extension}',
-               'company_logo': f'companies/logos/{file_name}.{extension}',
-               'job_attachment': f'jobs/attachments/{file_name}.{extension}',
-               'document': f'documents/{file_name}.{extension}'
+               'resume': f'{settings.ENVIRONMENT}/resumes/{file_name}.{extension}',
+               'profile_image': f'{settings.ENVIRONMENT}/profiles/{file_name}.{extension}',
+               'cover_letter': f'{settings.ENVIRONMENT}/cover-letters/{file_name}.{extension}',
+               'project_image': f'{settings.ENVIRONMENT}/projects/{file_name}.{extension}',
+               'company_logo': f'{settings.ENVIRONMENT}/companies/logos/{file_name}.{extension}',
+               'job_attachment': f'{settings.ENVIRONMENT}/jobs/attachments/{file_name}.{extension}',
+               'document': f'{settings.ENVIRONMENT}/documents/{file_name}.{extension}'
           }
           
           return path_mapping.get(file_type, f'misc/{file_name}.{extension}')

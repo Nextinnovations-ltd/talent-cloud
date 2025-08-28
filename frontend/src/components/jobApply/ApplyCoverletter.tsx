@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Label } from "../ui/label";
 import { RadioGroupItem, RadioGroup } from "../ui/radio-group";
 import ApplyJobUploadResume from "./ApplyJobUploadResume";
@@ -8,12 +8,20 @@ import { Trash } from "lucide-react";
 type ApplyCoverLetterProps = {
   fileData: File | undefined;
   setFileData: (file: File | undefined) => void;
+  radioValue: "uploadCover" | "noCover";
+  setRadioValue: (value: "uploadCover" | "noCover") => void;
+  coverError: boolean;
 };
 
-type CoverChoice = "uploadCover" | "noCover";
 
-const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({ fileData, setFileData }) => {
-  const [radioValue, setRadioValue] = useState<CoverChoice>("noCover");
+const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({  
+  fileData,
+  setFileData,
+  radioValue,
+  setRadioValue,
+  coverError
+}) => {
+
 
   // If user chooses "Skip", clear any selected file
   useEffect(() => {
@@ -26,10 +34,11 @@ const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({ fileData, setFileDa
       <p className="text-[14px] my-[10px]">Optional but recommended to stand out</p>
 
       <RadioGroup
-        className="mt-[40px]"
-        value={radioValue}
-        onValueChange={(v) => setRadioValue(v as CoverChoice)}
-      >
+  className="mt-[40px]"
+  value={radioValue}
+  onValueChange={(v) => setRadioValue(v as "uploadCover" | "noCover")}
+>
+
         {/* Upload option */}
         <div className="flex items-center cursor-pointer gap-3">
           <RadioGroupItem value="uploadCover" id="cover-upload" />
@@ -55,7 +64,12 @@ const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({ fileData, setFileDa
             </div>
           ) : (
             <div className="mt-[20px] ml-8">
-              <ApplyJobUploadResume type="coverLetter" setFileData={setFileData} />
+              <ApplyJobUploadResume coverError={coverError} type="coverLetter" setFileData={setFileData} />
+              {
+               coverError &&  <p className="text-red-500 text-sm mt-2 ml-8">
+               Upload the cover letter when you choose the upload option.
+             </p>
+              }
             </div>
           )
         )}

@@ -1,3 +1,4 @@
+from django.conf import settings
 from apps.users.models import PasswordReset
 from utils.token.jwt import TokenUtil
 
@@ -12,7 +13,7 @@ class PasswordService:
                token
           """
           token = TokenUtil.generate_encoded_token(value=email)
-          expired_at = TokenUtil.generate_expiration_time(60)
+          expired_at = TokenUtil.generate_expiration_time(settings.PASSWORD_RESET_REQUEST_EXPIRATION_TIME)
           
           # Add password request to database
           PasswordReset.objects.create(email=email, token=token, expired_at=expired_at)
@@ -29,7 +30,7 @@ class PasswordService:
           Returns:
                token
           """
-          expired_at = TokenUtil.generate_expiration_time(60)
+          expired_at = TokenUtil.generate_expiration_time(settings.PASSWORD_RESET_REQUEST_EXPIRATION_TIME)
           
           # Update password request expiration time in database
           reset_request.expired_at = expired_at

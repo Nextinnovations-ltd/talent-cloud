@@ -40,8 +40,8 @@ class FILE_SIZE_LIMITS:
     # Sizes in bytes (1 MB = 1024 * 1024)
     PROFILE_IMAGE = 3 * 1024 * 1024     # 3 MB
     PROJECT_IMAGE = 3 * 1024 * 1024     # 3 MB
+    COVER_LETTER = 3 * 1024 * 1024      # 3 MB
     RESUME = 5 * 1024 * 1024            # 5 MB
-    COVER_LETTER = 5 * 1024 * 1024      # 5 MB
 
 class UPLOAD_MAPPER:     
      TYPE_MAP = {
@@ -67,3 +67,11 @@ OVERRIDE_FILE_TYPES = [
      FILE_TYPES.PROFILE_IMAGE,
      FILE_TYPES.RESUME
 ]
+
+class UPLOAD_STATUS:
+     PENDING = 'pending'
+     CANCELLED = 'cancelled'
+     UPLOADED = 'uploaded'
+     FAILED = 'failed'
+     DELETED = 'deleted'
+     DELETION_FAILED = 'deletion_failed'

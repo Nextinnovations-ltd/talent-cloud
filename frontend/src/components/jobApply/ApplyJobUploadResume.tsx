@@ -8,12 +8,13 @@ import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
 import { useParams } from "react-router-dom";
 import filesTypes from "@/lib/filesTypes";
 
-type applyJobUploadResumeProps =  {
-   type:"profile" | "resume" | "coverLetter",
-   setFileData?:Dispatch<SetStateAction<any>>
+type applyJobUploadResumeProps = {
+    type: "profile" | "resume" | "coverLetter",
+    setFileData?: Dispatch<SetStateAction<any>>,
+    coverError?: boolean
 }
 
-const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type,setFileData}) => {
+const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFileData, coverError }) => {
     const [error, setError] = useState<string>("");
     const [rejections, setRejections] = useState<FileRejection[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -59,11 +60,11 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type,setFileD
     useEffect(() => {
         if (!file) return;
 
-        if(type === 'coverLetter' ){
-            if(setFileData){
+        if (type === 'coverLetter') {
+            if (setFileData) {
                 setFileData(acceptedFiles[0] ?? null);
             }
- 
+
             return;
         }
 
@@ -76,7 +77,7 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type,setFileD
 
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
-                const result = await UploadToS3({ file, type: type,postId:id });
+                const result = await UploadToS3({ file, type: type, postId: id });
 
                 if (cancelled) return;
 
@@ -116,15 +117,18 @@ const ApplyJobUploadResume:React.FC<applyJobUploadResumeProps> = ({type,setFileD
                 <div
                     {...getRootProps()}
                     className={`border-2 cursor-pointer p-4 ml-8 w-[220px] rounded border-dashed transition-colors duration-200 select-none
-    ${isDragReject
+    ${coverError
                             ? "border-red-500 bg-red-50"
-                            : isDragActive
-                                ? "border-blue-500 bg-blue-100"
-                                : "border-blue-200 bg-blue-50"
+                            : isDragReject
+                                ? "border-red-500 bg-red-50"
+                                : isDragActive
+                                    ? "border-blue-500 bg-blue-100"
+                                    : "border-blue-200 bg-blue-50"
                         }
     ${isUploading ? "opacity-50 pointer-events-none" : ""}`}
                     aria-label="Upload resume"
                 >
+
                     <input {...getInputProps({ disabled: isUploading })} /> {/* ✅ disable input */}
                     <div className="flex font-medium text-sm items-center justify-center gap-3">
                         <p>{isUploading ? "Uploading..." : "Upload"}</p>

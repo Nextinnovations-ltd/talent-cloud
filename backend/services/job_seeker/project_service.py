@@ -10,12 +10,16 @@ logger = logging.getLogger(__name__)
 
 class ProjectService:
      @staticmethod
-     def performed_project_creation(user, validated_data, upload_id):
+     def performed_project_creation(user, validated_data, upload_id=None):
           try:
                with transaction.atomic():
-                    file_upload = S3Service.update_upload_status(user, upload_id)
+                    file_upload_path = None
+                    
+                    if upload_id:
+                         file_upload = S3Service.update_upload_status(user, upload_id)
+                         file_upload_path = file_upload.file_path
 
-                    return ProjectService.create_project(user.jobseeker, validated_data, file_upload.file_path)
+                    return ProjectService.create_project(user.jobseeker, validated_data, file_upload_path)
           except Exception as e:
                logger.error(f"Failed to create project: {str(e)}")
                raise ValidationError(f"Failed to create project: {str(e)}")
@@ -84,14 +88,18 @@ class ProjectService:
                # Clean up image file if it exists
                if image_path:
                     try:
-                         S3Service.delete_file(image_path)
+                         is_deleted = S3Service.delete_file(image_path)
                          
-                         FileUploadService.soft_delete_upload_file(user, image_path)
-                         
-                         project.project_image_url=None
-                         project.save()
-                         
-                         logger.info(f"Deleted project image: {image_path}")
+                         if is_deleted:
+                              FileUploadService.soft_delete_upload_file(user, image_path)
+                              
+                              project.project_image_url=None
+                              project.save()
+                              
+                              logger.info(f"Deleted project image: {image_path}")
+                         else:
+                              logger.warning(f"Failed to delete project image.")
+                              raise ValidationError("Error deleting project image.")
                     except Exception as e:
                          logger.warning(f"Failed to delete project image {image_path}: {str(e)}")
                

@@ -13,12 +13,27 @@ from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import IsSuperadminForJobPost, TalentCloudSuperAdminPermission
-from services.dashboard.ni_dashboard_service import DashboardService
+from services.dashboard.ni_dashboard_service import NIDashboardService
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 import logging
 
 logger = logging.getLogger('ni_dashboard')
+
+# Admin Profile
+@extend_schema(tags=["NI Admin Profile"])
+class NIAdminProfileAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+     
+     def get(self, request):
+          """
+          Get NI Admin Profile Information
+          """
+          pass
+     
+     def post(self, request):
+          pass
 
 @extend_schema(tags=["NI Dashboard"])
 class NIAdminListAPIView(APIView):
@@ -26,7 +41,7 @@ class NIAdminListAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          result = DashboardService.get_ni_admin_list()
+          result = NIDashboardService.get_ni_admin_list()
           
           return Response(
                CustomResponse.success(result['message'], result['data']), 
@@ -53,7 +68,7 @@ class JobSeekerStatisticsAPIView(APIView):
      def get(self, request):
           company = SharedDashboardService.get_company(self.request.user)
 
-          result = DashboardService.get_job_seeker_statistics(company)
+          result = NIDashboardService.get_job_seeker_statistics(company)
           
           return Response(
                CustomResponse.success(result['message'], result['data']), 
@@ -66,7 +81,7 @@ class JobSeekerRoleStatisticsAPIView(APIView):
      permission_classes = [TalentCloudSuperAdminPermission]
      
      def get(self, request):
-          result = DashboardService.get_job_seeker_statistics_by_occupation_role()
+          result = NIDashboardService.get_job_seeker_statistics_by_occupation_role()
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
@@ -262,6 +277,7 @@ class RecentJobListAPIView(CustomListAPIView):
 
 # endregion Job Post Listing
 
+
 # region Company Approval Process
 
 @extend_schema(tags=["NI Dashboard"])
@@ -290,6 +306,7 @@ class CompanyApprovalAPIView(APIView):
           )
 
 # endregion Company Approval Process
+
 
 @extend_schema(tags=["NI Dashboard"])
 class ToggleJobPostStatusAPIView(APIView):

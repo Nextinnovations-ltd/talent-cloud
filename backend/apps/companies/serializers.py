@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from services.storage.s3_service import S3Service
 from .models import Company, Industry
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -44,6 +45,7 @@ class CompanyListSerializer(serializers.ModelSerializer):
      Serializer for the Company list.
      """
      opening_jobs = serializers.SerializerMethodField()
+     image_url = serializers.SerializerMethodField()
      
      class Meta:
           model = Company
@@ -55,6 +57,9 @@ class CompanyListSerializer(serializers.ModelSerializer):
      
      def get_opening_jobs(self, obj: Company):
           return obj.get_opening_jobs.count()
+     
+     def get_image_url(self, obj: Company):
+          return S3Service.get_public_url(obj.image_url) if obj.image_url else None
           
 class CompanyDetailSerializer(serializers.ModelSerializer):
      """
