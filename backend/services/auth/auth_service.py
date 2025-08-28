@@ -216,7 +216,7 @@ class AuthenticationService:
 
      @staticmethod
      def generate_login_success_response(user):
-          access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 180)
+          access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 600)
           refresh_token = TokenUtil.generate_refresh_token(user.pk, user.role.name)
           
           return {
