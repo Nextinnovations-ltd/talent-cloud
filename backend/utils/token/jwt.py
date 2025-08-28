@@ -51,7 +51,7 @@ class TokenUtil:
                'user_id': id,
                # 'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7),
                'role': role,
-               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=300),
+               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7),
                'iat': datetime.datetime.now(datetime.UTC),
           }, config('REFRESH_SECRET', default='refresh_secret'), algorithm=config('ENCRYPTION_ALGORITHM', default='HS256'))
 
