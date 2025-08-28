@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from datetime import datetime, timedelta
 from apps.authentication.models import FileUpload
-from core.constants.s3.constants import FILE_TYPES, OVERRIDE_FILE_TYPES
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS, OVERRIDE_FILE_TYPES
 from services.storage.s3_service import S3Service
 import logging
 
@@ -20,32 +20,9 @@ class FileUploadService:
                allowed_content_types, max_size = S3Service.validate_file_upload(content_type, file_size, file_type)
           except ValueError:
                raise ValidationError("Invalid file_size format")
-          
-          # Cancel any pending resume uploads
-          pending_upload = FileUpload.objects.filter(
-               user=user,
-               file_type=file_type,
-               upload_status='pending'
-          ).first()
-          
-          if pending_upload:
-               pending_upload.upload_status = 'cancelled'
-               pending_upload.save()
-               logger.info(f"Cancelled pending file upload {pending_upload.id} for user {user.id}")
-          
-          if file_type in OVERRIDE_FILE_TYPES:
-               # Delete previous uploaded file
-               previous_files = FileUpload.objects.filter(
-                    user=user,
-                    file_type=file_type,
-                    upload_status='uploaded'
-               )
-               
-               for file in previous_files:
-                    S3Service.delete_file(file.file_path)
-                    file.upload_status = 'deleted'
-                    file.save()
-                    logger.info(f"Deleted previous file {file.id} for user {user.id}")
+
+          # Cancel previous pending
+          FileUploadService.cancel_pending_uploads(user, file_type)
           
           # Generate unique file path
           file_path = S3Service.generate_unique_file_path(
@@ -72,7 +49,7 @@ class FileUploadService:
                file_path=file_path,
                file_size=file_size,
                content_type=content_type,
-               upload_status='pending',
+               upload_status=UPLOAD_STATUS.PENDING,
                upload_url_expires_at=datetime.now() + timedelta(hours=1)
           )
           
@@ -89,12 +66,55 @@ class FileUploadService:
           return response_data
      
      @staticmethod
+     def cancel_pending_uploads(user, file_type):
+          # Cancel any pending uploads
+          pending_upload = FileUpload.objects.filter(
+               user=user,
+               file_type=file_type,
+               upload_status=UPLOAD_STATUS.PENDING
+          ).first()
+          
+          if pending_upload:
+               pending_upload.upload_status = UPLOAD_STATUS.CANCELLED
+               pending_upload.save()
+               logger.info(f"Cancelled pending file upload {pending_upload.id} for user {user.id}")
+          
+          # if file_type in OVERRIDE_FILE_TYPES:
+          #      # Delete previous uploaded file
+          #      previous_files = FileUpload.objects.filter(
+          #           user=user,
+          #           file_type=file_type,
+          #           upload_status=UPLOAD_STATUS.UPLOADED
+          #      )
+               
+          #      for file in previous_files:
+          #           is_deleted = S3Service.delete_file(file.file_path)
+                    
+          #           file.upload_status = UPLOAD_STATUS.DELETED if is_deleted else UPLOAD_STATUS.DELETION_FAILED
+          #           file.save()
+                    
+          #           logger.info(f"Deleted previous file {file.id} for user {user.id}")
+
+     @staticmethod
+     def update_file_upload_status(file_upload: FileUpload, file_size=None, upload_status=UPLOAD_STATUS.UPLOADED):
+          # Update upload record
+          file_upload.upload_status = upload_status
+          file_upload.uploaded_at = datetime.now()
+          
+          if file_size:
+               file_upload.file_size = file_size
+          
+          file_upload.save()
+          
+          return file_upload
+     
+     @staticmethod
      def soft_delete_upload_file(user, file_path):
           try:
                uploaded_file = FileUpload.objects.filter(
                     user=user,
                     file_path=file_path,
-                    upload_status='uploaded'
+                    upload_status=UPLOAD_STATUS.UPLOADED
                ).first()
                
                if not uploaded_file:
