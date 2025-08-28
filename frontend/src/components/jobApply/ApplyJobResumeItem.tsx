@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Button } from "../ui/button";
-import { Download, Eye, Trash } from "lucide-react";
+import { Download, Eye } from "lucide-react";
 import { format } from "date-fns";
 
 type ResumeDataType = {
@@ -93,9 +93,7 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
         }
     };
 
-    const handleDelete = () => {
 
-    };
 
     return (
         <div className="flex items-center mt-[30px] gap-5">
@@ -123,14 +121,6 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
                 aria-label={`Download ${fileName}`}
             >
                 <Download size={18} />
-            </Button>
-
-            <Button
-                onClick={handleDelete}
-                className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
-                aria-label={`Delete ${fileName}`}
-            >
-                <Trash size={18} />
             </Button>
         </div>
     );
