@@ -9,12 +9,11 @@ from django.db import transaction
 from django.http import Http404
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 class JobApplicationService:
      @staticmethod
-     def perform_application_submission(user, job_post_id, cover_letter_upload_id):
+     def perform_application_submission(user, job_post_id, cover_letter_upload_id, is_skipped=False):
           try:
                # Get required objects
                job_post = get_object_or_404(JobPost, id=job_post_id)
@@ -24,14 +23,18 @@ class JobApplicationService:
                JobApplicationService._validate_application_eligibility(job_post, job_seeker)
                
                with transaction.atomic():
-                    # Update File Upload
-                    file_upload = JobApplicationService.update_cover_upload_status(user, cover_letter_upload_id)
+                    file_upload_path = None
                     
+                    if not is_skipped:
+                         # Update File Upload
+                         file_upload = JobApplicationService.update_cover_upload_status(user, cover_letter_upload_id)
+                         file_upload_path = file_upload.file_path
+                         
                     # Create application
                     application = JobApplicationService._create_application(
                          job_post,
                          job_seeker,
-                         file_upload.file_path
+                         file_upload_path
                     )
                     
                     # Send notification about the new application

@@ -51,10 +51,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }, [inputRef?.current?.value?.length]);
 
     return (
-      <div>
+      <div className=" ">
         <div
           className={cn(
-            "flex h-10  items-center rounded-[10px] bg-blue relative border-input bg-white text-sm",
+            "flex h-10 mt-[16px] items-center rounded-[10px] bg-blue relative border-input bg-white text-sm",
             className
           )}
         >

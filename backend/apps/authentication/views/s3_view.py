@@ -1,15 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.openapi import OpenApiTypes
+from datetime import datetime, timedelta
 from rest_framework import status
 from services.storage.s3_service import S3Service
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
 from utils.response import CustomResponse
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.openapi import OpenApiTypes
 from apps.authentication.models import FileUpload
-from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,6 @@ class GenerateUploadURLAPIView(APIView):
                
                # Generate unique file path
                file_path = S3Service.generate_unique_file_path(
-                    user_id=request.user.id,
                     file_type=file_type,
                     original_filename=filename
                )

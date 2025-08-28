@@ -17,19 +17,25 @@ const UpdatedFooter = () => {
           <div className="w-[203px]">
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">Explore</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[20px] md:mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
-              {isEmpLp ? (
-                <HashLink smooth to="#about-us">About Us</HashLink>
-              ) : (
-                <HashLink smooth to="#what-you-get">What You Get</HashLink>
-              )}
-            </p>
+         
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
               <HashLink smooth to="#why-us">Why us</HashLink>
             </p>
+             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
+                {!isEmpLp && (
+                <HashLink smooth to="#about-us">About us</HashLink>
+                ) }
+                
+            </p>
+             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
+                {isEmpLp && (
+                <HashLink smooth to="#what-you-get">What You Get</HashLink>
+                ) }
+                
+            </p>
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-[45px] md:mb-0">
               
-              {!isEmpLp && (
+              {isEmpLp && (
               <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
               ) }
             </p>
@@ -37,7 +43,7 @@ const UpdatedFooter = () => {
           <div className="w-[203px]">
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
-            <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</p>
+            <Link to='/contact-us' target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
 
           </div>
           <div className="w-[203px]">

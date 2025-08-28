@@ -97,7 +97,6 @@ class ProfileImageUploadAPIView(APIView):
                
                # Generate unique file path for profile image
                file_path = S3Service.generate_unique_file_path(
-                    user_id=request.user.id,
                     file_type='profile_image',
                     original_filename=filename
                )
@@ -243,7 +242,6 @@ class ProfileResumeUploadAPIView(APIView):
                
                # Generate unique file path
                file_path = S3Service.generate_unique_file_path(
-                    user_id=request.user.id,
                     file_type='resume',
                     original_filename=filename
                )
@@ -388,84 +386,6 @@ class ConfirmProfileUploadAPIView(APIView):
                     'uploaded_at': file_upload.uploaded_at.isoformat(),
                     'upload_status': 'uploaded',
                     'profile_updated': profile_updated
-               }
-               
-               logger.info(f"Confirmed upload {file_upload.id} for user {request.user.id}")
-               
-               return Response(
-                    CustomResponse.success("Profile file uploaded and profile updated", response_data),
-                    status=status.HTTP_200_OK
-               )
-               
-          except ValidationError as e:
-               logger.warning(f"Validation error in upload confirmation: {str(e)}")
-               return Response(
-                    CustomResponse.error(str(e)),
-                    status=status.HTTP_400_BAD_REQUEST
-               )
-          except Exception as e:
-               logger.error(f"Error confirming profile upload: {str(e)}")
-               return Response(
-                    CustomResponse.error("Failed to confirm upload"),
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-               )
-
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserPermission]
-     
-     @extend_schema(
-          summary="Confirm cover letter upload and update job application",
-          request={
-               'application/json': {
-                    'type': 'object',
-                    'properties': {
-                         'upload_id': {'type': 'string', 'description': 'Upload ID from generate URL endpoint'},
-                         'file_size': {'type': 'integer', 'description': 'Actual uploaded file size (optional)'},
-                    },
-                    'required': ['upload_id']
-               }
-          }
-     )
-     def post(self, request):
-          """
-          Confirm cover letter file upload and update job application
-          """
-          try:
-               upload_id = request.data.get('upload_id')
-               file_size = request.data.get('file_size')
-               
-               if not upload_id:
-                    raise ValidationError("upload_id is required")
-               
-               # Get upload record
-               try:
-                    file_upload = FileUpload.objects.get(
-                         id=upload_id,
-                         user=request.user,
-                         upload_status='pending'
-                    )
-               except FileUpload.DoesNotExist:
-                    raise ValidationError("Invalid upload_id or upload already processed")
-               
-               # Update upload record
-               file_upload.upload_status = 'uploaded'
-               file_upload.uploaded_at = datetime.now()
-               if file_size:
-                    file_upload.file_size = file_size
-               file_upload.save()
-               
-               # Generate URL for response
-               public_url = S3Service.get_public_url(
-                    file_upload.file_path
-               )
-            
-               response_data = {
-                    'upload_id': str(file_upload.id),
-                    'file_type': file_upload.file_type,
-                    'file_path': file_upload.file_path,
-                    'url': public_url,
-                    'uploaded_at': file_upload.uploaded_at.isoformat(),
-                    'upload_status': 'uploaded',
                }
                
                logger.info(f"Confirmed upload {file_upload.id} for user {request.user.id}")

@@ -36,10 +36,21 @@ const JobMatch = () => {
           ))
         }
       </div>
-      <div onClick={() => { navigate('/auth/login') }} className="flex cursor-pointer gap-[17px] justify-center items-center w-[345px] h-[72px] rounded-[28px] border border-[#0A66C2] mx-auto">
-        <a href="" className=''>See all jobs post</a>
-        <img src={arrowRight} alt="" />
-      </div>
+      <button
+        onClick={() => navigate('/auth/login')}
+        className="group flex items-center justify-center gap-[12px] w-[345px] h-[72px] 
+                   rounded-[28px] border border-[#0A66C2] text-[#000] font-medium 
+                   transition-all duration-300 hover:bg-[#0A66C2] hover:text-white mx-auto"
+      >
+        <span>See all jobs post</span>
+        <img 
+          src={arrowRight} 
+          alt="arrow" 
+          className="transition-transform duration-300 group-hover:translate-x-1 group-hover:invert"
+        />
+      </button>
+
+
     </div>
   )
 }
