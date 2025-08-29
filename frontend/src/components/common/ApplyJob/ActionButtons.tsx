@@ -77,7 +77,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ jobId, alreadyAppl
             <Button className='bg-blue-500 shadow-none text-[16px] h-[48px] px-[20px]   rounded-[12px] text-white'>Quick Apply</Button>
           </Link>
         ) : (
-          <p  className='text-blue-500   text-[16px]   rounded-[12px]'>Already applied</p>
+          <p  className='text-blue-500   text-[16px]   rounded-[12px]'>Applied</p>
         )
       }
      </div>

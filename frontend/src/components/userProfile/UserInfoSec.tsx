@@ -60,14 +60,14 @@ const links = [
     },
 
     {
-        title: "Projects",
+        title: "Selected Projects",
         icon: (
             <SvgDockProjects />
         ),
         href: "#projects-section",
     },
     {
-        title: "Videos",
+        title: "Video Introduction",
         icon: (
             <SvgDockVideo />
         ),

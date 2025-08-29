@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ApplyJobCard, { Job } from "@/components/jobApply/ApplyJobCard";
 import { ApplyJobSideBar } from "@/components/jobApply/ApplyJobSideBar";
 import ApplyJobCardSkeleton from "@/components/jobApply/ApplyJobSkeleton";
-import { PostUploadedCombo } from "@/components/jobApply/PostUploadedCombo";
 import ApplyJobFilters from "@/components/jobApply/ApplyJobFilters";
 import { useGetJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { useSearchParams } from "react-router-dom";
@@ -107,23 +106,23 @@ export const Home: React.FC = () => {
     setSearchParams(params);
   };
 
-  const handleOrderingChange = (newOrdering: string) => {
-    // Update filters with new ordering value
-    const updatedFilters = { ...filters, ordering: newOrdering };
+  // const handleOrderingChange = (newOrdering: string) => {
+  //   // Update filters with new ordering value
+  //   const updatedFilters = { ...filters, ordering: newOrdering };
 
-    setFilters(updatedFilters);
-    setPage(1); // reset page on filter change
-    setSelectedJob(null); // clear selected job
+  //   setFilters(updatedFilters);
+  //   setPage(1); // reset page on filter change
+  //   setSelectedJob(null); // clear selected job
 
-    // Update URL params
-    const params = new URLSearchParams();
-    Object.entries(updatedFilters).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      }
-    });
-    setSearchParams(params);
-  };
+  //   // Update URL params
+  //   const params = new URLSearchParams();
+  //   Object.entries(updatedFilters).forEach(([key, value]) => {
+  //     if (value) {
+  //       params.set(key, value);
+  //     }
+  //   });
+  //   setSearchParams(params);
+  // };
 
   const handleScroll = () => {
     if (
@@ -150,10 +149,10 @@ export const Home: React.FC = () => {
 
       <div className="container mx-auto mb-[50px] 2xl:px-[100px] items-center p-4 flex justify-between">
         <h3>{data?.data.count || 0} job opportunities waiting.</h3>
-        <PostUploadedCombo
+        {/* <PostUploadedCombo
           ordering={filters.ordering}
           onOrderingChange={handleOrderingChange}
-        />
+        /> */}
       </div>
       <div className={`flex gap-[40px] pb-[200px] container mx-auto flex-col lg:flex-row`}>
         <div

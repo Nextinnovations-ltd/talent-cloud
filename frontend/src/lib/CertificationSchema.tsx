@@ -26,7 +26,7 @@ export const CertificationYupSchema = yup.object({
   credentialURL: yup.string().url("Credential URL must be a valid URL"),
 }).test(
   "end-date-after-start-date",
-  "End date cannot be earlier than start date.",
+  "Expiration Date cannot be earlier than Issued Date",
   function (value) {
     const { noExpired, issueYear, issueMonth, expirationYear, expirationMonth } = value || {};
     if (noExpired) return true;
