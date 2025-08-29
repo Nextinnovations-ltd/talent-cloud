@@ -3,6 +3,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from apps.job_seekers.models import JobSeeker
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS, OVERRIDE_FILE_TYPES
+from services.job_seeker.file_upload_service import FileUploadService
 from services.storage.s3_service import S3Service
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
@@ -38,9 +40,6 @@ class ProfileImageUploadAPIView(APIView):
           Generate presigned URL when user confirms profile image upload
           """
           try:
-               if not request.user or not request.user.is_authenticated:
-                    raise ValidationError("User not authenticated")
-               
                filename = request.data.get('filename')
                file_size = request.data.get('file_size')
                content_type = request.data.get('content_type')
@@ -49,92 +48,12 @@ class ProfileImageUploadAPIView(APIView):
                     raise ValidationError("filename is required")
                if not file_size:
                     raise ValidationError("file_size is required")
+               if len(filename.strip()) == 0:
+                    raise ValidationError("filename cannot be empty")
                
-               # Convert file_size to integer and validate
-               try:
-                    file_size = int(file_size)
-                    if file_size > 5 * 1024 * 1024:  # 5MB limit for profile images
-                         raise ValidationError("File size cannot exceed 5MB")
-                    if file_size < 1:
-                         raise ValidationError("File size must be greater than 0")
-               except ValueError:
-                    raise ValidationError("Invalid file_size format")
+               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.PROFILE_IMAGE)
                
-               # Auto-detect content type if not provided
-               if not content_type:
-                    content_type = S3Service.get_content_type_from_filename(filename)
-               
-               # Validate image content type
-               allowed_image_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-               
-               if content_type not in allowed_image_types:
-                    raise ValidationError(f"Only image files are allowed. Supported: {', '.join(allowed_image_types)}")
-               
-               # Cancel any pending uploads for this user
-               pending_upload = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='profile_image',
-                    upload_status='pending'
-               ).first()
-               
-               if pending_upload:
-                    pending_upload.upload_status = 'cancelled'
-                    pending_upload.save()
-                    logger.info(f"Cancelled pending upload {pending_upload.id} for user {request.user.id}")
-               
-               # Delete previous uploaded profile image
-               previous_uploads = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='profile_image',
-                    upload_status='uploaded'
-               )
-               
-               for prev_upload in previous_uploads:
-                    S3Service.delete_file(prev_upload.file_path)
-                    prev_upload.upload_status = 'deleted'
-                    prev_upload.save()
-                    logger.info(f"Deleted previous upload {prev_upload.id} for user {request.user.id}")
-               
-               # Generate unique file path for profile image
-               file_path = S3Service.generate_unique_file_path(
-                    file_type='profile_image',
-                    original_filename=filename
-               )
-               
-               # Generate presigned URL
-               upload_data = S3Service.generate_presigned_upload_url(
-                    file_path=file_path,
-                    file_type=content_type,
-                    file_size=file_size,
-                    expiration=3600
-               )
-               
-               if not upload_data:
-                    raise ValidationError("Failed to generate upload URL")
-               
-               # Create tracking record
-               file_upload = FileUpload.objects.create(
-                    user=request.user,
-                    file_type='profile_image',
-                    original_filename=filename,
-                    file_path=file_path,
-                    file_size=file_size,
-                    content_type=content_type,
-                    upload_status='pending',
-                    upload_url_expires_at=datetime.now() + timedelta(hours=1)
-               )
-               
-               response_data = {
-                    'upload_id': str(file_upload.id),
-                    'upload_url': upload_data['upload_url'],
-                    'fields': upload_data['fields'],
-                    'file_path': file_path,
-                    'expires_in': 3600,
-                    'max_file_size': '5MB',
-                    'allowed_types': allowed_image_types
-               }
-               
-               logger.info(f"Generated profile image upload URL for user {request.user.id}, upload_id: {file_upload.id}")
+               logger.info(f"Generated profile image upload URL for user {request.user.id}, upload_id: {response_data['upload_id']}")
                
                return Response(
                     CustomResponse.success("Profile image upload URL generated", response_data),
@@ -178,9 +97,6 @@ class ProfileResumeUploadAPIView(APIView):
           Generate presigned URL when user confirms resume upload
           """
           try:
-               if not request.user or not request.user.is_authenticated:
-                    raise ValidationError("User not authenticated")
-               
                filename = request.data.get('filename')  # Changed from query_params
                file_size = request.data.get('file_size')
                content_type = request.data.get('content_type')
@@ -322,9 +238,6 @@ class ConfirmProfileUploadAPIView(APIView):
           Confirm profile file upload and update TalentCloudUser profile
           """
           try:
-               if not request.user or not request.user.is_authenticated:
-                    raise ValidationError("User not authenticated")
-               
                upload_id = request.data.get('upload_id')
                file_size = request.data.get('file_size')
                
@@ -336,23 +249,13 @@ class ConfirmProfileUploadAPIView(APIView):
                     file_upload = FileUpload.objects.get(
                          id=upload_id,
                          user=request.user,
-                         upload_status='pending'
+                         upload_status=UPLOAD_STATUS.PENDING
                     )
                except FileUpload.DoesNotExist:
                     raise ValidationError("Invalid upload_id or upload already processed")
-               
-               # # Check if file exists in S3
-               # if not S3Service.check_file_exists(file_upload.file_path):
-               #      file_upload.upload_status = 'failed'
-               #      file_upload.save()
-               #      raise ValidationError("File not found in S3. Upload may have failed.")
-               
+
                # Update upload record
-               file_upload.upload_status = 'uploaded'
-               file_upload.uploaded_at = datetime.now()
-               if file_size:
-                    file_upload.file_size = file_size
-               file_upload.save()
+               file_upload = FileUploadService.update_file_upload_status(file_upload, file_size)
                
                # Generate download URL for response
                public_url = S3Service.get_public_url(
@@ -378,13 +281,20 @@ class ConfirmProfileUploadAPIView(APIView):
                     logger.warning(f"TalentCloudUser not found for user {request.user.id}")
                     profile_updated = False
                
+               # if file_upload.file_type in OVERRIDE_FILE_TYPES:
+               # delete_previous_files_task.delay(
+               #      user_id=request.user.id,
+               #      file_type=file_upload.file_type,
+               #      exclude_upload_id=file_upload.id
+               # )
+                    
                response_data = {
                     'upload_id': str(file_upload.id),
                     'file_type': file_upload.file_type,
                     'file_path': file_upload.file_path,
                     'url': public_url,
                     'uploaded_at': file_upload.uploaded_at.isoformat(),
-                    'upload_status': 'uploaded',
+                    'upload_status': UPLOAD_STATUS.UPLOADED,
                     'profile_updated': profile_updated
                }
                

@@ -74,23 +74,23 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             labelName={"Project Duration"}
                             labelStyle="text-[20px] font-[500]"
                             error={!!formMethods.formState.errors.project_duration}
-                            isRequired={false}
-                            height="border-[#6B6B6B] rounded-[12px] mt-2 h-[45px]"
+                            isRequired={true}
+                            height={clsx('border-[#6B6B6B] rounded-[12px] mt-2 h-[45px]')}
                             showRequiredLabel={true}
                             placeholder={"Select the Duration"}
                             data={PROJECT_DURATION_TYPE_DATA}
-                            width="w-[50%]"
+                            width={clsx('w-[50%] ', !!formMethods.formState.errors.number_of_positions && "mt-[-28px]", !!formMethods.formState.errors.number_of_positions && 'mt-[0px]')}
                         />
                         <InputField
                             fieldName='number_of_positions'
                             languageName=""
-                            fieldWidth={clsx("w-[50%]",!!formMethods.formState.errors?.number_of_positions && "mt-[30px]")}
+                            fieldWidth={clsx("w-[50%]", !!formMethods.formState.errors.project_duration && "mt-[-28px]" )}
                             type="number"
                             labelSize="text-[20px] mb-3 font-[500]"
                             fieldHeight="border-[#6B6B6B] rounded-[12px]"
                             isError={!!formMethods.formState.errors?.number_of_positions}
                             lableName="Number of position"
-                            required={false}
+                            required={true}
                             placeholder="0"
                         />
                     </div>
@@ -175,6 +175,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                         required={true}
                         fieldHeight={"border-[#6B6B6B] rounded-[12px] h-12"}
                         fieldWidth={"w-full"}
+                        placeholder="Last Application Date"
                     />
 
                     <div className="mt-[40px]">
@@ -209,6 +210,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             languageName=""
                             fieldWidth="w-full"
                             type="number"
+                            maxLength={2}
                             labelSize="text-[20px] mb-3 font-[500]"
                             fieldHeight="border-[#6B6B6B] rounded-[12px]"
                             isError={!!formMethods.formState.errors?.experience_years}

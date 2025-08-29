@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavBar } from "@/components/nav/NavBar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
 import { useGetJobSeekerNotificationsQuery, useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
-
 
 export const MainLayout = () => {
   const socketRef = useRef<WebSocket | null>(null);
@@ -15,6 +14,14 @@ export const MainLayout = () => {
   const { showNotification } = useToast();
   const { refetch } = useGetUnReadNotificationsCountQuery();
   const { refetch:RefetchIsRead } = useGetJobSeekerNotificationsQuery({ limit:10, offset:0 });
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Scroll to top whenever route changes
+    window.scrollTo({ top: 0, behavior: "instant" }); 
+    // use "smooth" instead of "instant" if you want smooth scrolling
+  }, [pathname]);
 
   useEffect(() => {
     if (!token) return;

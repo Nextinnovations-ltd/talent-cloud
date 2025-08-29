@@ -38,13 +38,13 @@ export const UserWorkExperienceSchema = yup.object({
   description:yup.string().max(250)
 }).test(
   "end-date-after-start-date",
-  "End date cannot be earlier than start date.",
+  "End date must be after start date.",
   function (value) {
     const { is_present_work, startDateYear, startDateMonth, endDateYear, endDateMonth } = value || {};
     if (is_present_work) return true;
     if (!startDateYear || !startDateMonth || !endDateYear || !endDateMonth) return true;
     const start = new Date(Number(startDateYear), Number(startDateMonth) - 1);
     const end = new Date(Number(endDateYear), Number(endDateMonth) - 1);
-    return end >= start;
+    return end > start;
   }
 );

@@ -42,8 +42,8 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     
     def validate_description(self, value):
         """Validate project description"""
-        if not value or len(value.strip()) < 10:
-            raise serializers.ValidationError("Project description must be at least 10 characters long.")
+        # if not value or len(value.strip()) < 10:
+        #     raise serializers.ValidationError("Project description must be at least 10 characters long.")
         return value.strip()
     
     def validate_tags(self, value):

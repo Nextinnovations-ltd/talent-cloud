@@ -52,13 +52,6 @@ class ProjectImageUploadUrlAPIView(APIView):
                 CustomResponse.success("project image upload URL generated", response_data),
                 status=status.HTTP_200_OK
             )
-            
-        except ValidationError as e:
-            logger.warning(f"Validation error in project image upload: {str(e)}")
-            return Response(
-                CustomResponse.error(str(e)),
-                status=status.HTTP_400_BAD_REQUEST
-            )
         except Exception as e:
             logger.error(f"Error generating project image upload URL: {str(e)}")
             return Response(
@@ -154,8 +147,8 @@ class JobSeekerProjectListAPIView(APIView):
         """Create a new project"""
         upload_id = request.data.get('project_image_upload_id')
         
-        if not upload_id:
-            raise ValidationError("Project Image file required.")
+        # if not upload_id:
+        #     raise ValidationError("Project Image file required.")
         
         serializer = JobSeekerProjectCreateUpdateSerializer(
             data=request.data,
@@ -284,13 +277,6 @@ class JobSeekerProjectDetailAPIView(APIView):
                         ),
                         status=status.HTTP_200_OK
                     )
-                    
-            except ValidationError as e:
-                logger.warning(f"Validation error in project update: {str(e)}")
-                return Response(
-                    CustomResponse.error(str(e)),
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             except Exception as e:
                 logger.error(f"Error updating project {project_id}: {str(e)}")
                 return Response(

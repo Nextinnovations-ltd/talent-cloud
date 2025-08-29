@@ -58,7 +58,7 @@ const HeroSection = () => {
             </HashLink>
             </li>
             </ul>
-          <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
+          <Link target="_blank" to={'/emp/lp'} className="text-[#6e6e6e90] hidden md:flex ">For Employee</Link>
           <div className=" hidden md:flex">
           <CommonButton title="Get Started" url='/tc/lp'/>
           </div>
@@ -101,7 +101,7 @@ const HeroSection = () => {
                           <li><HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
                           <li> <HashLink smooth to="#what-you-get"  className={linkClass("#what-you-get")}>What You Get</HashLink></li>
                           <li><HashLink smooth to="#find-jobs" className={linkClass("#find-jobs")}>Find Jobs</HashLink></li>
-                          <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#0389FF] ">For Employee</Link></li>
+                          <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#6e6e6e90] ">For Employee</Link></li>
                         </ul>
 <Link to='/emp/lp' target="_blank">
                         <Button className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">

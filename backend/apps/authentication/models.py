@@ -155,6 +155,7 @@ class FileUpload(models.Model):
           ('uploaded', 'Uploaded'),
           ('failed', 'Failed'),
           ('deleted', 'Deleted'),
+          ('deletion_failed', 'Deletion failed'),
      ]
      
      id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

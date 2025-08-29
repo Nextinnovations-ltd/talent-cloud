@@ -43,7 +43,7 @@ const JobMatch = () => {
                    transition-all duration-300 hover:bg-[#0A66C2] hover:text-white mx-auto"
       >
         <span>See all jobs post</span>
-        <img 
+        <img  
           src={arrowRight} 
           alt="arrow" 
           className="transition-transform duration-300 group-hover:translate-x-1 group-hover:invert"
