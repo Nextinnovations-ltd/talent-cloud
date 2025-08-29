@@ -3,6 +3,7 @@ from .views import (
     BookmarkDeleteAPIView,
     CompanyJobListView,
     CoverLetterUploadUrlAPIView,
+    ExpiredJobPostAPIView,
     JobDiscoveryAPIView,
     JobPostEditDetailAPIView,
     JobPostCreateAPIView,
@@ -25,16 +26,26 @@ urlpatterns = [
     # Endpoints related to Job Post
     path('job-posts/', JobPostCreateAPIView.as_view(), name='jobpost-list-create'),
     path('job-posts/all/', JobPostListAPIView.as_view(), name='jobpost-list'),
-    path('job-posts/recent/', RecentJobPostListAPIView.as_view(), name='recent-jobpost-list'),
-    path('job-posts/discover/', JobDiscoveryAPIView.as_view(), name='discover-jobpost-list'),
+    path('job-posts/expired/', ExpiredJobPostAPIView.as_view(), name='expired-jobpost-list'), # For super admin and job seeker
     path('job-posts/newest/', NewestJobPostAPIView.as_view(), name='recent-jobpost-list'),
-    path('job-posts/matched/', MatchedJobPostAPIView.as_view(), name='matched-jobpost-list'),
+    
+    
+    # Recent Jobs
+    path('job-posts/recent/', RecentJobPostListAPIView.as_view(), name='recent-jobpost-list'),
+    
+    # Jobs Search
+    path('job-posts/discover/', JobDiscoveryAPIView.as_view(), name='discover-jobpost-list'),
     path('job-posts/search/', JobSearchListAPIView.as_view(), name='matched-jobpost-list'),
+    
+    # Matched Jobs
+    path('job-posts/matched/', MatchedJobPostAPIView.as_view(), name='matched-jobpost-list'),
+    
+    # Jobs Details and Edit
     path('job-posts/<int:pk>/', JobPostActionAPIView.as_view(), name='jobpost-detail'),
     path('job-posts/edit/<int:pk>/', JobPostEditDetailAPIView.as_view(), name='jobpost-edit-detail'),
     
     # Job Application Endpoints for Super Admin and Company Admins
-    path('job-posts/', CompanyJobListView.as_view(), name='company-jobpost-list'), # GET only for superadmin and admins
+    path('job-posts/', CompanyJobListView.as_view(), name='company-jobpost-list'), # GET only for superadmin and admins, currently not using
     path('job-posts/<int:job_post_id>/applications/', CompanyJobApplicationsListView.as_view(), name='jobpost-applications-list'), # GET only for superadmins and admins
     path('applications/<int:pk>/', CompanyApplicationDetailView.as_view(), name='application-detail'),
     
