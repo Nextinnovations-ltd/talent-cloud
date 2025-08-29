@@ -107,6 +107,19 @@ def _handle_drf_exceptions(exc, response, error_context):
         elif isinstance(exc.detail, list) and len(exc.detail) == 1 and isinstance(exc.detail[0], str):
             # Single error message in a list
             response.data = CustomResponse.error(message=exc.detail[0])
+        elif isinstance(exc.detail, dict):
+            # Take the first field and first error message
+            field, messages = next(iter(exc.detail.items()))
+            if isinstance(messages, list) and messages:
+                response.data = CustomResponse.error(
+                    message=messages[0],
+                    errors=exc.detail
+                )
+            else:
+                response.data = CustomResponse.error(
+                    message="Validation failed",
+                    errors=exc.detail
+                )
         else:
             # Complex validation errors with field-specific errors
             response.data = CustomResponse.error(

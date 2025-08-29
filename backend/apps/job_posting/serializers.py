@@ -120,13 +120,14 @@ class JobPostListSerializer(serializers.ModelSerializer):
                'company_name',
                'company_image_url',
                'display_salary',
-               'created_at',
                'applicant_count',
                'is_new',
                'is_bookmarked',
                'is_applied',
                'is_expired',
                'effective_status',
+               'created_at',
+               'last_application_date',
           ]
 
      # Use JobPostDisplayMixin methods except get_is_new
