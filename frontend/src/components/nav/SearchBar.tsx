@@ -94,7 +94,7 @@ export const SearchBar = ({
           width={"w-full"}
           placeholder="What are you looking for?"
           className={clsx(
-            "border-none bg-[#F3F4F6] outline-none transition-all duration-300 w-[300px]"
+            "border-none bg-[#F3F4F6] translate-y-[-5px] outline-none transition-all duration-300 w-[300px]"
           )}
           value={value}
           onChange={(e) => setValue(e.target.value)}
