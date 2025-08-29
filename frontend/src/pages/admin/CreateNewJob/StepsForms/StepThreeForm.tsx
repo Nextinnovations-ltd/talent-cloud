@@ -140,7 +140,8 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     fieldName={clsx(formMethods?.watch('salary_mode') === 'range' ? 'salary_min' : 'salary_fixed')}
                                     languageName=""
                                     fieldWidth="w-full"
-                                    type="number"
+                                    type="text"
+                                    formatThousands
                                     labelSize="text-[20px] mb-3 font-[500]"
                                     fieldHeight="border-[#6B6B6B] rounded-[12px]"
                                     isError={formMethods?.watch('salary_mode') === 'range' ? !!formMethods.formState.errors?.salary_min : !!formMethods.formState.errors?.salary_fixed}
@@ -153,7 +154,8 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                         fieldName='salary_max'
                                         languageName=""
                                         fieldWidth="w-full"
-                                        type="number"
+                                        type="text"
+                                        formatThousands
                                         labelSize="text-[20px] mb-3 font-[500]"
                                         fieldHeight="border-[#6B6B6B] rounded-[12px]"
                                         isError={!!formMethods.formState.errors?.salary_max}

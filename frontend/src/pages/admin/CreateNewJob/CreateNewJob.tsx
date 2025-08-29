@@ -122,6 +122,14 @@ const CreateNewJob = () => {
             }
         }
 
+        const sanitizeNumber = (val: unknown) => {
+            if (val === undefined || val === null) return undefined;
+            const cleaned = String(val).replace(/,/g, '').trim();
+            if (cleaned === '') return undefined;
+            const num = Number(cleaned);
+            return isNaN(num) ? undefined : num;
+        };
+
         const payload = {
             title: formData.stepOne.title,
             description: formData.stepOne.description,
@@ -141,9 +149,9 @@ const CreateNewJob = () => {
             number_of_positions: formData.stepThree.number_of_positions,
             salary_type: formData.stepThree.salary_type,
             salary_mode: formData.stepThree.salary_mode,
-            salary_min: formData.stepThree.salary_min,
-            salary_max: formData.stepThree.salary_max,
-            salary_fixed: formData.stepThree.salary_fixed,
+            salary_min: sanitizeNumber(formData.stepThree.salary_min),
+            salary_max: sanitizeNumber(formData.stepThree.salary_max),
+            salary_fixed: sanitizeNumber(formData.stepThree.salary_fixed),
             last_application_date: formattedDate
         };
 
