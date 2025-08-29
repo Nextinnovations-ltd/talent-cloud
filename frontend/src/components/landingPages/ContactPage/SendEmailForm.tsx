@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
@@ -8,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import TextAreaField from '@/components/common/form/fields/text-area-field'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import emailjs from "emailjs-com";
 
 const SendEmailForm = ({ step, setStep }:{step:any,setStep:any}) => {
 
@@ -31,12 +31,12 @@ const SendEmailForm = ({ step, setStep }:{step:any,setStep:any}) => {
       setStep(3);
 
     
-     const templateParams = {
-      name: formData.name,
-      email: formData.email,
-      subject: formData.subject,
-      message: formData.description,
-    };
+    //  const templateParams = {
+    //   name: formData.name,
+    //   email: formData.email,
+    //   subject: formData.subject,
+    //   message: formData.description,
+    // };
 
  /*    emailjs.send(
       "service_uioedbr",   // Your Service ID
@@ -104,14 +104,12 @@ const SendEmailForm = ({ step, setStep }:{step:any,setStep:any}) => {
                   fieldName={'name'}
                   lableName='Your Name *'
                   placeholder={formData.name}
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]'
-                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
                 <InputField
                   fieldName={'email'}
                   lableName='Your Email *'
                   placeholder={formData.email}
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]'
-                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
               </div>
               <InputField
                 fieldName={'subject'}

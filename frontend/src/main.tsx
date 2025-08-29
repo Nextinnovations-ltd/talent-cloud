@@ -13,6 +13,7 @@ import adminAuthReducer from "./services/slices/adminAuthSlice";
 import { ERRORCIRCLE, TickCircle } from "./constants/svgs";
 import { Toaster } from "@/components/ui/sonner"
 
+
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
@@ -25,14 +26,19 @@ export const store = configureStore({
 });
 
 createRoot(document.getElementById("root")!).render(
+ <>
   <Provider store={store}>
     <Toaster icons={{
       success:<TickCircle/>,
       error:<ERRORCIRCLE/>,
       warning:<TickCircle/>
     }} />
+    
     <RouterProvider router={router} />
+   
   </Provider>
+
+ </>
 );
 
 

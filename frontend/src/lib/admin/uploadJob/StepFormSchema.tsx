@@ -75,15 +75,21 @@ export const StepThreeFormYupSchema = yup.object({
     otherwise: (schema) => schema.optional(),
   }),
 
-  project_duration: yup.string().optional(),
+  project_duration: yup.string().required('Project Duration is required'),
   skills: yup.array().of(yup.string().required()).optional().default(undefined),
   experience_level: yup.string().optional(),
   experience_years: yup.string().optional(),
 
   number_of_positions: yup
     .number()
-    .max(999, "Number of positions cannot exceed 3 digits")
-    .default(0),
+    .max(99, "Number of positions cannot exceed 3 digits")
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? 0 : value
+    )
+    .default(1)
+    .required('Number of position is required')
+    .min(1, "Number of positions must be greater than 0")
+    ,
 
   last_application_date: yup
     .string()

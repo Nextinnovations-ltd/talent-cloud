@@ -1,4 +1,3 @@
-import React from 'react'
 import gradientImg from '@/assets/Employee/Contact us.png'
 import { Link } from 'react-router-dom'
 const Privacy = () => {

@@ -74,7 +74,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={clsx(fieldWidth,'translate-y-[-4px]')}>
           {requiredLabel && (
-            <FormLabel className={clsx('font-[500] text-[14px] md:text-[16px] text-[#05060F] ',labelSize)}>
+            <FormLabel className={clsx('font-[500]  text-[14px] md:text-[16px] text-[#05060F] ',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}
@@ -88,7 +88,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                 isError={isError}
                 className={cn(
                  
-                  "text-[14px] disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
+                  "text-[14px]  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
                   
                   fieldHeight
 

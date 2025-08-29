@@ -122,7 +122,7 @@ const ApplyJob = () => {
 
 
         <Button onClick={handleApply} disabled={!data?.data?.resume_url} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
-          JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit Application'}</Button>
+          JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>
     </div>
