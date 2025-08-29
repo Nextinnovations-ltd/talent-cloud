@@ -21,7 +21,6 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
   setSelectedJob,
 }) => {
 
-
   const {
     data,
     isLoading,
@@ -74,7 +73,7 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
           isBookmarked={jobDetails?.is_bookmarked}
         />
 
-        <DescriptionSplit content={jobDetails?.description || ""} isline={false}/>
+        <DescriptionSplit content={jobDetails?.description || ""} isline={false} />
         {
           jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
         }

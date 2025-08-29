@@ -121,6 +121,7 @@ class JobPostActionAPIView(APIView):
 
 # region Job Post List Views
 
+# Listing Jobs
 class RecentJobPostListAPIView(CustomListAPIView):
      queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
      serializer_class = JobPostListSerializer
@@ -139,6 +140,123 @@ class JobPostListAPIView(CustomListAPIView):
 
      success_message = "Successfully fetched all job posts."
 
+
+@extend_schema(tags=["Job Post"])
+class NewestJobPostAPIView(CustomListAPIView):
+     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
+        .order_by('-created_at')\
+        .select_related('role', 'experience_level', 'posted_by')
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+
+     success_message = "Successfully fetched latest job posts."
+
+
+@extend_schema(tags=["Job Post"])
+class ExpiredJobPostAPIView(CustomListAPIView):
+     queryset = JobPost.objects.expired()\
+        .order_by('-created_at')\
+        .select_related('role', 'experience_level', 'posted_by')
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+
+     success_message = "Successfully fetched expired job posts."
+
+@extend_schema(tags=["Job Post"])
+class MatchedJobPostAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserDynamicPermission]
+     serializer_class = JobPostListSerializer
+     filter_backends = [DjangoFilterBackend, SearchFilter]
+     filterset_class = JobPostFilter
+     search_fields = [ 'title', 'description', 'location' ] 
+     
+     def get_queryset(self):
+          try:
+               jobseeker = self.request.user.jobseeker
+               occupation = getattr(jobseeker, 'occupation', None)
+               
+               if not occupation:
+                    return JobPost.objects.none()
+               
+               queryset = JobPost.objects.active().filter(
+                    is_accepting_applications=True,
+                    job_post_status=StatusChoices.ACTIVE,
+                    number_of_positions__gt=0
+               )
+
+               today = date.today()
+               queryset = queryset.filter(
+                    Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
+               )
+               
+               user_match_q = Q()
+               
+               # Build matching query
+               skill_ids = list(occupation.skills.values_list('id', flat=True))
+               
+               if skill_ids:
+                    user_match_q |= Q(skills__id__in=skill_ids)
+
+               if occupation.specialization_id:
+                    user_match_q |= Q(specialization_id=occupation.specialization_id)
+
+               if occupation.role_id:
+                    user_match_q |= Q(role_id=occupation.role_id)
+               
+               # Filter 2: Must match user's profile
+               if user_match_q:
+                    queryset = queryset.filter(user_match_q)
+               else:
+                    # Return empty queryset because there's no profile data to match against
+                    return JobPost.objects.none()
+               
+               return queryset.distinct().order_by('-created_at').select_related(
+                    'role', 'experience_level', 'posted_by'
+               )
+          except (JobSeeker.DoesNotExist, AttributeError):
+               # Return empty queryset instead of raising exception
+               return JobPost.objects.none()
+
+     def list(self, request, *args, **kwargs):
+          """Override list to add metadata about matched job discovery"""
+          response = super().list(request, *args, **kwargs)
+         
+          original_data = response.data.get('data', {})
+          
+          # Merge with original data
+          if original_data.get('count', 0) > 0:
+               
+               message = "Successfully fetchd all matched jobs."
+          else:
+               message = "No matched jobs found for you. Please update your profile."
+          
+          # Return new response with enhanced data
+          return Response(
+               CustomResponse.success(
+                    message,
+                    original_data
+               )
+          )
+
+@extend_schema(tags=["Company Job Post"])
+class CompanyJobListView(CustomListAPIView):
+     """
+     API endpoint for Admin/Superadmin to list all job posts for their company.
+     URL: /api/v1/company-job-posts/ (GET)
+     """
+     serializer_class = JobPostListSerializer
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
+     use_pagination = False
+
+     def get_queryset(self):
+          # Filter job posts by admin/superadmin
+          return JobPost.objects.filter(posted_by=self.request.user)
+
+# Search Jobs
 @extend_schema(tags=["Job Post"])
 class JobDiscoveryAPIView(CustomListAPIView):
      """Smart job discovery that adapts to user profile completeness"""
@@ -322,109 +440,6 @@ class JobSearchListAPIView(CustomListAPIView):
           )
 
           return queryset
-
-@extend_schema(tags=["Job Post"])
-class NewestJobPostAPIView(CustomListAPIView):
-     queryset = JobPost.objects.active().filter(is_accepting_applications=True)\
-        .order_by('-created_at')\
-        .select_related('role', 'experience_level', 'posted_by')
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserDynamicPermission]
-     serializer_class = JobPostListSerializer
-
-     success_message = "Successfully fetched latest job posts."
-
-@extend_schema(tags=["Job Post"])
-class MatchedJobPostAPIView(CustomListAPIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudUserDynamicPermission]
-     serializer_class = JobPostListSerializer
-     filter_backends = [DjangoFilterBackend, SearchFilter]
-     filterset_class = JobPostFilter
-     search_fields = [ 'title', 'description', 'location' ] 
-     
-     def get_queryset(self):
-          try:
-               jobseeker = self.request.user.jobseeker
-               occupation = getattr(jobseeker, 'occupation', None)
-               
-               if not occupation:
-                    return JobPost.objects.none()
-               
-               queryset = JobPost.objects.active().filter(
-                    is_accepting_applications=True,
-                    job_post_status=StatusChoices.ACTIVE,
-                    number_of_positions__gt=0
-               )
-
-               today = date.today()
-               queryset = queryset.filter(
-                    Q(last_application_date__gte=today) | Q(last_application_date__isnull=True)
-               )
-               
-               user_match_q = Q()
-               
-               # Build matching query
-               skill_ids = list(occupation.skills.values_list('id', flat=True))
-               
-               if skill_ids:
-                    user_match_q |= Q(skills__id__in=skill_ids)
-
-               if occupation.specialization_id:
-                    user_match_q |= Q(specialization_id=occupation.specialization_id)
-
-               if occupation.role_id:
-                    user_match_q |= Q(role_id=occupation.role_id)
-               
-               # Filter 2: Must match user's profile
-               if user_match_q:
-                    queryset = queryset.filter(user_match_q)
-               else:
-                    # Return empty queryset because there's no profile data to match against
-                    return JobPost.objects.none()
-               
-               return queryset.distinct().order_by('-created_at').select_related(
-                    'role', 'experience_level', 'posted_by'
-               )
-          except (JobSeeker.DoesNotExist, AttributeError):
-               # Return empty queryset instead of raising exception
-               return JobPost.objects.none()
-
-     def list(self, request, *args, **kwargs):
-          """Override list to add metadata about matched job discovery"""
-          response = super().list(request, *args, **kwargs)
-         
-          original_data = response.data.get('data', {})
-          
-          # Merge with original data
-          if original_data.get('count', 0) > 0:
-               
-               message = "Successfully fetchd all matched jobs."
-          else:
-               message = "No matched jobs found for you. Please update your profile."
-          
-          # Return new response with enhanced data
-          return Response(
-               CustomResponse.success(
-                    message,
-                    original_data
-               )
-          )
-     
-@extend_schema(tags=["Company Job Post"])
-class CompanyJobListView(CustomListAPIView):
-     """
-     API endpoint for Admin/Superadmin to list all job posts for their company.
-     URL: /api/v1/company-job-posts/ (GET)
-     """
-     serializer_class = JobPostListSerializer
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAdminOrSuperAdminPermission, IsCompanyAdminOrSuperadminForApplication]
-     use_pagination = False
-
-     def get_queryset(self):
-          # Filter job posts by admin/superadmin
-          return JobPost.objects.filter(posted_by=self.request.user)
 
 # endregion Job Post List Views
 
