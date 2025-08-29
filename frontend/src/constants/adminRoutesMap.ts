@@ -40,6 +40,10 @@ const adminRoutesMap = {
     createNewJob:{
         path:'createNewJob',
         name:'CreateNewJob'
+    },
+    pushNotification:{
+        path:'pushNotification',
+        name:'PushNotification'
     }
 }
 
