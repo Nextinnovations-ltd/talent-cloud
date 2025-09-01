@@ -14,7 +14,6 @@ export const MainLayout = () => {
   const { showNotification } = useToast();
   const { refetch } = useGetUnReadNotificationsCountQuery();
   const { refetch:RefetchIsRead } = useGetJobSeekerNotificationsQuery({ limit:10, offset:0 });
-
   const { pathname } = useLocation();
 
   useEffect(() => {

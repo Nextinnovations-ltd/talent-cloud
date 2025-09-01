@@ -50,7 +50,7 @@ const SelectedProject = () => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const [addSelectedProject, { isLoading: isAdding }] = useAddSelectedProjectsMutation();
   const [updateSelectedProject, { isLoading: isUpdating }] = useUpdateSelectedProjectsMutation();
-  const [isLoading,setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { showNotification } = useToast();
@@ -128,27 +128,23 @@ const SelectedProject = () => {
       let response;
       if (id) {
 
-        console.log("-----")
-        console.log(form.getValues('project_image_url'))
-        console.log("-----")
+
+        const result = await uploadToS3({ file: form.getValues('project_image_url') as unknown as File, type: 'project' });
 
 
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
-
-
-        if(result){
+        if (result) {
           //@ts-ignore
           payload.project_image_upload_id = result;
         }
 
         response = await updateSelectedProject({ id, credentials: payload });
       } else {
-        
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+
+        const result = await uploadToS3({ file: form.getValues('project_image_url') as unknown as File, type: 'project' });
 
 
-        if(result){
-            //@ts-ignore
+        if (result) {
+          //@ts-ignore
           payload.project_image_upload_id = result;
         }
 
@@ -221,7 +217,7 @@ const SelectedProject = () => {
               lableName="Project Url"
               required={true}
               placeholder="Type here"
-              maxLength={60}
+              maxLength={120}
               showLetterCount
               disabled={loading}
             />
