@@ -53,10 +53,16 @@ import EmployeePage from "./pages/LandingPages/EmployeePage";
 import Contact from "./pages/LandingPages/ContactPage/Contact";
 import PrivacyPolicy from "./pages/LandingPages/PrivacyPolicy/PrivacyPolicy";
 import TermsConditions from "./pages/LandingPages/TermsConditions/TermsConditions";
+import PushNotification from "./pages/admin/PushNotification/PushNotification";
+import Shine from "./pages/Shine";
 
 
 
 export const router = createBrowserRouter([
+  {
+    path: "/shine",
+    element: <Shine/>
+  },
   {
     path: "/",
     element: <Navigate to="/employee/lp" replace />,
@@ -290,7 +296,12 @@ export const router = createBrowserRouter([
           {
             path:adminRoutesMap?.allJobsEditJob?.path,
             element:<AllJobsEditJobs/>
-          }
+          },
+          {
+            path:adminRoutesMap?.pushNotification?.path,
+            element:<PushNotification/>
+          },
+
         ]
 
       },

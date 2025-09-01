@@ -32,7 +32,8 @@ type DatePickerFieldProps = {
   startIcon?: ReactNode;
   lableName?: string;
   readOnly?:boolean;
-  labelSize?:string
+  labelSize?:string,
+  formatThousands?: boolean
 };
 
 const  InputField: React.FC<DatePickerFieldProps> = ({
@@ -55,7 +56,8 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
   startIcon,
   lableName,
   readOnly = false,
-  labelSize
+  labelSize,
+  formatThousands = false
 }) => {
   const form = useFormContext();
   const { t } = useTranslation(languageName);
@@ -67,6 +69,21 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
     input.value = input.value.replace(/[^\d.]/g, '');
   };
 
+  // Handler to add thousands separators while typing
+  const handleThousandsChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: unknown) => void
+  ) => {
+    const raw = e.target.value;
+    const digitsOnly = raw.replace(/\D/g, '');
+    if (digitsOnly === '') {
+      onChange('');
+      return;
+    }
+    const formatted = new Intl.NumberFormat('en-US').format(Number(digitsOnly));
+    onChange(formatted);
+  };
+
   return (
     <FormField
       control={form.control}
@@ -74,7 +91,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={clsx(fieldWidth,'translate-y-[-4px]')}>
           {requiredLabel && (
-            <FormLabel className={clsx('font-[500] text-[14px] md:text-[16px] text-[#05060F] ',labelSize)}>
+            <FormLabel className={clsx('font-[500]  text-[14px] md:text-[16px] text-[#05060F] ',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}
@@ -83,12 +100,12 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
           <FormControl>
             < >
               <Input
-                type={type}
+                type={formatThousands ? 'text' : type}
                 disabled={disabled}
                 isError={isError}
                 className={cn(
                  
-                  "text-[14px] disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
+                  "text-[14px]  disabled:border-none disabled:opacity-100  disabled:text-secondaryTextColor disabled:bg-[#F1F5FB] border-[#CBD5E1] placeholder-[#D9D9D9] ",
                   
                   fieldHeight
 
@@ -101,8 +118,15 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                 showLetterCount={showLetterCount}
                 maxLength={maxLength}
                 // Only add onInput if type is number
-                {...(type === 'number' ? { onInput: handleNumberInput } : {})}
-                {...field}
+                {...(!formatThousands && type === 'number' ? { onInput: handleNumberInput } : {})}
+                // For thousands formatting, override onChange
+                {...(formatThousands
+                  ? {
+                      value: typeof field.value === 'string' ? field.value : field.value ?? '',
+                      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                        handleThousandsChange(e, field.onChange),
+                    }
+                  : { ...field })}
               />
               
             </>

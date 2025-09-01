@@ -1,6 +1,6 @@
-import React from 'react'
 import gradientImg from '@/assets/Employee/Contact us.png'
-import { Link } from 'react-router-dom'
+
+
 const Terms = () => {
   return (
  <div className='' style={{

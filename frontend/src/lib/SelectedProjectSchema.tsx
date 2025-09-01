@@ -20,7 +20,7 @@ const SelectedProjectSchema = yup.object({
   team_size: yup.number(),
 }).test(
   "end-date-after-start-date",
-  "End date cannot be earlier than start date.",
+  "Expiration Date cannot be earlier than Issued Date",
   function (value) {
     const { is_ongoing, startDateYear, startDateMonth, endDateYear, endDateMonth } = value || {};
     if (is_ongoing) return true;

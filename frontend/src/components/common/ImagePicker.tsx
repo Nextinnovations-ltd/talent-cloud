@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SVGProfile } from "@/constants/svgs";
 import DefaultImage from '@/assets/Login/DefaultImg.png';
 import { useState, useCallback } from "react";
@@ -7,6 +6,7 @@ import { Button } from "../ui/button";
 import { ImageEditor } from "./ImageEditor";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 import { useGetJobSeekerProfileQuery } from "@/services/slices/jobSeekerSlice";
+import imageCompression from 'browser-image-compression';
 
 type FormLike = {
   setValue: (name: string, value: unknown) => void;
@@ -17,7 +17,6 @@ const ImagePicker = ({
   setPreview,
   preview,
   form,
-  setIsOpen,
   type = "circle",
   imageUploadType = "profile"
 }: {
@@ -38,46 +37,6 @@ const ImagePicker = ({
 
   const handleScaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScale(parseFloat(event.target.value));
-  };
-
-  const compressImageToFit = async (canvas: HTMLCanvasElement, maxSize: number): Promise<Blob | null> => {
-    const qualities = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3];
-    
-    for (const quality of qualities) {
-      try {
-        const blob = await new Promise<Blob>((resolve, reject) => {
-          canvas.toBlob((blob) => {
-            if (blob) resolve(blob);
-            else reject(new Error('Failed to create blob'));
-          }, 'image/png', quality);
-        });
-        
-        if (blob.size <= maxSize) {
-          return blob;
-        }
-      } catch (error) {
-        console.error('Error compressing image:', error);
-      }
-    }
-    
-    // If all qualities fail, try reducing canvas size
-    const maxDimension = 800;
-    if (canvas.width > maxDimension || canvas.height > maxDimension) {
-      const scale = Math.min(maxDimension / canvas.width, maxDimension / canvas.height);
-      const newCanvas = document.createElement('canvas');
-      const newCtx = newCanvas.getContext('2d');
-      
-      if (newCtx) {
-        newCanvas.width = canvas.width * scale;
-        newCanvas.height = canvas.height * scale;
-        newCtx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-        
-        // Try with the reduced size
-        return await compressImageToFit(newCanvas, maxSize);
-      }
-    }
-    
-    return null;
   };
 
   const saveEditedImage = () => {
@@ -109,39 +68,63 @@ const ImagePicker = ({
       ctx.scale(scale, scale);
       ctx.drawImage(image, -width / 2, -height / 2);
 
-      setPreview(canvas.toDataURL("image/png"));
-
-      // Use compression function to ensure file size is under 2MB
-      compressImageToFit(canvas, 2 * 1024 * 1024).then((compressedBlob) => {
-        if (!compressedBlob) {
-          setErrorMessage("Unable to compress image to fit under 2MB. Please try with a smaller image or reduce scale.");
+      // Get canvas as JPEG blob first, then compress to under 2MB using library
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          setErrorMessage("Failed to process image. Please try again.");
           return;
         }
 
         const originalName = selectedFile?.name || "image";
         const baseName = originalName.replace(/\.[^/.]+$/, "");
-        const rotatedFile = new File([compressedBlob], `${baseName}-edited.png`, {
-          type: "image/png",
-        });
 
-        if (imageUploadType === 'project') {
-          form.setValue("project_image_url", rotatedFile);
-          setIsModalOpen(false);
-        } else {
-          setIsUploading(true);
-          UploadToS3({ file: rotatedFile, type: imageUploadType })
-            .then(() => {
-              setIsModalOpen(false);
-              refetch();
-            })
-            .finally(() => {
-              setIsUploading(false);
+        const options = {
+          maxSizeMB: 2,
+          useWebWorker: true,
+          maxIteration: 10,
+          initialQuality: 0.9,
+          fileType: 'image/jpeg',
+          alwaysKeepResolution: true,
+        } as const;
+
+        const intermediateFile = new File([blob], `${baseName}-edited-source.jpg`, { type: 'image/jpeg' });
+
+        imageCompression(intermediateFile, options)
+          .then((compressedBlob) => {
+            if (!compressedBlob || compressedBlob.size > 2 * 1024 * 1024) {
+              setErrorMessage("Edited image is too large (over 2MB). Please reduce scale or choose a smaller image.");
+              return;
+            }
+
+            // Update preview to compressed image
+            const fr = new FileReader();
+            fr.onload = () => setPreview(fr.result);
+            fr.readAsDataURL(compressedBlob);
+
+            const rotatedFile = new File([compressedBlob], `${baseName}-edited.jpg`, {
+              type: "image/jpeg",
             });
-        }
-      }).catch((error) => {
-        console.error('Error compressing image:', error);
-        setErrorMessage("Error processing image. Please try again.");
-      });
+
+            if (imageUploadType === 'project') {
+              form.setValue("project_image_url", rotatedFile);
+              setIsModalOpen(false);
+            } else {
+              setIsUploading(true);
+              UploadToS3({ file: rotatedFile, type: imageUploadType })
+                .then(() => {
+                  setIsModalOpen(false);
+                  refetch();
+                })
+                .finally(() => {
+                  setIsUploading(false);
+                });
+            }
+          })
+          .catch((err) => {
+            console.error('Compression error:', err);
+            setErrorMessage("Error compressing image. Please try again.");
+          });
+      }, 'image/jpeg', 0.92);
     };
   };
 
@@ -240,14 +223,14 @@ const ImagePicker = ({
                 <input type="file" {...getInputProps()} className="hidden" />
               </div>
             </Button>
-            <Button
+            {/* <Button
               type="button"
               className="p-0 w-[139px] shadow-none h-[45px] bg-white text-black"
               onClick={() => setIsOpen(true)}
               disabled={isUploading}
             >
               <h3 className="font-bold">Remove</h3>
-            </Button>
+            </Button> */}
           </div>
           {errorMessage && (
             <p className="text-red-500 text-sm mt-1">{errorMessage}</p>

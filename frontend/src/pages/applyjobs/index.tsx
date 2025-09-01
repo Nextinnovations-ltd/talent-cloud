@@ -12,6 +12,7 @@ import { ChevronLeft } from "lucide-react"
 import { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -25,6 +26,7 @@ const ApplyJob = () => {
   const [fileData, setFileData] = useState<File>();
   const [radioValue, setRadioValue] = useState<"uploadCover" | "noCover">("noCover");
   const [coverError, setCoverError] = useState(false);
+  const navigation = useNavigate();
 
 
   const [loading, setLoading] = useState(false);
@@ -83,6 +85,8 @@ const ApplyJob = () => {
         type: "success",
       });
 
+      navigation('/admin/dashboard/allJobs');
+
       setLoading(false);
     } catch (error: unknown) {
       showNotification({
@@ -98,7 +102,7 @@ const ApplyJob = () => {
 
   return (
     <div className="container  mx-auto  pt-[20px]">
-      <Link to={'/'}>
+      <Link to={`/?jobId=${id}`}>
         <button className="border-[1px] ml-[50px] fixed  cursor-pointer w-[62px] h-[62px] flex duration-700 hover:border-blue-300 hover:bg-slate-100 items-center justify-center rounded-full">
           <ChevronLeft />
         </button>
@@ -122,7 +126,7 @@ const ApplyJob = () => {
 
 
         <Button onClick={handleApply} disabled={!data?.data?.resume_url} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
-          JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit Application'}</Button>
+          JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>
     </div>

@@ -16,11 +16,14 @@ import { UserProfile } from "@/types/job-seeker-types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
+
 
 
 export const ProfileUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const navigate = useNavigate();
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(
     useAddJobSeekerProfileMutation
   );
@@ -148,6 +151,7 @@ export const ProfileUser = () => {
           address: profileUser?.address?.address || "",
         });
         refetch();
+        navigate('/user/mainProfile');
       }
     } catch (error) {
       console.error("Error submitting form:", error);

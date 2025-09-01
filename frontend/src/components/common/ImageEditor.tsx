@@ -43,9 +43,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
       }}
         className="w-[90%] rounded-[15px]  md:w-full" >
         <h3 className=" mx-auto font-[600] text-[28px]">Adjust Photo</h3>
-        <p className="text-sm text-gray-600 text-center mb-4">
-          Note: Edited images must be under 2MB. Large images will be automatically compressed.
-        </p>
+     
         {errorMessage && (
           <div className="mx-auto mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600 text-sm font-medium text-center">{errorMessage}</p>

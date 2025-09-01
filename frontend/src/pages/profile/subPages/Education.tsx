@@ -41,7 +41,7 @@ export const Education = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: educationData = {} as any, isLoading } = useGetEducationByIdQuery(id ?? '', { skip: !id });
   const [updateEducation, { isLoading: isUpdating }] = useUpdateEducationMutation();
-  const {showNotification} = useToast()
+  const { showNotification } = useToast()
 
 
   const form = useForm<EducationFrom>({
@@ -83,8 +83,8 @@ export const Education = () => {
           is_currently_attending: data.is_currently_attending ?? false,
         };
         response = await updateEducation({ id: Number(id), credentials: updatePayload });
-         //@ts-ignore
-        showNotification({message:response?.data?.message,type:"success"})
+        //@ts-ignore
+        showNotification({ message: response?.data?.message, type: "success" })
       } else {
         // Create mode: add
         const addPayload = {
@@ -98,13 +98,15 @@ export const Education = () => {
         response = await executeApiCall(addPayload);
       }
       if (response) {
-       
+
         navigate('/user/mainProfile');
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
+
+  console.log(form.formState.errors)
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -145,16 +147,17 @@ export const Education = () => {
                 width="w-[50%]"
                 isRequired
               />
-              <SelectField
-                name={`endDate`}
-                placeholder="Month"
-                error={!!form.formState.errors?.endDate}
-                showRequiredLabel
-                labelName="End Date (Or Expected) "
-                data={generateYearData()}
-                width="w-[50%]"
-                isRequired
-              />
+              <div className="w-[50%]">
+                <SelectField
+                  name={`endDate`}
+                  placeholder="Year"
+                  error={!!form.formState.errors?.endDate}
+                  showRequiredLabel
+                  labelName="End Date (Or Expected)"
+                  data={generateYearData()}
+                  isRequired
+                />
+              </div>
             </div>
             <TextAreaField
               key={`description`}

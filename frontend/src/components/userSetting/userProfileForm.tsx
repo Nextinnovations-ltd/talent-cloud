@@ -17,6 +17,7 @@ import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/Return
 import { Button } from "../ui/button";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { PageInitialLoading } from "../common/PageInitialLoading";
+import clsx from "clsx";
 
 
 export const UserProfileForm = ({
@@ -149,7 +150,8 @@ export const UserProfileForm = ({
           description="System use only for job filtering and will not be visible to users."
         />
 
-        <SelectField
+       <div className="flex gap-5 mt-[24px] max-w-[672px]  ">
+       <SelectField
           name={"experience_level"}
           labelName={"Level"}
           error={form.formState.errors.role}
@@ -157,7 +159,7 @@ export const UserProfileForm = ({
           showRequiredLabel={true}
           placeholder={"eg. Junior Level"}
           data={EXPERIENCEDATA}
-          width=" max-w-[672px] mt-[24px]"
+          width=" max-w-[672px] w-[calc(50%-10px)] mt-[6px] "
         />
 
         <InputField
@@ -168,11 +170,12 @@ export const UserProfileForm = ({
           requiredLabel={true}
           type="number"
           languageName="userProfile"
-          maxLength={20}
+          maxLength={2}
           showLetterCount={true}
-          fieldHeight={cn("w-full", fieldHeight)}
-          fieldWidth={fieldWidth}
+          fieldHeight={cn("w-full" , fieldHeight,'mt-[1px]')}
+          fieldWidth={clsx(fieldWidth, 'w-[calc(50%-10px)] mt-[10px] ')}
         />
+       </div>
 
         <TextAreaField
           disabled={false}

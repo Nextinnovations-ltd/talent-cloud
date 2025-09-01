@@ -16,6 +16,7 @@ import { useCreateJobMutation } from "@/services/slices/adminSlice";
 import { useJobFormStore } from "@/state/zustand/create-job-store";
 
 import { useNavigate } from "react-router-dom";
+import useToast from "@/hooks/use-toast";
 
 const steps = [
     { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -29,12 +30,13 @@ const DESCRIPTION = ['Job title, Company, Location', 'Description, requirements,
 
 const CreateNewJob = () => {
     const [currentStep, setCurrentStep] = useState(0);
-    const { 
-        formData, 
-        setStepOneData, 
-        setStepTwoData, 
+    const { showNotification } = useToast();
+    const {
+        formData,
+        setStepOneData,
+        setStepTwoData,
         setStepThreeData,
-        resetForm 
+        resetForm
     } = useJobFormStore();
     const { executeApiCall, isLoading } = useApiCaller(useCreateJobMutation);
     const navigate = useNavigate();
@@ -67,6 +69,11 @@ const CreateNewJob = () => {
                 stepOneForm.handleSubmit((data) => {
                     setStepOneData(data);
                 })();
+
+                showNotification({
+                    message: "Step 1 completed successfully!",
+                    type: "success",
+                });
             }
         }
 
@@ -76,6 +83,10 @@ const CreateNewJob = () => {
                 stepTwoForm.handleSubmit((data) => {
                     setStepTwoData(data);
                 })();
+                showNotification({
+                    message: "Step 2 completed successfully!",
+                    type: "success",
+                });
             }
         }
 
@@ -85,6 +96,10 @@ const CreateNewJob = () => {
                 stepThreeForm.handleSubmit((data) => {
                     setStepThreeData(data);
                 })();
+                showNotification({
+                    message: "Step 3 completed successfully!",
+                    type: "success",
+                });
             }
         }
 
@@ -96,7 +111,7 @@ const CreateNewJob = () => {
     const handlePublish = async () => {
         const date = formData.stepThree.last_application_date;
         let formattedDate = '';
-        
+
         if (date) {
             const dateObj = new Date(date);
             if (!isNaN(dateObj.getTime())) {
@@ -106,6 +121,14 @@ const CreateNewJob = () => {
                 formattedDate = `${year}-${month}-${day}`;
             }
         }
+
+        const sanitizeNumber = (val: unknown) => {
+            if (val === undefined || val === null) return undefined;
+            const cleaned = String(val).replace(/,/g, '').trim();
+            if (cleaned === '') return undefined;
+            const num = Number(cleaned);
+            return isNaN(num) ? undefined : num;
+        };
 
         const payload = {
             title: formData.stepOne.title,
@@ -126,18 +149,18 @@ const CreateNewJob = () => {
             number_of_positions: formData.stepThree.number_of_positions,
             salary_type: formData.stepThree.salary_type,
             salary_mode: formData.stepThree.salary_mode,
-            salary_min: formData.stepThree.salary_min,
-            salary_max: formData.stepThree.salary_max,
-            salary_fixed: formData.stepThree.salary_fixed,
+            salary_min: sanitizeNumber(formData.stepThree.salary_min),
+            salary_max: sanitizeNumber(formData.stepThree.salary_max),
+            salary_fixed: sanitizeNumber(formData.stepThree.salary_fixed),
             last_application_date: formattedDate
         };
 
         try {
             await executeApiCall(payload);
-            
+
             // Enhanced reset sequence
             resetForm(); // Reset Zustand store
-            
+
             // Reset all form instances with empty values
             stepOneForm.reset({
                 title: '',
@@ -148,13 +171,13 @@ const CreateNewJob = () => {
                 work_type: '',
                 description: ''
             });
-            
+
             stepTwoForm.reset({
                 responsibilities: '',
                 requirements: '',
                 offered_benefits: ''
             });
-            
+
             stepThreeForm.reset({
                 salary_mode: '',
                 salary_type: '',
@@ -169,9 +192,9 @@ const CreateNewJob = () => {
                 number_of_positions: 1,
                 last_application_date: ''
             });
-            
+
             setCurrentStep(0);
-            
+
             console.log("Job created successfully!");
             navigate("/admin/dashboard/allJobs");
         } catch (error) {
@@ -184,7 +207,7 @@ const CreateNewJob = () => {
             <h3 className="text-[24px] font-semibold">Post a New Job</h3>
             <p className="text-[#575757] mb-[77px]">Create a amazing opportunity for talented professional.</p>
             <Stepper steps={steps} currentStep={currentStep} />
-            
+
             {currentStep !== 3 && (
                 <div className="my-[50px] rounded-md">
                     <h2 className="text-[24px] font-semibold mb-1">
@@ -193,7 +216,7 @@ const CreateNewJob = () => {
                     <p className="text-[#575757] text-[16px]">{DESCRIPTION[currentStep]}</p>
                 </div>
             )}
-            
+
             {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
             {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
             {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
@@ -208,7 +231,7 @@ const CreateNewJob = () => {
                 >
                     <ChevronLeft size={16} className="mr-3" /> Previous
                 </Button>
-                
+
                 {currentStep === steps.length - 1 ? (
                     <Button
                         className="bg-[#0481EF] text-white  text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
