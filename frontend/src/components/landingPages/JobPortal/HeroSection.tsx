@@ -18,7 +18,7 @@ import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { useLocation } from 'react-router-dom';
-
+import { motion } from "framer-motion";
 
 
 const HeroSection = () => {
@@ -34,6 +34,33 @@ const HeroSection = () => {
 
   const p5Ref = useRef(null);
   const initializedRef = useRef(false);
+
+
+
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        // scrolling down → hide
+        setShowNavbar(false);
+      } else {
+        // scrolling up → show
+        setShowNavbar(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   useEffect(() => {
     if (!containerRef.current || !matterContainerRef.current) return;
@@ -406,7 +433,10 @@ const HeroSection = () => {
   return (
     <div onClick={() => setNavIsOpen(!navIsOpen)}>
       <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
-        <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366]  max-w-[1240px] mx-auto rounded-none md:rounded-[25px] mt-0 md:mt-[22px]">
+           <div
+            className={`fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]
+            transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-[120%]"}`}
+          >
           <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
             {/* logo SVG here */}
             <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover" />

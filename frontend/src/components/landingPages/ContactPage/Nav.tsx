@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import { Link } from "react-router-dom";
 
@@ -8,8 +8,35 @@ import CommonButton from "../commonBtn/button";
 import { Button } from "@/components/ui/button";
 const Nav = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        // scrolling down → hide
+        setShowNavbar(false);
+      } else {
+        // scrolling up → show
+        setShowNavbar(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
   return (
-   <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]">
+          <div
+            className={`fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]
+            transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-[120%]"}`}
+          >
           <nav className="max-w-[1240px] mx-auto flex justify-between items-center  relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
             {/* logo SVG here */}
             <img
