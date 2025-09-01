@@ -42,7 +42,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
   required,
   fieldHeight = "h-12",
   fieldWidth = " max-w-[672px]",
-  placeholder = "plac Holder",
+  placeholder = "Type Here...",
   requiredLabel = true,
   disabled = false,
   type = "text",
