@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import TextAreaField from '@/components/common/form/fields/text-area-field'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import emailjs from '@emailjs/browser';
 
 const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
   const [formData, setFormData] = useState<any>(null);
@@ -23,7 +24,7 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
     
     setFormData(values);
     // Populate step 2 values
-    Object.keys(values).forEach((key) => setValue(key, values[key]));
+    (Object.keys(values) as Array<"name" | "description" | "email" | "subject">).forEach((key) => setValue(key, values[key]));
     setStep(2);
   };
 
@@ -58,11 +59,11 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
           <form onSubmit={handleSubmit(handleStep1Submit)}>
             <div className="flex flex-col gap-[32px]">
               <div className="flex flex-col md:flex-row w-full gap-[32px] md:gap-[44px]">
-                <InputField fieldName="name" lableName="Your Name" {...register("name")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required />
-                <InputField fieldName="email" lableName="Your Email" {...register("email")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required />
+                <InputField languageName={''} fieldName="name" lableName="Your Name" {...register("name")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required />
+                <InputField languageName={''} fieldName="email" lableName="Your Email" {...register("email")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required />
               </div>
-              <InputField fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required />
-              <TextAreaField fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" />
+              <InputField languageName={''} fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required />
+              <TextAreaField languageName={''} fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" required={false} />
             </div>
             <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]" type="submit">
               Next
@@ -85,8 +86,8 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
                   placeholder={formData.email}
                   fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
               </div>
-              <InputField fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required/>
-              <TextAreaField fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" />
+              <InputField languageName={''} fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required/>
+              <TextAreaField languageName={''} fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" required={false} />
             </div>
             <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]" type="submit"  disabled={isLoading} >
               {isLoading ? "Sending..." : "Send Message"}
