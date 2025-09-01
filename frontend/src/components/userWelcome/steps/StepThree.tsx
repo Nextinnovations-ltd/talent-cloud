@@ -80,7 +80,7 @@ export const StepThree = ({
   );
 
   const renderSpecializations = () => (
-    <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3  mt-10 gap-4">
       {combinedData?.map(({ id, name, SVGImg }) => (
         <SpecializationCard
           handleClick={() => {
