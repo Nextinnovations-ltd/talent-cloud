@@ -13,7 +13,7 @@ export const JobSeekerSkillSection = () => {
 
   return (
     <div className='mb-[120px]'>
-         <Title title={"Skills"} onpressAdd={()=>navigate(`/user/edit/skills`)} />
+         <Title title={"Skills"} showAddButton={false} isEdit={false} onEditToggle={()=>navigate(`/user/edit/skills`)} />
        <div className='flex gap-3 flex-wrap'>
        {
             isLoading ? (

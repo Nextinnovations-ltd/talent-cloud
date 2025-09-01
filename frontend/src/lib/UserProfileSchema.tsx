@@ -13,7 +13,7 @@ export const UserProfileSchema = yup.object({
                 ? undefined
                 : Number(originalValue)
         )
-        .required('Specialization specialize is required'),
+        .required("Specialization specialize is required"),
     experience_level: yup
         .number()
         .transform((value, originalValue) =>
@@ -22,6 +22,7 @@ export const UserProfileSchema = yup.object({
                 : Number(originalValue)
         )
         .required("Experience level is required"),
+
     experience_years: yup
         .number()
         .transform((value, originalValue) =>
@@ -29,7 +30,10 @@ export const UserProfileSchema = yup.object({
                 ? undefined
                 : Number(originalValue)
         )
-        .required("Experience years is required"),
+        .required("Experience years is required")
+        .integer("Experience years must be an integer")
+        .min(1, "Experience years must be at least 1"),
+
     bio: yup.string().max(250).optional(),
     email: yup.string().required("Email is required"),
     phone_number: yup.string().required("Phone number is required"),

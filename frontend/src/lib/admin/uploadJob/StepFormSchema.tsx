@@ -107,7 +107,7 @@ export const StepThreeFormYupSchema = yup.object({
 
   number_of_positions: yup
     .number()
-    .max(99, "Number of positions cannot exceed 3 digits")
+    .max(99, "Number of position should be only 2 digits")
     .transform((value, originalValue) =>
       String(originalValue).trim() === "" ? 0 : value
     )
