@@ -18,7 +18,7 @@ import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { useLocation } from 'react-router-dom';
-import { motion } from "framer-motion";
+
 
 
 const HeroSection = () => {
