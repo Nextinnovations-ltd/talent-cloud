@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import TextAreaField from '@/components/common/form/fields/text-area-field'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import emailjs from '@emailjs/browser';
 
 const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
   const [formData, setFormData] = useState<any>(null);
