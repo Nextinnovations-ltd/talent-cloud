@@ -39,30 +39,30 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
                 />
             )}
 
-{data?.data && data.data.length > 0 && (
-    <motion.div
-        className='grid grid-cols-2 gap-[143px] mb-[143px]'
-        variants={containerVariants}
-    >
-        {data.data
-            .slice() // avoid mutating original array
-            .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime())
-            .map((e, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                    <EducationCard
-                        id={e.id}
-                        degree={e.degree}
-                        institution={e.institution}
-                        start_date={e.start_date}
-                        end_date={e.end_date}
-                        isEdit={isEducationEdit}
-                        description={e.description}
-                        is_currently_attending={false}
-                    />
+            {data?.data && data.data.length > 0 && (
+                <motion.div
+                    className='grid grid-cols-2 gap-[143px] mb-[143px]'
+                    variants={containerVariants}
+                >
+                    {data.data
+                        .slice() // avoid mutating original array
+                        .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime())
+                        .map((e, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                                <EducationCard
+                                    id={e.id}
+                                    degree={e.degree}
+                                    institution={e.institution}
+                                    start_date={e.start_date}
+                                    end_date={e.end_date}
+                                    isEdit={isEducationEdit}
+                                    description={e.description}
+                                    is_currently_attending={false}
+                                />
+                            </motion.div>
+                        ))}
                 </motion.div>
-            ))}
-    </motion.div>
-)}
+            )}
         </>
     )
 }

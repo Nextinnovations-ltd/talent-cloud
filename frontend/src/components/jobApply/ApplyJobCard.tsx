@@ -97,7 +97,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           </TooltipProvider>
         </div>
         
-        <h4 className="font-semibold text-[18px]">{job.title}</h4>
+        <h4   className="text-[18px] font-semibold mt-2 text-[#000] w-full line-clamp-2">{job.title}</h4>
         <h4 className="text-[#6B6B6B] text-[16px]">{job.company_name}</h4>
 
         <div className="gap-[10px] mt-4">

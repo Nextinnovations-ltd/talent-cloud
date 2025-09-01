@@ -16,6 +16,7 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
                 method: 'PATCH',
                 body: JSON.stringify(credentials)
             }),
+            invalidatesTags: ['JobPostEdit']
         }),
         deleteJob: builder.mutation<unknown, number | string>({
             query: (id) => ({
@@ -24,7 +25,8 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             })
         }),
         getJobDetailOfEdit: builder.query<EditJobDetailResponse, unknown>({
-            query: (id) => `/job-posts/edit/${id}/`
+            query: (id) => `/job-posts/edit/${id}/`,
+            providesTags: ['JobPostEdit']
         }),
         getOrganizationDetailByAdmin: builder.query<RelatedInfoResponse, void>({
             query: () => '/related-company-info/'

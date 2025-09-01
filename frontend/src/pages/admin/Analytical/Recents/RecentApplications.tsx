@@ -11,7 +11,7 @@ const RecentApplications = () => {
 
   return (
     <div className="w-1/2 flex flex-col gap-5">
-      <RecenTitles title="Recent Applicants" />
+      <RecenTitles title="Recent Applicants" viewAll={false} />
       
       {isLoading ? (
         // Loading state (optional)
