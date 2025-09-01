@@ -2,10 +2,10 @@ import CompanyIcon from "@/assets/SuperAdmin/company.svg";
 import Calendar from "@/assets/SuperAdmin/calendar-clock.svg";
 import Eye from "@/assets/SuperAdmin/eye.svg";
 import UserIcon from "@/assets/SuperAdmin/users.svg";
-import TOOLTIP from '@/assets/SuperAdmin/Tooltip.png';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { useState } from "react";
-import { JobCardSwitch } from "./JobCardSwitch";
+// import TOOLTIP from '@/assets/SuperAdmin/Tooltip.png';
+// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+// import { useState } from "react";
+// import { JobCardSwitch } from "./JobCardSwitch";
 import { useNavigate } from "react-router-dom";
 import { Users } from "lucide-react";
 
@@ -27,9 +27,10 @@ const JobCard = ({
   company,
   applicants,
   views,
-  deadlineDate
+  deadlineDate,
+  status,
 }: JobCardProps) => {
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   // Format date to display as "Month Day Year" (e.g., "July 10 2025")
@@ -49,7 +50,10 @@ const JobCard = ({
           <h3 className="text-[14px] text-[#575757]">Position</h3>
           <h3 className="text-[16px] mt-2 text-[#000]">{title}</h3>
         </div>
-        <TooltipProvider>
+        <div className={`px-[17.5px] py-2 rounded-[12px] ${ status == "active" ? "bg-[#D0FEDE]" : "bg-[#FFD5D5]" }`}>
+          <p className={`text-[12px] font-normal leading-[135%] tracking-[0%] ${status == "active" ? "text-[#00AD42]" : "text-[#FF0000]"}`}>Active</p>
+        </div>
+        {/* <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
               <JobCardSwitch valueCheck={isChecked} onValueCheckChange={setIsChecked} />
@@ -58,7 +62,8 @@ const JobCard = ({
               <img width={75} src={TOOLTIP} alt="Tooltip" />
             </TooltipContent>
           </Tooltip>
-        </TooltipProvider>
+        </TooltipProvider> */}
+        
       </div>
 
       <div className="space-y-[12px] mt-[12px] text-[#575757] text-[12px] font-medium leading-[135%]">
@@ -68,7 +73,7 @@ const JobCard = ({
         </div>
         <div className="flex items-center gap-[12px]">
           <img src={Calendar} alt="Calendar" />
-          <p>Deadline : <span className="text-[14px]">{formatDate(deadlineDate)}</span></p>
+          <p>Deadline : <span className={`text-[14px] ${status == "active" ? "" : "text-[#DB2323]"}`}>{formatDate(deadlineDate)}</span></p>
         </div>
         <div className="flex items-center gap-[12px]">
           <img src={Eye} alt="Views" />
@@ -76,7 +81,7 @@ const JobCard = ({
         </div>
         <div className="flex items-center gap-[12px]">
           <img src={UserIcon} alt="Applicants" />
-          <p>Applicants : <span className="text-[14px]">{applicants}</span></p>
+          <p className="text-[#0481EF]">Applicants : <span className="text-[14px]">{applicants}</span></p>
         </div>
       </div>
 
