@@ -21,7 +21,11 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
 }) => {
   const { data } = useGetSelectedProjectsQuery();
   const navigate = useNavigate();
-  const PROJECTS = data?.data;
+  const PROJECTS = data?.data
+  ? [...data.data].sort(
+      (a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+    )
+  : [];
 
   return (
     <>

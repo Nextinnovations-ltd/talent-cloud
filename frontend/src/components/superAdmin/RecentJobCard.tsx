@@ -19,10 +19,6 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
 
-    console.log("------")
-    console.log(data)
-    console.log("------")
-
    
     
     // Calculate time differences
@@ -59,7 +55,7 @@ const RecentJobCard = ({ data }: RecentJobCardProps) => {
     <div className='w-full px-[24px] py-[18px] rounded-xl border border-bg-hr'>
       <div className='flex justify-between items-center'>
         <div className='space-y-[12px]'>
-          <h2 className='text-[16px] text-[#000] font-semibold'>{jobTitle}</h2>
+          <h2 className='text-[16px] text-[#000] font-semibold  w-[300px] line-clamp-1'>{jobTitle}</h2>
           
           <div className='flex gap-[32px] justify-center items-center text-[#575757] text-[12px] font-normal'>
             <p>{specialization}</p>

@@ -128,7 +128,7 @@ const VideoIntroduction = () => {
               showLetterCount
             />
             {form.watch('title') && !isValidIframe && (
-              <div className="text-[0.8rem] translate-y-[-6px]  font-medium text-destructive ">Invalid YouTube embed iframe. Please check your input.</div>
+              <div className="text-[0.8rem] translate-y-[-6px]  font-medium text-destructive ">Invalid YouTube embedded iframe. Please check your input.</div>
             )}
           </div>
           <div className="max-w-[672px] flex items-center justify-end space-x-4">
