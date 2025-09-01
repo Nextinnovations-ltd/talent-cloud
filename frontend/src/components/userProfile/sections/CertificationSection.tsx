@@ -65,7 +65,7 @@ const CertificationSection = ({
     return (
         <>
             <Title
-                title={"Certifications"}
+                title={"Certificate"}
                 isEdit={isCertificationEdit}
                 onpressAdd={() => navigate(`/user/edit/certifications`)}
                 onEditToggle={sortedCerts.length > 0 ? () => setIsCertificationEdit((prev) => !prev) : undefined}

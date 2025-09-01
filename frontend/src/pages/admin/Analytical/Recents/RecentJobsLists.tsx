@@ -2,12 +2,18 @@ import RecentJobCard from "@/components/superAdmin/RecentJobCard"
 import { RecenTitles } from "./RecenTitles"
 import { useGetAllRecentJobsListQuery } from "@/services/slices/adminSlice";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "react-router-dom";
 
 
  const RecentJobsLists = () => {
 
   const { data, isLoading } = useGetAllRecentJobsListQuery();
   const recentApplicants = data?.data;
+  const navigation = useNavigate();
+
+  const handleAction = ()=> {
+    navigation('/admin/dashboard/allJobs');
+  }
 
 
 
@@ -15,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
   
   return (
     <div className="w-1/2 flex flex-col gap-5">
-        <RecenTitles title="Recent Jobs"/>
+        <RecenTitles handleAction={handleAction} title="Recent Jobs"/>
 
         {isLoading && (
         // Loading state (optional)

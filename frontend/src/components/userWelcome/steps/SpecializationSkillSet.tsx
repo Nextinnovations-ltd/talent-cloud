@@ -6,6 +6,7 @@ import useToast from "@/hooks/use-toast";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import { useGetSpecializationsByIndustryIdQuery } from "@/services/slices/onBoardingSlice";
+import clsx from "clsx";
 import { useState, useEffect } from "react";
 
 interface Specialization {
@@ -108,7 +109,7 @@ export const SpecializationSkillSet = ({
 
     return (
       <div className="relative mt-[10px]">
-        <div className="grid grid-cols-1 md:grid-cols-4 py-[30px] h-[380px] overflow-scroll scroll gap-[25px] no-scrollbar">
+        <div className={clsx(' py-[30px] h-[380px] overflow-scroll scroll gap-[25px] no-scrollbar',filteredSpecializations.length > 4 ?  'grid grid-cols-1 md:grid-cols-4' : 'flex  justify-center' )}>
           {filteredSpecializations.length > 0 ? (
             filteredSpecializations.map(({ id, name }: Specialization) => (
               <SubSepcializationCard
