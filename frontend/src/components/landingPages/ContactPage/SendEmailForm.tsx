@@ -74,10 +74,6 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
           <form onSubmit={handleSubmit(handleFinalSubmit)}>
             <div className="flex flex-col gap-[32px]">
               <div className="flex flex-col md:flex-row w-full gap-[32px] md:gap-[44px]">
-<<<<<<< HEAD
-                <InputField fieldName="name" lableName="Your Name" {...register("name")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required/>
-                <InputField fieldName="email" lableName="Your Email" {...register("email")} fieldWidth="w-full lg:w-[50%] lg:w-[270px]" required/>
-=======
                 <InputField
                   fieldName={'name'}
                   lableName='Your Name *'
@@ -88,7 +84,6 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
                   lableName='Your Email *'
                   placeholder={formData.email}
                   fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
->>>>>>> 6339de447f4faf7f72751c8b1ce62be59d34c934
               </div>
               <InputField fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required/>
               <TextAreaField fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" />
