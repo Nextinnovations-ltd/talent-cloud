@@ -6,7 +6,7 @@ WORKDIR /app
 COPY backend/ .
 
 # Install dependencies (after copying the full app)
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Expose port
 EXPOSE 8000
