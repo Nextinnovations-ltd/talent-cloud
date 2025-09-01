@@ -77,14 +77,14 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
               <div className="flex flex-col md:flex-row w-full gap-[32px] md:gap-[44px]">
                 <InputField
                   fieldName={'name'}
-                  lableName='Your Name *'
+                  lableName='Your Name'
                   placeholder={formData.name}
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required               />
                 <InputField
                   fieldName={'email'}
-                  lableName='Your Email *'
+                  lableName='Your Email'
                   placeholder={formData.email}
-                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required={false}                />
+                  fieldWidth='w-full lg:w-[50%] lg:w-[270px]' languageName={''} required              />
               </div>
               <InputField fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required/>
               <TextAreaField fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" />
@@ -103,7 +103,7 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
                 <path d="M61.9167 11.1665L34 39.1111L25.625 30.7361" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <p className="text-black text-[20px] md:text-[24px] font-[500] leading-[35px] md:leading-[42px] text-center mt-6">Thanks for reaching out!</p>
-              <p className="text-[#484747] text-[14px] md:text-[24px] font-[500] leading-[25px] md:leading-[42px] text-center mt-3">We’ve received your inquiry and will respond as soon as possible.</p>
+              <p className="text-[#484747] text-[14px] md:text-[24px] font-[500] leading-[25px] md:leading-[42px] text-center mt-3">We’ve received your inquiry and will respond <br/> as soon as possible.</p>
             </div>
 
             <Link to="/emp/lp" className="bg-[#0481EF] w-full h-[71px] text-white text-[18px] font-[500] text-center rounded-[12px] flex justify-center items-center">
