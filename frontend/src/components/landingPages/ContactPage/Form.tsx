@@ -26,15 +26,15 @@ const Form = () => {
       <div className={`mx-[4px] md:mx-[10px] border border-[3]  w-[24px] md:w-[170px] h-[1px] ${step >1 ?'border-dashed border-[#0481EF]':'border-dashed border-[#575757]'}`}></div> 
         <div className={`flex justify-center items-center w-[100px] md:w-[167px] h-[39px] md:h-[65px] rounded-[16px] md:rounded-[24px]   p-[10px]  leading-[24px] md:leading-[32px] text-[12px] md:text-[16px] font-[500] ${step > 1 ? 'bg-[#0481EF]  text-white':'text-[#575757] border-[2px] border-[#575757]'}`}>Confirmation</div>
       <div className={`mx-[4px] md:mx-[10px] border border-[3] w-[24px] md:w-[170px] h-[1px] ${step > 2 ?'border-dashed border-[#0481EF]':'border-dashed border-[#575757]'}`}></div> 
-        <div className={`flex justify-center items-center w-[100px] md:w-[167px] h-[39px] md:h-[65px] rounded-[16px] md:rounded-[24px]   p-[10px]  leading-[24px] md:leading-[32px] text-[12px] md:text-[16px] font-[500] ${step > 2? 'bg-[#0481EF]  text-white':'text-[#575757] border-[2px] border-[#575757]'}`}>Delivering</div>
+        <div className={`flex justify-center items-center w-[100px] md:w-[167px] h-[39px] md:h-[65px] rounded-[16px] md:rounded-[24px]   p-[10px]  leading-[24px] md:leading-[32px] text-[12px] md:text-[16px] font-[500] ${step > 2? 'bg-[#0481EF]  text-white':'text-[#575757] border-[2px] border-[#575757]'}`}>Delivered</div>
 
       </div>
      </div>
       
         <div className="max-w-[1170px] flex flex-col-reverse lg:flex-row justify-center gap-[76px]  md:gap-[50px] min-h-[753px] mx-auto mt-[60px]  md:pb-[70px] md:px-[54px] pb-[0px] px-[0px]  rounded-[18px] bg-transparent md:bg-white shadow-none md:shadow-[0_4px_12px_0_#0D0A2C0F]">
-          <div className={`w-full lg:max-w-[425px] pt-0 ${step === 3 ?'md:pt-[98px]':'md:pt-[28px]'}`}>
+          <div className={`w-full lg:max-w-[425px] pt-0 ${step === 2 ?'md:pt-[28px]':'md:pt-[98px]'}`}>
         <Link to=''
-            className={`hidden ${step === 3 ? 'lg:hidden' : 'lg:flex'} gap-3  justify-start items-center text-black text-[18px] font-[500] leading-[20px] mb-[48px]`}
+            className={`hidden ${step === 2 ? 'lg:flex' : 'lg:hidden'} gap-3  justify-start items-center text-black text-[18px] font-[500] leading-[20px] mb-[48px]`}
             onClick={() => setStep(1)}
             type="button"
             >
