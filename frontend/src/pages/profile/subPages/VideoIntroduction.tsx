@@ -13,6 +13,7 @@ import { useAddVideoIndroductionMutation, useGetVideoIntroductionQuery } from "@
 import { useApiCaller } from "@/hooks/useApicaller";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {  useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 type VideoIntroduction = {
@@ -42,6 +43,7 @@ const VideoIntroduction = () => {
   const { data, isLoading } = useGetVideoIntroductionQuery();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
+  const navigate = useNavigate();
 
   // Helper to reconstruct iframe from src
   const makeIframeString = (src?: string) =>
@@ -81,6 +83,8 @@ const VideoIntroduction = () => {
       } else {
          await executeApiCall(payload);
       }
+
+      navigate('/user/mainProfile')
      
     } catch (error) {
       showNotification({ message: 'Failed to save video introduction', type: "danger" });
