@@ -29,7 +29,11 @@ const AllApplicantsView: React.FC<AllApplicantsViewProps> = ({
         }
     };
 
+    console.log("kdkdkd")
     console.log(applicants)
+    console.log("kdkdkd")
+
+
 
     if (!applicants?.results.length) {
         return <div className="py-8 text-center text-gray-500">

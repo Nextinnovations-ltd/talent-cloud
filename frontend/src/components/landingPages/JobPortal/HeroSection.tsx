@@ -445,14 +445,21 @@ const HeroSection = () => {
               <li> <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
               <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
             </ul>
-            <Button onClick={() => navigate('/auth/login')} className="hidden md:flex relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
-              <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+            <div className="flex gap-[42px]">
+             <a
+              href="/auth/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex justify-center items-center relative border-2 border-[#0481EF] text-[#0481EF] rounded-[30px] p-[10px] w-[141px] h-[64px] hover:bg-[#0481EF] hover:text-white transition-all duration-300"
+            >
+              <span className=" text-[16px] font-[500] leading-[28px] ">
                 Sign up
               </span>
-              <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
-                Sign up
-              </span>
-            </Button>
+             
+            </a>
+            <CommonButton title="Contact us" url='/contact-us'/>
+           </div>
+
             {/* responsive toggle */}
             <div
               className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
@@ -519,7 +526,7 @@ const HeroSection = () => {
               </p>
               <div className="flex justify-center md:mt-[80px] mt-[40px]">
 
-                <CommonButton login />
+                <CommonButton title='Explore Jobs' url="/" />
 
 
 
