@@ -154,7 +154,7 @@ const HeroSection = () => {
           >
             <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px] md:leading-[66.7px] uppercase text-black">
               Your Next Big <br /> Opportunity{" "}
-              <Link to="/tc/lp" target="_blank">
+              <Link to="/" target="_blank">
                 <span className="text-[#0481EF]"> Starts Here</span>
               </Link>
             </h1>
