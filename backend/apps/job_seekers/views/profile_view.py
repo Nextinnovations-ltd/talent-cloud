@@ -72,6 +72,12 @@ class JobSeekerVideoAPIView(APIView):
           response = JobSeekerService.update_job_seeker_video_url(request.user, request.data)
 
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+     
+     def delete(self, request):
+          """Delete job seeker's video url"""
+          response = JobSeekerService.delete_job_seeker_video_url(request.user)
+
+          return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerSkillAPIView(APIView):

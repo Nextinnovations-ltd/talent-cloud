@@ -1,6 +1,6 @@
 from celery import shared_task
 from apps.authentication.models import FileUpload
-from backend.core.constants.s3.constants import UPLOAD_STATUS
+from core.constants.s3.constants import UPLOAD_STATUS
 from services.storage.s3_service import S3Service
 import logging
 
