@@ -7,11 +7,13 @@ import TalentCloudImg from "@/assets/Talent Cloud.png";
 import { HashLink } from 'react-router-hash-link';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
+
 const UpdatedFooter = () => {
   const location = useLocation();
   const isEmpLp = location.pathname === "/emp/lp";
   return (
-    <div className='bg-[#000] w-full relative '>
+    <div className='bg-[#000] w-full relative ' >
         <div className="max-w-[1240px] mx-auto pt-[40px] md:pt-[77px] pl-5 pr-5">
         <div className="flex flex-col justify-start md:flex-row md:justify-between gap-5">
           <div className="w-[203px]">
