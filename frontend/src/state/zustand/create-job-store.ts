@@ -25,7 +25,7 @@ type FormData = {
     project_duration?: string;
     skills?: string[];
     experience_level?: string;
-    experience_years?: string;
+    experience_years: number;
     salary_fixed?: string;
     number_of_positions:number;
     last_application_date:string
@@ -65,7 +65,7 @@ export const useJobFormStore = create<JobFormStore>((set) => ({
       project_duration: '',
       skills: [],
       experience_level: '',
-      experience_years: '',
+      experience_years: 1,
       salary_fixed: '',
       number_of_positions:1,
       last_application_date:''
@@ -99,7 +99,7 @@ export const useJobFormStore = create<JobFormStore>((set) => ({
         project_duration: '',
         skills: [],
         experience_level: '',
-        experience_years: '',
+        experience_years: 1,
         salary_fixed: '',
         number_of_positions:1,
         last_application_date:''

@@ -7,7 +7,6 @@ import TalentCloudImg from "@/assets/Talent Cloud.png";
 import { HashLink } from 'react-router-hash-link';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { motion } from "framer-motion";
 
 const UpdatedFooter = () => {
   const location = useLocation();

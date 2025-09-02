@@ -415,6 +415,13 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['videoIntroductionList']
     }),
+    deleteVideoIntroduction: builder.mutation<unknown, void>({
+      query: () => ({
+        url: '/jobseeker/video-introduction/',
+        method: 'DELETE'
+      }),
+      invalidatesTags: ['videoIntroductionList']
+    }),
     //skill
     getJobSeekerUserSkills: builder.query<JobSeekerSkillsResponse, void>({
       query: () => "/jobseeker/skill/",
@@ -456,5 +463,7 @@ export const {
   useGetJobSeekerSkillsOptionsQuery,
   useAddVideoIndroductionMutation,
   useGetVideoIntroductionQuery,
-  useGetJobSeekerResumeQuery
+  useGetJobSeekerResumeQuery,
+  useDeleteVideoIntroductionMutation
 } = extendedJobSeekerSlice;
+

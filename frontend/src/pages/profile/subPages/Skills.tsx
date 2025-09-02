@@ -86,7 +86,7 @@ export const Skills = () => {
               className="w-[155px] disabled:bg-[#78acda] mt-[30px] h-[48px] bg-[#0389FF] text-white rounded-[30px]"
               disabled={isSubmitting}
             >
-              {isSubmitting ? <LoadingSpinner /> : "Save Profile"}
+              {isSubmitting ? <LoadingSpinner /> : "Update Skills"}
             </Button>
           </div>
         </form>

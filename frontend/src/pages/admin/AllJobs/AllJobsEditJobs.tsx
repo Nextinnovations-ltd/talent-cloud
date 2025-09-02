@@ -16,6 +16,7 @@ import StepThreeForm from "../CreateNewJob/StepsForms/StepThreeForm";
 import PreviewForm from "../CreateNewJob/StepsForms/PreviewForm";
 import useToast from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import SanitizeNumber from "@/components/common/SanitizeNumber";
 
 const steps = [
   { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -32,14 +33,12 @@ const AllJobsEditJobs = () => {
   const {
     formData, 
     setStepOneData,
-  setStepTwoData,
+    setStepTwoData,
     setStepThreeData,
     resetForm
   } = useJobFormStore();
 
   const [updateJob] = useUpdateJobMutation();
-
-
 
   const { data, isLoading, error } = useGetJobDetailOfEditQuery(id ?? '', {
     skip: !id,
@@ -92,7 +91,7 @@ const AllJobsEditJobs = () => {
       project_duration: "",
       skills: [],
       experience_level: "",
-      experience_years: "",
+      experience_years: 1,
       salary_fixed: "",
       number_of_positions: 0,
       last_application_date: ""
@@ -101,6 +100,10 @@ const AllJobsEditJobs = () => {
 
   useEffect(() => {
     if (JobData && !isLoading) {
+
+      console.log(JobData);
+
+
       stepOneForm.reset({
         title: JobData.title,
         specialization: JobData.specialization,
@@ -120,14 +123,14 @@ const AllJobsEditJobs = () => {
       stepThreeForm.reset({
         salary_mode: JobData?.salary_mode,
         salary_type: JobData?.salary_type,
-        salary_min: JobData?.salary_min || '',
-        salary_max: JobData?.salary_max || '',
+        salary_min: `${SanitizeNumber(JobData?.salary_min) }`  || '', 
+        salary_max: `${SanitizeNumber(JobData?.salary_max) }`  || '',
         is_salary_negotiable: JobData?.is_salary_negotiable,
         project_duration: JobData?.project_duration,
         skills: JobData?.skills,
         experience_level: JobData?.experience_level,
-        experience_years: JobData?.experience_years,
-        salary_fixed: JobData?.salary_fixed || "",
+        experience_years: SanitizeNumber(JobData?.experience_years) || undefined  ,
+        salary_fixed: `${SanitizeNumber(JobData?.salary_fixed) }`   || "",
         number_of_positions: JobData?.number_of_positions,
         last_application_date: JobData?.last_application_date
       })
@@ -203,20 +206,18 @@ const AllJobsEditJobs = () => {
       number_of_positions: formData.stepThree.number_of_positions,
       salary_type: formData.stepThree.salary_type,
       salary_mode: formData.stepThree.salary_mode,
-      salary_min: formData.stepThree.salary_min,
-      salary_max: formData.stepThree.salary_max,
-      salary_fixed: formData.stepThree.salary_fixed,
+      salary_min: SanitizeNumber(formData.stepThree.salary_min),
+      salary_max:  SanitizeNumber(formData.stepThree.salary_max),
+      salary_fixed:  SanitizeNumber(formData.stepThree.salary_fixed),
       last_application_date: formattedDate
     };
-
-    console.log("-----")
-    console.log(payload)
-    console.log("-----")
 
 
     try {
 
     const response =   await updateJob({id:id || '',credentials:payload})
+
+
 
     showNotification({
       message:response.data?.message,
@@ -253,7 +254,7 @@ const AllJobsEditJobs = () => {
            project_duration: '',
            skills: [],
            experience_level: '',
-           experience_years: '',
+           experience_years: 1,
            salary_fixed: '',
            number_of_positions: 0,
            last_application_date: ''
@@ -261,10 +262,14 @@ const AllJobsEditJobs = () => {
        
        setCurrentStep(0);
        console.log("Job created successfully!");
-       navigation('/admin/dashboard/allJobs');
+       if(response?.data?.status){
+        navigation('/admin/dashboard/allJobs');
+       }
+      
 
     } catch (error){
       console.error("Error creating job",error)
+       navigation('/admin/dashboard/allJobs');
     }
     
 

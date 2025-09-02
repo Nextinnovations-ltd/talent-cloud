@@ -170,7 +170,7 @@ export const UserProfileForm = ({
           requiredLabel={true}
           type="number"
           languageName="userProfile"
-          maxLength={2}
+          maxLength={3}
           showLetterCount={true}
           fieldHeight={cn("w-full" , fieldHeight,'mt-[1px]')}
           fieldWidth={clsx(fieldWidth, 'w-[calc(50%-10px)] mt-[10px] ')}
@@ -240,7 +240,7 @@ export const UserProfileForm = ({
         />
 
         {/* ---------- */}
-
+""
         <SelectField
           name={"country"}
           labelName={"Country"}

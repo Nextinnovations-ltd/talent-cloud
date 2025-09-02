@@ -1,7 +1,10 @@
 import { motion, animate, MotionValue } from 'framer-motion';
-import React, { RefObject } from 'react';
+import React, { RefObject, useState } from 'react';
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice';
 import type { UseJobSeekerProfileResponse } from '@/services/slices/jobSeekerSlice';
+import { useGetJobSeekerResumeQuery } from '@/services/slices/jobSeekerSlice';
+import { toast } from 'sonner';
+
 // Removed unused Link import
 
 
@@ -37,8 +40,56 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
     const {
         data: profileData,
       } = useGetJobSeekerProfileQuery();
+      const {data,isLoading} = useGetJobSeekerResumeQuery();
+
+
+      const resume_url = data?.data?.resume_url || "";
+      const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
     
       const userData: UseJobSeekerProfileResponse['data'] | undefined = profileData?.data;
+
+
+
+
+      const [isDownloading, setIsDownloading] = useState(false);
+
+      const handleDownload = async () => {
+        if (!resume_url) return;
+
+        setIsDownloading(true);
+        try {
+          await toast.promise(
+            (async () => {
+              const res = await fetch(resume_url);
+              if (!res.ok) throw new Error("Failed to fetch resume");
+
+              const blob = await res.blob();
+              const objectUrl = URL.createObjectURL(blob);
+
+              const a = document.createElement("a");
+              a.href = objectUrl;
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+
+              setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+            })(),
+            {
+              loading: 'Downloading resume…',
+              success: 'Download started',
+              error: 'Failed to download resume',
+            }
+          );
+        } catch (err) {
+          console.error("Download failed:", err);
+          window.open(resume_url, "_blank", "noopener,noreferrer");
+        } finally {
+          setIsDownloading(false);
+        }
+      };
+      
+
 
   // Social links mapping
   const socialLinks = [
@@ -79,13 +130,17 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
         <h3 className="text-[46px] z-50">{userData?.email}</h3>
 
         <motion.button
-          className="w-[185px] z-50 h-[64px] bg-[#0389FF] flex items-center justify-center gap-[5px] rounded-[8px] text-[16px] font-[600] text-white"
-          whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(3, 137, 255, 0.3)" }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-        >
-          Download CV
-        </motion.button>
+  onClick={handleDownload}
+  disabled={!resume_url || isLoading || isDownloading}
+  className={`w-[185px] z-50 h-[64px] cursor-pointer flex items-center justify-center gap-[5px] rounded-[8px] text-[16px] font-[600] text-white 
+    ${resume_url ? "bg-[#0389FF]" : "bg-gray-400 cursor-not-allowed"}`}
+  whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(3, 137, 255, 0.3)" }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+>
+  {isLoading || isDownloading ? "Downloading..." : resume_url ? "Download CV" : "No Resume"}
+</motion.button>
+
 
         <ul className="flex gap-[34px] z-50">
           {socialLinks.map(({ name, key }) => {

@@ -200,7 +200,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             labelName={"Experience Level"}
                             labelStyle="text-[20px] font-[500]"
                             error={!!formMethods.formState.errors.experience_level}
-                            isRequired={false}
+                            isRequired={true}
                             height="border-[#6B6B6B] rounded-[12px] h-12"
                             showRequiredLabel={true}
                             placeholder={"Select the Duration"}
@@ -221,7 +221,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             placeholder="0"
                         />
                     </div>
-                </form>
+                </form>''""
             </Form>
         </div>
     );
