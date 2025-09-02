@@ -104,7 +104,6 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
   }
 
   const onSubmit = async (values: OnBoardingStepTwoType) => {
-    console.log(values)
     if (!isButtonDisabled) {
       setIsModalOpen(false);
       const formData = new FormData();
@@ -188,14 +187,14 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
   };
 
   return (
-    <div className="   ">
+    <div className="   pb-[100px]">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="  space-y-14 w-full "
         >
           <div className="flex gap-[40px] md:gap-0  flex-col-reverse  md:flex-row w-full  justify-between">
-            <div className=" space-y-4 md:w-[50%]">
+            <div className=" space-y-6 md:w-[50%]">
               {/* Form Fields */}
               {nameFields.map((field) => (
                 <InputField

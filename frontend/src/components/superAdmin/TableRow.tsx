@@ -26,6 +26,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
   const { showNotification } = useToast();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
@@ -66,6 +67,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
     }
   
     try {
+      setIsDownloading(true);
       const response = await fetch(data.resume_url);
       const blob = await response.blob();
   
@@ -79,11 +81,18 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
       // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      showNotification({
+        message: "Download started",
+        type: "success",
+      });
     } catch  {
       showNotification({
         message: "Failed to download CV",
         type: "danger",
       });
+    } finally {
+      setIsDownloading(false);
     }
   };
   
@@ -137,15 +146,27 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
           </div>
         </td>
 
-        {/* Download CV Column */}
-        <td className="w-[15%] min-w-[100px] max-w-[150px] px-2 align-middle">
-          <button
-            onClick={handleDownloadCV}
-            className="bg-[#0481EF] px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm hover:shadow-none transition-shadow"
-          >
-            Download CV
-          </button>
-        </td>
+       {/* Download CV Column */}
+<td className="w-[15%] min-w-[100px] max-w-[150px] px-2 align-middle">
+  {data?.resume_url ? (
+    <button
+      onClick={handleDownloadCV}
+      disabled={isDownloading}
+      aria-busy={isDownloading}
+      className="bg-[#0481EF] px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm hover:shadow-none transition-shadow disabled:opacity-70 disabled:cursor-not-allowed"
+    >
+      {isDownloading ? 'Downloading…' : 'Download CV'}
+    </button>
+  ) : (
+    <button
+      disabled
+      className="bg-gray-300 px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm cursor-not-allowed"
+    >
+      No CV
+    </button>
+  )}
+</td>
+
 
         {/* Actions Column */}
         <td className="w-[5%] min-w-[100px] max-w-[150px] px-2">

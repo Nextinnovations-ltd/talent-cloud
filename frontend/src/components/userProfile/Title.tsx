@@ -4,6 +4,7 @@ import CRYSTAL from '@/assets/Login/Vector.svg';
 import ActiveActionsButtons from './ActiveActionsButtons';
 import SvgAdd from '@/assets/svgs/SvgAdd';
 import SvgEdit from '@/assets/svgs/SvgEdit';
+import SvgDelete from '@/assets/svgs/SvgDelete';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -70,7 +71,7 @@ const crystalVariants = {
     }
 };
 
-export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true, showAddButton = true }: { title: string; isEdit?: boolean; onEditToggle?: () => void, onpressAdd?: () => void, isTitle?: boolean, showAddButton?: boolean }) => {
+export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true, showAddButton = true, onDelete }: { title: string; isEdit?: boolean; onEditToggle?: () => void, onpressAdd?: () => void, isTitle?: boolean, showAddButton?: boolean, onDelete?: () => void }) => {
     return (
         <motion.div
             className="flex items-center justify-between gap-[10px] mb-[43px]"
@@ -114,6 +115,13 @@ export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true,
                         icon={<SvgEdit />}
                         title={isEdit ? 'Cancel' : 'Edit'}
                         onClick={onEditToggle}
+                    />
+                )}
+                {onDelete && (
+                    <ActiveActionsButtons
+                        icon={<SvgDelete />}
+                        title={'Delete'}
+                        onClick={onDelete}
                     />
                 )}
             </div>

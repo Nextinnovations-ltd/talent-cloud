@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Download, Eye } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from 'sonner';
 
 type ResumeDataType = {
     resume_url: string;
@@ -18,6 +19,8 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
     isLoading,
     ResumeData,
 }) => {
+
+    const [isDownloading, setIsDownloading] = useState(false);
 
     if (isLoading) {
         return (
@@ -54,42 +57,44 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
         window.open(resume_url, "_blank");
     };
 
+   
+
     const handleDownload = async () => {
         if (!resume_url) return;
-
-        // Try to fetch the file and force a download from blob (works around download attribute for cross-origin links).
+        setIsDownloading(true);
         try {
-            const res = await fetch(resume_url, { mode: "cors" });
-            if (!res.ok) {
-                // fallback: open original url in new tab
-                window.open(resume_url, "_blank", "noopener,noreferrer");
-                return;
-            }
+            await toast.promise(
+                (async () => {
+                    const res = await fetch(resume_url, { mode: "cors" });
+                    if (!res.ok) {
+                        window.open(resume_url, "_blank", "noopener,noreferrer");
+                        return;
+                    }
 
-            const blob = await res.blob();
-            const objectUrl = URL.createObjectURL(blob);
+                    const blob = await res.blob();
+                    const objectUrl = URL.createObjectURL(blob);
 
-            // Create a temporary anchor to trigger download
-            const a = document.createElement("a");
-            a.href = objectUrl;
-            a.download = fileName;
-            // append -> click -> remove
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+                    const a = document.createElement("a");
+                    a.href = objectUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
 
-            // Also open the file in a new tab for preview (object URL is same-origin so it will open)
-            window.open(objectUrl, "_blank", "noopener,noreferrer");
+                    // Also open preview
+                    window.open(objectUrl, "_blank", "noopener,noreferrer");
 
-            // Revoke object URL after a short delay to allow download/open to start
-            setTimeout(() => {
-                URL.revokeObjectURL(objectUrl);
-            }, 1000 * 10); // 10s
+                    setTimeout(() => {
+                        URL.revokeObjectURL(objectUrl);
+                    }, 1000 * 10);
+                })(),
+                { loading: 'Downloading resume…', success: 'Download started', error: 'Failed to download resume' }
+            );
         } catch (err) {
-            // If fetch fails (CORS, network), fallback to opening the url in new tab
-            // Note: some browsers won't honor download attribute for cross-origin URLs.
             console.error("Download failed, falling back to open in new tab:", err);
             window.open(resume_url, "_blank", "noopener,noreferrer");
+        } finally {
+            setIsDownloading(false);
         }
     };
 
@@ -117,10 +122,11 @@ const ApplyJobResumeItem: React.FC<ApplyJobResumeItemProps> = ({
 
             <Button
                 onClick={handleDownload}
+                disabled={isDownloading}
                 className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
                 aria-label={`Download ${fileName}`}
             >
-                <Download size={18} />
+                {isDownloading ? <span className="text-xs">...</span> : <Download size={18} />}
             </Button>
         </div>
     );

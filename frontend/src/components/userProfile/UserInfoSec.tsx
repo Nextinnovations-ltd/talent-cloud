@@ -9,6 +9,7 @@ import SHADOWLEFT from '@/assets/Login/ShadowLeft.svg';
 import SHADOWRIGHT from '@/assets/Login/ShadowRight.svg';
 import { BackGroundGrid } from '@/constants/svgs';
 import { useRef, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { FloatingDock } from '../common/Floating-dock';
 
 import { ContentSection } from './sections/ContentSection';
@@ -115,44 +116,38 @@ export const UserInfoSec = () => {
     const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
 
 
+    const [isDownloading, setIsDownloading] = useState(false);
+
     const handleDownload = async () => {
         if (!resume_url) return;
-
-        // Try to fetch the file and force a download from blob (works around download attribute for cross-origin links).
+        setIsDownloading(true);
         try {
-            const res = await fetch(resume_url, { mode: "cors" });
-            if (!res.ok) {
-                // fallback: open original url in new tab
-                window.open(resume_url, "_blank", "noopener,noreferrer");
-                return;
-            }
+          await toast.promise(
+            (async () => {
+              const res = await fetch(resume_url);
+              if (!res.ok) throw new Error("Failed to fetch resume");
 
-            const blob = await res.blob();
-            const objectUrl = URL.createObjectURL(blob);
+              const blob = await res.blob();
+              const objectUrl = URL.createObjectURL(blob);
 
-            // Create a temporary anchor to trigger download
-            const a = document.createElement("a");
-            a.href = objectUrl;
-            a.download = fileName;
-            // append -> click -> remove
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+              const a = document.createElement("a");
+              a.href = objectUrl;
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
 
-            // Also open the file in a new tab for preview (object URL is same-origin so it will open)
-            window.open(objectUrl, "_blank", "noopener,noreferrer");
-
-            // Revoke object URL after a short delay to allow download/open to start
-            setTimeout(() => {
-                URL.revokeObjectURL(objectUrl);
-            }, 1000 * 10); // 10s
+              setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+            })(),
+            { loading: 'Downloading resume…', success: 'Download started', error: 'Failed to download resume' }
+          );
         } catch (err) {
-            // If fetch fails (CORS, network), fallback to opening the url in new tab
-            // Note: some browsers won't honor download attribute for cross-origin URLs.
-            console.error("Download failed, falling back to open in new tab:", err);
-            window.open(resume_url, "_blank", "noopener,noreferrer");
+          console.error("Download failed:", err);
+          window.open(resume_url, "_blank", "noopener,noreferrer");
+        } finally {
+          setIsDownloading(false);
         }
-    };
+      };
 
 
 
@@ -279,10 +274,8 @@ export const UserInfoSec = () => {
             >
                 <div className="flex items-center gap-4 bg-[#525252]/10 backdrop-blur-md rounded-full px-4 py-2 border border-[#525252]/20">
                     <FloatingDock items={links} />
-                    <button onClick={handleDownload} disabled={!!resume_url} className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors">
-                     {
-                        isLoading ? "Loading..." : resume_url ? "Download Resume" : "No Resume"
-                     }
+                    <button onClick={handleDownload}  disabled={!resume_url || isLoading || isDownloading} className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors">
+                     { (isLoading || isDownloading) ? "Downloading..." : resume_url ? "Download Resume" : "No Resume" }
                     </button>
                 </div>
             </motion.div>

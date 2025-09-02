@@ -100,12 +100,7 @@ const VideoIntroduction = () => {
     }
   };
 
-  const handleClearPreview = () => {
-    setEmbedUrl(null);
-    setDialogOpen(false);
-    form.reset({ title: undefined });
-  };
-
+ 
   const isValidIframe = !!extractSrcFromIframe(form.watch('title'));
 
   return (
@@ -141,7 +136,7 @@ const VideoIntroduction = () => {
             >
               Preview
             </Button>
-            {(embedUrl || dialogOpen) && (
+            {/* {(embedUrl || dialogOpen) && (
               <Button
                 type="button"
                 onClick={handleClearPreview}
@@ -150,7 +145,7 @@ const VideoIntroduction = () => {
               >
                 Cancel
               </Button>
-            )}
+            )} */}
             <Button
               type="submit"
               title={mode === "edit" ? "Update Video" : "Save Video"}

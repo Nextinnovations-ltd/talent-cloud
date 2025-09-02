@@ -4,5 +4,6 @@
     "dateOfBirth":"Date of Birth",
     "address":"Address",
     "username":"Username",
-    "tagline":"Tagline"
+    "tagline":"Tagline",
+     "workExperience":"Work Experience"
 }
