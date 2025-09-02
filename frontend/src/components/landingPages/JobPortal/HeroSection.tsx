@@ -526,7 +526,7 @@ const HeroSection = () => {
               </p>
               <div className="flex justify-center md:mt-[80px] mt-[40px]">
 
-                <CommonButton title='Explore Jobs' url="/" />
+                <CommonButton title='Explore Jobs' url="/auth/login" />
 
 
 

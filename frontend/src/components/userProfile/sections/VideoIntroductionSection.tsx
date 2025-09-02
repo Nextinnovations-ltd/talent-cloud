@@ -3,7 +3,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Title } from '../Title'
 import { motion } from 'framer-motion'
-import { useGetVideoIntroductionQuery } from '@/services/slices/jobSeekerSlice';
+import { useDeleteVideoIntroductionMutation, useGetVideoIntroductionQuery } from '@/services/slices/jobSeekerSlice';
+import useToast from '@/hooks/use-toast';
 import EMPTYVIDEO from '@/assets/Login/EmptyVideo.png';
 import { EmptyData } from '@/components/common/EmptyData';
 
@@ -32,7 +33,16 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
 
     const navigate = useNavigate();
     const { data } = useGetVideoIntroductionQuery();
-
+    const [deleteVideo] = useDeleteVideoIntroductionMutation();
+    const { showNotification } = useToast();
+    const handleDelete = async () => {
+        try {
+            await deleteVideo().unwrap();
+            showNotification({ message: 'Video introduction deleted', type: 'success' });
+        } catch {
+            showNotification({ message: 'Failed to delete video introduction', type: 'danger' });
+        }
+    }
     const handleEdit = () => {
         setIsVideoIntroductionEdit((prev) => !prev)
         navigate('/user/edit/video-introduction?mode=edit')
@@ -48,6 +58,7 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
                 isEdit={isVideoIntroductionEdit}
                 onEditToggle={data?.data?.video_url ? handleEdit : undefined}
                 showAddButton={!data?.data?.video_url}
+                onDelete={data?.data?.video_url ? handleDelete : undefined}
             />
 
         {(!data?.data || !data.data.video_url ) ? (

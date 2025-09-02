@@ -29,9 +29,6 @@ const AllApplicantsView: React.FC<AllApplicantsViewProps> = ({
         }
     };
 
-    console.log("kdkdkd")
-    console.log(applicants)
-    console.log("kdkdkd")
 
 
 

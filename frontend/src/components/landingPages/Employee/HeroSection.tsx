@@ -154,7 +154,7 @@ const HeroSection = () => {
           >
             <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px] md:leading-[66.7px] uppercase text-black">
               Your Next Big <br /> Opportunity{" "}
-              <Link to="/" target="_blank">
+              <Link to="/auth/login" >
                 <span className="text-[#0481EF]"> Starts Here</span>
               </Link>
             </h1>
@@ -175,7 +175,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              <CommonButton title="Explore Jobs" url="/" />
+              <CommonButton title="Explore Jobs" url="/auth/login" />
             </motion.div>
           </motion.div>
 
