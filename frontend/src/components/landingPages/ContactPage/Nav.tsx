@@ -57,7 +57,7 @@ const Nav = () => {
             </ul>
             <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
             <div className=" hidden md:flex">
-            <CommonButton title="Get Started" url='/jobseeker/lp'/>
+            <CommonButton title="Contact-us" url='/contact-us'/>
             </div>
          
             {/* responsive toggle */}

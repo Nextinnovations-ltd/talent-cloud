@@ -95,8 +95,8 @@ const FAQ = () => {
                       {faq.subTitles}
                     </p>
                     {faq.answers.map((ans, i) => (
-                      <div className="flex gap-3 items-center" key={i}>
-                        <img src={circle} alt=""  className='w-[7px] h-[7px] md:w-[16px] md:h-[16px]'/>
+                      <div className="flex gap-3 items-start md:items-center" key={i}>
+                        <img src={circle} alt=""  className='mt-[4px] md:mt-0 w-[7px] h-[7px] md:w-[16px] md:h-[16px]'/>
                         <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[20px] md:leading-[48px]">{ans}</p>
                       </div>
                     ))}
