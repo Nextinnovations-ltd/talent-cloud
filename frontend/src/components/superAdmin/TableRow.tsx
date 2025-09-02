@@ -56,10 +56,39 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
     console.log('View profile:', data.applicant_id);
   };
 
-  const handleDownloadCV = () => {
-    // Implement download CV logic
-    console.log('Download CV:', data.applicant_id);
+  const handleDownloadCV = async () => {
+    if (!data?.resume_url) {
+      showNotification({
+        message: "No resume available for this applicant",
+        type: "danger",
+      });
+      return;
+    }
+  
+    try {
+      const response = await fetch(data.resume_url);
+      const blob = await response.blob();
+  
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${data.name || "resume"}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+  
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch  {
+      showNotification({
+        message: "Failed to download CV",
+        type: "danger",
+      });
+    }
   };
+  
+  
+  
 
   return (
     <>
@@ -127,6 +156,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+          
               {
                 !isShortList && <DropdownMenuItem
                   onSelect={() => setIsDialogOpen(true)}
@@ -141,6 +171,13 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
               >
                 View user profile
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={handleUserDetail}
+                className="cursor-pointer focus:bg-gray-100"
+              >
+                Download Cover Letter
+              </DropdownMenuItem>
+            
             </DropdownMenuContent>
           </DropdownMenu>
         </td>

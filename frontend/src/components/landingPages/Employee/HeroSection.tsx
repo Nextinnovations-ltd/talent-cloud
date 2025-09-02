@@ -76,7 +76,7 @@ const HeroSection = () => {
             </ul>
           <Link target="_blank" to={'/emp/lp'} className="text-[#6e6e6e90] hidden md:flex ">For Employee</Link>
           <div className=" hidden md:flex">
-          <CommonButton title="Get Started" url='/tc/lp'/>
+          <CommonButton title="Contact us" url='/contact-us'/>
           </div>
          
           {/* responsive toggle */}

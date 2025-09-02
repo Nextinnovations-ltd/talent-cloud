@@ -38,7 +38,7 @@ const TextAreaField: React.FC<DatePickerFieldProps> = ({
   required,
   fieldHeight = "h-12",
   fieldWidth = " max-w-[672px]",
-  placeholder = "Place holder",
+  placeholder = "Message",
   requiredLabel = true,
   disabled = false,
   isError,

@@ -470,10 +470,23 @@ class JobSeekerService:
           job_seeker.save()
           
           return {
-               'message': "Video url is updated.",
+               'message': "Video url is successfully updated .",
                'data': {
                     "video_url": job_seeker.video_url
                }
+          }
+     
+     @staticmethod
+     def delete_job_seeker_video_url(user: TalentCloudUser):
+          job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
+          
+          job_seeker.video_url=None
+          
+          job_seeker.save()
+          
+          return {
+               'message': "Video url is successfully deleted.",
+               'data': None
           }
 
      @staticmethod

@@ -6,6 +6,7 @@ import cardImg1 from '../../../assets/Employee/Frame 36408.png'
 import cardImg2 from '../../../assets/Employee/Frame 36408 (1).png'
 import cardImg3 from '../../../assets/Employee/Frame 36408 (2).png'
 import cardImg4 from '../../../assets/Employee/Frame 36408 (3).png'
+import { motion } from "framer-motion";
 gsap.registerPlugin(ScrollTrigger)
 
 const Whatugot = () => {
@@ -70,9 +71,12 @@ const Whatugot = () => {
   return (
     <div id='what-you-get' className="max-w-[1240px] mx-auto px-4 pt-[48px] pb-0 md:py-20">
      
-      <h1 className="text-black text-[20px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[100px]">
+      <motion.h1 className="text-black text-[20px] md:text-[40px] font-[600] text-center mb-[24px] md:mb-[100px]"  initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true }}>
         WHAT YOU GET
-      </h1>
+      </motion.h1>
 
       <div className="space-y-[100px]">
         {cardData.map((card, index) => (
@@ -80,7 +84,7 @@ const Whatugot = () => {
             key={index}
             //@ts-ignore
             ref={(el) => (cardsRef.current[index] = el)}
-            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row  justify-end md:justify-center items-center gap-[24px] md:gap-[50px] sticky  md:h-[414px] h-[680px] top-[15%] py-[40px] md:py-6 shadow-[0_1px_3px_0_#A6AFC366] "
+            className="bg-[#FAFAFA] rounded-[25px]   flex flex-col-reverse md:flex-row  justify-end md:justify-center items-center gap-[24px] md:gap-[50px] sticky  md:h-[414px] h-[680px] top-[15%] px-[20px] md:px-0 py-[40px] md:py-6 shadow-[0_1px_3px_0_#A6AFC366] "
           >           
 
             <div className="max-w-[345px] md:max-w-[506px]">
