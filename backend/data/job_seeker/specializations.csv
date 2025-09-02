@@ -1,57 +1,6 @@
-name,description
-Web Development,Building and maintaining websites and web applications.
-Frontend Development,Creating the visual and interactive parts of a website using HTML, CSS, and JavaScript.
-Backend Development,Developing server-side logic, APIs, and databases for web applications.
-Full Stack Development,Working on both frontend and backend of web applications.
-Mobile App Development,Designing and developing apps for iOS and Android platforms.
-Software Engineering,Creating software systems and applications using structured engineering principles.
-Game Development,Designing and developing interactive games using engines like Unity or Unreal.
-Embedded Systems,Programming low-level systems in hardware like microcontrollers.
-DevOps Engineering,Automating deployments and managing CI/CD pipelines and infrastructure.
-Cloud Computing,Managing applications and infrastructure on cloud platforms like AWS, Azure, or GCP.
-AI & Machine Learning,Building intelligent systems using algorithms that learn from data.
-Data Engineering,Designing and managing data pipelines, ETL processes, and databases.
-UI/UX Design,Designing user interfaces and experiences to enhance usability and accessibility.
-Graphic Design,Creating visual content using typography, images, and layout.
-Product Design,Designing the user journey and features of digital products.
-Motion Graphics,Creating animated visual content for digital media.
-Animation,Bringing characters and scenes to life through frame-by-frame motion.
-3D Design,Creating three-dimensional models and visualizations.
-Illustration,Drawing or designing artwork for books, ads, games, and more.
-Branding & Identity,Creating visual and strategic identity for brands.
-Data Analysis,Interpreting data to uncover insights and support decision making.
-Data Science,Using statistics, algorithms, and machine learning to extract insights from data.
-Business Intelligence,Analyzing business data to inform strategy and operations.
-Statistical Modeling,Creating mathematical models to represent data and predict outcomes.
-Machine Learning,Building systems that learn patterns and make decisions from data.
-Big Data,Handling and processing massive datasets with distributed systems.
-Research & Development,Exploring new technologies and developing innovative solutions.
-Digital Marketing,Promoting products and services using digital channels.
-Content Creation,Writing or producing media content for blogs, videos, and social platforms.
-SEO/SEM,Optimizing websites for search engines and managing paid search campaigns.
-Social Media Management,Planning and publishing content across social platforms.
-Email Marketing,Creating and managing email campaigns for engagement or conversion.
-Copywriting,Writing persuasive or informative content for marketing and branding.
-Performance Marketing,Running data-driven ad campaigns focused on ROI.
-Product Management,Defining product vision and managing the product lifecycle.
-Project Management,Planning and managing projects to deliver goals on time and within scope.
-Business Analysis,Analyzing business needs and defining technical requirements.
-Quality Assurance,Testing software to find and report bugs and ensure product quality.
-Scrum Master / Agile Coach,Facilitating agile development and coaching teams in agile practices.
-Technical Writing,Creating documentation for software products and systems.
-Technical Support,Helping users resolve software or hardware issues.
-Customer Success,Ensuring users achieve value and satisfaction from a product or service.
-B2B Sales,Selling products or services to other businesses.
-Sales Engineering,Providing technical support during the sales process.
-Account Management,Managing client relationships and retaining key customers.
-Cybersecurity,Protecting systems and data from cyber threats.
-Network Administration,Maintaining and troubleshooting computer networks.
-System Administration,Managing and configuring servers and operating systems.
-Cloud Infrastructure,Designing and maintaining cloud-based systems and services.
-Site Reliability Engineering (SRE),Ensuring reliable and scalable system operations through automation and monitoring.
-FinTech Engineering,Developing financial technologies like payment systems or trading platforms.
-Financial Analysis,Interpreting financial data to guide business decisions.
-Accounting,Managing and reporting financial transactions and records.
-Operations Management,Overseeing business operations and improving efficiency.
-Supply Chain,Managing logistics and flow of goods and services.
-
+id,name,description
+SP101,Web Development,Building and maintaining websites and web applications.
+SP102,Mobile Development,Designing and developing apps for iOS and Android platforms.
+SP103,UI/UX Design,Designing user interfaces and experiences to enhance usability and accessibility.
+SP104,Graphic / Visual Design,Creating visual content, graphics, and branding for digital and print media.
+SP105,System Development,Developing and managing system software, infrastructure, and operations.

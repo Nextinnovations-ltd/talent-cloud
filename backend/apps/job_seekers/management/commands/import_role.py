@@ -27,16 +27,17 @@ class Command(BaseCommand):
                     try:
                          specialization = None
                          if row.get('specialization'):
-                              specialization = JobSeekerSpecialization.objects.get(name=row['specialization'])
+                              specialization = JobSeekerSpecialization.objects.get(id=row['specialization'])
                     except JobSeekerSpecialization.DoesNotExist:
                          self.stderr.write(f"❌ Specialization '{row['specialization']}' not found for role {row['name']}")
                          error_count += 1
                          continue
 
                     obj, created = JobSeekerRole.objects.update_or_create(
-                         name=row['name'],
+                         id=row['id'],
                          defaults={
-                         'specialization': specialization
+                              'name': row['name'],
+                              'specialization': specialization
                          }
                     )
                     
