@@ -444,37 +444,7 @@ class JobSearchListAPIView(CustomListAPIView):
 # endregion Job Post List Views
 
 
-# region Job Post Metric Views
-
-# @extend_schema_view(get=extend_schema(tags=["Job Post"]))
-# class JobPostMetricViewAPIView(APIView):
-#      authentication_classes = [TokenAuthentication]
-#      permission_classes = [TalentCloudSuperAdminPermission]
-
-#      def get(self, request, pk):
-#           metric = get_object_or_404(JobPostMetric, job_post_id=pk)
-#           serializer = JobPostMetricSerializer(metric)
-          
-#           return Response(serializer.data, status=status.HTTP_200_OK)
-
-# @extend_schema_view(get=extend_schema(tags=["Job Post"]))
-# class IncrementJobPostViewCountAPIView(APIView):
-#      authentication_classes = [TokenAuthentication]
-#      permission_classes = [TalentCloudSuperAdminPermission]
-
-#      def post(self, request, pk):
-#           metric, created = JobPostMetric.objects.get_or_create(job_post_id=pk)
-          
-#           metric.view_count += 1
-#           metric.save()
-          
-#           return Response({'view_count': metric.view_count}, status=status.HTTP_200_OK)
-
-# endregion Job Post Metric Views
-
-
 # region Job Application Views
-
 
 @extend_schema(tags=["Cover Upload"])
 class CoverLetterUploadUrlAPIView(APIView):
