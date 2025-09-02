@@ -16,7 +16,7 @@ interface EducationSectionProps {
 
 const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, setIsEducationEdit, containerVariants, itemVariants }) => {
 
-    const { data} = useGetEducationsQuery();
+    const { data } = useGetEducationsQuery();
     const navigate = useNavigate();
 
     const EDUCATIONDATA = data?.data;
@@ -28,7 +28,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
                 title={"Education"}
                 onpressAdd={() => navigate('/user/edit/education')}
                 isEdit={isEducationEdit}
-                onEditToggle={EDUCATIONDATA && EDUCATIONDATA?.length>0 ?() => setIsEducationEdit((prev) => !prev): undefined}
+                onEditToggle={EDUCATIONDATA && EDUCATIONDATA?.length > 0 ? () => setIsEducationEdit((prev) => !prev) : undefined}
             />
 
             {(!data?.data || data.data.length === 0) && (
@@ -44,11 +44,23 @@ const EducationSection: React.FC<EducationSectionProps> = ({ isEducationEdit, se
                     className='grid grid-cols-2 gap-[143px] mb-[143px]'
                     variants={containerVariants}
                 >
-                    {
-                        data.data.map((e, index) => <motion.div key={index} variants={itemVariants}>
-                            <EducationCard id={e.id} degree={e.degree} institution={e.institution} start_date={e.start_date} end_date={e.end_date} isEdit={isEducationEdit} description={e.description} is_currently_attending={false} />
-                        </motion.div>)
-                    }
+                    {data.data
+                        .slice() // avoid mutating original array
+                        .sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime())
+                        .map((e, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                                <EducationCard
+                                    id={e.id}
+                                    degree={e.degree}
+                                    institution={e.institution}
+                                    start_date={e.start_date}
+                                    end_date={e.end_date}
+                                    isEdit={isEducationEdit}
+                                    description={e.description}
+                                    is_currently_attending={false}
+                                />
+                            </motion.div>
+                        ))}
                 </motion.div>
             )}
         </>

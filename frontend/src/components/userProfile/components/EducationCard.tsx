@@ -61,7 +61,7 @@ export const EducationCard = ({ hasSchoolLogo = false, isEdit = false, id, insti
     const dateRange = formatDateRange(start_date, end_date, is_currently_attending);
 
     return (
-        <div className="relative">
+        <div className="relative ">
             {isEdit && (
                 <div className="absolute top-2 right-2 flex gap-2 z-10">
                     {/* Replace with your actual edit/delete icons as needed */}

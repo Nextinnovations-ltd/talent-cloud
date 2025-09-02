@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
 import { useGetJobSeekerNotificationsQuery, useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
+import PortalCopyRight from "@/components/common/PortalCopyRight";
 
 export const MainLayout = () => {
   const socketRef = useRef<WebSocket | null>(null);
@@ -14,7 +15,6 @@ export const MainLayout = () => {
   const { showNotification } = useToast();
   const { refetch } = useGetUnReadNotificationsCountQuery();
   const { refetch:RefetchIsRead } = useGetJobSeekerNotificationsQuery({ limit:10, offset:0 });
-
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -89,6 +89,7 @@ export const MainLayout = () => {
         <div className="mt-[100px]">
           <Outlet />
         </div>
+        <PortalCopyRight/>
         {/* <Footer /> */}
       {/* </ProtectRoute> */}
     </>

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
-import Profile from '@/assets/SuperAdmin/user-profile.png';
+import Profile from '@/assets/ProfileNoData.png';
 import Phone from '@/assets/SuperAdmin/phone.svg';
 import Location from '@/assets/SuperAdmin/location.svg';
 import SvgMore from '@/assets/svgs/SvgMore';

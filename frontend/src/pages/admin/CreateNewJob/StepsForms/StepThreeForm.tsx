@@ -217,7 +217,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             fieldHeight="border-[#6B6B6B] rounded-[12px]"
                             isError={!!formMethods.formState.errors?.experience_years}
                             lableName="Years of Experience"
-                            required={false}
+                            required={true}
                             placeholder="0"
                         />
                     </div>

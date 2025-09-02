@@ -7,6 +7,7 @@ import { StepTwo } from "@/components/userWelcome/steps/StepTwo";
 import { StepThree } from "@/components/userWelcome/steps/StepThree";
 import { StepFour } from "@/components/userWelcome/steps/StepFour";
 import { SpecializationSkillSet } from "@/components/userWelcome/steps/SpecializationSkillSet";
+import PortalCopyRight from "@/components/common/PortalCopyRight";
 
 interface StepWizardRef {
   nextStep: () => void;
@@ -42,6 +43,7 @@ export const Userwelcome = () => {
   }
 
   return (
+    <>
     <div className="min-h-[100svh] pb-[50px] overflow-hidden">
       <StepWizard
         initialStep={parseInt(searchParams.get("step") || "1", 10)}
@@ -64,7 +66,10 @@ export const Userwelcome = () => {
           setFinished={setFinished} />
        
       </StepWizard>
-    </div>)
+    </div>
+    <PortalCopyRight boarding/>
+    </>
+    )
 
 };
 
