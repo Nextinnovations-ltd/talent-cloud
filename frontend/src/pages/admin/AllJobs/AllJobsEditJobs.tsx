@@ -209,6 +209,11 @@ const AllJobsEditJobs = () => {
       last_application_date: formattedDate
     };
 
+    console.log("-----")
+    console.log(payload)
+    console.log("-----")
+
+
     try {
 
     const response =   await updateJob({id:id || '',credentials:payload})

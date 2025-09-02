@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
 import upArrow from "@/assets/JobPortal/arrow-up-left.svg";
 
 interface CommonButtonProps {
@@ -8,7 +7,7 @@ interface CommonButtonProps {
 }
 
 const CommonButton: FC<CommonButtonProps> = ({ title, url }) => {
-  const navigate = useNavigate();
+
 
   const handleClick = (url?: string) => {
     window.open(url, "_blank");

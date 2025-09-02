@@ -39,6 +39,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      applied_date = serializers.DateTimeField(source='created_at', read_only=True)
      profile_image_url = serializers.SerializerMethodField()
      resume_url = serializers.SerializerMethodField()
+     cover_letter_url = serializers.SerializerMethodField()
      
      class Meta:
           model = JobApplication
@@ -55,6 +56,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
                'applied_date',
                'profile_image_url',
                'resume_url'
+               'cover_letter_url'
           ]
      
      def get_phone_number(self, obj: JobApplication):
@@ -80,3 +82,8 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      
      def get_resume_url(self, obj: JobApplication):
           return obj.job_seeker.resume_url_link
+     
+     def get_cover_letter_url(self, obj: JobApplication):
+          if obj.cover_letter_url:
+               return S3Service.get_public_url(obj.cover_letter_url)
+          return None
