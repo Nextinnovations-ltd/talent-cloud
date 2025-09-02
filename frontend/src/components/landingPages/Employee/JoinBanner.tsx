@@ -44,7 +44,7 @@ const JoinBanner = () => {
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
       viewport={{ once: true }}
     >
-      <CommonButton title="Join Talent Cloud" url="/emp/lp" />
+      <CommonButton title="Join Talent Cloud" url="/" />
     </motion.div>
   </div>
   )
