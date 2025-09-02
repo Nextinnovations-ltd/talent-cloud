@@ -103,7 +103,18 @@ export const StepThreeFormYupSchema = yup.object({
   project_duration: yup.string().required('Project Duration is required'),
   skills: yup.array().of(yup.string().required()).optional().default(undefined),
   experience_level: yup.string().optional(),
-  experience_years: yup.string().required("Experience year is required").min(1, "Number of experience must be greater than 0"),
+  experience_years: yup
+  .number()
+  .transform((value, originalValue) => {
+    if (typeof originalValue === "string") {
+      const cleaned = originalValue.replace(/,/g, "").trim();
+      return cleaned === "" ? undefined : Number(cleaned);
+    }
+    return value;
+  })
+  .required("Experience year is required")
+  .min(1, "Number of experience must be greater than 0"),
+
 
   number_of_positions: yup
     .number()
