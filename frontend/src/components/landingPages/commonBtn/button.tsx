@@ -11,10 +11,10 @@ const CommonButton: FC<CommonButtonProps> = ({ title, url }) => {
 
   const navigate = useNavigate();
 
-
   const handleClick = (url?: string) => {
-    navigate(url)
-
+ if(url){
+  navigate(url)
+ }
   };
 
   return (
