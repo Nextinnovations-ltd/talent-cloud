@@ -18,6 +18,8 @@ import CheckCircle from '@/assets/check-circle.svg'
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { useLocation } from 'react-router-dom';
+import heroText1 from '@/assets/JobPortal/Global Opportunities.svg'
+import heroText2 from '@/assets/JobPortal/for Myanmar talent.svg'
 
 
 
@@ -432,7 +434,7 @@ const HeroSection = () => {
 
   return (
     <div onClick={() => setNavIsOpen(!navIsOpen)}>
-      <div className="md:h-[600px] h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
+      <div className=" h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
            <div
             className={`fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]
             transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-[120%]"}`}
@@ -517,10 +519,12 @@ const HeroSection = () => {
           
             </div>
             <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
-              <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
+            {/*   <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
                 Global Possibilities for 
                 <br className="hidden md:block" /> Myanmar Professionals
-              </h1>
+              </h1> */}
+              <img src={heroText1} alt="" className="mt-[168px] mx-auto max-w-[1200px] h-[102px] "/>
+              <img src={heroText2} alt="" className="mt-4 mb-[64px] mx-auto max-w-[1136px]   h-[102px] "/>
               <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
                 Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
               </p>
