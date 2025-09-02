@@ -24,7 +24,14 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
   const navigate = useNavigate();
   const { data } = useGetExperiencesQuery();
 
-  const EXPERIENCEDATA = data?.data;
+  let EXPERIENCEDATA = data?.data || [];
+
+  // 🔽 Sort by end_date (latest first), treat "present" work as latest
+  EXPERIENCEDATA = [...EXPERIENCEDATA].sort((a, b) => {
+    const dateA = a.is_present_work ? new Date() : new Date(a.end_date);
+    const dateB = b.is_present_work ? new Date() : new Date(b.end_date);
+    return dateB.getTime() - dateA.getTime(); // descending
+  });
 
   return (
     <div>
@@ -32,10 +39,10 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
         title={" Work Experience"}
         onpressAdd={() => navigate('/user/edit/workexperience')}
         isEdit={isWorkExperienceEdit}
-        onEditToggle={EXPERIENCEDATA && EXPERIENCEDATA.length > 0 ? () => setIsWorkExperienceEdit((prev) => !prev) : undefined}
+        onEditToggle={EXPERIENCEDATA.length > 0 ? () => setIsWorkExperienceEdit((prev) => !prev) : undefined}
       />
 
-      {(!EXPERIENCEDATA || EXPERIENCEDATA.length === 0) && (
+      {(EXPERIENCEDATA.length === 0) && (
         <EmptyData
           image={<img src={EmptyExperiences} alt="No Work Experience" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
           title="Work Experience"
@@ -43,14 +50,13 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
         />
       )}
 
-      {EXPERIENCEDATA && EXPERIENCEDATA.length > 0 && (
+      {EXPERIENCEDATA.length > 0 && (
         <motion.div
           className='grid grid-cols-2 gap-[143px] mb-[140px]'
           variants={containerVariants}
         >
           {
             EXPERIENCEDATA.map((e, index) => {
-              // Format the date range for experience
               const startDate = new Date(e.start_date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short'
@@ -66,7 +72,7 @@ const WorkExperienceSection: React.FC<WorkExperienceSectionProps> = ({
               const experienceDateRange = `${startDate} - ${endDate}`;
 
               return (
-                <motion.div key={index} variants={itemVariants}>
+                <motion.div key={e.id ?? index} variants={itemVariants}>
                   <WorkExperienceCard
                     id={e.id}
                     title={e.title}

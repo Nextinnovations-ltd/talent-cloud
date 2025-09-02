@@ -53,7 +53,7 @@ const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, 
 const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['JobList', 'CertificationList', 'EducationsList', 'selectprojectsList', 'videoIntroductionList', 'appliedJobs', 'bookmarked', 'NotificationList','ShortList'],
+  tagTypes: ['JobList', 'CertificationList', 'EducationsList', 'selectprojectsList', 'videoIntroductionList', 'appliedJobs', 'bookmarked', 'NotificationList','ShortList','JobPostEdit'],
   endpoints: () => ({}),
 });
 

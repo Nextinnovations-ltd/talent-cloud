@@ -16,6 +16,7 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
                 method: 'PATCH',
                 body: JSON.stringify(credentials)
             }),
+            invalidatesTags: ['JobPostEdit']
         }),
         deleteJob: builder.mutation<unknown, number | string>({
             query: (id) => ({
@@ -24,7 +25,8 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             })
         }),
         getJobDetailOfEdit: builder.query<EditJobDetailResponse, unknown>({
-            query: (id) => `/job-posts/edit/${id}/`
+            query: (id) => `/job-posts/edit/${id}/`,
+            providesTags: ['JobPostEdit']
         }),
         getOrganizationDetailByAdmin: builder.query<RelatedInfoResponse, void>({
             query: () => '/related-company-info/'
@@ -32,6 +34,13 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         getNIAllJobsByAdmin: builder.query<JobPostResponse, { page: string | number, ordering?: string }>({
             query: (data) => `/dashboard/ni/job-posts/all/?page=${data?.page}&ordering=${data?.ordering}`
         }),
+        getNIExpiredJobsByAdmin: builder.query<JobPostResponse, { page: string | number, ordering?: string }>({
+            query: (data) => `/dashboard/ni/job-posts/expired/?page=${data?.page}&ordering=${data?.ordering}`
+        }),
+        getNIActivedJobsByAdmin: builder.query<JobPostResponse, { page: string | number, ordering?: string }>({
+            query: (data) => `/dashboard/ni/job-posts/active/?page=${data?.page}&ordering=${data?.ordering}`
+        }),
+
         getAllApplicants: builder.query<unknown, unknown>({
             query: (id) => `/job-posts/${id}/applications/`
         }),
@@ -64,4 +73,4 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation,useGetNIActivedJobsByAdminQuery,useGetNIExpiredJobsByAdminQuery } = extendedAdminSlice

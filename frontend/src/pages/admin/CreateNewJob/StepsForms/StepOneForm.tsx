@@ -177,7 +177,7 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
             fieldHeight="h-[128px] border-[#6B6B6B] rounded-[12px] mt-3"
             fieldWidth="w-full mt-[50px]"
             showLetterCount
-            maxLength={500}
+            maxLength={800}
           />
         </form>
       </Form>

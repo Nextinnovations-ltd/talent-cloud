@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
@@ -54,7 +55,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className=" ">
         <div
           className={cn(
-            "flex h-10 mt-[16px] items-center rounded-[10px] bg-blue relative border-input bg-white text-sm",
+            "flex h-10  mt-[20px] items-center rounded-[10px] bg-blue relative border-input bg-white text-sm",
             className
           )}
         >

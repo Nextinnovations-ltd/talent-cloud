@@ -79,8 +79,8 @@ const UpdatedFooter = () => {
           </div>
           <div className="flex md:flex-row flex-col gap-[30px] md:gap-4 flex-wrap ">
 
-          <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Privacy Policy</p>
-          <p  className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </p>
+          <Link to='/privacy-policy' target='_blank' className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Privacy Policy</Link>
+          <Link to='/terms-conditions' target='_blank'   className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </Link>
 
           </div>
         </div>

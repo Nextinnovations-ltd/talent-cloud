@@ -163,7 +163,7 @@ export const Certification = () => {
               fieldName={`organizationIssue`}
               languageName=""
               isError={!!form.formState.errors?.organizationIssue}
-              lableName="Issuing organization"
+              lableName="Issued organization"
               required={true}
               placeholder="Organization"
               maxLength={60}
@@ -175,7 +175,7 @@ export const Certification = () => {
                 placeholder="Year"
                 error={!!form.formState.errors?.issueYear}
                 showRequiredLabel
-                labelName="Issue Date"
+                labelName="Issued Date"
                 data={generateYearData()}
                 width="w-[50%]"
                 isRequired

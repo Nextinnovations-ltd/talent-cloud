@@ -22,6 +22,7 @@ import type { ProjdctsWithIdResponse } from '@/services/slices/jobSeekerSlice';
 import uploadToS3 from "@/lib/UploadToS3/UploadToS3";
 
 
+
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
   return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
     const year = startYear + index;
@@ -49,6 +50,7 @@ const SelectedProject = () => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
   const [addSelectedProject, { isLoading: isAdding }] = useAddSelectedProjectsMutation();
   const [updateSelectedProject, { isLoading: isUpdating }] = useUpdateSelectedProjectsMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { showNotification } = useToast();
@@ -104,6 +106,8 @@ const SelectedProject = () => {
 
   const onSubmit = async (data: SelectedProjectForm) => {
 
+    setIsLoading(true);
+
 
 
     const start_date = `${data.startDateYear}-${data.startDateMonth}-01`;
@@ -124,22 +128,23 @@ const SelectedProject = () => {
       let response;
       if (id) {
 
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+
+        const result = await uploadToS3({ file: form.getValues('project_image_url') as unknown as File, type: 'project' });
 
 
-        if(result){
+        if (result) {
           //@ts-ignore
           payload.project_image_upload_id = result;
         }
 
         response = await updateSelectedProject({ id, credentials: payload });
       } else {
-        
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+
+        const result = await uploadToS3({ file: form.getValues('project_image_url') as unknown as File, type: 'project' });
 
 
-        if(result){
-            //@ts-ignore
+        if (result) {
+          //@ts-ignore
           payload.project_image_upload_id = result;
         }
 
@@ -164,14 +169,19 @@ const SelectedProject = () => {
         });
         showNotification({ message: id ? "Project updated successfully" : "Project added successfully", type: "success" });
         navigate('/user/mainProfile');
+        setIsLoading(false);
       } else {
         showNotification({ message: 'Failed to save project', type: "danger" });
+        setIsLoading(false);
       }
     } catch (error) {
       showNotification({ message: 'Failed to save project', type: "danger" });
+      setIsLoading(false);
       console.error('Failed to save project:', error);
     }
   }
+
+  const loading = isAdding || isUpdating || isFetching || isLoading
 
   if (isFetching) return <div><p>Loading...</p></div>
 
@@ -198,6 +208,7 @@ const SelectedProject = () => {
               placeholder="Type here"
               maxLength={60}
               showLetterCount
+              disabled={loading}
             />
             <InputField
               fieldName={`project_url`}
@@ -206,8 +217,9 @@ const SelectedProject = () => {
               lableName="Project Url"
               required={true}
               placeholder="Type here"
-              maxLength={60}
+              maxLength={120}
               showLetterCount
+              disabled={loading}
             />
             <TagInputField
               fieldName="tags"
@@ -228,6 +240,7 @@ const SelectedProject = () => {
               placeholder="Type here"
               maxLength={60}
               showLetterCount
+              disabled={loading}
             />
             <div className="flex max-w-[672px] gap-4">
               <SelectField
@@ -296,15 +309,23 @@ const SelectedProject = () => {
               fieldHeight={"h-[128px]"}
               maxLength={1000}
               showLetterCount
+              disabled={loading}
             />
           </div>
           <div className="max-w-[672px]  flex items-center justify-end">
             <button
               type="submit"
-              className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 "
+              className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
               disabled={isAdding || isUpdating || isFetching}
+              aria-busy={(isAdding || isUpdating || isFetching || isLoading) ? true : undefined}
             >
-              {(isAdding || isUpdating || isFetching) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
+              {(loading) && (
+                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              )}
+              {(loading) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
             </button>
           </div>
         </form>

@@ -17,13 +17,15 @@ export const AppliedJobs = () => {
   const jobs = applications?.data?.flatMap(app => app.job_post) ?? [];
 
 
+
+
   const handleJobClick = (job: Job) => {
 
     console.log(job)
   }
 
   const handleAction = ()=>{
-    navigate(`/`);
+    navigate(`/?`);
   }
 
   if (isLoading) {

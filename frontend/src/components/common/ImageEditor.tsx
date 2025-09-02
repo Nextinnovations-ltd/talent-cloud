@@ -16,6 +16,7 @@ export interface ImageEditorProps {
   handleScaleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   saveEditedImage: () => void;
   isUploading?: boolean;
+  errorMessage?: string | null;
 }
 
 export const ImageEditor: React.FC<ImageEditorProps> = ({
@@ -28,6 +29,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   handleScaleChange,
   saveEditedImage,
   isUploading = false,
+  errorMessage,
 }) => {
   // This function will trigger the rotation and animation for the button
   const handleRotateClick = () => {
@@ -41,6 +43,12 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
       }}
         className="w-[90%] rounded-[15px]  md:w-full" >
         <h3 className=" mx-auto font-[600] text-[28px]">Adjust Photo</h3>
+     
+        {errorMessage && (
+          <div className="mx-auto mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm font-medium text-center">{errorMessage}</p>
+          </div>
+        )}
         <div className="flex flex-col  items-center">
           {typeof preview === "string" && (
             <div className="relative md:w-[396px] md:h-[342px] rounded-[10px] border-2 overflow-hidden">

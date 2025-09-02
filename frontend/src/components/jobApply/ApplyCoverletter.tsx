@@ -4,47 +4,82 @@ import { RadioGroupItem, RadioGroup } from "../ui/radio-group";
 import ApplyJobUploadResume from "./ApplyJobUploadResume";
 import { Button } from "../ui/button";
 import { Trash } from "lucide-react";
+import SvgEye from "@/assets/svgs/SvgEye";
 
 type ApplyCoverLetterProps = {
   fileData: File | undefined;
   setFileData: (file: File | undefined) => void;
+  radioValue: "uploadCover" | "noCover";
+  setRadioValue: (value: "uploadCover" | "noCover") => void;
+  coverError: boolean;
 };
 
-type CoverChoice = "uploadCover" | "noCover";
-
-const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({ fileData, setFileData }) => {
-  const [radioValue, setRadioValue] = useState<CoverChoice>("noCover");
+const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({
+  fileData,
+  setFileData,
+  radioValue,
+  setRadioValue,
+  coverError,
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // If user chooses "Skip", clear any selected file
   useEffect(() => {
     if (radioValue === "noCover" && fileData) setFileData(undefined);
   }, [radioValue, fileData, setFileData]);
 
+  // Generate preview link when fileData changes
+  useEffect(() => {
+    if (fileData) {
+      const url = URL.createObjectURL(fileData);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPreviewUrl(null);
+  }, [fileData]);
+
   return (
     <div className="mt-[50px] mb-[10px]">
       <h3 className="text-[22px]">Cover Letter</h3>
-      <p className="text-[14px] my-[10px]">Optional but recommended to stand out</p>
+      <p className="text-[14px] my-[10px]">
+        Optional but recommended to stand out
+      </p>
 
       <RadioGroup
         className="mt-[40px]"
         value={radioValue}
-        onValueChange={(v) => setRadioValue(v as CoverChoice)}
+        onValueChange={(v) => setRadioValue(v as "uploadCover" | "noCover")}
       >
         {/* Upload option */}
         <div className="flex items-center cursor-pointer gap-3">
           <RadioGroupItem value="uploadCover" id="cover-upload" />
           <Label className="font-medium cursor-pointer" htmlFor="cover-upload">
             <h3 className="text-[16px]">Upload Cover Letter</h3>
-            <p className="text-[12px] mt-[10px] font-light">Upload a personalized cover letter</p>
+            <p className="text-[12px] mt-[10px] font-light">
+              Upload a personalized cover letter
+            </p>
           </Label>
         </div>
 
-        {radioValue === "uploadCover" && (
-          fileData ? (
+        {radioValue === "uploadCover" &&
+          (fileData ? (
             <div className="flex items-center ml-8 justify-start gap-5 mt-5">
               <div className="h-[51px] px-4 flex items-center shadow-none border rounded font-normal border-slate-300 bg-slate-100 gap-3 max-w-[320px] truncate">
                 {fileData.name}
               </div>
+
+              {/* Open in new tab */}
+              {previewUrl && (
+                <Button
+                  type="button"
+                  onClick={() => window.open(previewUrl, "_blank")}
+                  className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
+                >
+                  <SvgEye />
+                </Button>
+              )}
+
+              {/* Delete Button */}
               <Button
                 type="button"
                 onClick={() => setFileData(undefined)}
@@ -55,17 +90,27 @@ const ApplyCoverLetter: React.FC<ApplyCoverLetterProps> = ({ fileData, setFileDa
             </div>
           ) : (
             <div className="mt-[20px] ml-8">
-              <ApplyJobUploadResume type="coverLetter" setFileData={setFileData} />
+              <ApplyJobUploadResume
+                coverError={coverError}
+                type="coverLetter"
+                setFileData={setFileData}
+              />
+              {coverError && (
+                <p className="text-red-500 text-sm mt-2 ml-8">
+                  Upload the cover letter when you choose the upload option.
+                </p>
+              )}
             </div>
-          )
-        )}
+          ))}
 
         {/* Skip option */}
         <div className="flex items-center cursor-pointer gap-3 mt-[40px]">
           <RadioGroupItem value="noCover" id="cover-skip" />
           <Label className="font-medium cursor-pointer" htmlFor="cover-skip">
             <h3 className="text-[16px]">Skip Cover Letter</h3>
-            <p className="text-[12px] mt-[10px] font-light">Continue without a cover letter</p>
+            <p className="text-[12px] mt-[10px] font-light">
+              Continue without a cover letter
+            </p>
           </Label>
         </div>
       </RadioGroup>

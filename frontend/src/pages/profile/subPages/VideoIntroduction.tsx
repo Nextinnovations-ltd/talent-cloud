@@ -13,6 +13,7 @@ import { useAddVideoIndroductionMutation, useGetVideoIntroductionQuery } from "@
 import { useApiCaller } from "@/hooks/useApicaller";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {  useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 type VideoIntroduction = {
@@ -42,6 +43,7 @@ const VideoIntroduction = () => {
   const { data, isLoading } = useGetVideoIntroductionQuery();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
+  const navigate = useNavigate();
 
   // Helper to reconstruct iframe from src
   const makeIframeString = (src?: string) =>
@@ -81,6 +83,8 @@ const VideoIntroduction = () => {
       } else {
          await executeApiCall(payload);
       }
+
+      navigate('/user/mainProfile')
      
     } catch (error) {
       showNotification({ message: 'Failed to save video introduction', type: "danger" });
@@ -109,7 +113,7 @@ const VideoIntroduction = () => {
       <ProfileTitle title="Video Introduction" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-4 space-y-[15px]">
+          <div className="mb-4 space-y-[15px]  h-[400px]">
             <TextAreaField
               fieldName={`title`}
               languageName=""
@@ -124,7 +128,7 @@ const VideoIntroduction = () => {
               showLetterCount
             />
             {form.watch('title') && !isValidIframe && (
-              <div className="text-red-500 ">Invalid YouTube embed iframe. Please check your input.</div>
+              <div className="text-[0.8rem] translate-y-[-6px]  font-medium text-destructive ">Invalid YouTube embedded iframe. Please check your input.</div>
             )}
           </div>
           <div className="max-w-[672px] flex items-center justify-end space-x-4">

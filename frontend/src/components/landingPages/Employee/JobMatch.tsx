@@ -17,8 +17,8 @@ const JobMatch = () => {
   })) ?? [];
 
   return (
-    <div id='find-jobs' className='w-full bg-[#EEF4FF] pt-[74px] pb-[74px] flex flex-col gap-[69px]'>
-      <h1 className='text-black text-[40px] font-[600] text-center mb-[48px]'>
+    <div id='find-jobs' className='w-full bg-[#EEF4FF] pt-[48x] md:pt-[74px] pb-[48px] md:pb-[74px] flex flex-col gap-[69px]'>
+      <h1 className='text-black text-[20px] md:text-[40px] font-[600] text-center mb-6 md:mb-[48px]'>
         FIND YOUR JOB MATCH
       </h1>
 
@@ -38,15 +38,15 @@ const JobMatch = () => {
       </div>
       <button
         onClick={() => navigate('/auth/login')}
-        className="group flex items-center justify-center gap-[12px] w-[345px] h-[72px] 
+        className="group flex items-center justify-center gap-[17px]  w-[233px] md:w-[345px] h-[66px] md:h-[72px] 
                    rounded-[28px] border border-[#0A66C2] text-[#000] font-medium 
                    transition-all duration-300 hover:bg-[#0A66C2] hover:text-white mx-auto"
       >
         <span>See all jobs post</span>
-        <img 
+        <img  
           src={arrowRight} 
           alt="arrow" 
-          className="transition-transform duration-300 group-hover:translate-x-1 group-hover:invert"
+          className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1 group-hover:invert"
         />
       </button>
 

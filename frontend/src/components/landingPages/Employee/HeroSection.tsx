@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect} from "react";
 import TalentCloudLogoImg from "@/assets/JobPortal/Vector (3).svg";
 import { Link } from "react-router-dom";
 import HeroImg from "@/assets/Employee/Frame 36555.png";
 import bgImage from "@/assets/Employee/Frame 1618873013.png";
 import { HashLink } from 'react-router-hash-link';
-
+import { motion } from "framer-motion";
 
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
@@ -19,10 +19,36 @@ const HeroSection = () => {
     `transition-colors duration-300 hover:text-[#0389FF] ${
       location.hash === hash ? "text-[#0389FF]" : ""
     }`;
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        // scrolling down → hide
+        setShowNavbar(false);
+      } else {
+        // scrolling up → show
+        setShowNavbar(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
   return (
     <div onClick={() => setNavIsOpen(!navIsOpen)}>
-      <div className="fixed  top-0 left-0 right-0  m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]">
+        <div
+          className={`fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]
+          transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-[120%]"}`}
+        >
         <nav className="max-w-[1240px] mx-auto flex justify-between items-center  relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
           {/* logo SVG here */}
           <img
@@ -30,17 +56,7 @@ const HeroSection = () => {
             alt=""
             className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover"
           />
-{/*           <ul className=" gap-[48px] hidden md:flex">
-            <li>
-              <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink>
-            </li>
-            <li>
-               <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink>
-            </li>
-            <li>
-               <HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink>
-            </li>
-          </ul> */}
+
            <ul className="gap-[48px] hidden md:flex">
           <li>
             <HashLink smooth to="#why-us" className={linkClass("#why-us")}>
@@ -58,7 +74,7 @@ const HeroSection = () => {
             </HashLink>
             </li>
             </ul>
-          <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
+          <Link target="_blank" to={'/emp/lp'} className="text-[#6e6e6e90] hidden md:flex ">For Employee</Link>
           <div className=" hidden md:flex">
           <CommonButton title="Get Started" url='/tc/lp'/>
           </div>
@@ -101,7 +117,7 @@ const HeroSection = () => {
                           <li><HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
                           <li> <HashLink smooth to="#what-you-get"  className={linkClass("#what-you-get")}>What You Get</HashLink></li>
                           <li><HashLink smooth to="#find-jobs" className={linkClass("#find-jobs")}>Find Jobs</HashLink></li>
-                          <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#0389FF] ">For Employee</Link></li>
+                          <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#6e6e6e90] ">For Employee</Link></li>
                         </ul>
 <Link to='/emp/lp' target="_blank">
                         <Button className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
@@ -127,52 +143,100 @@ const HeroSection = () => {
         
         }}
       >
-        <div className=" max-w-[1240px]  mx-auto flex flex-col md:flex-row justify-between items-center gap-[48px] pl-6 pr-6">
-          <div className="max-w-[641px] flex flex-col justify-center items-start gap-6 md:gap-8">
-            <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px ] md:leading-[66.7px] uppercase text-black">
-              Your Next Big <br></br> Opportunity
-              <Link to='/tc/lp' target="_blank"><span className="text-[#0481EF]"> Starts Here</span></Link>
-              
+         <div className="max-w-[1240px] mx-auto flex flex-col md:flex-row justify-between items-center gap-[48px] pl-6 pr-6">
+      
+          {/* Left side - text */}
+          <motion.div
+            className="max-w-[641px] flex flex-col justify-center items-start gap-6 md:gap-8"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <h1 className="text-[24px] md:text-[46px] font-[600] leading-[34.8px] md:leading-[66.7px] uppercase text-black">
+              Your Next Big <br /> Opportunity{" "}
+              <Link to="/tc/lp" target="_blank">
+                <span className="text-[#0481EF]"> Starts Here</span>
+              </Link>
             </h1>
-            <p className="md:max-w-[532px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[22.8px] md:leading-[30.4px]">
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="md:max-w-[532px] text-[#575757] text-[12px] md:text-[16px] font-[500] leading-[22.8px] md:leading-[30.4px]"
+            >
               Build your career with top international tech teams. We connect
               talented professionals like you with real jobs, fair pay, and full
               support.
-            </p>
-            <CommonButton title='Explore Jobs' url="/"/>
-          </div>
-          <div className="">
-            <img src={HeroImg} alt="" className="w-full max-w-[485px]"/>
-          </div>
+            </motion.p>
 
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.6 }}
+            >
+              <CommonButton title="Explore Jobs" url="/" />
+            </motion.div>
+          </motion.div>
+
+          {/* Right side - image */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+            className=""
+          >
+            <img src={HeroImg} alt="" className="w-full max-w-[485px]" />
+          </motion.div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] md:gap-8 max-w-[1240px] mx-auto pt-[50px] pb-[48px] md:pt-[200px] md:pb-[145px] pl-[45px] pr-[24px]">
-          <div className="flex flex-col gap-2 front-line  max-w-full md:max-w-[330px]">
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[38.4px ]">
+           <motion.div
+            className="flex flex-col gap-2 front-line max-w-full md:max-w-[330px]"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
               Talent Cloud, powered by Next Innovations Ltd.
             </h1>
-            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[25.6px ]">
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">
               Your gateway to international tech careers—no visa or overseas legal
               hassles, all from Myanmar.
             </p>
-          </div>
-          <div className="flex flex-col gap-2 front-line  max-w-full md:max-w-[330px]">
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[38.4px ]">
-            Built for Myanmar Professionals
+          </motion.div>
+           <motion.div
+            className="flex flex-col gap-2 front-line max-w-full md:max-w-[330px]"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
+              Built for Myanmar Professionals
             </h1>
-            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[25.6px ]">
-            We help career development for talented developers and designers like you access real global projects with full local support.
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">
+              We help career development for talented developers and designers like
+              you access real global projects with full local support.
             </p>
-          </div>
-          <div className="flex flex-col gap-2 front-line  max-w-full md:max-w-[330px]">
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[38.4px ]">
-            Work Globally, Supported Locally
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col gap-2 front-line max-w-full md:max-w-[330px]"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
+              Work Globally, Supported Locally
             </h1>
-            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[25.6px ]">
-            We support local , payroll up to 2,500,000MMK , project management and language while you work with confidence.
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">
+              We support local, payroll up to 2,500,000MMK, project management and
+              language while you work with confidence.
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
 
