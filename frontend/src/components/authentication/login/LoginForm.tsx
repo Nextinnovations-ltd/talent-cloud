@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form } from "@/components/ui/form";
 import InputField from "@/components/common/form/fields/input-field";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { useSelector } from "react-redux";
 import { selectKeepMeLoggedIn } from "@/services/slices/authSlice";
 import routesMap from "@/constants/routesMap";
+import clsx from "clsx";
 
 const fieldHeight = "h-12 ";
 const filedWidth = "w-full";
@@ -32,6 +34,7 @@ export const LoginForm = ({
       rememberMe: keepMeLoggedIn,
     },
   });
+
 
   return (
     <Form {...form}>
@@ -56,7 +59,7 @@ export const LoginForm = ({
             fieldWidth={filedWidth}
           />
         ))}
-        <div className="flex  items-center justify-between">
+        <div className={clsx('flex items-center   justify-between',form.formState.errors.password && 'translate-y-1')}>
           <CustomCheckbox
             form={form}
             fieldName="rememberMe"

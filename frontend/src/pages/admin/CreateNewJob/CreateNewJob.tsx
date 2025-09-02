@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Stepper } from "@/components/ui/stepper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import StepOneForm from "./StepsForms/StepOneForm";
@@ -17,6 +17,7 @@ import { useJobFormStore } from "@/state/zustand/create-job-store";
 
 import { useNavigate } from "react-router-dom";
 import useToast from "@/hooks/use-toast";
+import SanitizeNumber from "@/components/common/SanitizeNumber";
 
 const steps = [
     { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -44,21 +45,37 @@ const CreateNewJob = () => {
     // Step One Form 
     const stepOneForm = useForm({
         resolver: yupResolver(StepOneFormYupSchema),
-        defaultValues: formData.stepOne
+        defaultValues: formData.stepOne,
+        mode: 'onSubmit'
     });
 
     // Step Two Form 
     const stepTwoForm = useForm({
         resolver: yupResolver(StepTwoFormYupSchema),
-        defaultValues: formData.stepTwo
+        defaultValues: formData.stepTwo,
+        mode: 'onSubmit'
     });
 
     // Step Three Form
     const stepThreeForm = useForm({
         //@ts-ignore
         resolver: yupResolver(StepThreeFormYupSchema),
-        defaultValues: formData.stepThree
+        defaultValues: formData.stepThree,
+        mode: 'onSubmit'
     });
+
+    // Reset forms when store data changes to ensure synchronization
+    useEffect(() => {
+        stepOneForm.reset(formData.stepOne);
+    }, [formData.stepOne, stepOneForm]);
+
+    useEffect(() => {
+        stepTwoForm.reset(formData.stepTwo);
+    }, [formData.stepTwo, stepTwoForm]);
+
+    useEffect(() => {
+        stepThreeForm.reset(formData.stepThree);
+    }, [formData.stepThree, stepThreeForm]);
 
     const handleNext = async () => {
         let isValid = false;
@@ -109,7 +126,39 @@ const CreateNewJob = () => {
     };
 
     const handlePublish = async () => {
-        const date = formData.stepThree.last_application_date;
+        // Validate all forms before publishing
+        const isStepOneValid = await stepOneForm.trigger();
+        const isStepTwoValid = await stepTwoForm.trigger();
+        const isStepThreeValid = await stepThreeForm.trigger();
+
+        if (!isStepOneValid || !isStepTwoValid || !isStepThreeValid) {
+            // Redirect to the first step with errors
+            if (!isStepOneValid) {
+                setCurrentStep(0);
+            } else if (!isStepTwoValid) {
+                setCurrentStep(1);
+            } else if (!isStepThreeValid) {
+                setCurrentStep(2);
+            }
+            
+            showNotification({
+                message: "Please fix all validation errors before publishing",
+                type: "danger",
+            });
+            return;
+        }
+
+        // Get the latest form data from all forms
+        const stepOneData = stepOneForm.getValues();
+        const stepTwoData = stepTwoForm.getValues();
+        const stepThreeData = stepThreeForm.getValues();
+
+        // Update the store with the latest form data
+        setStepOneData(stepOneData);
+        setStepTwoData(stepTwoData);
+        setStepThreeData(stepThreeData);
+
+        const date = stepThreeData.last_application_date;
         let formattedDate = '';
 
         if (date) {
@@ -122,36 +171,29 @@ const CreateNewJob = () => {
             }
         }
 
-        const sanitizeNumber = (val: unknown) => {
-            if (val === undefined || val === null) return undefined;
-            const cleaned = String(val).replace(/,/g, '').trim();
-            if (cleaned === '') return undefined;
-            const num = Number(cleaned);
-            return isNaN(num) ? undefined : num;
-        };
-
+    
         const payload = {
-            title: formData.stepOne.title,
-            description: formData.stepOne.description,
-            responsibilities: formData.stepTwo.responsibilities,
-            requirements: formData.stepTwo.requirements,
-            offered_benefits: formData.stepTwo.offered_benefits,
-            is_salary_negotiable: formData.stepThree.is_salary_negotiable,
-            project_duration: formData.stepThree.project_duration,
-            job_type: formData.stepOne.job_type,
-            work_type: formData.stepOne.work_type,
-            location: formData.stepOne.location,
-            specialization: formData.stepOne.specialization,
-            role: formData.stepOne.role,
-            skills: formData.stepThree.skills,
-            experience_level: formData.stepThree.experience_level,
-            experience_years: formData.stepThree.experience_years,
-            number_of_positions: formData.stepThree.number_of_positions,
-            salary_type: formData.stepThree.salary_type,
-            salary_mode: formData.stepThree.salary_mode,
-            salary_min: sanitizeNumber(formData.stepThree.salary_min),
-            salary_max: sanitizeNumber(formData.stepThree.salary_max),
-            salary_fixed: sanitizeNumber(formData.stepThree.salary_fixed),
+            title: stepOneData.title,
+            description: stepOneData.description,
+            responsibilities: stepTwoData.responsibilities,
+            requirements: stepTwoData.requirements,
+            offered_benefits: stepTwoData.offered_benefits,
+            is_salary_negotiable: stepThreeData.is_salary_negotiable,
+            project_duration: stepThreeData.project_duration,
+            job_type: stepOneData.job_type,
+            work_type: stepOneData.work_type,
+            location: stepOneData.location,
+            specialization: stepOneData.specialization,
+            role: stepOneData.role,
+            skills: stepThreeData.skills,
+            experience_level: stepThreeData.experience_level,
+            experience_years: stepThreeData.experience_years,
+            number_of_positions: stepThreeData.number_of_positions,
+            salary_type: stepThreeData.salary_type,
+            salary_mode: stepThreeData.salary_mode,
+            salary_min: SanitizeNumber(stepThreeData.salary_min),
+            salary_max: SanitizeNumber(stepThreeData.salary_max),
+            salary_fixed: SanitizeNumber(stepThreeData.salary_fixed),
             last_application_date: formattedDate
         };
 
@@ -187,7 +229,7 @@ const CreateNewJob = () => {
                 project_duration: '',
                 skills: [],
                 experience_level: '',
-                experience_years: '',
+                experience_years: 1,
                 salary_fixed: '',
                 number_of_positions: 1,
                 last_application_date: ''

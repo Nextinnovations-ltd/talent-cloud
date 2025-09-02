@@ -11,7 +11,7 @@ const passwordValidation = yup
   .required("Password is required")
   .matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    "Password must be at least 8 characters, include uppercase, lowercase, numbers, and symbols."
+    "Min. 8 chars: uppercase, lowercase, number, symbol."
   );
 
 // Login auth schema

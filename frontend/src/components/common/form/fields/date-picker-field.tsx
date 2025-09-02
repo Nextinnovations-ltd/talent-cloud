@@ -3,6 +3,7 @@ import {
   FormLabel,
   FormItem,
   FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -65,6 +66,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
               }}
             />
           </FormControl>
+          <FormMessage />
         </FormItem>
       )}
     />
