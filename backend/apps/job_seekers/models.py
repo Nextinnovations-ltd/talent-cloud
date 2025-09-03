@@ -125,6 +125,11 @@ class JobSeekerProject(TimeStampModel):
 
 # region OCCUPATIONS
 class JobSeekerSpecialization(TimeStampModel):
+     id = models.CharField(
+          max_length=10, 
+          primary_key=True,
+          unique=True
+     )
      name = models.CharField(max_length=150)
      description = models.TextField(null=True, blank= True)
      specialization_image_url = models.URLField(max_length=2048, null=True, blank=True)
@@ -133,7 +138,12 @@ class JobSeekerSpecialization(TimeStampModel):
           return f"{self.name} - {self.description}"
 
 class JobSeekerRole(TimeStampModel):
-     specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.CASCADE, default=1)
+     id = models.CharField(
+          max_length=10,
+          primary_key=True,
+          unique=True
+     )
+     specialization = models.ForeignKey(JobSeekerSpecialization, on_delete=models.CASCADE, to_field="id")
      name = models.CharField(max_length=150)
      role_image_url = models.URLField(max_length=2048, null=True, blank=True)
      
