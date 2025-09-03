@@ -87,3 +87,45 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           if obj.cover_letter_url:
                return S3Service.get_public_url(obj.cover_letter_url)
           return None
+
+# class JobSeekerOverviewSerializer(serializers.ModelSerializer):
+#      recent_applied_jobs
+#      recent_application
+#      specialization_name
+#      role_name
+#      resume_url
+#      cover_letter_url
+#      address
+#      phone_number
+#      class Meta:
+#           model=JobSeeker
+#           fields=[
+#                'name', 'email', 'bio', 'phone_number', 'address', 'role_name', 
+#                'specialization_name', 'experience_level', 'experience_years',
+#                'skills', 'social_links', 'resume_url', 'cover_letter_url',
+#                'recent_applied_jobs', 'recent_application', 'is_open_to_work',
+#                'expected_salary'
+#           ]
+     
+     
+     
+#                # 'specialization': {
+#                #      'id': occupation.specialization.id,
+#                #      'name': occupation.specialization.name,
+#                # } if occupation and occupation.specialization else None,
+#                # 'role': {
+#                #      'id': occupation.role.id,
+#                #      'name': occupation.role.name,
+#                # } if occupation and occupation.role else None,
+#                # 'experience_level': {
+#                #      'id': occupation.experience_level.id,
+#                #      'level': occupation.experience_level.level,
+#                # } if occupation and occupation.experience_level else None,
+#                # 'experience_years': occupation.experience_years if occupation else None,
+              
+#                # # Social Links
+#                # 'facebook_url': social_links.facebook_social_url if social_links else None,
+#                # 'linkedin_url': social_links.linkedin_social_url if social_links else None,
+#                # 'behance_url': social_links.behance_social_url if social_links else None,
+#                # 'portfolio_url': social_links.portfolio_social_url if social_links else None,
+#                # 'github_url': social_links.github_social_url if social_links else None,
