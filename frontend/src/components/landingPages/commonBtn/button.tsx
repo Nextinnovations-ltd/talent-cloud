@@ -13,7 +13,9 @@ const CommonButton: FC<CommonButtonProps> = ({ title, url }) => {
 
 
   const handleClick = (url?: string) => {
+   if(url){
     navigate(url)
+   }
 
   };
 
