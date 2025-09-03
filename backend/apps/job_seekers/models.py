@@ -1,6 +1,5 @@
 from django.db import models
 from apps.users.models import TalentCloudUser
-from services.storage.s3_service import S3Service
 from services.models import TimeStampModel
 
 class JobSeeker(TalentCloudUser):
@@ -24,7 +23,9 @@ class JobSeeker(TalentCloudUser):
      @property
      def resume_url_link(self):
          """Get the url resume"""
-         return S3Service.get_public_url(self.resume_url) if self.resume_url else None
+         from services.job_seeker.job_seeker_service import JobSeekerService
+
+         return JobSeekerService.get_resume_url(self.resume_url)
      
 # region PROFILE DETAILS
 class JobSeekerExperience(TimeStampModel):
