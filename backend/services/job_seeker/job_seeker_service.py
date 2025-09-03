@@ -351,8 +351,10 @@ class JobSeekerService:
                               try:
                                    from apps.job_seekers.models import JobSeekerRole
                                    role = JobSeekerRole.objects.get(id=role_id)
-                                   if role.specialization_id != specialization_id:
+                                   
+                                   if str(role.specialization_id) != str(specialization_id):
                                         raise ValidationError(f"Selected role does not belong to the selected specialization.")
+                                   
                                    occupation.role_id = role_id
                               except JobSeekerRole.DoesNotExist:
                                    raise ValidationError("Invalid role selected.")
@@ -806,7 +808,8 @@ class JobSeekerService:
           try:
                from apps.job_seekers.models import JobSeekerRole
                role = JobSeekerRole.objects.get(id=role_id)
-               if role.specialization_id != specialization_id:
+               
+               if str(role.specialization_id) != str(specialization_id):
                     raise ValidationError("Selected role does not belong to the current specialization.")
           except JobSeekerRole.DoesNotExist:
                raise ValidationError("Invalid role selected.")
