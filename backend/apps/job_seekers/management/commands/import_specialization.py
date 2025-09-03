@@ -24,8 +24,9 @@ class Command(BaseCommand):
             
             for i, row in enumerate(reader, 1):
                 obj, created = JobSeekerSpecialization.objects.update_or_create(
-                    name=row['name'],
+                    id=row['id'],
                     defaults={
+                        'name': row['name'],
                         'description': row.get('description', ''),
                         'status': row.get('status', True)
                     }
