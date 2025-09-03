@@ -59,6 +59,25 @@ const SelectedProjectSchema = yup
         endComparable <= nowComparable || this.createError({ path: "endDateYear" })
       );
     }
+  )
+  // ✅ Start date cannot be in the future
+  .test(
+    "start-date-not-in-future",
+    "Start date cannot be in the future.",
+    function (value) {
+      const { startDateYear, startDateMonth } = value || {};
+      if (!startDateYear || !startDateMonth) return true;
+
+      const start = new Date(Number(startDateYear), Number(startDateMonth) - 1);
+      const now = new Date();
+
+      const startComparable = new Date(start.getFullYear(), start.getMonth(), 1);
+      const nowComparable = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      return (
+        startComparable <= nowComparable || this.createError({ path: "startDateYear" })
+      );
+    }
   );
 
 export default SelectedProjectSchema;
