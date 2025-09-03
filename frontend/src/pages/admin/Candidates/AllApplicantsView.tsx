@@ -32,6 +32,7 @@ const AllApplicantsView: React.FC<AllApplicantsViewProps> = ({
 
 
 
+
     if (!applicants?.results.length) {
         return <div className="py-8 text-center text-gray-500">
             <CommonError image={EMPTY} title="No one has applied yet" description="" />

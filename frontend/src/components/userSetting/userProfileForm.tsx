@@ -240,7 +240,7 @@ export const UserProfileForm = ({
         />
 
         {/* ---------- */}
-""
+
         <SelectField
           name={"country"}
           labelName={"Country"}

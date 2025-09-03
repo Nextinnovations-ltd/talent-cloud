@@ -14,7 +14,7 @@ import { useShortListApplicantsMutation } from '@/services/slices/adminSlice';
 import { Applicant } from '@/types/admin-auth-slice';
 import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
-
+import { useNavigate } from "react-router-dom";
 
 
 interface ApplicantsJobItemsProps {
@@ -27,6 +27,10 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
   const { showNotification } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
+  const navigate = useNavigate();
+
+
+  console.log(data)
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
@@ -55,6 +59,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const handleUserDetail = () => {
     // Implement view profile logic
     console.log('View profile:', data.applicant_id);
+    navigate(`/admin/dashboard/candiates/profile/2`)
   };
 
   const handleDownloadCV = async () => {
