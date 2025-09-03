@@ -16,7 +16,7 @@ class JobSeekerResumeAPIView(APIView):
      permission_classes = [TalentCloudUserPermission]
      
      def get(self, request):
-          response = JobSeekerService.get_job_seeker_resume_url(request.user)
+          response = JobSeekerService.get_job_seeker_resume_info(request.user)
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
 
