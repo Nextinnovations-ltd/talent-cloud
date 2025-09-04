@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { FC } from "react";
 import upArrow from "@/assets/JobPortal/arrow-up-left.svg";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +14,8 @@ const CommonButton: FC<CommonButtonProps> = ({ title, url }) => {
 
 
   const handleClick = (url?: string) => {
-   // navigate(url)
-     window.open(url, "_blank"); // opens in new tab
+   url && navigate(url)
+   //  window.open(url, "_blank"); // opens in new tab
   };
 
   return (
