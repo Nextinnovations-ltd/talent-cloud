@@ -205,6 +205,15 @@ class RecentApplicantListAPIView(CustomListAPIView):
 
 # endregion Applicant
 
+# region Applicant/Job Seeker Overview/Details
+class JobSeekerOverviewAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          pass
+
+# endregion Applicant/Job Seeker Overview/Details
 
 # region Job Post Listing
 
