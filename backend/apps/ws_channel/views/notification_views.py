@@ -19,7 +19,18 @@ from utils.response import CustomResponse
 
 class TestAPIView(APIView):
     def get(self, request):
-        NotificationHelpers.notify_system_maintenance(title="System maintenance", message="System Maintanence will be tonight 12:00 AM.")
+        context = {
+            'maintenance_info': "Hello maintainence: message",
+            "start_time": datetime(2024, 8, 1, 9, 0),
+            "end_time": datetime(2024, 8, 1, 11, 30),
+            "duration": "2 hours 30 minutes",
+        }
+        
+        NotificationHelpers.notify_system_maintenance(
+            title="System maintenance", 
+            message="System Maintanence will be tonight 12:00 AM.",
+            maintanence_context=context
+        )
         
         return Response(
             CustomResponse.success(
@@ -415,8 +426,7 @@ class TestMailNoti(APIView):
     permission_classes = []
     
     def get(self, request):
-        from services.notification.notification_service import NotificationService, NotificationHelpers
-        from apps.ws_channel.models import NotificationTemplate
+        from services.notification.notification_service import NotificationService
         from utils.notification.types import NotificationTarget
         from utils.notification.types import NotificationType, NotificationChannel
 
