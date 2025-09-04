@@ -30,7 +30,6 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const navigate = useNavigate();
 
 
-  console.log(data)
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
@@ -58,8 +57,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
 
   const handleUserDetail = () => {
     // Implement view profile logic
-    console.log('View profile:', data.applicant_id);
-    navigate(`/admin/dashboard/candiates/profile/2`)
+    navigate(`/admin/dashboard/candiates/profile/${data.applicant_id}?application_id=${data.application_id}`)
   };
 
   const handleDownloadCV = async () => {
