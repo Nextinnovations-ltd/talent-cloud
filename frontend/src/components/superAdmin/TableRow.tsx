@@ -57,7 +57,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
 
   const handleUserDetail = () => {
     // Implement view profile logic
-    navigate(`/admin/dashboard/candiates/profile/${data.applicant_id}`)
+    navigate(`/admin/dashboard/candiates/profile/${data.applicant_id}?application_id=${data.application_id}`)
   };
 
   const handleDownloadCV = async () => {

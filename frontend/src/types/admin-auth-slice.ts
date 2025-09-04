@@ -82,6 +82,7 @@ export interface EditJobDetailResponse {
 
 export interface Applicant {
   applicant_id: number;
+  application_id:number;
   name: string | null;
   applied_date: string;
   phone_number: string | null;
@@ -181,5 +182,19 @@ export type JobSeekerOverviewResponse = {
     }[];
   };
 };
+
+type Project = {
+  id: number;
+  title: string;
+  description: string;
+  project_image_url: string;
+};
+
+export type JobSeekerProjectListResponse = {
+  status: boolean;
+  message: string;
+  data: Project[];
+};
+
 
 

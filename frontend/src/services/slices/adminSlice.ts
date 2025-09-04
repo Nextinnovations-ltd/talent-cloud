@@ -1,4 +1,4 @@
-import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCountResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCountResponse, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
@@ -71,11 +71,15 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             invalidatesTags: ['NotificationList']
         }),
          //candidates
-         getJobSeekersOverView: builder.query<unknown,{id:string|number}>({
-            query: (id) => `/dashboard/ni/job-seekers/${id?.id}/overview`
+         getJobSeekersOverView: builder.query<JobSeekerOverviewResponse,{id:string|number,applicationId:string| number}>({
+            query: ({id,applicationId}) => `/dashboard/ni/job-seekers/${id}/overview?application_id=${applicationId}`
+        }),
+        getJobSeekersProjects:builder.query<JobSeekerProjectListResponse,{id:string|number}>({
+         query: ({id})=> `/dashboard/ni/job-seekers/${id}/projects/`
         })
+        
        
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery } = extendedAdminSlice

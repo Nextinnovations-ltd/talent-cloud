@@ -12,7 +12,7 @@ import { CandidateSkills } from "./CandidateSkills";
 import CandidateDescription from "./CandidateDescription";
 import CandidateTabs from "./CandidateTabs";
 
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useGetJobSeekersOverViewQuery } from "@/services/slices/adminSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 import DownloadInfoItem from "@/components/common/ApplyJob/DownloadInfoItem";
@@ -24,23 +24,29 @@ const CandidateProfileUserInfo = () => {
 
     const { id } = useParams<{ id: string }>();
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const application_id = queryParams.get('application_id');
+
+
 
     const { data } = useGetJobSeekersOverViewQuery(
-        id ? { id } : skipToken
+        id && application_id ? { id: id, applicationId: application_id } : skipToken
     );
 
     const ProfileData = data?.data;
 
 
-        // Transform null values to undefined for social_links
-        const socialLinks = ProfileData?.social_links
+
+    // Transform null values to undefined for social_links
+    const socialLinks = ProfileData?.social_links
         ? {
-              facebook_url: ProfileData.social_links.facebook_url ?? undefined,
-              linkedin_url: ProfileData.social_links.linkedin_url ?? undefined,
-              behance_url: ProfileData.social_links.behance_url ?? undefined,
-              portfolio_url: ProfileData.social_links.portfolio_url ?? undefined,
-              github_url: ProfileData.social_links.github_url ?? undefined,
-          }
+            facebook_url: ProfileData.social_links.facebook_url ?? undefined,
+            linkedin_url: ProfileData.social_links.linkedin_url ?? undefined,
+            behance_url: ProfileData.social_links.behance_url ?? undefined,
+            portfolio_url: ProfileData.social_links.portfolio_url ?? undefined,
+            github_url: ProfileData.social_links.github_url ?? undefined,
+        }
         : undefined;
 
 
@@ -59,7 +65,6 @@ const CandidateProfileUserInfo = () => {
 
                     <CandidateDescription description={ProfileData?.bio || ''} />
 
-
                     <CandidateSkills skillArray={ProfileData?.occupation?.skills || []} />
 
 
@@ -75,7 +80,7 @@ const CandidateProfileUserInfo = () => {
                         <DownloadInfoItem link={ProfileData?.cover_letter_url || ''} icon={FILE} color text={'Download Cover Letter'} alt="Phone" />
                     </div>
                     <h3 className="text-[20px] mt-[36px] font-semibold">External Links</h3>
-                   
+
                     <CandidateSocialLinks links={socialLinks} />
                 </div>
 
