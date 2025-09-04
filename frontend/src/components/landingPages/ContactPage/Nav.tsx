@@ -46,13 +46,13 @@ const Nav = () => {
             />
             <ul className=" gap-[48px] hidden md:flex">
               <li>
-                <HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink>
+                <HashLink smooth to="/emp/lp#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink>
               </li>
               <li>
-                 <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink>
+                 <HashLink smooth to="/emp/lp#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink>
               </li>
               <li>
-                 <HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink>
+                 <HashLink smooth to="/emp/lp#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink>
               </li>
             </ul>
             <Link target="_blank" to={'/emp/lp'} className="text-[#0481EF] hidden md:flex">For Employee</Link>
@@ -95,18 +95,18 @@ const Nav = () => {
 
 
                           <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                            <li><HashLink smooth to="#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
-                            <li> <HashLink smooth to="#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink></li>
-                            <li><HashLink smooth to="#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink></li>
+                            <li><HashLink smooth to="/emp/lp#why-us"  className="hover:text-[#0389FF] transition-colors duration-300">Why us</HashLink></li>
+                            <li> <HashLink smooth to="/emp/lp#what-you-get"  className="hover:text-[#0389FF] transition-colors duration-300">What You Get</HashLink></li>
+                            <li><HashLink smooth to="/emp/lp#find-jobs"  className="hover:text-[#0389FF] transition-colors duration-300">Find Jobs</HashLink></li>
                             <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#0389FF] ">For Employee</Link></li>
                           </ul>
-  <Link to='/emp/lp' target="_blank">
+  <Link to='/contact-us' target="_blank">
                           <Button className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
                             <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-                              Get Started
+                           Contact us
                             </span>
                             <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[30px] transition-transform duration-300">
-                              Get Started
+                           Contact us
                             </span>
                 </Button>
                 </Link>

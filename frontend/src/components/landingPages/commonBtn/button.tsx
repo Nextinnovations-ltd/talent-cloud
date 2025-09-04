@@ -13,10 +13,8 @@ const CommonButton: FC<CommonButtonProps> = ({ title, url }) => {
 
 
   const handleClick = (url?: string) => {
-   if(url){
-    navigate(url)
-   }
-
+   // navigate(url)
+     window.open(url, "_blank"); // opens in new tab
   };
 
   return (

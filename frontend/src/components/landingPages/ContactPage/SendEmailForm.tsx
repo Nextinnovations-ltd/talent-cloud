@@ -54,6 +54,17 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
 
   return (
     <div className="w-full pt-0 md:pt-[98px]">
+       <Link to=''
+        className={` ${step === 2 ? 'flex lg:hidden' : 'hidden'} gap-3  justify-start items-center text-black text-[14px] md:text-[18px] font-[500] leading-[20px] mb-[40px]`}
+        onClick={() => setStep(1)}
+        type="button"
+        >
+        <svg className='w-[20px] h-[20px]' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 12H5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 19L5 12L12 5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back
+      </Link> 
       <Form {...form}>
         {step === 1 && (
           <form onSubmit={handleSubmit(handleStep1Submit)}>

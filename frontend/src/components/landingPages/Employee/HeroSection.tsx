@@ -119,13 +119,13 @@ const HeroSection = () => {
                           <li><HashLink smooth to="#find-jobs" className={linkClass("#find-jobs")}>Find Jobs</HashLink></li>
                           <li><Link target="_blank"  to={'/emp/lp'}  className="text-[#6e6e6e90] ">For Employee</Link></li>
                         </ul>
-<Link to='/emp/lp' target="_blank">
+<Link to='/contact-us' target="_blank">
                         <Button className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
                           <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-                            Get Started
+                           Contact us
                           </span>
                           <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[30px] transition-transform duration-300">
-                            Get Started
+                           Contact us
                           </span>
               </Button>
               </Link>
