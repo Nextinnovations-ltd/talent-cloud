@@ -5,7 +5,6 @@ from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
 from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer
 from apps.users.models import Address, TalentCloudUser
-from services.storage.s3_service import S3Service
 
 # Constants
 class OnboardingConstants:
@@ -23,9 +22,9 @@ class JobSeekerService:
           if hasattr(user, 'jobseeker'):
                return user.jobseeker
           return None
-     
+
      @staticmethod
-     def get_job_seeker_resume_url(user):
+     def get_job_seeker_resume_info(user):
           """
           Retrieves the job seeker resume url and uploaded time.
           """
@@ -34,10 +33,19 @@ class JobSeekerService:
           return {
                'message': "Successfully fetched job seeker resume.",
                'data': {
-                    'resume_url': S3Service.get_public_url(job_seeker.resume_url),
+                    'resume_url': JobSeekerService.get_resume_url(job_seeker.resume_url),
                     'resume_uploaded_time': job_seeker.resume_upload_time,
                }
           }
+          
+     @staticmethod
+     def get_resume_url(resume_path):
+          """
+          Retrieves the job seeker resume url
+          """
+          from services.storage.s3_service import S3Service
+          
+          return S3Service.get_public_url(resume_path)
      
      @staticmethod
      def modify_jobseeker_username(user, username):
@@ -83,6 +91,8 @@ class JobSeekerService:
      @staticmethod
      def _get_step_1_data(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
           """Get step 1 onboarding data (profile basics)"""
+          from services.storage.s3_service import S3Service
+          
           profile_url = S3Service.get_public_url(job_seeker.profile_image_url) if job_seeker.profile_image_url else None
           
           return {
@@ -341,8 +351,10 @@ class JobSeekerService:
                               try:
                                    from apps.job_seekers.models import JobSeekerRole
                                    role = JobSeekerRole.objects.get(id=role_id)
-                                   if role.specialization_id != specialization_id:
+                                   
+                                   if str(role.specialization_id) != str(specialization_id):
                                         raise ValidationError(f"Selected role does not belong to the selected specialization.")
+                                   
                                    occupation.role_id = role_id
                               except JobSeekerRole.DoesNotExist:
                                    raise ValidationError("Invalid role selected.")
@@ -406,6 +418,8 @@ class JobSeekerService:
           occupation: JobSeekerOccupation = None,
           social_links: JobSeekerSocialLink = None
      ):
+          from services.storage.s3_service import S3Service
+
           profile_url = S3Service.get_public_url(job_seeker.profile_image_url) if job_seeker.profile_image_url else None
           resume_url = S3Service.get_public_url(job_seeker.resume_url) if job_seeker.resume_url else None
           
@@ -794,7 +808,8 @@ class JobSeekerService:
           try:
                from apps.job_seekers.models import JobSeekerRole
                role = JobSeekerRole.objects.get(id=role_id)
-               if role.specialization_id != specialization_id:
+               
+               if str(role.specialization_id) != str(specialization_id):
                     raise ValidationError("Selected role does not belong to the current specialization.")
           except JobSeekerRole.DoesNotExist:
                raise ValidationError("Invalid role selected.")
