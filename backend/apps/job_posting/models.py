@@ -1,6 +1,7 @@
 from django.db import models
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
 from apps.users.models import TalentCloudUser
+from utils.job_posting.job_posting_utils import format_salary
 from services.models import TimeStampModel
 
 class JobType(models.TextChoices):
@@ -192,6 +193,24 @@ class JobPost(TimeStampModel):
           
           return posted_by.company.name if posted_by.company else None
 
+     @property
+     def get_salary(self):
+          if self.salary_fixed:
+               fixed = format_salary(self.salary_fixed)
+               return f"{fixed}MMK/{self.get_salary_type_display()}"
+          elif self.salary_min and self.salary_max:
+               salary_min = format_salary(self.salary_min)
+               salary_max = format_salary(self.salary_max)
+               return f"{salary_min}-{salary_max}MMK/{self.get_salary_type_display()}"
+          elif self.is_salary_negotiable:
+               return "Negotiable"
+          
+          return "Not specified"
+     
+     @property
+     def get_skill_list(self):
+          return [skill.title for skill in self.skills.all()] if self.skills.exists() else []
+          
      def __str__(self):
           return f"{self.title} - {self.get_effective_status()}"
 
