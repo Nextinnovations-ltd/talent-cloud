@@ -234,7 +234,19 @@ class JobApplicationSerializer(ModelSerializer):
           if obj.cover_letter_url:
                return S3Service.get_public_url(obj.cover_letter_url)
           return None
-     
+
+class JobSeekerRecentApplicationSerializer(ModelSerializer):
+     position = serializers.CharField(source='job_post.title')
+     company = serializers.CharField(source='job_post.get_company_name')
+     salary = serializers.CharField(source='job_post.get_salary')
+     total_applicants = serializers.IntegerField(source='job_post.applicant_count')
+     last_application_date = serializers.DateField(source='job_post.last_application_date')
+     applied_date = serializers.DateTimeField(source='created_at')
+
+     class Meta:
+          model = JobApplication
+          fields = ['position', 'company', 'salary', 'total_applicants', 'applied_date', 'last_application_date']
+          
 class JobApplicationCreateSerializer(ModelSerializer):
      class Meta:
           model = JobApplication
@@ -266,10 +278,3 @@ class BookmarkedJobSerializer(ModelSerializer):
           read_only_fields = ['id', 'job_post', 'created_at']
 
 # endregion Bookmarked Job Serializers
-
-class JobPostMetricSerializer(ModelSerializer):
-     class Meta:
-          model=JobPostMetric
-          fields=(
-               'id', 'job_post', 'user', 'event_type', 'created_at', 'metadata'
-          )

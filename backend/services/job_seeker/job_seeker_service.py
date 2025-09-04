@@ -2,9 +2,10 @@ import json
 from django.db import transaction
 from django.core import exceptions as django_exceptions
 from rest_framework.exceptions import ValidationError
-from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink, SpokenLanguage
+from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink
 from apps.job_seekers.serializers.occupation_serializer import JobSeekerExperienceLevelSerializer, JobSeekerRoleSerializer
 from apps.users.models import Address, TalentCloudUser
+from apps.job_posting.serializers import JobSeekerRecentApplicationSerializer
 
 # Constants
 class OnboardingConstants:
@@ -46,6 +47,53 @@ class JobSeekerService:
           from services.storage.s3_service import S3Service
           
           return S3Service.get_public_url(resume_path)
+     
+     @staticmethod
+     def get_profile_image_url(profile_image_path):
+          """
+          Retrieves the job seeker profile image url
+          """
+          from services.storage.s3_service import S3Service
+          
+          return S3Service.get_public_url(profile_image_path)
+     
+     @staticmethod
+     def get_job_seeker_social_links(job_seeker):
+          try:
+               social_links = job_seeker.social_links
+          except JobSeekerSocialLink.DoesNotExist:
+               social_links = None
+          
+          return {
+               'facebook_url': social_links.facebook_social_url if social_links else None,
+               'linkedin_url': social_links.linkedin_social_url if social_links else None,
+               'behance_url': social_links.behance_social_url if social_links else None,
+               'portfolio_url': social_links.portfolio_social_url if social_links else None,
+               'github_url': social_links.github_social_url if social_links else None
+          }
+     
+     @staticmethod
+     def get_latest_application(job_seeker: JobSeeker):
+          """
+          Retrieves the job seeker latest application
+          """
+          latest_application = job_seeker.applications.order_by('-created_at').first()
+          
+          return JobSeekerRecentApplicationSerializer(latest_application).data
+     
+     @staticmethod
+     def get_latest_job_applications(job_seeker: JobSeeker):
+          """
+          Retrieves the job seeker recent job applications
+          """
+          latest_applications = job_seeker.applications.order_by(
+               '-created_at'
+          )[:6]
+          
+          if not latest_applications:
+               return None
+          
+          return latest_applications
      
      @staticmethod
      def modify_jobseeker_username(user, username):
@@ -517,15 +565,15 @@ class JobSeekerService:
 
           jobseeker_skills = (
                list(jobseeker_occupation.skills.values("id", "title"))
-               if jobseeker_occupation.skills.exists() 
+               if jobseeker_occupation.skills.exists()
                else []
           )
 
           return {
                'message': "Successfully fetched job seeker skills.",
-               'data': jobseeker_skills 
+               'data': jobseeker_skills
           }
-     
+
      @staticmethod
      def perform_job_seeker_skills_update(user, data):
           """Update job seeker skills with enhanced validation and error handling"""
@@ -618,7 +666,7 @@ class JobSeekerService:
      @staticmethod
      def get_job_seeker_langauges(user):
           jobseeker_user = JobSeekerService.get_job_seeker_user(user)
-               
+
           languages = (
                [
                     {
@@ -738,6 +786,59 @@ class JobSeekerService:
           }
           
      @staticmethod
+     def get_occupation_info(job_seeker):
+          occupation = JobSeekerService._get_occupation(job_seeker)
+
+          if not occupation:
+               return None
+          
+          return {
+               'specialization_name': JobSeekerService._get_specialization_name(occupation),
+               'role_name': JobSeekerService._get_role_name(occupation),
+               'experience_level': JobSeekerService._get_experience_level(occupation),
+               'experience_years': JobSeekerService._get_experience_years(occupation),
+               'skills': JobSeekerService._get_skills(occupation)
+          }
+          
+          
+     @staticmethod
+     def _get_specialization_name(occupation):          
+          if not occupation or not occupation.specialization:
+               return None
+          
+          return occupation.specialization.name
+          
+     @staticmethod
+     def _get_role_name(occupation):          
+          if not occupation or not occupation.role:
+               return None
+          
+          return occupation.role.name
+     
+     @staticmethod
+     def _get_experience_level(occupation):          
+          if not occupation or not occupation.experience_level:
+               return None
+          
+          return occupation.experience_level.level
+     
+     @staticmethod
+     def _get_experience_years(occupation):          
+          if not occupation or not occupation.role:
+               return None
+          
+          return occupation.experience_years
+
+     @staticmethod
+     def _get_skills(occupation):
+          if not occupation or not occupation.skills.exists():
+               return []
+          
+          skills = occupation.skills.all()
+          
+          return [skill.title for skill in skills]
+     
+     @staticmethod
      def _get_extracted_address(job_seeker: JobSeeker):
           address: Address = job_seeker.address
           
@@ -773,6 +874,7 @@ class JobSeekerService:
                     language_id=language_id,
                     proficiency_level=proficiency_level
                )
+
      @staticmethod
      def _get_or_create_occupation(job_seeker: JobSeeker) -> JobSeekerOccupation:
           """Get existing occupation or create a new one for the job seeker"""
@@ -781,6 +883,13 @@ class JobSeekerService:
           if not occupation:
                occupation = JobSeekerOccupation.objects.create(user=job_seeker)
           
+          return occupation
+     
+     @staticmethod
+     def _get_occupation(job_seeker: JobSeeker) -> JobSeekerOccupation:
+          """Get existing occupation or create a new one for the job seeker"""
+          occupation = getattr(job_seeker, 'occupation', None)
+
           return occupation
      
      @staticmethod

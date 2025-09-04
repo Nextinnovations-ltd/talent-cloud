@@ -246,7 +246,7 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     @property
     def has_company(self):
         return self.company is not None
-    
+
     @property
     def get_address(self):
         address = self.address
@@ -263,6 +263,12 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
             parts.append(address.country.name)
         
         return ', '.join(parts) if parts else None
+    
+    @property
+    def get_phone_number(self):
+        from services.user.user_service import UserService
+
+        return UserService.get_phone_number(self.country_code, self.phone_number)
 
 class Token(TimeStampModel):
     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE) 

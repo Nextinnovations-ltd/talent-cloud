@@ -1,8 +1,9 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
+from apps.ni_dashboard.serializers import JobSeekerOverviewSerializer
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import NotFound, ValidationError
 from django.db import transaction
-from django.db.models import Sum, Max, F
+from django.db.models import Sum, Max
 
 class SharedDashboardService:
      @staticmethod
@@ -55,8 +56,7 @@ class SharedDashboardService:
      @staticmethod
      def get_rejected_applicants_by_specific_job_queryset(company, job_id):
           return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.REJECTED)
-     
-     
+
      @staticmethod
      def perform_shortlisting_applicant(job_id, applicant_id):
           with transaction.atomic():
@@ -107,7 +107,6 @@ class SharedDashboardService:
                     )
                except JobApplication.DoesNotExist:
                     raise NotFound("Application not found.")
-
 
      @staticmethod
      def _get_applicants_queryset(company, job_id=None, application_status=None):
@@ -213,3 +212,20 @@ class SharedDashboardService:
                     'new_status': new_status
                }
           }
+     
+     @staticmethod
+     def get_job_seeker_overview(id):
+          """
+          Get Job Seeker Overview information
+          """
+          from apps.job_seekers.models import JobSeeker
+          
+          try:
+               job_seeker = JobSeeker.objects.get(user_id=id)
+               
+               return {
+                    'message': 'Job Seeker overview information is successfully retrieved.',
+                    'data': JobSeekerOverviewSerializer(job_seeker).data
+               }
+          except JobSeeker.DoesNotExist:
+               raise ValidationError("Job seeker not found.")

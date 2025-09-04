@@ -1,3 +1,4 @@
+from unittest import result
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -211,8 +212,9 @@ class JobSeekerOverviewAPIView(APIView):
      permission_classes=[TalentCloudSuperAdminPermission]
 
      def get(self, request, user_id):
-          pass
+          result = SharedDashboardService.get_job_seeker_overview(user_id)
 
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 # endregion Applicant/Job Seeker Overview/Details
 
 # region Job Post Listing
