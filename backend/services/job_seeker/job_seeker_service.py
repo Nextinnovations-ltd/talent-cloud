@@ -56,7 +56,7 @@ class JobSeekerService:
           from services.storage.s3_service import S3Service
           
           return S3Service.get_public_url(profile_image_path)
-     
+
      @staticmethod
      def get_job_seeker_social_links(job_seeker):
           try:

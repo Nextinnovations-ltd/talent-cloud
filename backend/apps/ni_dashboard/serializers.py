@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from apps.job_posting.models import JobSeeker, JobApplication, JobPost
+from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, JobSeekerProject
 from services.job_seeker.job_seeker_service import JobSeekerService
 from services.storage.s3_service import S3Service
+from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
      company = serializers.SerializerMethodField()
@@ -32,6 +34,7 @@ class JobPostDashboardSerializer(serializers.ModelSerializer):
           return obj.get_skill_list
 
 class ApplicantDashboardSerializer(serializers.Serializer):
+     application_id = serializers.IntegerField(source='id')
      applicant_id = serializers.IntegerField(source='job_seeker.user.id')
      application_status = serializers.CharField()
      job_post_id = serializers.IntegerField(source='job_post.id')
@@ -49,6 +52,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      class Meta:
           model = JobApplication
           fields = [
+               'application_id',
                'applicant_id',
                'application_status',
                'job_post_id',
@@ -118,8 +122,18 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      def get_resume_url(self, obj:JobSeeker):
           return obj.resume_url_link
 
-     def get_cover_letter_url(self, obj:JobSeeker):
-          return None
+     def get_cover_letter_url(self, obj: JobSeeker):
+          application_id = self.context.get("application_id")
+          
+          if not application_id:
+               return None
+          
+          try:
+               application = JobApplication.objects.get(id=application_id, job_seeker=obj)
+               
+               return application.cover_letter_url
+          except JobApplication.DoesNotExist:
+               return None
 
      def get_phone_number(self, obj:JobSeeker):
           return obj.get_phone_number
@@ -170,3 +184,46 @@ class JobSeekerRecentAppliedJobSerializer(serializers.ModelSerializer):
      
      def get_salary(self, obj: JobApplication):
           return obj.job_post.get_salary
+
+class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
+     """Serializer for displaying project card"""
+     project_image_url = serializers.SerializerMethodField()
+     
+     class Meta:
+          model = JobSeekerProject
+          fields = [
+               'id', 'title', 'description', 'project_image_url'
+          ]
+
+     def get_project_image_url(self, obj: JobSeekerProject):
+          return S3Service.get_public_url(obj.project_image_url)
+
+class DashboardJobSeekerExperienceSerializer(serializers.ModelSerializer):
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerExperience
+          fields = ['id', 'title', 'organization', 'description', 'duration']
+     
+     def get_duration(self, obj:JobSeekerExperience):
+          return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_present_work)
+
+class DashboardJobSeekerEducationSerializer(serializers.ModelSerializer):
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerEducation
+          fields = ['id', 'degree', 'institution', 'description', 'duration']
+
+     def get_duration(self, obj:JobSeekerEducation):
+          return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_currently_attending)
+
+class DashboardJobSeekerCertificationSerializer(serializers.ModelSerializer):     
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerCertification
+          fields = [ 'id', 'title', 'organization', 'duration' , 'url', 'credential_id']
+     
+     def get_duration(self, obj:JobSeekerCertification):
+          if obj.has_expiration_date:
+               return f"Expiration Date: {format_date_for_display(obj.expiration_date)}"
+          
+          return f"Issued {format_date_for_display(obj.issued_date)} . No expiration Date"

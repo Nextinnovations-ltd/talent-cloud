@@ -206,15 +206,66 @@ class RecentApplicantListAPIView(CustomListAPIView):
 
 # endregion Applicant
 
+
 # region Applicant/Job Seeker Overview/Details
+
 class JobSeekerOverviewAPIView(APIView):
      authentication_classes=[TokenAuthentication]
      permission_classes=[TalentCloudSuperAdminPermission]
 
      def get(self, request, user_id):
-          result = SharedDashboardService.get_job_seeker_overview(user_id)
+          application_id = request.query_params.get("application_id")
+          
+          result = SharedDashboardService.get_job_seeker_overview(user_id, application_id)
 
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+class JobSeekerProjectListAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          result = SharedDashboardService.get_job_seeker_project_list(user_id)
+
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+class JobSeekerVideoURLAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          result = SharedDashboardService.get_job_seeker_video_url(user_id)
+
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+class JobSeekerExperienceListAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          result = SharedDashboardService.get_job_seeker_experience_list(user_id)
+
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+class JobSeekerEducationListAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          result = SharedDashboardService.get_job_seeker_education_list(user_id)
+
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+class JobSeekerCertificationListAPIView(APIView):
+     authentication_classes=[TokenAuthentication]
+     permission_classes=[TalentCloudSuperAdminPermission]
+
+     def get(self, request, user_id):
+          result = SharedDashboardService.get_job_seeker_certification_list(user_id)
+
+          return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+
 # endregion Applicant/Job Seeker Overview/Details
 
 # region Job Post Listing

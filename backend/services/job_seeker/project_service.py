@@ -118,3 +118,7 @@ class ProjectService:
           )
 
           return JobSeekerProjectCreateUpdateSerializer(project).data
+     
+     @staticmethod
+     def get_projects(user_id):
+          return JobSeekerProject.objects.filter(user__id=user_id).order_by('-created_at')
