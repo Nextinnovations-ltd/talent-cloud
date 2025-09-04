@@ -20,6 +20,8 @@ import CommonButton from "../commonBtn/button";
 import { useLocation } from 'react-router-dom';
 import heroText1 from '@/assets/JobPortal/Global Opportunities.svg'
 import heroText2 from '@/assets/JobPortal/for Myanmar talent.svg'
+import heroText1Mobile from '@/assets/JobPortal/Global Opportunities (1).svg'
+import heroText2Mobile from '@/assets/JobPortal/for Myanmar talent (1).svg'
 
 
 
@@ -459,7 +461,9 @@ const HeroSection = () => {
               </span>
              
             </a>
+              <div className="hidden md:flex">
             <CommonButton title="Contact us" url='/contact-us'/>
+          </div>
            </div>
 
             {/* responsive toggle */}
@@ -515,20 +519,31 @@ const HeroSection = () => {
                 <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
                   Sign up
                 </span>
-                </Button>
+              </Button>
+              <Button onClick={() => navigate('/contact-us')}  className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
+              <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+              Contact us
+              </span>
+              <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
+                Contact us
+              </span>
+              </Button>
           
             </div>
-            <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 pl-[20px] pr-[20px]">
+            <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10  px-6">
             {/*   <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
                 Global Possibilities for 
                 <br className="hidden md:block" /> Myanmar Professionals
               </h1> */}
-              <img src={heroText1} alt="" className="mt-[168px] mx-auto max-w-[1200px] h-[102px] "/>
-              <img src={heroText2} alt="" className="mt-4 mb-[64px] mx-auto max-w-[1136px]   h-[102px] "/>
-              <p className="text-center mx-auto md:mt-[35px] mt-[11px] text-[#575757] md:max-w-[783px] w-[100%] ">
+              <img src={heroText1} alt="" className="hidden md:flex mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] lg:h-[102px] "/>
+              <img src={heroText2} alt="" className="hidden md:flex mt-4 mb-[64px] mx-auto w-[100%] max-w-[1136px]   lg:h-[102px] " />
+              <img src={heroText1Mobile} alt="" className="flex md:hidden mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] md:h-[102px] "/>
+              <img src={heroText2Mobile} alt="" className="flex md:hidden mt-5 mb-[50px] mx-auto w-[100%] max-w-[1136px]   md:h-[102px] " />
+              
+              <p className="text-left md:text-center mx-auto md:mt-[64px] mt-[11px] text-[#000] md:max-w-[963px] w-[100%] text-[16px] md:text-[20px] font-[500] leading-[26px] md:leading-[32px]">
                 Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
               </p>
-              <div className="flex justify-center md:mt-[80px] mt-[40px]">
+              <div className="flex justify-center md:mt-[32px] mt-[24px]">
 
                 <CommonButton title='Explore Jobs' url="/auth/login" />
 
@@ -553,7 +568,7 @@ const HeroSection = () => {
 
         </div>
       </div>
-      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[28px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
+      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[0px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
         <section className="canvas-section h-full " ref={containerRef}>
           <div id="matter-container" ref={matterContainerRef} />
         </section>

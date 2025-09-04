@@ -40,9 +40,9 @@ const TalentCloudDone = () => {
                   Used: JavaScript, Laravel <br/>
                   Role: Full-stack Developer
                 </p>
-                <button className='text-white text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] bg-[#FFFFFF3D]'>
+                <a href="https://hosono.ai/ja" target="_blank" className='text-white text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] bg-[#FFFFFF3D] hover:bg-black transition-all duration-300'>
                   Visit site
-                </button>
+                </a>
               </div>
             </div>
           </MotionLink>
@@ -69,9 +69,9 @@ const TalentCloudDone = () => {
                   Used: PHP, Laravel <br/>
                   Role: Backend, DevOps
                 </p>
-                <button className='text-white text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] bg-[#FFFFFF3D]'>
+                <a href="https://hosono.ai/ja" target="_blank" className='text-white text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] bg-[#FFFFFF3D] hover:bg-black transition-all duration-300'>
                   Visit site
-                </button>
+                </a>
               </div>
             </div>
           </MotionLink>
@@ -91,9 +91,9 @@ const TalentCloudDone = () => {
             <div className="flex flex-col gap-3 justify-center">
               <p className='text-[16px] md:text-[16px] font-[500]'>Used: Django, GitHub Actions, LLMOps</p>
               <p className='text-[16px] md:text-[16px] font-[500]'>Role: Backend, DevOps</p>
-              <button className='text-[#0481EF] text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] border border-[#767676] max-w-[80px]'>
+              <a href="https://hosono.ai/ja" target="_blank" className='text-[#0481EF] text-[12px] font-[600] leading-[21.48px] mt-[10px] md:mt-[16px] underline py-[10px] px-[12px] rounded-[6px] border border-[#767676] max-w-[80px] hover:border-[#0481EF] hover:bg-[#0481EF] hover:text-white transition-all duration-300'>
                 Visit site
-              </button>
+              </a>
             </div>
           </div>
 
