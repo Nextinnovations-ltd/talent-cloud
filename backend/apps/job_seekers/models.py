@@ -22,10 +22,27 @@ class JobSeeker(TalentCloudUser):
     
      @property
      def resume_url_link(self):
-         """Get the url resume"""
+         """Get the resume url"""
          from services.job_seeker.job_seeker_service import JobSeekerService
-
          return JobSeekerService.get_resume_url(self.resume_url)
+
+     @property
+     def profile_image_url_link(self):
+         """Get the profile image url"""
+         from services.job_seeker.job_seeker_service import JobSeekerService
+         return JobSeekerService.get_profile_image_url(self.profile_image_url)
+
+     @property
+     def recent_application(self):
+          """Get job seeker latest application"""
+          from services.job_seeker.job_seeker_service import JobSeekerService
+          return JobSeekerService.get_latest_application(self)
+     
+     @property
+     def latest_job_applications(self):
+          """Get job seeker latest job applications"""
+          from services.job_seeker.job_seeker_service import JobSeekerService
+          return JobSeekerService.get_latest_job_applications(self)
      
 # region PROFILE DETAILS
 class JobSeekerExperience(TimeStampModel):
