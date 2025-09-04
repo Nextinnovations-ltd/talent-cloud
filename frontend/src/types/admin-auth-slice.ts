@@ -133,3 +133,53 @@ export interface ShortListMutationResopnse {
   message: string;
   data: null
 }
+
+export type JobSeekerOverviewResponse = {
+  status: boolean;
+  message: string;
+  data: {
+    name: string;
+    email: string;
+    bio: string | null;
+    phone_number: string | null;
+    address: string | null;
+    is_open_to_work: boolean;
+    expected_salary: string | number | null;
+    profile_image_url: string | null;
+    resume_url: string | null;
+    cover_letter_url: string | null;
+    occupation: {
+      specialization_name: string | null;
+      role_name: string | null;
+      experience_level: string | null;
+      experience_years: number | null;
+      skills: string[];
+    };
+    social_links: {
+      facebook_url: string | null;
+      linkedin_url: string | null;
+      behance_url: string | null;
+      portfolio_url: string | null;
+      github_url: string | null;
+    };
+    recent_application: {
+      position: string;
+      company: string;
+      salary: string | number;
+      total_applicants: number;
+      applied_date: string; // ISO timestamp
+      last_application_date: string; // Date string (YYYY-MM-DD)
+    } | null;
+    recent_applied_jobs: {
+      job_id: number;
+      position: string;
+      applicant_count: number;
+      applied_date: string; // ISO timestamp
+      company: string;
+      skills: string[];
+      salary: string | number;
+    }[];
+  };
+};
+
+

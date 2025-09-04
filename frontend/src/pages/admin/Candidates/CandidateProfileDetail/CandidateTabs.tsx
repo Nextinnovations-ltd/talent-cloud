@@ -33,7 +33,7 @@ const CandidateTabs = () => {
     return (
         <div className="flex w-full mt-[100px] pb-[100px] flex-col gap-6">
             <Tabs value={value} onValueChange={setValue} defaultValue="overview" className="w-full  h-full">
-                <TabsList className="gap-[5px] flex flex-wrap">
+                <TabsList className="gap-[5px] flex flex-wrap justify-between">
                     {TABSDATAS.map((tab) => {
                         const Icon = tab.Icon;
                         return (
