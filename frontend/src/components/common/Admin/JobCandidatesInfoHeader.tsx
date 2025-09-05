@@ -37,7 +37,7 @@ const JobCandidatesInfoHeader: React.FC<JobCandidatesInfoHeaderProps> = ({ side,
     }
 
     const handleBack = () => {
-        navigation('/admin/dashboard/allJobs')
+        navigation(-1)
     };
 
     return (

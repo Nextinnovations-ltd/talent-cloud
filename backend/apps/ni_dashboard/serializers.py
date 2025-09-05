@@ -193,15 +193,18 @@ class JobSeekerRecentAppliedJobSerializer(serializers.ModelSerializer):
 class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
      """Serializer for displaying project card"""
      project_image_url = serializers.SerializerMethodField()
-     
+     duration = serializers.SerializerMethodField()
      class Meta:
           model = JobSeekerProject
           fields = [
-               'id', 'title', 'description', 'project_image_url'
+               'id', 'title', 'description', 'project_image_url', 'duration'
           ]
 
      def get_project_image_url(self, obj: JobSeekerProject):
           return S3Service.get_public_url(obj.project_image_url)
+
+     def get_duration(self, obj:JobSeekerProject):
+          return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_ongoing)
 
 class DashboardJobSeekerExperienceSerializer(serializers.ModelSerializer):
      duration = serializers.SerializerMethodField()

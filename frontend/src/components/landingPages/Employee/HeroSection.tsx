@@ -5,7 +5,6 @@ import HeroImg from "@/assets/Employee/Frame 36555.png";
 import bgImage from "@/assets/Employee/Frame 1618873013.png";
 import { HashLink } from 'react-router-hash-link';
 import { motion,AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import './HeroSection.css'
 import CommonButton from "../commonBtn/button";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,6 @@ const HeroSection = () => {
     }`;
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;

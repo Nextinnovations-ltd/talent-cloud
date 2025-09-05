@@ -80,7 +80,7 @@ const CandidateProfileAvaliable = ({status = false}:{status:boolean}) => {
                  }}
              />
          </motion.div>
-         Available for work
+         Unavailable for work
      </motion.h3> 
        }
        </>

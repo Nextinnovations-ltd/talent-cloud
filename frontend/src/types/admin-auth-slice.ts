@@ -142,10 +142,11 @@ export type JobSeekerOverviewResponse = {
     name: string;
     email: string;
     bio: string | null;
+    age:number | null;
     phone_number: string | null;
     address: string | null;
     is_open_to_work: boolean;
-    expected_salary: string | number | null;
+    expected_salary: string  | null;
     profile_image_url: string | null;
     resume_url: string | null;
     cover_letter_url: string | null;
