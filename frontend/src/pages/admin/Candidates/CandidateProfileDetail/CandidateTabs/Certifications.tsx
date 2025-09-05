@@ -65,7 +65,9 @@ const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title
           <p className="text-[15px] mb-[12px]">
             {organization}
           </p>
-          <p className="mb-[12px] text-[14px] text-[#6B6B6B]">Credential ID: {credential_id || 0}</p>
+         {
+          credential_id && <p className="mb-[12px] text-[14px] text-[#6B6B6B]">Credential ID: {credential_id || 0}</p>
+         }
           <p className="text-[#6B6B6B] text-[14px]">{duration}</p>
           
           {/* Button to open full certificate */}
