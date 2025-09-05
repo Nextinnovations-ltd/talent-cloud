@@ -1,7 +1,10 @@
+import CommonError from "@/components/CommonError/CommonError";
 import { useGetJobSeekerDetailVideoQuery } from "@/services/slices/adminSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import EMPTYTABS from '@/assets/SuperAdmin/EmptyTabs.png';
+
 
 const Video = () => {
   const {id } = useParams<{id:string}>();
@@ -9,10 +12,18 @@ const Video = () => {
   const {data} = useGetJobSeekerDetailVideoQuery(id ? {id} : skipToken);
 
 
-  console.log(data);
-  // if(!data?.data){
-  //   return <div> <p>No video data!</p></div>
-  // }
+
+  if (!data?.data) {
+    return (
+      <div className="text-center  text-gray-500 mt-20 text-lg">
+      <CommonError 
+        image={EMPTYTABS} 
+        width={117} 
+        title="No video found" 
+        description="This candidate hasn’t added any introduction video."/>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-[71px]">

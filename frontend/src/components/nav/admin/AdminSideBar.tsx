@@ -9,7 +9,7 @@ import {
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
 import { LogOutDialog } from "@/components/common/LogOutDialog"
-import AdminNotification from "./AdminNotification"
+//import AdminNotification from "./AdminNotification"
 
 
 const AdminSideBar = () => {
@@ -54,7 +54,7 @@ const AdminSideBar = () => {
         <div className=" "></div>
         <AdminMenu/>
         <AdminJobManagement/>
-        <AdminNotification/>
+        {/* <AdminNotification/> */}
         <div onClick={()=> setShowLogoutDialog(true)} className="flex cursor-pointer gap-[24px] px-[20px] mt-[36px]">
           <LogOut color="#575757"/>
           <p className="text-[#0481EF] font-semibold">Log out</p>
