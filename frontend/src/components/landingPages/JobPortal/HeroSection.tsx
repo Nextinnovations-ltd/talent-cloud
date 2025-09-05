@@ -22,6 +22,7 @@ import heroText1 from '@/assets/JobPortal/Global Opportunities.svg'
 import heroText2 from '@/assets/JobPortal/for Myanmar talent.svg'
 import heroText1Mobile from '@/assets/JobPortal/Global Opportunities (1).svg'
 import heroText2Mobile from '@/assets/JobPortal/for Myanmar talent (1).svg'
+import { motion,AnimatePresence  } from "framer-motion";
 
 
 
@@ -437,123 +438,203 @@ const HeroSection = () => {
   return (
     <div onClick={() => setNavIsOpen(!navIsOpen)}>
       <div className=" h-[auto] relative bg-[linear-gradient(to_bottom,_#75d1ff_90%,_#fff_100%)]">
-           <div
-            className={`fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]
-            transition-transform duration-500 ${showNavbar ? "translate-y-0" : "-translate-y-[120%]"}`}
-          >
-          <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
-            {/* logo SVG here */}
-            <img src={TalentCloudLogoImg} alt="" className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover" />
-            <ul className=" gap-[48px] hidden md:flex">
-              <li> <HashLink smooth to="#why-us"  className={linkClass("#why-us")}>Why us</HashLink></li>
-              <li> <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
-              <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
-            </ul>
-            <div className="flex gap-[42px]">
-             <a
-              href="/auth/login"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:flex justify-center items-center relative border-2 border-[#0481EF] text-[#0481EF] rounded-[30px] p-[10px] w-[141px] h-[64px] hover:bg-[#0481EF] hover:text-white transition-all duration-300"
+        <AnimatePresence>
+          {showNavbar && (
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="fixed top-0 left-0 right-0 m-auto z-[10000] bg-white shadow-[0_1px_3px_0_#A6AFC366] max-w-[1240px] mx-auto md:rounded-[25px] mt-0 md:mt-[22px]"
             >
-              <span className=" text-[16px] font-[500] leading-[28px] ">
-                Sign up
-              </span>
-             
-            </a>
-              <div className="hidden md:flex">
-            <CommonButton title="Contact us" url='/contact-us'/>
-          </div>
-           </div>
+              <nav className="max-w-[1240px] mx-auto flex justify-between items-center relative z-10 md:px-5 md:py-6 py-[15px] px-[27px]">
+                {/* Logo */}
+                <motion.img
+                  src={TalentCloudLogoImg}
+                  alt="Talent Cloud Logo"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="w-[185px] md:w-[214px] h-[40px] md:h-[60px] object-cover"
+                />
 
-            {/* responsive toggle */}
-            <div
-              className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
-              onClick={() => setNavIsOpen(!navIsOpen)}
-            >
-              {/* Top bar */}
-              <div
-                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "rotate-45 translate-y-[4px]" : ""
-                  }`}
-              ></div>
+                {/* Nav Links + Buttons */}
+                <motion.ul
+                  className="hidden md:flex items-center gap-[48px]"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: {
+                      transition: { staggerChildren: 0.15, delayChildren: 0.3 },
+                    },
+                  }}
+                >
+                  {/* Nav Links */}
+                  {[
+                    { to: "#why-us", label: "Why us" },
+                    { to: "#about-us", label: "About us" },
+                    { to: "#faq", label: "FAQ" },
+                  ].map((item, idx) => (
+                    <motion.li
+                      key={idx}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.5} },
+                      }}
+                    >
+                      <HashLink smooth to={item.to} className={linkClass(item.to)}>
+                        {item.label}
+                      </HashLink>
+                    </motion.li>
+                  ))}
 
-              {/* Middle bar */}
-              <div
-                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "opacity-0" : ""
-                  }`}
-              ></div>
+                  {/* Sign Up Button */}
+                  <motion.li
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+                    }}
+                  >
+                    <a
+                      href="/auth/login"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex justify-center items-center relative border-2 border-[#0481EF] text-[#0481EF] rounded-[30px] p-[10px] w-[141px] h-[64px] hover:bg-[#0481EF] hover:text-white transition-all duration-300"
+                    >
+                      <span className="text-[16px] font-[500] leading-[28px]">Sign up</span>
+                    </a>
+                  </motion.li>
 
-              {/* Bottom bar */}
-              <div
-                className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
-                  }`}
-              ></div>
-            </div>
-          </nav>
-        </div>
+                  {/* Contact Us Button */}
+                  <motion.li
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+                    }}
+                  >
+                    <CommonButton title="Contact us" url="/contact-us" path="jp" />
+                  </motion.li>
+                </motion.ul>
+
+                {/* Mobile Toggle */}
+                <div
+                  className="flex md:hidden flex-col gap-[3px] justify-center items-center cursor-pointer w-[25px] h-[25px]"
+                  onClick={() => setNavIsOpen(!navIsOpen)}
+                >
+                  <div
+                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
+                      navIsOpen ? "rotate-45 translate-y-[4px]" : ""
+                    }`}
+                  ></div>
+                  <div
+                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
+                      navIsOpen ? "opacity-0" : ""
+                    }`}
+                  ></div>
+                  <div
+                    className={`w-[25px] h-[3px] rounded-[2px] bg-black transition-all duration-300 ${
+                      navIsOpen ? "-rotate-45 -translate-y-[8px]" : ""
+                    }`}
+                  ></div>
+                </div>
+              </nav>
+               {/* responsive menu */}
+
+
+              <div className={`flex md:hidden flex-col items-center shadow-[0_1px_3px_0_#A6AFC366] bg-white rounded-bl-[20px] fixed z-[100] w-[60%] right-0 top-0 py-[24px] gap-6 overflow-hidden
+                                  transition-all duration-500 
+                                  ${navIsOpen ? "max-h-screen mt-[70px] animate-bouncy-drop " : "max-h-0 mt-0 animate-bouncy-close "}
+                                `}>
+
+
+                <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
+                  <li >  <HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
+                  <li>  <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
+                  <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
+                </ul>
+
+                <Button onClick={() => navigate('/auth/login')}  className="relative bg-[#fff] text-[#0481EF] rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group hover:bg-[#0481EF] hover:text-white transition-all duration-300">
+                  <span className="   ">
+                    Sign up
+                  </span>
+                
+                </Button>
+                <Button onClick={() => navigate('/contact-us?path=jp')}   className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
+                <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
+                Contact us
+                </span>
+                <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
+                  Contact us
+                </span>
+                </Button>
+          
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+
 
 
 
         <div className="max-w-[1240px] mx-auto ">
           <div className="">
 
-            {/* responsive menu */}
+         
 
+            <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10 px-6">
+              <div className="max-w-[1240px] mx-auto flex flex-col ">
+                {/* Images */}
+                <motion.div
+                  initial={{ opacity: 0, y: -30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="flex flex-col items-center"
+                >
+                  <img
+                    src={heroText1}
+                    alt=""
+                    className="hidden md:flex mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] lg:h-[102px]"
+                  />
+                  <img
+                    src={heroText2}
+                    alt=""
+                    className="hidden md:flex mt-4 mb-[64px] mx-auto w-[100%] max-w-[1136px] lg:h-[102px]"
+                  />
+                  <img
+                    src={heroText1Mobile}
+                    alt=""
+                    className="flex md:hidden mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] md:h-[102px]"
+                  />
+                  <img
+                    src={heroText2Mobile}
+                    alt=""
+                    className="flex md:hidden mt-5 mb-[50px] mx-auto w-[100%] max-w-[1136px] md:h-[102px]"
+                  />
+                </motion.div>
 
-            <div className={`flex md:hidden flex-col items-center shadow-[0_1px_3px_0_#A6AFC366] bg-white rounded-bl-[20px] fixed z-[100] w-[60%] right-0 top-0 py-[24px] gap-6 overflow-hidden
-                                transition-all duration-500 
-                                ${navIsOpen ? "max-h-screen mt-[70px] animate-bouncy-drop " : "max-h-0 mt-0 animate-bouncy-close "}
-                              `}>
+                {/* Paragraph */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 0.3 }}
+                  className="text-left md:text-center mx-auto md:mt-[64px] mt-[11px] text-[#000] md:max-w-[963px] w-[100%] text-[16px] md:text-[20px] font-[500] leading-[26px] md:leading-[32px]"
+                >
+                  Talent Cloud by Next Innovations handles hiring talents, HR & admin,
+                  payroll, management and compliance—making global hiring easy for employers
+                  and fully supported for employees.
+                </motion.p>
 
-
-              <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                <li >  <HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
-                <li>  <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
-                <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
-              </ul>
-
-              <Button onClick={() => navigate('/auth/login')}  className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
-                <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-                  Sign up
-                </span>
-                <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
-                  Sign up
-                </span>
-              </Button>
-              <Button onClick={() => navigate('/contact-us')}  className="relative bg-[#0481EF] text-white rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group">
-              <span className="block text-[16px] text-white font-[400] leading-[18px] relative z-10 translate-y-0 group-hover:-translate-y-[38px] transition-transform duration-300">
-              Contact us
-              </span>
-              <span className="block text-[16px] text-[#fff] font-[400] leading-[18px] absolute top-full left-0 w-full z-0 group-hover:-translate-y-[32px] transition-transform duration-300">
-                Contact us
-              </span>
-              </Button>
-          
-            </div>
-            <div className="pt-[90px] md:pt-[66px] pb-[40px] relative z-10  px-6">
-            {/*   <h1 className="uppercase text-center text-black mt-[50px] md:mt-[100px] text-[32px] md:text-[46px] lg:text-[64px] font-[700] leading-[46px] md:leading-[60px] lg:leading-[87px]">
-                Global Possibilities for 
-                <br className="hidden md:block" /> Myanmar Professionals
-              </h1> */}
-              <img src={heroText1} alt="" className="hidden md:flex mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] lg:h-[102px] "/>
-              <img src={heroText2} alt="" className="hidden md:flex mt-4 mb-[64px] mx-auto w-[100%] max-w-[1136px]   lg:h-[102px] " />
-              <img src={heroText1Mobile} alt="" className="flex md:hidden mt-[20px] md:mt-[168px] mx-auto w-[100%] max-w-[1200px] md:h-[102px] "/>
-              <img src={heroText2Mobile} alt="" className="flex md:hidden mt-5 mb-[50px] mx-auto w-[100%] max-w-[1136px]   md:h-[102px] " />
-              
-              <p className="text-left md:text-center mx-auto md:mt-[64px] mt-[11px] text-[#000] md:max-w-[963px] w-[100%] text-[16px] md:text-[20px] font-[500] leading-[26px] md:leading-[32px]">
-                Talent Cloud by Next Innovations handles hiring talents, HR & admin, payroll, management and compliance—making global hiring easy for employers and fully supported for employees.
-              </p>
-              <div className="flex justify-center md:mt-[32px] mt-[24px]">
-
-                <CommonButton title='Explore Jobs' url="/auth/login" />
-
-
-
-
-
-
-
-
+                {/* Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, delay: 0.6 }}
+                  className="flex justify-center md:mt-[32px] mt-[24px]"
+                >
+                  <CommonButton title="Explore Jobs" url="/auth/login" />
+                </motion.div>
               </div>
             </div>
             <div className="cloud ">
@@ -568,46 +649,80 @@ const HeroSection = () => {
 
         </div>
       </div>
-      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px]  max-w-[1240px]  m-auto md:pt-[86px] pt-[0px] pl-[20px] pr-[20px]  flex-wrap lg:flex-nowrap">
-        <section className="canvas-section h-full " ref={containerRef}>
+      <div className="flex md:flex-row flex-col justify-center items-center gap-[25px] max-w-[1240px] m-auto md:pt-[86px] pt-[0px] pl-[20px] pr-[20px] flex-wrap lg:flex-nowrap">
+        {/* Left side - Canvas Section */}
+        <motion.section
+          className="canvas-section h-full"
+          ref={containerRef}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
           <div id="matter-container" ref={matterContainerRef} />
-        </section>
-        <div className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]">
-          <div className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-            <h1 className=" text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">200+
+        </motion.section>
+
+        {/* Middle - Small Cards */}
+        <motion.div
+          className="flex flex-row md:flex-col gap-[26px] md:w-[399px] w-[100%]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.3 }}
+        >
+          {/* Card 1 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center"
+          >
+            <h1 className="text-[#0481EF] text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">
+              200+
             </h1>
-            <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]"> IT Professional</p>
-          </div>
-          <div className="w-[50%]  md:w-[100%] h-[87px]  md:h-[143px] bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center">
-            <h1 className="text-black   text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">100%
+            <p className="text-black md:text-[16px] text-[12px] leading-[15px] md:leading-[31px]">
+              IT Professional
+            </p>
+          </motion.div>
+
+          {/* Card 2 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="w-[50%] md:w-[100%] h-[87px] md:h-[143px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-center"
+          >
+            <h1 className="text-black text-[20px] md:text-[32px] md:leading-[31px] leading-[21px] font-[500]">
+              100%
             </h1>
-            <p className=" text-[#0481EF]  md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center"> The EOR service is already in operation.</p>
-          </div>
+            <p className="text-[#0481EF] md:text-[16px] text-[12px] leading-[15px] md:leading-[31px] text-center">
+              The EOR service is already in operation.
+            </p>
+          </motion.div>
+        </motion.div>
 
-        </div>
-        <div className="md:w-[409px] w-[100%]
-                h-[313px]  bg-[#FAFAFA]  rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]
-        ">
-
+        {/* Right side - Feature List */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
+          className="md:w-[409px] w-[100%] h-[313px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]"
+        >
           <div className="flex gap-[24px] items-center">
             <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF] ">  Legal Compliance Guarantee</p>
-          </div>
-          <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF] ">  Full HR & Payroll Management</p>
-          </div>
-          <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF] ">  IT Talent Specialization </p>
+            <p className="text-[#0389FF]"> Legal Compliance Guarantee</p>
           </div>
           <div className="flex gap-[24px] items-center">
             <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF] "> Stable & Productive Work Environment</p>
+            <p className="text-[#0389FF]"> Full HR & Payroll Management</p>
           </div>
-
-
-        </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF]"> IT Talent Specialization</p>
+          </div>
+          <div className="flex gap-[24px] items-center">
+            <img src={CheckCircle} alt="" />
+            <p className="text-[#0389FF]"> Stable & Productive Work Environment</p>
+          </div>
+        </motion.div>
       </div>
     </div>
   )
