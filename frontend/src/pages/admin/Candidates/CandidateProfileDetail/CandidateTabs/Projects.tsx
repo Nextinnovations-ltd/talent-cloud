@@ -1,26 +1,51 @@
 import { useGetJobSeekersProjectsQuery } from "@/services/slices/adminSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { useParams } from "react-router-dom";
+import EMPTYTABS from '@/assets/SuperAdmin/EmptyTabs.png';
+
 
 const Projects = () => {
 
-    const { id } = useParams<{ id: string }>();
-    const {data} = useGetJobSeekersProjectsQuery(id ? {id} : skipToken);
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading } = useGetJobSeekersProjectsQuery(id ? { id } : skipToken);
 
+
+  if (isLoading) {
     return (
-        <div className="grid grid-cols-2 gap-[35px] mt-[72px]">
-            {
-                data?.data.map((e)=> <ProjectCard 
-                projectImageUrl={e.project_image_url} 
-                title={e.title} 
-                description={e.description} />)
-            }
-
-        </div>
+      <div className="flex items-center justify-center h-[300px]">
+        Loading ...
+      </div>
     )
+  }
+
+  if (!data?.data || data.data.length === 0) {
+    return (
+      <div className="text-center  text-gray-500 mt-20 text-lg">
+        <CommonError
+          image={EMPTYTABS}
+          width={117}
+          title="No certificate found"
+          description="This candidate hasn’t added any certificate." />
+      </div>
+    );
+  }
+
+
+  return (
+    <div className="grid grid-cols-2 gap-[35px] mt-[72px]">
+      {
+        data?.data.map((e) => <ProjectCard
+          projectImageUrl={e.project_image_url}
+          title={e.title}
+          description={e.description} />)
+      }
+
+    </div>
+  )
 }
 
 import { useState } from "react";
+import CommonError from "@/components/CommonError/CommonError";
 
 interface ProjectCardProps {
   projectImageUrl: string;
@@ -40,9 +65,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ projectImageUrl, title, descr
         <img
           src={projectImageUrl}
           alt={title}
-          className={`w-full h-full object-cover  rounded-[17px] transition-opacity duration-500 ${
-            isLoaded ? "opacity-100" : "opacity-0"
-          }`}
+          className={`w-full h-full object-contain   rounded-[17px] transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"
+            }`}
           onLoad={() => setIsLoaded(true)}
         />
       </div>

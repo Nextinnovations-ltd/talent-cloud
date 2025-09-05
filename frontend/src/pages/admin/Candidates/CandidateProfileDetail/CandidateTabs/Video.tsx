@@ -1,7 +1,18 @@
+import { useGetJobSeekerDetailVideoQuery } from "@/services/slices/adminSlice";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Video = () => {
+  const {id } = useParams<{id:string}>();
   const [isLoaded, setIsLoaded] = useState(false);
+  const {data} = useGetJobSeekerDetailVideoQuery(id ? {id} : skipToken);
+
+
+  console.log(data);
+  // if(!data?.data){
+  //   return <div> <p>No video data!</p></div>
+  // }
 
   return (
     <div className="mt-[71px]">
@@ -20,7 +31,7 @@ const Video = () => {
           className={`rounded-2xl transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}
-          src="https://www.youtube.com/embed/JVeRUTAzKLI?si=r0v9lQ4z8CiJOM9c"
+          src={data?.data}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           onLoad={() => setIsLoaded(true)}

@@ -1,30 +1,73 @@
+import { useGetJobSeekerDetailExperienceQuery } from "@/services/slices/adminSlice";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useParams } from "react-router-dom";
+import NOLOGO from "@/assets/Login/Login/VectorNO.svg";
+import EMPTYTABS from '@/assets/SuperAdmin/EmptyTabs.png';
+import CommonError from "@/components/CommonError/CommonError";
+
+
 const Experience = () => {
+    const { id } = useParams<{ id: string }>();
+    const { data, isLoading } = useGetJobSeekerDetailExperienceQuery(id ? { id } : skipToken);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-[300px]">
+                Loading ...
+            </div>
+        )
+    }
+
+    if (!data?.data || data.data.length === 0) {
+        return (
+            <div className="text-center  text-gray-500 mt-20 text-lg">
+                <CommonError
+                    image={EMPTYTABS}
+                    width={117}
+                    title="No certificate found"
+                    description="This candidate hasn’t added any certificate." />
+            </div>
+        );
+    }
+
     return (
-        <div className="grid grid-cols-2 mt-[72px] gap-[100px]">
-            <ExperienceCard />
-            <ExperienceCard />
-            <ExperienceCard />
-            <ExperienceCard />
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-[72px]">
+            {data.data.map((e) => (
+                <ExperienceCard
+                    title={e.title}
+                    organization={e.organization}
+                    duration={e.duration}
+                    description={e.description}
+                />
+            ))}
         </div>
-    )
-}
+    );
+};
 
-const ExperienceCard = () => {
+type ExperienceCardProps = {
+    title: string;
+    organization: string;
+    duration: string;
+    description: string;
+};
 
+const ExperienceCard: React.FC<ExperienceCardProps> = ({
+    title,
+    organization,
+    duration,
+    description,
+}) => {
     return (
-        <div>
-            <img className="rounded-full object-cover w-[96px] h-[96px]" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVCJpAHzn91VMfwirwAbAmV-ONO02UjmCj2w&s" />
-
-            <h3 className="mt-[32px] font-semibold text-[26px] mb-[20px]">Mid Level UI/UX Designer</h3>
-
-            <h3 className="mb-[16px] text-[18px] font-[500px]">Next Innovations</h3>
-
-            <p className="text-[#6B6B6B] mb-[30px]">Mar 2025 - Present</p>
-
-            <p className="text-[#6B6B6B] leading-[28px]">Collaborated with the development team to implement a responsive design  approach, improving the mobile user experience and increasing mobile app engagement.</p>
+        <div className="p-6 rounded-2xl transition-shadow bg-white">
+            <div className='w-[96px] bg-[#EFF2F6] flex items-center justify-center mb-[36px] h-[96px] rounded-full'>
+                <img src={NOLOGO} alt="No Education Logo" />
+            </div>
+            <h3 className="mt-6 font-semibold text-2xl text-gray-800">{title}</h3>
+            <h4 className="text-lg font-medium text-gray-600 mt-2">{organization}</h4>
+            <p className="text-sm text-gray-500 mt-1">{duration}</p>
+            <p className="text-gray-600 leading-7 mt-4">{description}</p>
         </div>
-    )
-}
+    );
+};
 
 export default Experience;

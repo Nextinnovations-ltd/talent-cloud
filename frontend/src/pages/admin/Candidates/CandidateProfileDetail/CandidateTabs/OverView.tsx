@@ -35,8 +35,8 @@ const SUMMARYDATA = [
             <div className="grid grid-cols-3  gap-[32px]">
             {
                 SUMMARYDATA.map((e,index)=> <div key={index} className="px-[24px]  flex flex-col items-center justify-center rounded-3xl border-[#CBD5E1] py-[40px] border-[1px]">
-                <h3 className="text-[16px]">{e.value}</h3> 
-                <p className="mt-[6px] text-[#6B6B6B] text-[12px]">{e.des}</p>
+                <h3 className="text-[20px]">{e.value}</h3> 
+                <p className="mt-[6px] text-[#6B6B6B] text-[14px]">{e.des}</p>
                 </div>)
             }
             </div>
@@ -45,8 +45,8 @@ const SUMMARYDATA = [
               <div className="grid grid-cols-3  gap-[52px]">
               {
                   SUMMARYDATA.map((e,index)=> <div key={index} className="px-[15px]  flex flex-col items-start justify-start  border-l-[#0481EF]  border-l-[4px] rounded-[2px]">
-                  <h3 className="text-[16px] font-[500px]">{e.value}</h3> 
-                  <p className="mt-[6px] text-[#6B6B6B] text-[12px]">{e.des}</p>
+                  <h3 className="text-[20px] font-[500px]">{e.value}</h3> 
+                  <p className="mt-[6px] text-[#6B6B6B] text-[14px]">{e.des}</p>
                   </div>)
               }
               </div>

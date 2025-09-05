@@ -218,7 +218,7 @@ const SelectedProject = () => {
               lableName="Project Url"
               required={true}
               placeholder="Type here"
-              maxLength={60}
+              maxLength={120}
               showLetterCount
               disabled={loading}
             />
