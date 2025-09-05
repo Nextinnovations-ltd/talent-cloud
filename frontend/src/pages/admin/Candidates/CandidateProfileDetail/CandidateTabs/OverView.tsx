@@ -42,7 +42,7 @@ const OverView = () => {
                     />
                 </div>
             } />
-            <Frame title="Recent Application " children={
+            <Frame title="Latest Applied Job" children={
                 <div className="grid grid-cols-3  gap-[52px]">
                     <OverViewApplication
                         positionApplied={ProfileData?.recent_application?.position || '-'}
