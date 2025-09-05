@@ -13,6 +13,7 @@ const Certifications = () => {
   const {data,isLoading} = useGetJobSeekerDetailCertificationQuery(id?{id}: skipToken);
 
 
+
   if(isLoading) {
     return (
       <div className="flex items-center justify-center h-[300px]">
@@ -36,7 +37,7 @@ const Certifications = () => {
   return (
     <div className="grid grid-cols-2 gap-[35px] mt-[72px]">
     {
-      data?.data?.map((e)=> <CertificateCard duration={e.duration} organization={e.organization} title={e.title} url={e.url}/>)
+      data?.data?.map((e)=> <CertificateCard credential_id={e.credential_id} duration={e.duration} organization={e.organization} title={e.title} url={e.url}/>)
     }
 
 </div>
@@ -48,9 +49,10 @@ type CertificateProps = {
   organization:string;
   title:string;
   url:string;
+  credential_id:number
 }
 
-const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title,url})=> {
+const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title,url,credential_id})=> {
   return (
       <div className="w-[490px]">
         {/* PDF Preview */}
@@ -63,7 +65,7 @@ const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title
           <p className="text-[15px] mb-[12px]">
             {organization}
           </p>
-          <p className="mb-[12px] text-[14px] text-[#6B6B6B]">Credential ID: UXD123456789</p>
+          <p className="mb-[12px] text-[14px] text-[#6B6B6B]">Credential ID: {credential_id || 0}</p>
           <p className="text-[#6B6B6B] text-[14px]">{duration}</p>
           
           {/* Button to open full certificate */}

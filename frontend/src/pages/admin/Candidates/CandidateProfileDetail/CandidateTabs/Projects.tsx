@@ -24,8 +24,8 @@ const Projects = () => {
         <CommonError
           image={EMPTYTABS}
           width={117}
-          title="No certificate found"
-          description="This candidate hasn’t added any certificate." />
+          title="No projects found"
+          description="The candidate hasn’t added any projects." />
       </div>
     );
   }

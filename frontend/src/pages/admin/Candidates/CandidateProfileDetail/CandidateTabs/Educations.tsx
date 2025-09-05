@@ -25,8 +25,8 @@ const Educations = () => {
       <CommonError 
         image={EMPTYTABS} 
         width={117} 
-        title="No certificate found" 
-        description="This candidate hasn’t added any certificate."/>
+        title="No education found" 
+        description="The candidate hasn’t added any education."/>
       </div>
     );
   }

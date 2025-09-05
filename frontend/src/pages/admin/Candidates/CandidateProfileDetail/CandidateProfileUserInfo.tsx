@@ -36,6 +36,8 @@ const CandidateProfileUserInfo = () => {
 
     const ProfileData = data?.data;
 
+    console.log(ProfileData)
+
 
 
     // Transform null values to undefined for social_links
