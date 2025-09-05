@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import apiSlice from "../api/apiSlice";
 import {

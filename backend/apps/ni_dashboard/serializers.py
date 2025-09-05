@@ -1,13 +1,16 @@
 from rest_framework import serializers
-from apps.job_posting.models import JobApplication, JobPost
-from apps.job_seekers.models import JobSeeker
+from apps.job_posting.models import JobSeeker, JobApplication, JobPost
+from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, JobSeekerProject
+from services.job_seeker.job_seeker_service import JobSeekerService
 from services.storage.s3_service import S3Service
+from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display, calculate_age
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
      company = serializers.SerializerMethodField()
      specialization_name = serializers.CharField(source='specialization.name', read_only=True)
      posted_date = serializers.DateTimeField(source='created_at', read_only=True)
      deadline_date = serializers.DateField(source='last_application_date', read_only=True)
+     skills = serializers.SerializerMethodField()
 
      class Meta:
           model = JobPost
@@ -16,6 +19,7 @@ class JobPostDashboardSerializer(serializers.ModelSerializer):
                'title',
                'company',
                'specialization_name',
+               'skills',
                'job_post_status',
                'applicant_count',
                'view_count',
@@ -25,8 +29,12 @@ class JobPostDashboardSerializer(serializers.ModelSerializer):
 
      def get_company(self, obj: JobPost):
           return obj.get_company_name
+     
+     def get_skills(self, obj: JobPost):
+          return obj.get_skill_list
 
 class ApplicantDashboardSerializer(serializers.Serializer):
+     application_id = serializers.IntegerField(source='id')
      applicant_id = serializers.IntegerField(source='job_seeker.user.id')
      application_status = serializers.CharField()
      job_post_id = serializers.IntegerField(source='job_post.id')
@@ -44,6 +52,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      class Meta:
           model = JobApplication
           fields = [
+               'application_id',
                'applicant_id',
                'application_status',
                'job_post_id',
@@ -88,44 +97,138 @@ class ApplicantDashboardSerializer(serializers.Serializer):
                return S3Service.get_public_url(obj.cover_letter_url)
           return None
 
-# class JobSeekerOverviewSerializer(serializers.ModelSerializer):
-#      recent_applied_jobs
-#      recent_application
-#      specialization_name
-#      role_name
-#      resume_url
-#      cover_letter_url
-#      address
-#      phone_number
-#      class Meta:
-#           model=JobSeeker
-#           fields=[
-#                'name', 'email', 'bio', 'phone_number', 'address', 'role_name', 
-#                'specialization_name', 'experience_level', 'experience_years',
-#                'skills', 'social_links', 'resume_url', 'cover_letter_url',
-#                'recent_applied_jobs', 'recent_application', 'is_open_to_work',
-#                'expected_salary'
-#           ]
+class JobSeekerOverviewSerializer(serializers.ModelSerializer):
+     profile_image_url = serializers.SerializerMethodField()
+     resume_url = serializers.SerializerMethodField()
+     cover_letter_url = serializers.SerializerMethodField()
+     phone_number = serializers.SerializerMethodField()
+     address = serializers.SerializerMethodField()
+     social_links = serializers.SerializerMethodField()
+     occupation = serializers.SerializerMethodField()
+     recent_application = serializers.SerializerMethodField()
+     recent_applied_jobs = serializers.SerializerMethodField()
+     age = serializers.SerializerMethodField()
      
+     class Meta:
+          model=JobSeeker
+          fields=[
+               'name', 'email', 'bio', 'phone_number', 'address', 'is_open_to_work',
+               'expected_salary', 'profile_image_url', 'resume_url', 'cover_letter_url', 
+               'age', 'occupation', 'social_links', 'recent_application',
+               'recent_applied_jobs',
+          ]
      
+     def get_age(self, obj:JobSeeker):
+          return calculate_age(obj.date_of_birth)
      
-#                # 'specialization': {
-#                #      'id': occupation.specialization.id,
-#                #      'name': occupation.specialization.name,
-#                # } if occupation and occupation.specialization else None,
-#                # 'role': {
-#                #      'id': occupation.role.id,
-#                #      'name': occupation.role.name,
-#                # } if occupation and occupation.role else None,
-#                # 'experience_level': {
-#                #      'id': occupation.experience_level.id,
-#                #      'level': occupation.experience_level.level,
-#                # } if occupation and occupation.experience_level else None,
-#                # 'experience_years': occupation.experience_years if occupation else None,
-              
-#                # # Social Links
-#                # 'facebook_url': social_links.facebook_social_url if social_links else None,
-#                # 'linkedin_url': social_links.linkedin_social_url if social_links else None,
-#                # 'behance_url': social_links.behance_social_url if social_links else None,
-#                # 'portfolio_url': social_links.portfolio_social_url if social_links else None,
-#                # 'github_url': social_links.github_social_url if social_links else None,
+     def get_profile_image_url(self, obj:JobSeeker):
+          return obj.profile_image_url_link
+
+     def get_resume_url(self, obj:JobSeeker):
+          return obj.resume_url_link
+
+     def get_cover_letter_url(self, obj: JobSeeker):
+          application_id = self.context.get("application_id")
+          
+          if not application_id:
+               return None
+          
+          try:
+               application = JobApplication.objects.get(id=application_id, job_seeker=obj)
+               
+               return application.cover_letter_url
+          except JobApplication.DoesNotExist:
+               return None
+
+     def get_phone_number(self, obj:JobSeeker):
+          return obj.get_phone_number
+
+     def get_address(self, obj:JobSeeker):
+          return obj.get_address
+
+     def get_social_links(self, obj:JobSeeker):
+          return JobSeekerService.get_job_seeker_social_links(obj)
+     
+     def get_occupation(self, obj):
+          return JobSeekerService.get_occupation_info(obj)
+     
+     def get_recent_application(self, obj: JobSeeker):
+          return obj.recent_application
+     
+     def get_recent_applied_jobs(self, obj: JobSeeker):
+          latest_job_applications = obj.latest_job_applications
+          
+          return JobSeekerRecentAppliedJobSerializer(latest_job_applications, many=True).data
+
+class JobSeekerRecentAppliedJobSerializer(serializers.ModelSerializer):
+     job_id = serializers.IntegerField(source='job_post.id')
+     position = serializers.CharField(source='job_post.title')
+     applicant_count = serializers.IntegerField(source='job_post.applicant_count')
+     applied_date = serializers.DateTimeField(source='job_post.created_at')
+     company = serializers.SerializerMethodField()
+     skills = serializers.SerializerMethodField()
+     salary = serializers.SerializerMethodField()
+
+     class Meta:
+          model = JobApplication
+          fields = [
+               'job_id',
+               'position',
+               'applicant_count',
+               'applied_date',
+               'company',
+               'skills',
+               'salary'
+          ]
+
+     def get_company(self, obj: JobApplication):
+          return obj.job_post.get_company_name
+     
+     def get_skills(self, obj: JobApplication):
+          return obj.job_post.get_skill_list
+     
+     def get_salary(self, obj: JobApplication):
+          return obj.job_post.get_salary
+
+class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
+     """Serializer for displaying project card"""
+     project_image_url = serializers.SerializerMethodField()
+     
+     class Meta:
+          model = JobSeekerProject
+          fields = [
+               'id', 'title', 'description', 'project_image_url'
+          ]
+
+     def get_project_image_url(self, obj: JobSeekerProject):
+          return S3Service.get_public_url(obj.project_image_url)
+
+class DashboardJobSeekerExperienceSerializer(serializers.ModelSerializer):
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerExperience
+          fields = ['id', 'title', 'organization', 'description', 'duration']
+     
+     def get_duration(self, obj:JobSeekerExperience):
+          return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_present_work)
+
+class DashboardJobSeekerEducationSerializer(serializers.ModelSerializer):
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerEducation
+          fields = ['id', 'degree', 'institution', 'description', 'duration']
+
+     def get_duration(self, obj:JobSeekerEducation):
+          return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_currently_attending)
+
+class DashboardJobSeekerCertificationSerializer(serializers.ModelSerializer):     
+     duration = serializers.SerializerMethodField()
+     class Meta:
+          model = JobSeekerCertification
+          fields = [ 'id', 'title', 'organization', 'duration' , 'url', 'credential_id']
+     
+     def get_duration(self, obj:JobSeekerCertification):
+          if obj.has_expiration_date:
+               return f"Expiration Date: {format_date_for_display(obj.expiration_date)}"
+          
+          return f"Issued {format_date_for_display(obj.issued_date)} . No expiration Date"

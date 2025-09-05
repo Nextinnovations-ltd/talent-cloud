@@ -34,6 +34,9 @@ export const ProfileUser = () => {
     refetch,
   } = useGetJobSeekerProfileQuery();
 
+
+
+
  
   const form = useForm<UserProfile>({
     //@ts-ignore
@@ -65,6 +68,8 @@ export const ProfileUser = () => {
       address: profileData?.data?.address?.address || "",
     },
   });
+
+  console.log(form.formState.errors)
 
   useEffect(() => {
     if (profileData) {

@@ -28,8 +28,9 @@ class CustomResponse:
         }
         
         # Only include data if it's not None (allows empty lists/dicts)
-        if data is not None:
-            response["data"] = data
+        # if data is not None:
+        
+        response["data"] = data
             
         return response
 

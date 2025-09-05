@@ -9,10 +9,10 @@ import ROLES from "@/constants/authorizations";
 
 const VerifyRoleAndToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     const { hasToken, isTokenVerifying, isSucceedTokenVerifying } = useVerifyToken();
-    const { 
-        data: userInfo, 
-        isLoading: isLoadingUserInfo, 
-        isSuccess: isUserInfoSuccess 
+    const {
+        data: userInfo,
+        isLoading: isLoadingUserInfo,
+        isSuccess: isUserInfoSuccess
     } = useGetUserInfoQuery(undefined, {
         skip: shouldSkip || isTokenVerifying || !isSucceedTokenVerifying,
     });
@@ -39,7 +39,9 @@ const VerifyRoleAndToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
 
     // Show loading spinner while any verification is in progress
     if (isTokenVerifying || isLoadingUserInfo) {
-        return <LoadingSpinner />; // Replace with your loading component
+        return <div className="w-[100svw] h-[100svh] flex items-center justify-center">
+            <LoadingSpinner />
+        </div>; // Replace with your loading component
     }
 
     // Only render Outlet if ALL conditions are met:
@@ -51,7 +53,9 @@ const VerifyRoleAndToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     }
 
     // Default fallback (while redirects are happening)
-    return <LoadingSpinner />;
+    return <div className="w-[100svw] h-[100svh] flex items-center justify-center">
+        <LoadingSpinner />
+    </div>; // Replace with your loading component;
 };
 
 export default VerifyRoleAndToken;

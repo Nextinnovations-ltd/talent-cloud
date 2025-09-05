@@ -1,8 +1,11 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
+from apps.ni_dashboard.serializers import DashboardJobSeekerCertificationSerializer, DashboardJobSeekerEducationSerializer, DashboardJobSeekerExperienceSerializer, DashboardJobSeekerProjectSerializer, JobSeekerOverviewSerializer
+from services.job_seeker.profile_service import EducationService, ExperienceService, CertificationService
+from services.job_seeker.project_service import ProjectService
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import NotFound, ValidationError
 from django.db import transaction
-from django.db.models import Sum, Max, F
+from django.db.models import Sum, Max
 
 class SharedDashboardService:
      @staticmethod
@@ -55,8 +58,7 @@ class SharedDashboardService:
      @staticmethod
      def get_rejected_applicants_by_specific_job_queryset(company, job_id):
           return SharedDashboardService._get_applicants_queryset(company, job_id, ApplicationStatus.REJECTED)
-     
-     
+
      @staticmethod
      def perform_shortlisting_applicant(job_id, applicant_id):
           with transaction.atomic():
@@ -107,7 +109,6 @@ class SharedDashboardService:
                     )
                except JobApplication.DoesNotExist:
                     raise NotFound("Application not found.")
-
 
      @staticmethod
      def _get_applicants_queryset(company, job_id=None, application_status=None):
@@ -213,3 +214,102 @@ class SharedDashboardService:
                     'new_status': new_status
                }
           }
+     
+     @staticmethod
+     def get_job_seeker_overview(user_id, application_id):
+          """
+          Get Job Seeker Overview information
+          """
+          from apps.job_seekers.models import JobSeeker
+          
+          try:
+               job_seeker = JobSeeker.objects.get(user_id=user_id)
+               
+               return {
+                    'message': 'Job Seeker overview information is successfully retrieved.',
+                    'data': JobSeekerOverviewSerializer(
+                         job_seeker,
+                         context={'application_id': application_id}
+                    ).data
+               }
+          except JobSeeker.DoesNotExist:
+               raise ValidationError("Job seeker not found.")
+          
+     @staticmethod
+     def get_job_seeker_project_list(user_id):
+          """
+          Get Job Seeker Project List
+          """
+          try:
+               projects = ProjectService.get_projects(user_id)
+               
+               return {
+                    'message': 'Job Seeker project list is successfully retrieved.',
+                    'data': DashboardJobSeekerProjectSerializer(projects, many=True).data
+               }
+          except Exception as e:
+               raise ValidationError(f"Error retrieving project list: {str(e)}")
+     
+     @staticmethod
+     def get_job_seeker_video_url(user_id):
+          """
+          Get Job Seeker video link
+          """
+          from apps.job_seekers.models import JobSeeker
+          
+          try:
+               job_seeker = JobSeeker.objects.get(user_id=user_id)
+               
+               return {
+                    'message': 'Job Seeker video is successfully retrieved.' if job_seeker.video_url else 'No video url exists.',
+                    'data': job_seeker.video_url
+               }
+          except JobSeeker.DoesNotExist:
+               raise ValidationError("Job seeker not found.")
+
+     @staticmethod
+     def get_job_seeker_experience_list(user_id):
+          """
+          Get Job Seeker Experience List
+          """
+          try:
+               projects = ExperienceService.get_experiences(user_id)
+               
+               return {
+                    'message': 'Job Seeker experience list is successfully retrieved.',
+                    'data': DashboardJobSeekerExperienceSerializer(projects, many=True).data
+               }
+          except Exception as e:
+               raise ValidationError(f"Error retrieving experience list: {str(e)}")
+     
+     @staticmethod
+     def get_job_seeker_education_list(user_id):
+          """
+          Get Job Seeker Education List
+          """
+          try:
+               projects = EducationService.get_educations(user_id)
+               
+               return {
+                    'message': 'Education list is successfully retrieved.',
+                    'data': DashboardJobSeekerEducationSerializer(projects, many=True).data
+               }
+          except Exception as e:
+               raise ValidationError(f"Error retrieving education list: {str(e)}")
+     
+     @staticmethod
+     def get_job_seeker_certification_list(user_id):
+          """
+          Get Job Seeker Certification List
+          """
+          try:
+               projects = CertificationService.get_certifications(user_id)
+               
+               return {
+                    'message': 'Certification list is successfully retrieved.',
+                    'data': DashboardJobSeekerCertificationSerializer(projects, many=True).data
+               }
+          except Exception as e:
+               raise ValidationError(f"Error retrieving certification list: {str(e)}")
+     
+     

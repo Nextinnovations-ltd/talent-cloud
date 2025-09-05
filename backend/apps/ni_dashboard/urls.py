@@ -3,7 +3,13 @@ from apps.ni_dashboard.views import (
     ApplicantRejectAPIView,
     ApplicantShortListAPIView,
     CompanyListAPIView,
+    JobSeekerCertificationListAPIView,
+    JobSeekerEducationListAPIView,
+    JobSeekerExperienceListAPIView,
+    JobSeekerOverviewAPIView,
+    JobSeekerProjectListAPIView,
     JobSeekerRoleStatisticsAPIView,
+    JobSeekerVideoURLAPIView,
     NIApplicantListAPIView, 
     JobSeekerStatisticsAPIView, 
     NIAdminListAPIView,
@@ -35,12 +41,12 @@ urlpatterns = [
     path('dashboard/ni/job-posts/<int:job_id>/applicants/rejected', NIJobSpecificRejectedApplicantListAPIView.as_view(), name='ni-shortlisted-job-post-list'),
     
     # Job Seeker Details(same with applicant details)
-    path('dashboard/ni/job-seekers/<int:user_id>/overview/', RecentApplicantListAPIView.as_view(), name='recent-applicant-list'),
-    path('dashboard/ni/job-seekers/<int:user_id>/projects/', NIApplicantListAPIView.as_view(), name='applicant-list'),
-    path('dashboard/ni/job-seekers/<int:user_id>/video/', NIApplicantListAPIView.as_view(), name='applicant-list'),
-    path('dashboard/ni/job-seekers/<int:user_id>/experiences/', NIApplicantListAPIView.as_view(), name='applicant-list'),
-    path('dashboard/ni/job-seekers/<int:user_id>/educations/', NIApplicantListAPIView.as_view(), name='applicant-list'),
-    path('dashboard/ni/job-seekers/<int:user_id>/certifications/', NIApplicantListAPIView.as_view(), name='applicant-list'),
+    path('dashboard/ni/job-seekers/<int:user_id>/overview/', JobSeekerOverviewAPIView.as_view(), name='job-seeker-overview'),
+    path('dashboard/ni/job-seekers/<int:user_id>/projects/', JobSeekerProjectListAPIView.as_view(), name='job-seeker-project-list'),
+    path('dashboard/ni/job-seekers/<int:user_id>/video/', JobSeekerVideoURLAPIView.as_view(), name='job-seeker-video-url'),
+    path('dashboard/ni/job-seekers/<int:user_id>/experiences/', JobSeekerExperienceListAPIView.as_view(), name='job-seeker-experience-list'),
+    path('dashboard/ni/job-seekers/<int:user_id>/educations/', JobSeekerEducationListAPIView.as_view(), name='job-seeker-education-list'),
+    path('dashboard/ni/job-seekers/<int:user_id>/certifications/', JobSeekerCertificationListAPIView.as_view(), name='job-seeker-certification-list'),
     
     # Application Actions
     path('dashboard/ni/job-posts/<int:job_id>/applicants/<int:applicant_id>/shortlist/', ApplicantShortListAPIView.as_view(), name='ni-applicant-shortlist-action'),

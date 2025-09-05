@@ -55,6 +55,8 @@ import PrivacyPolicy from "./pages/LandingPages/PrivacyPolicy/PrivacyPolicy";
 import TermsConditions from "./pages/LandingPages/TermsConditions/TermsConditions";
 import PushNotification from "./pages/admin/PushNotification/PushNotification";
 import Shine from "./pages/Shine";
+import CandidateProfileDetail from "./pages/admin/Candidates/CandidateProfileDetail/CandidateProfileDetail";
+
 
 
 
@@ -271,6 +273,11 @@ export const router = createBrowserRouter([
             element:<CandidateApplicants/>
           },
           {
+            path:adminRoutesMap?.candidateProfile.path,
+            element:<CandidateProfileDetail/>
+            
+          },
+          {
             path:adminRoutesMap?.allJobs.path,
             element:<AllJobs/>
           },
@@ -301,6 +308,7 @@ export const router = createBrowserRouter([
             path:adminRoutesMap?.pushNotification?.path,
             element:<PushNotification/>
           },
+         
 
         ]
 

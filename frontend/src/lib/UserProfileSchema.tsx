@@ -6,14 +6,7 @@ export const UserProfileSchema = yup.object({
     username: yup.string().max(20).required("User name is required"),
     tagline: yup.string().max(60).required("Tagline is required"),
     role: yup.string().required("Role is required"),
-    specializations: yup
-        .number()
-        .transform((value, originalValue) =>
-            originalValue === "" || originalValue === null || Number.isNaN(value)
-                ? undefined
-                : Number(originalValue)
-        )
-        .required("Specialization specialize is required"),
+    specializations: yup.string().required("Specialization specialize is required"),
     experience_level: yup
         .number()
         .transform((value, originalValue) =>

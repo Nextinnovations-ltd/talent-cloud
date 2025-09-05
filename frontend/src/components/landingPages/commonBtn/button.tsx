@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { FC } from "react";
 import upArrow from "@/assets/JobPortal/arrow-up-left.svg";
 import { useNavigate } from "react-router-dom";
