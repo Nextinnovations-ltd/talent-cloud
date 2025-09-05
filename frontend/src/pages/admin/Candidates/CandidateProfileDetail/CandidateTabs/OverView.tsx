@@ -59,7 +59,13 @@ const OverView = () => {
 
             <div className=" rounded-xl mt-[72px] w-full py-[35px] px-[40px] ">
                 <h3 className="text-[24px] font-semibold mb-[32px]">Other Applied Jobs </h3>
-                <OverViewOtherApplied otherAppliedData={ProfileData?.recent_applied_jobs} />
+                <OverViewOtherApplied 
+                    otherAppliedData={ProfileData?.recent_applied_jobs?.map(job => ({
+                        ...job,
+                        applicant_count: job.applicant_count.toString(),
+                        salary: job.salary.toString(),
+                    })) || []} 
+                />
             </div>
 
         </div>
