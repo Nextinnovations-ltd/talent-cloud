@@ -82,7 +82,7 @@ export interface EditJobDetailResponse {
 
 export interface Applicant {
   applicant_id: number;
-  application_id:number;
+  application_id: number;
   name: string | null;
   applied_date: string;
   phone_number: string | null;
@@ -93,7 +93,7 @@ export interface Applicant {
   profile_image_url: string | null;
   job_post_id: string | null;
   application_status: string | null;
-  resume_url: string  | null
+  resume_url: string | null
 }
 
 export interface ApplicantsApiResponse {
@@ -198,3 +198,51 @@ export type JobSeekerProjectListResponse = {
 
 
 
+export type JobSeekerDetailVideoResponse = {
+  status: boolean;
+  message: string;
+  data: string
+}
+
+type Experience = {
+  description: string;
+  duration: string;
+  id: number;
+  organization: string;
+  title: string
+}
+
+export type JobSeekerDetailExperience = {
+  status: boolean;
+  message: string;
+  data: Experience[]
+}
+
+type Education = {
+  id: number,
+  degree: string,
+  institution: string,
+  description: string,
+  duration: string
+}
+
+export type JobSeekerEducationDetail = {
+  status: boolean;
+  message: string;
+  data: Education[];
+}
+
+type Certifications = {
+  credential_id: number;
+  duration: string;
+  id: number;
+  organization: string;
+  title: string;
+  url: string
+}
+
+export type JobSeekerCertificationDetail = {
+  status: boolean;
+  message: string;
+  data: Certifications[]
+}

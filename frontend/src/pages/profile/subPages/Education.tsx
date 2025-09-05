@@ -106,7 +106,6 @@ export const Education = () => {
     }
   };
 
-  console.log(form.formState.errors)
 
   if (isLoading) return <p>Loading...</p>;
 

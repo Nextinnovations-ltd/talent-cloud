@@ -67,7 +67,7 @@ const NotificationDropDown = () => {
                             limit={LIMIT}
                             offset={offset}
                             onMarkAsRead={handleMarkAsRead} />
-                    )): <CommonError width={130} image={NONOTI} title="" description="You're all caught up — no new notifications."/>
+                    )): <CommonError width={130} image={NONOTI } title="" description="You're all caught up — no new notifications."/>
                    }
                     {hasMore && (
                         <div className="flex justify-center py-2 px-2">

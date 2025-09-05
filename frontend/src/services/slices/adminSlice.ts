@@ -1,4 +1,4 @@
-import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCountResponse, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
@@ -76,10 +76,22 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         }),
         getJobSeekersProjects:builder.query<JobSeekerProjectListResponse,{id:string|number}>({
          query: ({id})=> `/dashboard/ni/job-seekers/${id}/projects/`
+        }),
+        getJobSeekerDetailVideo:builder.query<JobSeekerDetailVideoResponse,{id:string| number}>({
+            query: ({id})=> `/dashboard/ni/job-seekers/${id}/video/`
+        }),
+        getJobSeekerDetailExperience:builder.query<JobSeekerDetailExperience,{id:string| number}>({
+            query:({id})=> `/dashboard/ni/job-seekers/${id}/experiences/`
+        }),
+        getJobSeekerDetailEducation:builder.query<JobSeekerEducationDetail,{id:string | number}>({
+            query:({id})=> `/dashboard/ni/job-seekers/${id}/educations/`
+        }),
+        getJobSeekerDetailCertification:builder.query<JobSeekerCertificationDetail,{id:string | number}>({
+            query:({id})=> `/dashboard/ni/job-seekers/${id}/certifications/`
         })
         
        
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery,useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery,useGetJobSeekerDetailEducationQuery,useGetJobSeekerDetailCertificationQuery } = extendedAdminSlice
