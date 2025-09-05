@@ -88,9 +88,9 @@ const Nav = () => {
               >
                 {/* Nav Links */}
                 {[
-                  { to: "#why-us", label: "Why us" },
-                  { to: "#about-us", label: "About us" },
-                  { to: "#faq", label: "FAQ" },
+                  { to: "/tc/lp#why-us", label: "Why us" },
+                  { to: "/tc/lp#about-us", label: "About us" },
+                  { to: "/tc/lp#faq", label: "FAQ" },
                 ].map((item, idx) => (
                   <motion.li
                     key={idx}
@@ -162,9 +162,9 @@ const Nav = () => {
 
 
               <ul className="flex flex-col gap-[24px] transition-opacity duration-300 delay-200">
-                <li >  <HashLink smooth to="#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
-                <li>  <HashLink smooth to="#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
-                <li><HashLink smooth to="#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
+                <li >  <HashLink smooth to="/tc/lp#why-us" className={linkClass("#why-us")}>Why us</HashLink></li>
+                <li>  <HashLink smooth to="/tc/lp#about-us" className={linkClass("#about-us")}>About us</HashLink></li>
+                <li><HashLink smooth to="/tc/lp#faq" className={linkClass("#faq")}>FAQ</HashLink></li>
               </ul>
 
               <Button onClick={() => navigate('/auth/login')}   className="relative bg-[#fff] text-[#0481EF] rounded-[30px] p-[10px] w-[120px] h-[45px] border-2 border-[#0481EF] overflow-hidden group hover:bg-[#0481EF] hover:text-white transition-all duration-300">

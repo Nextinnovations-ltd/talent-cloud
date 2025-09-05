@@ -121,4 +121,4 @@ class ProjectService:
      
      @staticmethod
      def get_projects(user_id):
-          return JobSeekerProject.objects.filter(user__id=user_id).order_by('-created_at')
+          return JobSeekerProject.objects.filter(user__id=user_id).order_by('-start_date')

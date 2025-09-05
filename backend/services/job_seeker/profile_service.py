@@ -3,14 +3,14 @@ from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, 
 class ExperienceService:
      @staticmethod
      def get_experiences(user_id):
-          return JobSeekerExperience.objects.filter(user__id=user_id).order_by('-created_at')
+          return JobSeekerExperience.objects.filter(user__id=user_id).order_by('-start_date')
 
 class EducationService:
      @staticmethod
      def get_educations(user_id):
-          return JobSeekerEducation.objects.filter(user__id=user_id).order_by('-created_at')
+          return JobSeekerEducation.objects.filter(user__id=user_id).order_by('-start_date')
 
 class CertificationService:
      @staticmethod
      def get_certifications(user_id):
-          return JobSeekerCertification.objects.filter(user__id=user_id).order_by('-created_at')
+          return JobSeekerCertification.objects.filter(user__id=user_id).order_by('-issued_date')
