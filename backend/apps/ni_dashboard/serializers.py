@@ -3,7 +3,7 @@ from apps.job_posting.models import JobSeeker, JobApplication, JobPost
 from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, JobSeekerProject
 from services.job_seeker.job_seeker_service import JobSeekerService
 from services.storage.s3_service import S3Service
-from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display
+from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display, calculate_age
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
      company = serializers.SerializerMethodField()
@@ -107,14 +107,19 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      occupation = serializers.SerializerMethodField()
      recent_application = serializers.SerializerMethodField()
      recent_applied_jobs = serializers.SerializerMethodField()
+     age = serializers.SerializerMethodField()
      
      class Meta:
           model=JobSeeker
           fields=[
                'name', 'email', 'bio', 'phone_number', 'address', 'is_open_to_work',
                'expected_salary', 'profile_image_url', 'resume_url', 'cover_letter_url', 
-               'occupation', 'social_links', 'recent_application', 'recent_applied_jobs'
+               'age', 'occupation', 'social_links', 'recent_application',
+               'recent_applied_jobs',
           ]
+     
+     def get_age(self, obj:JobSeeker):
+          return calculate_age(obj.date_of_birth)
      
      def get_profile_image_url(self, obj:JobSeeker):
           return obj.profile_image_url_link

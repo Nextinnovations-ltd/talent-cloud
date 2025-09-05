@@ -47,3 +47,39 @@ def format_date_for_display(date_obj, input_format='month_year'):
      format_string = format_map.get(input_format, input_format)
      
      return datetime_obj.strftime(format_string)
+
+def calculate_age(dob):
+     """
+     Calculate age from date of birth
+     Returns:
+          Age in years as integer, or None if invalid date
+     """
+     if not dob:
+        return None
+    
+     # Handle string input
+     if isinstance(dob, str):
+          try:
+               dob = datetime.strptime(dob, '%Y-%m-%d').date()
+          except ValueError:
+               return None
+     
+     # Extract date part
+     if isinstance(dob, datetime):
+          dob = dob.date()
+     
+     # Validate it's a date object
+     if not isinstance(dob, date):
+          return None
+     
+     today = date.today()
+     
+     # Calculate age
+     age = today.year - dob.year
+     
+     # Adjust if birthday hasn't occurred this year yet
+     if today.month < dob.month or (today.month == dob.month and today.day < dob.day):
+          age -= 1
+     
+     # Ensure age is not negative
+     return max(0, age)
