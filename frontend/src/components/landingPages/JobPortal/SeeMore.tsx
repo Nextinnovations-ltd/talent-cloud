@@ -1,5 +1,6 @@
 import  { useState } from 'react'
 import arrowIncrease from '../../../assets/JobPortal/streamline_graph-arrow-increase.svg'
+
 const SeeMore = () => {
     const [showmore, setShowMore] = useState(false);  
   return (
