@@ -8,6 +8,9 @@ import AnalyticalPieChart from "./analyticalPieChart";
 const AnalyticalCharts = () => {
 
     const { data: dashboardAnalytics, isLoading: isAnalyticsLoading } = useGetDashboardAnalyticsQuery();
+    
+
+
 
     return (
         <div className="mt-[66px] pr-5 flex w-full gap-5">
