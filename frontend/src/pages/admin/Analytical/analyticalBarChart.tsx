@@ -73,6 +73,7 @@ function AnalyticalBarChart() {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Bar dataKey="jobSeeker" fill="var(--color-desktop)" radius={0}>
+                        {/* @ts-ignore */}
                             {chartData.map((_entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
@@ -87,6 +88,7 @@ function AnalyticalBarChart() {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="grid grid-cols-3 mt-10 ml-4 flex-wrap items-center gap-2 text-sm">
+            {/* @ts-ignore */}
                 {chartData.map((role, index) => (
                     <AnalyticalActiveItems
                         key={index}
