@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { ComfirmUpload } from './ConfirmUpload';
 import { generatePresignedUrl } from './GeneratePresignedUrl';
@@ -9,7 +10,7 @@ type UploadToS3Props = {
     postId?: string
 }
 
-export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise<boolean | string> {
+export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise<boolean | string | unknown> {
     try {
         // Generate presigned URL using the dedicated function
         const presignedUrlData = await generatePresignedUrl({ file,type });
@@ -19,10 +20,14 @@ export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
          
          if (type === 'profile' || type === 'resume'){
-             await ComfirmUpload({
+            const response = await ComfirmUpload({
                 uploadId:presignedUrlData?.data?.upload_id,
                 fileSize:file.size
             });
+
+
+                //@ts-ignore
+            return response?.data?.data?.upload_id;
          }
 
         // if (type === 'coverLetter') {

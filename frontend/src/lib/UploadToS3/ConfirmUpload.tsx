@@ -18,7 +18,7 @@ export async function ComfirmUpload({uploadId,fileSize}:ConfirmUploadProps):Prom
 
         const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
 
-         await axios.post(
+       const response =  await axios.post(
             `${URL}jobseeker/application/upload/confirm/`,
             {
               upload_id: uploadId,
@@ -34,7 +34,9 @@ export async function ComfirmUpload({uploadId,fileSize}:ConfirmUploadProps):Prom
 
 
 
-        return undefined;
+
+
+        return response;
     }catch (error:any) {
         console.error('Error confirming upload:', error);
         throw new Error(error.response?.data?.message || 'Failed to confirm upload');
