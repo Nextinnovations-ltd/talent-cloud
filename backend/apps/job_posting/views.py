@@ -10,15 +10,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
 from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from apps.job_posting.serializers import (
-    BookmarkedJobSerializer,
-    JobApplicationCreateSerializer,
-    JobApplicationSerializer,
-    JobApplicationStatusUpdateSerializer,
-    JobPostDetailSerializer,
-    JobPostListSerializer,
-    JobPostSerializer,
-)
 from apps.job_seekers.models import JobSeeker
 from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
@@ -33,8 +24,15 @@ from core.middleware.permission import (
     IsOwnerOfApplication,
     IsCompanyAdminOrSuperadminForApplication
 )
-from core.constants.s3.constants import FILE_TYPES
-from services.job_seeker.file_upload_service import FileUploadService
+from apps.job_posting.serializers import (
+    BookmarkedJobSerializer,
+    JobApplicationCreateSerializer,
+    JobApplicationSerializer,
+    JobApplicationStatusUpdateSerializer,
+    JobPostDetailSerializer,
+    JobPostListSerializer,
+    JobPostSerializer,
+)
 
 import logging
 
@@ -482,7 +480,7 @@ class CoverLetterUploadUrlAPIView(APIView):
                if len(filename.strip()) == 0:
                     raise ValidationError("filename cannot be empty")
                
-               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.COVER_LETTER)
+               response_data = JobApplicationService.generate_application_cover_letter_upload_url(request.user, filename, file_size, content_type)
                
                logger.info(f"Generated cover letter upload URL for user {request.user.id}")
                
@@ -540,7 +538,7 @@ class JobApplicationResumeUrlAPIView(APIView):
                if len(filename.strip()) == 0:
                     raise ValidationError("filename cannot be empty")
                
-               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.APPLICATION_RESUME)
+               response_data = JobApplicationService.generate_application_resume_upload_url(request.user, filename, file_size, content_type)
                
                logger.info(f"Generated job application upload URL for user {request.user.id}")
 
