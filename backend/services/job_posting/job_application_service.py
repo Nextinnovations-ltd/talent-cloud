@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.job_seekers.models import JobSeeker
 from apps.authentication.models import FileUpload
-from core.constants.s3.constants import UPLOAD_STATUS
+from services.storage.upload_service import UploadService
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
@@ -13,6 +14,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 class JobApplicationService:
+     @staticmethod
+     def generate_application_cover_letter_upload_url(user, filename, file_size, content_type=None):
+          return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.COVER_LETTER)
+     
+     @staticmethod
+     def generate_application_resume_upload_url(user, filename, file_size, content_type=None):
+          return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.APPLICATION_RESUME)
+     
      @staticmethod
      def perform_application_submission(user, job_post_id, cover_letter_upload_id, resume_upload_id, is_cover_letter_skipped=False):
           try:

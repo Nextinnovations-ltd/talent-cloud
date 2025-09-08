@@ -2,16 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
-from apps.job_seekers.models import JobSeeker
-from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS, OVERRIDE_FILE_TYPES
-from services.job_seeker.file_upload_service import FileUploadService
-from services.storage.s3_service import S3Service
+from services.job_seeker.profile_service import ProfileService
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
-from apps.authentication.models import FileUpload
-from datetime import datetime, timedelta
 import logging
 
 logger = logging.getLogger(__name__)
@@ -51,7 +46,7 @@ class ProfileImageUploadAPIView(APIView):
                if len(filename.strip()) == 0:
                     raise ValidationError("filename cannot be empty")
                
-               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.PROFILE_IMAGE)
+               response_data = ProfileService.generate_profile_image_upload_url(request.user, filename, file_size, content_type)
                
                logger.info(f"Generated profile image upload URL for user {request.user.id}, upload_id: {response_data['upload_id']}")
                
@@ -101,101 +96,16 @@ class ProfileResumeUploadAPIView(APIView):
                file_size = request.data.get('file_size')
                content_type = request.data.get('content_type')
                
-               # Validation
                if not filename:
                     raise ValidationError("filename is required")
                if not file_size:
                     raise ValidationError("file_size is required")
+               if len(filename.strip()) == 0:
+                    raise ValidationError("filename cannot be empty")
                
-               # Convert file_size to integer and validate
-               try:
-                    file_size = int(file_size)
-                    if file_size > 10 * 1024 * 1024:  # 10MB limit for resumes
-                         raise ValidationError("File size cannot exceed 10MB")
-                    if file_size < 1:
-                         raise ValidationError("File size must be greater than 0")
-               except ValueError:
-                    raise ValidationError("Invalid file_size format")
+               response_data = ProfileService.generate_profile_resume_upload_url(request.user, filename, file_size, content_type)
                
-               # Auto-detect content type if not provided
-               if not content_type:
-                    content_type = S3Service.get_content_type_from_filename(filename)
-               
-               # Validate document content type
-               allowed_doc_types = [
-                    'application/pdf',
-                    'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'text/plain'
-               ]
-               if content_type not in allowed_doc_types:
-                    raise ValidationError(f"Only document files are allowed. Supported: PDF, DOC, DOCX, TXT")
-               
-               # Cancel any pending resume uploads
-               pending_upload = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='resume',
-                    upload_status='pending'
-               ).first()
-               
-               if pending_upload:
-                    pending_upload.upload_status = 'cancelled'
-                    pending_upload.save()
-                    logger.info(f"Cancelled pending resume upload {pending_upload.id} for user {request.user.id}")
-               
-               # Delete previous uploaded resume
-               previous_resumes = FileUpload.objects.filter(
-                    user=request.user,
-                    file_type='resume',
-                    upload_status='uploaded'
-               )
-               
-               for prev_resume in previous_resumes:
-                    S3Service.delete_file(prev_resume.file_path)
-                    prev_resume.upload_status = 'deleted'
-                    prev_resume.save()
-                    logger.info(f"Deleted previous resume {prev_resume.id} for user {request.user.id}")
-               
-               # Generate unique file path
-               file_path = S3Service.generate_unique_file_path(
-                    file_type='resume',
-                    original_filename=filename
-               )
-               
-               # Generate presigned URL
-               upload_data = S3Service.generate_presigned_upload_url(
-                    file_path=file_path,
-                    file_type=content_type,
-                    file_size=file_size,
-                    expiration=3600
-               )
-               
-               if not upload_data:
-                    raise ValidationError("Failed to generate upload URL")
-               
-               # Create tracking record
-               file_upload = FileUpload.objects.create(
-                    user=request.user,
-                    file_type='resume',
-                    original_filename=filename,
-                    file_path=file_path,
-                    file_size=file_size,
-                    content_type=content_type,
-                    upload_status='pending',
-                    upload_url_expires_at=datetime.now() + timedelta(hours=1)
-               )
-               
-               response_data = {
-                    'upload_id': str(file_upload.id),
-                    'upload_url': upload_data['upload_url'],
-                    'fields': upload_data['fields'],
-                    'file_path': file_path,
-                    'expires_in': 3600,
-                    'max_file_size': '10MB',
-                    'allowed_types': allowed_doc_types
-               }
-               
-               logger.info(f"Generated resume upload URL for user {request.user.id}, upload_id: {file_upload.id}")
+               logger.info(f"Generated resume upload URL for user {request.user.id}, upload_id: {response_data['upload_id']}")
                
                return Response(
                     CustomResponse.success("Resume upload URL generated", response_data),
@@ -239,66 +149,13 @@ class ConfirmProfileUploadAPIView(APIView):
           """
           try:
                upload_id = request.data.get('upload_id')
-               file_size = request.data.get('file_size')
                
                if not upload_id:
                     raise ValidationError("upload_id is required")
-               
-               # Get upload record
-               try:
-                    file_upload = FileUpload.objects.get(
-                         id=upload_id,
-                         user=request.user,
-                         upload_status=UPLOAD_STATUS.PENDING
-                    )
-               except FileUpload.DoesNotExist:
-                    raise ValidationError("Invalid upload_id or upload already processed")
-
-               # Update upload record
-               file_upload = FileUploadService.update_file_upload_status(file_upload, file_size)
-               
-               # Generate download URL for response
-               public_url = S3Service.get_public_url(
-                    file_upload.file_path
-               )
-               
-               # Update TalentCloudUser profile based on file type
-               try:
-                    from apps.job_seekers.models import TalentCloudUser
-                    job_seeker = JobSeeker.objects.get(id=request.user.id)
                     
-                    if file_upload.file_type == 'profile_image':
-                         job_seeker.profile_image_url = file_upload.file_path
-                         logger.info(f"Updated profile image for user {request.user.id}")
-                    elif file_upload.file_type == 'resume':
-                         job_seeker.resume_url = file_upload.file_path
-                         logger.info(f"Updated resume for user {request.user.id}")
-                    
-                    job_seeker.save()
-                    profile_updated = True
-                    
-               except TalentCloudUser.DoesNotExist:
-                    logger.warning(f"TalentCloudUser not found for user {request.user.id}")
-                    profile_updated = False
+               response_data = ProfileService.confirm_profile_upload(request.user, upload_id)
                
-               # if file_upload.file_type in OVERRIDE_FILE_TYPES:
-               # delete_previous_files_task.delay(
-               #      user_id=request.user.id,
-               #      file_type=file_upload.file_type,
-               #      exclude_upload_id=file_upload.id
-               # )
-                    
-               response_data = {
-                    'upload_id': str(file_upload.id),
-                    'file_type': file_upload.file_type,
-                    'file_path': file_upload.file_path,
-                    'url': public_url,
-                    'uploaded_at': file_upload.uploaded_at.isoformat(),
-                    'upload_status': UPLOAD_STATUS.UPLOADED,
-                    'profile_updated': profile_updated
-               }
-               
-               logger.info(f"Confirmed upload {file_upload.id} for user {request.user.id}")
+               logger.info(f"Confirmed upload {response_data['upload_id']} for user {request.user.id}")
                
                return Response(
                     CustomResponse.success("Profile file uploaded and profile updated", response_data),

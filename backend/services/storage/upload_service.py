@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class FileUploadService:
+class UploadService:
      @staticmethod
      def generate_file_upload_url(user, filename, file_size, content_type=None, file_type = FILE_TYPES.PROFILE_IMAGE):
           try:
@@ -22,7 +22,7 @@ class FileUploadService:
                raise ValidationError("Invalid file_size format")
 
           # Cancel previous pending
-          FileUploadService.cancel_pending_uploads(user, file_type)
+          UploadService.cancel_pending_uploads(user, file_type)
           
           # Generate unique file path
           file_path = S3Service.generate_unique_file_path(
@@ -53,14 +53,17 @@ class FileUploadService:
                upload_url_expires_at=datetime.now() + timedelta(hours=1)
           )
 
+          # 'fields': upload_data['fields'],
+          # 'expires_in': 3600,
+          
           response_data = {
                'upload_id': str(file_upload.id),
                'upload_url': upload_data['upload_url'],
-               # 'fields': upload_data['fields'],
                'file_path': file_path,
-               # 'expires_in': 3600,
                'max_file_size': max_size,
-               'allowed_types': allowed_content_types
+               'allowed_types': allowed_content_types,
+               'fields': upload_data['fields'],
+               'expires_in': 3600,
           }
           
           return response_data
@@ -96,18 +99,24 @@ class FileUploadService:
           #           logger.info(f"Deleted previous file {file.id} for user {user.id}")
 
      @staticmethod
-     def update_file_upload_status(file_upload: FileUpload, file_size=None, upload_status=UPLOAD_STATUS.UPLOADED):
+     def update_file_upload_status(user, upload_id, old_upload_status = UPLOAD_STATUS.PENDING, new_upload_status = None) -> FileUpload:
+          try:
+               file_upload = FileUpload.objects.get(
+                    id=upload_id,
+                    user=user,
+                    upload_status=old_upload_status
+               )
+          except FileUpload.DoesNotExist:
+               raise ValidationError("Invalid upload_id or upload already processed")
+
           # Update upload record
-          file_upload.upload_status = upload_status
+          new_upload_status = new_upload_status if new_upload_status else UPLOAD_STATUS.UPLOADED
+          file_upload.upload_status = new_upload_status
           file_upload.uploaded_at = datetime.now()
-          
-          if file_size:
-               file_upload.file_size = file_size
-          
           file_upload.save()
           
           return file_upload
-     
+
      @staticmethod
      def soft_delete_upload_file(user, file_path):
           try:

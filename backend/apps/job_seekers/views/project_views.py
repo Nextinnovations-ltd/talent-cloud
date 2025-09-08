@@ -5,16 +5,14 @@ from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from apps.job_seekers.models import JobSeekerProject
+from services.job_seeker.project_service import ProjectService
+from core.middleware.authentication import TokenAuthentication
+from core.middleware.permission import TalentCloudUserPermission
+from utils.response import CustomResponse
 from apps.job_seekers.serializers.project_serializer import (
     JobSeekerProjectDisplaySerializer,
     JobSeekerProjectCreateUpdateSerializer
 )
-from services.job_seeker.project_service import ProjectService
-from core.constants.s3.constants import FILE_TYPES
-from services.job_seeker.file_upload_service import FileUploadService
-from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudUserPermission
-from utils.response import CustomResponse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -44,7 +42,7 @@ class ProjectImageUploadUrlAPIView(APIView):
             if len(filename.strip()) == 0:
                 raise ValidationError("filename cannot be empty")
             
-            response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.PROJECT_IMAGE)
+            response_data = ProjectService.generate_project_image_upload_url(request.user, filename, file_size, content_type)
             
             logger.info(f"Generated project image upload URL for user {request.user.id}")
             
@@ -146,17 +144,13 @@ class JobSeekerProjectListAPIView(APIView):
     def post(self, request):
         """Create a new project"""
         upload_id = request.data.get('project_image_upload_id')
-        
-        # if not upload_id:
-        #     raise ValidationError("Project Image file required.")
-        
+
         serializer = JobSeekerProjectCreateUpdateSerializer(
             data=request.data,
             context={'request': request}
         )
         
         if serializer.is_valid():
-            # serializer.save()
             project_data = ProjectService.performed_project_creation(request.user, serializer.validated_data, upload_id)
             
             return Response(
