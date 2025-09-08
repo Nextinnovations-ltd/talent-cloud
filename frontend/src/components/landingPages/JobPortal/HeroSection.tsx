@@ -496,14 +496,13 @@ const HeroSection = () => {
                       visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
                     }}
                   >
-                    <a
-                      href="/auth/login"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex justify-center items-center relative border-2 border-[#0481EF] text-[#0481EF] rounded-[30px] p-[10px] w-[141px] h-[64px] hover:bg-[#0481EF] hover:text-white transition-all duration-300"
+                    <p
+                    onClick={()=>navigate('/auth/login') }
+
+                      className="flex justify-center cursor-pointer items-center relative border-2 border-[#0481EF] text-[#0481EF] rounded-[30px] p-[10px] w-[141px] h-[64px] hover:bg-[#0481EF] hover:text-white transition-all duration-300"
                     >
                       <span className="text-[16px] font-[500] leading-[28px]">Sign up</span>
-                    </a>
+                    </p>
                   </motion.li>
 
                   {/* Contact Us Button */}

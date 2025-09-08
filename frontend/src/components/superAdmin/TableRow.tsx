@@ -15,6 +15,7 @@ import { Applicant } from '@/types/admin-auth-slice';
 import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
 import { useNavigate } from "react-router-dom";
+import clsx from 'clsx';
 
 
 interface ApplicantsJobItemsProps {
@@ -28,6 +29,9 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const { showNotification } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
   const navigate = useNavigate();
+
+
+  console.log(data)
 
 
 
@@ -59,6 +63,43 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
     // Implement view profile logic
     navigate(`/admin/dashboard/candiates/profile/${data.applicant_id}?application_id=${data.application_id}`)
   };
+
+  const handleDownLoadCover = async()=> {
+    if (!data?.cover_letter_url) {
+      showNotification({
+        message: "No cover letter available for this applicant",
+        type: "danger",
+      });
+      return;
+    }
+    try {
+      const response = await fetch(data.cover_letter_url);
+      const blob = await response.blob();
+  
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${data.name || "resume"}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+  
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showNotification({
+        message: "Download started",
+        type: "success",
+      });
+    } catch  {
+      showNotification({
+        message: "Failed to download CV",
+        type: "danger",
+      });
+    } finally {
+      //setIsDownloading(false);
+    }
+  }
 
   const handleDownloadCV = async () => {
     if (!data?.resume_url) {
@@ -144,7 +185,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
                 }`}
             />
             <p className="text-[14px] font-medium">
-              {data.is_open_to_work ? 'Available for Work' : 'unvailable'}
+              {data.is_open_to_work ? 'Available for Work' : 'Unvailable for Work'}
             </p>
           </div>
         </td>
@@ -196,8 +237,9 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
                 View user profile
               </DropdownMenuItem>
               <DropdownMenuItem
-                onSelect={handleUserDetail}
-                className="cursor-pointer focus:bg-gray-100"
+                disabled={!data?.cover_letter_url}
+                onSelect={handleDownLoadCover}
+                className={clsx(' focus:bg-gray-100', data?.cover_letter_url ? 'cursor-pointer' : 'cursor-not-allowed' )}
               >
                 Download Cover Letter
               </DropdownMenuItem>

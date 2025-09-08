@@ -109,7 +109,7 @@ export const UserInfoSec = () => {
     const [isCertificationEdit, setIsCertificationEdit] = useState(false);
     const [isSelectedProjectsEdit, setIsSelectedProjectsEdit] = useState(false);
     const [isVideoIntroductionEdit, setIsVideoIntroductionEdit] = useState(false);
-    const {data,isLoading} = useGetJobSeekerResumeQuery();
+    const { data, isLoading } = useGetJobSeekerResumeQuery();
 
 
     const resume_url = data?.data?.resume_url || "";
@@ -122,32 +122,32 @@ export const UserInfoSec = () => {
         if (!resume_url) return;
         setIsDownloading(true);
         try {
-          await toast.promise(
-            (async () => {
-              const res = await fetch(resume_url);
-              if (!res.ok) throw new Error("Failed to fetch resume");
+            await toast.promise(
+                (async () => {
+                    const res = await fetch(resume_url);
+                    if (!res.ok) throw new Error("Failed to fetch resume");
 
-              const blob = await res.blob();
-              const objectUrl = URL.createObjectURL(blob);
+                    const blob = await res.blob();
+                    const objectUrl = URL.createObjectURL(blob);
 
-              const a = document.createElement("a");
-              a.href = objectUrl;
-              a.download = fileName;
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
+                    const a = document.createElement("a");
+                    a.href = objectUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
 
-              setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
-            })(),
-            { loading: 'Downloading resume…', success: 'Download started', error: 'Failed to download resume' }
-          );
+                    setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+                })(),
+                { loading: 'Downloading resume…', success: 'Download started', error: 'Failed to download resume' }
+            );
         } catch (err) {
-          console.error("Download failed:", err);
-          window.open(resume_url, "_blank", "noopener,noreferrer");
+            console.error("Download failed:", err);
+            window.open(resume_url, "_blank", "noopener,noreferrer");
         } finally {
-          setIsDownloading(false);
+            setIsDownloading(false);
         }
-      };
+    };
 
 
 
@@ -216,23 +216,23 @@ export const UserInfoSec = () => {
                 {/* Work Experience */}
 
                 <div id="work-experience-section">
-                    <WorkExperienceSection 
-                    isWorkExperienceEdit={isWorkExperienceEdit} 
-                    setIsWorkExperienceEdit={setIsWorkExperienceEdit} 
-                    containerVariants={containerVariants} 
-                     //@ts-ignore
-                    itemVariants={itemVariants} />
+                    <WorkExperienceSection
+                        isWorkExperienceEdit={isWorkExperienceEdit}
+                        setIsWorkExperienceEdit={setIsWorkExperienceEdit}
+                        containerVariants={containerVariants}
+                        //@ts-ignore
+                        itemVariants={itemVariants} />
                 </div>
 
                 {/* Education */}
 
                 <div id="education-section">
-                    <EducationSection 
-                    isEducationEdit={isEducationEdit} 
-                    setIsEducationEdit={setIsEducationEdit} 
-                    containerVariants={containerVariants} 
-                      //@ts-ignore
-                    itemVariants={itemVariants} />
+                    <EducationSection
+                        isEducationEdit={isEducationEdit}
+                        setIsEducationEdit={setIsEducationEdit}
+                        containerVariants={containerVariants}
+                        //@ts-ignore
+                        itemVariants={itemVariants} />
                 </div>
 
 
@@ -274,10 +274,18 @@ export const UserInfoSec = () => {
             >
                 <div className="flex items-center gap-4 bg-[#525252]/10 backdrop-blur-md rounded-full px-4 py-2 border border-[#525252]/20">
                     <FloatingDock items={links} />
-                    <button onClick={handleDownload}  disabled={!resume_url || isLoading || isDownloading} className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors">
-                     { (isLoading || isDownloading) ? "Downloading..." : resume_url ? "Download Resume" : "No Resume" }
-                    </button>
+
+                    {resume_url && (
+                        <button
+                            onClick={handleDownload}
+                            disabled={isLoading || isDownloading}
+                            className="h-12 px-6 rounded-full bg-blue-500 backdrop-blur-md border border-[#525252]/50 shadow-lg shadow-[#525252]/30 text-white font-medium hover:bg-blue-600 transition-colors"
+                        >
+                            {(isLoading || isDownloading) ? "Downloading..." : "Download Resume"}
+                        </button>
+                    )}
                 </div>
+
             </motion.div>
         </motion.div>
         //dock

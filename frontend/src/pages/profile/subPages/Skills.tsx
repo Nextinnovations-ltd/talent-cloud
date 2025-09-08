@@ -4,7 +4,7 @@ import { SkillYupSchema } from "@/lib/SkillYupSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { MultiSelect } from "@/components/common/MultiSelect";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PageInitialLoading } from "@/components/common/PageInitialLoading";
 import { useFormattedSkills, useFormattedUserSkills } from "@/lib/dropData.tsx/ReturnSkills";
 import { useApiCaller } from "@/hooks/useApicaller";
@@ -12,8 +12,6 @@ import { useAddJobSeekerSkillsMutation } from "@/services/slices/jobSeekerSlice"
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
-
-
 
 type SkillForm = {
   skill_list: string[];
@@ -24,36 +22,37 @@ export const Skills = () => {
   const { data: FORMATTEDUSER, isLoading: USERLOADING, refetch: USERREFETCH } = useFormattedUserSkills();
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddJobSeekerSkillsMutation);
   const navigate = useNavigate();
+
   const form = useForm<SkillForm>({
     resolver: yupResolver(SkillYupSchema),
+    defaultValues: {
+      skill_list: Array.isArray(FORMATTEDUSER) ? FORMATTEDUSER.map(String) : [],
+    },
   });
 
-  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(
-    Array.isArray(FORMATTEDUSER) ? FORMATTEDUSER.map(String) : []
-  );
-
+  // Sync form default values when user data loads
   useEffect(() => {
-    if (Array.isArray(FORMATTEDUSER) && FORMATTEDUSER.length > 0) {
-      setSelectedFrameworks(FORMATTEDUSER.map(String));
+    if (Array.isArray(FORMATTEDUSER)) {
+      form.setValue("skill_list", FORMATTEDUSER.map(String));
     }
-  }, [FORMATTEDUSER]);
-
-  useEffect(() => {
-    if (Array.isArray(selectedFrameworks) && selectedFrameworks.length > 0) {
-      form.setValue('skill_list', selectedFrameworks);
-    }
-  }, [selectedFrameworks]);
+  }, [FORMATTEDUSER, form]);
 
   const onSubmit = async (data: SkillForm) => {
+    if (data.skill_list.length < 5) {
+      form.setError("skill_list", {
+        type: "manual",
+        message: "Please select at least 5 skills.",
+      });
+      return;
+    }
+
     try {
       await executeApiCall(data);
-      refetch()
-      USERREFETCH()
-
-      navigate('/user/mainProfile')
-
+      refetch();
+      USERREFETCH();
+      navigate("/user/mainProfile");
     } catch (error) {
-      console.error("Error submitting from:", error);
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -68,15 +67,25 @@ export const Skills = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 max-w-[672px]">
             <MultiSelect
-              options={Array.isArray(FORMATTEDDATA) ? FORMATTEDDATA.map(opt => ({ ...opt, value: String(opt.value) })) : []}
-              onValueChange={setSelectedFrameworks}
-              defaultValue={selectedFrameworks}
+              options={
+                Array.isArray(FORMATTEDDATA)
+                  ? FORMATTEDDATA.map((opt) => ({ ...opt, value: String(opt.value) }))
+                  : []
+              }
+              onValueChange={(values) => form.setValue("skill_list", values)}
+              defaultValue={form.watch("skill_list")}
               placeholder="eg. Microsoft Office"
               variant="inverted"
               animation={2}
               maxCount={100}
               className="min-h-[56px] max-w-[672px]"
+              disabled={isSubmitting}
             />
+            {form.formState.errors.skill_list && (
+              <p className="text-red-500 mt-1 text-sm">
+                {form.formState.errors.skill_list.message}
+              </p>
+            )}
           </div>
 
           <div className="max-w-[672px] flex items-center justify-end">

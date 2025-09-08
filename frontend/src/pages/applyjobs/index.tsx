@@ -26,7 +26,9 @@ const ApplyJob = () => {
   const [fileData, setFileData] = useState<File>();
   const [radioValue, setRadioValue] = useState<"uploadCover" | "noCover">("noCover");
   const [coverError, setCoverError] = useState(false);
+  const [resumeUploadId,setResumeUploadId] = useState<string | undefined>(undefined);
   const navigation = useNavigate();
+
 
 
   const [loading, setLoading] = useState(false);
@@ -54,13 +56,23 @@ const ApplyJob = () => {
       return;
     }
 
+    console.log("kdkdkdk")
+    console.log(resumeUploadId)
+    console.log("kdkdkdk")
+
+
     try {
       setLoading(true);
 
       const payload = {
         cover_letter_upload_id: "",
         is_skipped: false,
+        resume_upload_id: ""
       };
+
+      if(resumeUploadId){
+        payload.resume_upload_id = resumeUploadId 
+      }
 
       if (fileData) {
         const result = await uploadToS3({
@@ -70,6 +82,8 @@ const ApplyJob = () => {
         });
         //@ts-ignore
         payload.cover_letter_upload_id = result;
+       
+       
       } else {
         payload.is_skipped = true;
       }
@@ -101,7 +115,7 @@ const ApplyJob = () => {
   };
 
   return (
-    <div className="container  mx-auto  pt-[20px]">
+    <div className="container  mx-auto  pb-[200px] pt-[20px]">
       <Link to={`/?jobId=${id}`}>
         <button className="border-[1px] ml-[50px] fixed  cursor-pointer w-[62px] h-[62px] flex duration-700 hover:border-blue-300 hover:bg-slate-100 items-center justify-center rounded-full">
           <ChevronLeft />
@@ -115,7 +129,7 @@ const ApplyJob = () => {
           <h3 className=" underline text-[#0481EF] text-[18px]">View Full Job Description </h3>
         </Link>
 
-        <ApplyJobResume resumeData={data?.data?.resume_url} />
+        <ApplyJobResume setResumeUploadId={setResumeUploadId} resumeData={data?.data?.resume_url} />
         <ApplyCoverLetter
           fileData={fileData}
           setFileData={setFileData}
@@ -125,7 +139,7 @@ const ApplyJob = () => {
         />
 
 
-        <Button onClick={handleApply} disabled={!data?.data?.resume_url} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
+        <Button onClick={handleApply} disabled={!resumeUploadId} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
           JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>

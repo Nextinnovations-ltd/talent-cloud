@@ -18,6 +18,7 @@ import { Button } from "../ui/button";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { PageInitialLoading } from "../common/PageInitialLoading";
 import clsx from "clsx";
+import { useEffect, useRef } from "react";
 
 
 export const UserProfileForm = ({
@@ -40,7 +41,44 @@ export const UserProfileForm = ({
   const { data: EXPERIENCEDATA, isLoading: EXPERIENCEDATALoading } = useFormattedExperience();
   const { data: COUNTRYDATA, isLoading: COUNTRYLoading } = useFormattedCountryList();
   const { data: CITYDATA, isLoading: CITYLoading } = useFormattedCityList(selectedCountryId);
-  const { data: ROLEDATA, isLoading: ROLELoading } = useFormattedRolesBySpecializationList(selectedSpecializationId);
+  const { data: ROLEDATA, isLoading: ROLELoading,isSuccess: isSuccessRole } = useFormattedRolesBySpecializationList(selectedSpecializationId);
+
+
+
+  const selectedRole = form.watch("role");
+  const firstRender = useRef(true);
+  const prevSpecializationId = useRef<number | string | null>(null);
+
+
+  useEffect(() => {
+    // Skip on first render
+    if (firstRender.current) {
+      firstRender.current = false;
+      prevSpecializationId.current = selectedSpecializationId;
+      return;
+    }
+
+  
+    // Only proceed if role data has loaded
+    if (!isSuccessRole || !ROLEDATA.length) return;
+
+
+
+  
+    // Only reset role if specialization has changed
+    if (prevSpecializationId.current !== selectedSpecializationId) {
+      prevSpecializationId.current = selectedSpecializationId;
+  
+      const isValidRole = ROLEDATA.some(role => role.value === selectedRole);
+
+      if (!isValidRole) {
+        form.setValue('role', '');
+      }
+    }
+  }, [selectedSpecializationId, ROLEDATA, isSuccessRole]);
+  
+  
+  
 
 
 
@@ -48,6 +86,9 @@ export const UserProfileForm = ({
   const fieldWidth = "max-w-[672px]";
 
   const loading = FORMATTEDDATALoading || EXPERIENCEDATALoading || COUNTRYLoading || ROLELoading
+
+
+
 
   if (loading) {
     return (

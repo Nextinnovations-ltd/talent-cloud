@@ -80,4 +80,7 @@ const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title
   )
 }
 
+
+
+
 export default Certifications;

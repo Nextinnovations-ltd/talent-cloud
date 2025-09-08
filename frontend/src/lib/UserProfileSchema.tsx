@@ -36,20 +36,10 @@ export const UserProfileSchema = yup.object({
     resume_url: yup.string().optional(),
     is_open_to_work: yup.boolean().required(),
     country: yup
-        .number()
-        .transform((value, originalValue) =>
-            originalValue === "" || originalValue === null || Number.isNaN(value)
-                ? undefined
-                : Number(originalValue)
-        )
+        .string()
         .required("Country is required"),
     city: yup
-        .number()
-        .transform((value, originalValue) =>
-            originalValue === "" || originalValue === null || Number.isNaN(value)
-                ? undefined
-                : Number(originalValue)
-        )
+        .string()
         .required("City is required"),
     linkedin_url: yup.string().optional(),
     behance_url: yup.string().optional(),

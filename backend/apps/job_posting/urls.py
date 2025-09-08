@@ -2,8 +2,10 @@ from django.urls import path
 from .views import (
     BookmarkDeleteAPIView,
     CompanyJobListView,
+    ConfirmJobApplicationResumeUploadAPIView,
     CoverLetterUploadUrlAPIView,
     ExpiredJobPostAPIView,
+    JobApplicationResumeUrlAPIView,
     JobDiscoveryAPIView,
     JobPostEditDetailAPIView,
     JobPostCreateAPIView,
@@ -54,6 +56,10 @@ urlpatterns = [
     path('application/upload/cover-letter/', CoverLetterUploadUrlAPIView.as_view(), name='get-cover-letter-upload-url'),
     path('my-applications/', JobSeekerApplicationListView.as_view(), name='my-applications-list'),
     path('my-applications/<int:pk>/', JobSeekerApplicationDetailView.as_view(), name='my-applications-detail'),
+    
+    # Job Seeker Application Resume
+    path('jobseeker/application/upload/resume/', JobApplicationResumeUrlAPIView.as_view(), name='application-resume-upload'),
+    path('jobseeker/application/upload/confirm/', ConfirmJobApplicationResumeUploadAPIView.as_view(), name='confirm-application-resume-upload'),
     
     # Bookmarked Job Endpoints (Job Seeker)
     path('my-bookmarks/', JobSeekerBookmarkedJobListView.as_view(), name='my-bookmarks-list'),

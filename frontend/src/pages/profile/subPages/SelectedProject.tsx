@@ -127,9 +127,6 @@ const SelectedProject = () => {
     try {
       let response;
       if (id) {
-
-
-
         const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
 
 
@@ -230,7 +227,7 @@ const SelectedProject = () => {
               maxLength={20}
               placeholder="Type here"
             />
-            <p className="text-xs text-gray-500 mt-1 mb-2">Type a tag and press Enter or comma to add. Click × to remove a tag. Max 20 tags, 20 characters each.</p>
+            <p className="text-sm text-gray-500 mt-1 mb-2">Type a tag and press Enter or comma to add. Click × to remove a tag. Max 20 tags, 20 characters each.</p>
             <InputField
               fieldName={`team_size`}
               languageName=""

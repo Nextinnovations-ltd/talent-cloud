@@ -10,15 +10,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
 from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from apps.job_posting.serializers import (
-    BookmarkedJobSerializer,
-    JobApplicationCreateSerializer,
-    JobApplicationSerializer,
-    JobApplicationStatusUpdateSerializer,
-    JobPostDetailSerializer,
-    JobPostListSerializer,
-    JobPostSerializer,
-)
 from apps.job_seekers.models import JobSeeker
 from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
@@ -33,8 +24,15 @@ from core.middleware.permission import (
     IsOwnerOfApplication,
     IsCompanyAdminOrSuperadminForApplication
 )
-from core.constants.s3.constants import FILE_TYPES
-from services.job_seeker.file_upload_service import FileUploadService
+from apps.job_posting.serializers import (
+    BookmarkedJobSerializer,
+    JobApplicationCreateSerializer,
+    JobApplicationSerializer,
+    JobApplicationStatusUpdateSerializer,
+    JobPostDetailSerializer,
+    JobPostListSerializer,
+    JobPostSerializer,
+)
 
 import logging
 
@@ -482,7 +480,7 @@ class CoverLetterUploadUrlAPIView(APIView):
                if len(filename.strip()) == 0:
                     raise ValidationError("filename cannot be empty")
                
-               response_data = FileUploadService.generate_file_upload_url(request.user, filename, file_size, content_type, FILE_TYPES.COVER_LETTER)
+               response_data = JobApplicationService.generate_application_cover_letter_upload_url(request.user, filename, file_size, content_type)
                
                logger.info(f"Generated cover letter upload URL for user {request.user.id}")
                
@@ -501,6 +499,112 @@ class CoverLetterUploadUrlAPIView(APIView):
                logger.error(f"Error generating cover letter upload URL: {str(e)}")
                return Response(
                     CustomResponse.error("Failed to generate upload URL"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
+
+@extend_schema(tags=["Cover Upload"])
+class JobApplicationResumeUrlAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Generate presigned URL for job application resume upload",
+          request={
+               'application/json': {
+                    'type': 'object',
+                    'properties': {
+                         'filename': {'type': 'string', 'description': 'Original filename'},
+                         'file_size': {'type': 'integer', 'description': 'File size in bytes'},
+                         'content_type': {'type': 'string', 'description': 'MIME type (optional)'},
+                    },
+                    'required': ['filename', 'file_size']
+               }
+          }
+     )
+     def post(self, request):
+          """
+          Generate presigned URL when user confirms job application resume upload
+          """
+          try:
+               filename = request.data.get('filename')
+               file_size = request.data.get('file_size')
+               content_type = request.data.get('content_type')
+               
+               # Validation
+               if not filename:
+                    raise ValidationError("filename is required")
+               if not file_size:
+                    raise ValidationError("file_size is required")
+               if len(filename.strip()) == 0:
+                    raise ValidationError("filename cannot be empty")
+               
+               response_data = JobApplicationService.generate_application_resume_upload_url(request.user, filename, file_size, content_type)
+               
+               logger.info(f"Generated job application upload URL for user {request.user.id}")
+
+               return Response(
+                    CustomResponse.success("Job application upload URL generated", response_data),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in job application upload: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error generating job application upload URL: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to generate upload URL"),
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
+
+@extend_schema(tags=["Profile Upload"])
+class ConfirmJobApplicationResumeUploadAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     @extend_schema(
+          summary="Confirm job application resume upload",
+          request={
+               'application/json': {
+                    'type': 'object',
+                    'properties': {
+                         'upload_id': {'type': 'string', 'description': 'Upload ID from generate URL endpoint'},
+                         'file_size': {'type': 'integer', 'description': 'Actual uploaded file size (optional)'},
+                    },
+                    'required': ['upload_id']
+               }
+          }
+     )
+     def post(self, request):
+          """
+          Confirm job application resume upload and update TalentCloudUser profile
+          """
+          try:
+               upload_id = request.data.get('upload_id')
+               
+               if not upload_id:
+                    raise ValidationError("upload_id is required")
+               
+               response = JobApplicationService.confirm_job_application_resume_upload(request.user, upload_id)
+               
+               return Response(
+                    CustomResponse.success("Job application resume uploaded.", response),
+                    status=status.HTTP_200_OK
+               )
+               
+          except ValidationError as e:
+               logger.warning(f"Validation error in upload confirmation: {str(e)}")
+               return Response(
+                    CustomResponse.error(str(e)),
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Error confirming job application resume upload: {str(e)}")
+               return Response(
+                    CustomResponse.error("Failed to confirm upload"),
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
 
@@ -523,13 +627,14 @@ class JobApplicationCreateView(APIView):
           }
      )
      def post(self, request, job_post_id):
-          cover_letter_upload_id = request.data.get('cover_letter_upload_id')
-          is_skipped = request.data.get('is_skipped', False)
+          cover_letter_upload_id = request.data.get('cover_letter_upload_id', None)
+          resume_upload_id = request.data.get('resume_upload_id', None)
+          is_cover_letter_skipped = request.data.get('is_skipped', False)
           
           # Validation
           if not job_post_id:
                raise ValidationError("Job post cannot be empty")
-          if not is_skipped and not cover_letter_upload_id:
+          if not is_cover_letter_skipped and not cover_letter_upload_id:
                raise ValidationError("Cover letter is required")
 
           # Create application using service
@@ -537,7 +642,8 @@ class JobApplicationCreateView(APIView):
                user=request.user,
                job_post_id=job_post_id,
                cover_letter_upload_id=cover_letter_upload_id,
-               is_skipped=is_skipped
+               resume_upload_id=resume_upload_id,
+               is_cover_letter_skipped=is_cover_letter_skipped,
           )
           
           # Return success response

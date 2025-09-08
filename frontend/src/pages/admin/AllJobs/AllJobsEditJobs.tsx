@@ -17,6 +17,8 @@ import PreviewForm from "../CreateNewJob/StepsForms/PreviewForm";
 import useToast from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import SanitizeNumber from "@/components/common/SanitizeNumber";
+import SanitizeNumberCurrency from "@/components/common/SanitizeNumberCurrency";
+
 
 const steps = [
   { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -123,14 +125,14 @@ const AllJobsEditJobs = () => {
       stepThreeForm.reset({
         salary_mode: JobData?.salary_mode,
         salary_type: JobData?.salary_type,
-        salary_min: `${SanitizeNumber(JobData?.salary_min) }`  || '', 
-        salary_max: `${SanitizeNumber(JobData?.salary_max) }`  || '',
+        salary_min: `${SanitizeNumberCurrency(JobData?.salary_min) }`  || '', 
+        salary_max: `${SanitizeNumberCurrency(JobData?.salary_max) }`  || '',
         is_salary_negotiable: JobData?.is_salary_negotiable,
         project_duration: JobData?.project_duration,
         skills: JobData?.skills,
         experience_level: JobData?.experience_level,
         experience_years: SanitizeNumber(JobData?.experience_years) || undefined  ,
-        salary_fixed: `${SanitizeNumber(JobData?.salary_fixed) }`   || "",
+        salary_fixed: `${SanitizeNumberCurrency(JobData?.salary_fixed) }`   || "",
         number_of_positions: JobData?.number_of_positions,
         last_application_date: JobData?.last_application_date
       })
@@ -187,6 +189,16 @@ const AllJobsEditJobs = () => {
         formattedDate = `${year}-${month}-${day}`;
       }
     }
+
+    function sanitizeNumberPayload(value: string | undefined) {
+      if (!value) return null;
+      return Number(
+        String(value).replace(/[^0-9.-]+/g, "") // remove $, commas, etc.
+      );
+    }
+
+
+
     const payload = {
       title: formData.stepOne.title,
       description: formData.stepOne.description,
@@ -206,11 +218,13 @@ const AllJobsEditJobs = () => {
       number_of_positions: formData.stepThree.number_of_positions,
       salary_type: formData.stepThree.salary_type,
       salary_mode: formData.stepThree.salary_mode,
-      salary_min: SanitizeNumber(formData.stepThree.salary_min),
-      salary_max:  SanitizeNumber(formData.stepThree.salary_max),
-      salary_fixed:  SanitizeNumber(formData.stepThree.salary_fixed),
+      salary_min: sanitizeNumberPayload(formData.stepThree.salary_min),
+      salary_max:  sanitizeNumberPayload(formData.stepThree.salary_max),
+      salary_fixed:  sanitizeNumberPayload(formData.stepThree.salary_fixed),
       last_application_date: formattedDate
     };
+
+
 
 
     try {

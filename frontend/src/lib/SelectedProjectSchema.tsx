@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 const SelectedProjectSchema = yup
   .object({
-    title: yup.string().required("Title is required"),
+    title: yup.string().required("Title is required").min(3,"Title must be at least 3 characters"),
     description: yup.string().required("Description is required"),
     project_url: yup
       .string()

@@ -51,7 +51,7 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         if not isinstance(value, list):
             raise serializers.ValidationError("Tags must be a list of strings.")
         
-        if len(value) > 10:
+        if len(value) > 20:
             raise serializers.ValidationError("Maximum 10 tags allowed per project.")
         
         # Clean and validate each tag
