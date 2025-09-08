@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class FileUploadService:
      @staticmethod
-     def generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.PROFILE_IMAGE):
+     def generate_file_upload_url(user, filename, file_size, content_type=None, file_type = FILE_TYPES.PROFILE_IMAGE):
           try:
                # Convert file_size to integer and validate
                file_size = int(file_size)
@@ -52,13 +52,13 @@ class FileUploadService:
                upload_status=UPLOAD_STATUS.PENDING,
                upload_url_expires_at=datetime.now() + timedelta(hours=1)
           )
-          
+
           response_data = {
                'upload_id': str(file_upload.id),
                'upload_url': upload_data['upload_url'],
-               'fields': upload_data['fields'],
+               # 'fields': upload_data['fields'],
                'file_path': file_path,
-               'expires_in': 3600,
+               # 'expires_in': 3600,
                'max_file_size': max_size,
                'allowed_types': allowed_content_types
           }
