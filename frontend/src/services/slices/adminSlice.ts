@@ -61,6 +61,9 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         getDashboardAnalytics: builder.query<JobSeekerCountResponse, void>({
             query: () => `/dashboard/ni/statistics`
         }),
+        getDashboardRoleAnalytics:builder.query<unknown,void>({
+            query:()=> `dashboard/ni/statistics/role/`
+        }),
 
         //short list
         shortListApplicants: builder.mutation<ShortListMutationResopnse, { jobId: string | number; applicantId: string | number }>({
@@ -94,4 +97,4 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery,useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery,useGetJobSeekerDetailEducationQuery,useGetJobSeekerDetailCertificationQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery,useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery,useGetJobSeekerDetailEducationQuery,useGetJobSeekerDetailCertificationQuery,useGetDashboardRoleAnalyticsQuery } = extendedAdminSlice
