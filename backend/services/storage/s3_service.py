@@ -195,6 +195,7 @@ class S3Service:
           # Organize by file type and user
           path_mapping = {
                'resume': f'{settings.ENVIRONMENT}/resumes/{file_name}.{extension}',
+               'application_resume': f'{settings.ENVIRONMENT}/application-resumes/{file_name}.{extension}',
                'profile_image': f'{settings.ENVIRONMENT}/profiles/{file_name}.{extension}',
                'cover_letter': f'{settings.ENVIRONMENT}/cover-letters/{file_name}.{extension}',
                'project_image': f'{settings.ENVIRONMENT}/projects/{file_name}.{extension}',
