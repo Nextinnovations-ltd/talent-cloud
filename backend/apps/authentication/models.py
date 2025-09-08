@@ -152,6 +152,7 @@ class FileUpload(models.Model):
      
      UPLOAD_STATUS = [
           ('pending', 'Pending'),
+          ('pending_application', 'Pending job application'), # use for uploaded job application resume while waiting job application submission
           ('uploaded', 'Uploaded'),
           ('failed', 'Failed'),
           ('deleted', 'Deleted'),
