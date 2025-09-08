@@ -799,8 +799,8 @@ class JobSeekerService:
                'experience_years': JobSeekerService._get_experience_years(occupation),
                'skills': JobSeekerService._get_skills(occupation)
           }
-          
-          
+
+     # Private methods    
      @staticmethod
      def _get_specialization_name(occupation):          
           if not occupation or not occupation.specialization:

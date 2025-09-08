@@ -1,6 +1,7 @@
 from apps.job_seekers.models import JobSeekerProject
 from apps.job_seekers.serializers.project_serializer import JobSeekerProjectCreateUpdateSerializer
-from services.job_seeker.file_upload_service import FileUploadService
+from core.constants.s3.constants import FILE_TYPES
+from services.storage.upload_service import UploadService
 from services.storage.s3_service import S3Service
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
@@ -9,6 +10,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ProjectService:
+     @staticmethod
+     def generate_project_image_upload_url(user, filename, file_size, content_type=None):
+          return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.PROJECT_IMAGE)
+     
      @staticmethod
      def performed_project_creation(user, validated_data, upload_id=None):
           try:
@@ -91,7 +96,7 @@ class ProjectService:
                          is_deleted = S3Service.delete_file(image_path)
                          
                          if is_deleted:
-                              FileUploadService.soft_delete_upload_file(user, image_path)
+                              UploadService.soft_delete_upload_file(user, image_path)
                               
                               project.project_image_url=None
                               project.save()

@@ -12,11 +12,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
     # Test
-    'add-every-30-seconds': {
-        'task': 'sample_tasks.add',
-        'schedule': 30.0,
-        'args': (16, 16)
-    },
+    # 'add-every-30-seconds': {
+    #     'task': 'sample_tasks.add',
+    #     'schedule': 30.0,
+    #     'args': (16, 16)
+    # },
     'update-expired-jobs-daily': {
         'task': 'job_tasks.update_expired_jobs',
         'schedule': crontab(hour=12, minute=0),  # Daily at 12:00 PM
@@ -24,6 +24,13 @@ app.conf.beat_schedule = {
             'expires': 3600,
         }
     },
+    # 'delete-expired-uploads': {
+    #     'task': 'upload_tasks.delete_expired_uploads',
+    #     'schedule': crontab(hour=12, minute=0),  # Daily at 12:00 PM
+    #     'options': {
+    #         'expires': 3600,
+    #     }
+    # },
 }
 
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
