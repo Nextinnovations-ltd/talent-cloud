@@ -47,7 +47,6 @@ export const UserProfile = () => {
   const { data: profileData, isLoading: isProfileLoading } = useGetJobSeekerProfileQuery();
   const userData = profileData?.data;
 
-  console.log(userData?.profile_image_url)
 
   if (!userData && !isProfileLoading) {
     return (

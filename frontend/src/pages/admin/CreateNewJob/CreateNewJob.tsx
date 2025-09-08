@@ -17,7 +17,7 @@ import { useJobFormStore } from "@/state/zustand/create-job-store";
 
 import { useNavigate } from "react-router-dom";
 import useToast from "@/hooks/use-toast";
-import SanitizeNumber from "@/components/common/SanitizeNumber";
+
 
 const steps = [
     { title: "Basic Information ", description: "Job title, Company, Location" },
@@ -171,6 +171,14 @@ const CreateNewJob = () => {
             }
         }
 
+       
+        function sanitizeNumberPayload(value: string | undefined) {
+            if (!value) return null;
+            return Number(
+              String(value).replace(/[^0-9.-]+/g, "") // remove $, commas, etc.
+            );
+          }
+      
     
         const payload = {
             title: stepOneData.title,
@@ -191,11 +199,12 @@ const CreateNewJob = () => {
             number_of_positions: stepThreeData.number_of_positions,
             salary_type: stepThreeData.salary_type,
             salary_mode: stepThreeData.salary_mode,
-            salary_min: SanitizeNumber(stepThreeData.salary_min),
-            salary_max: SanitizeNumber(stepThreeData.salary_max),
-            salary_fixed: SanitizeNumber(stepThreeData.salary_fixed),
+            salary_min: sanitizeNumberPayload(stepThreeData.salary_min),
+            salary_max: sanitizeNumberPayload(stepThreeData.salary_max),
+            salary_fixed: sanitizeNumberPayload(stepThreeData.salary_fixed),
             last_application_date: formattedDate
         };
+     
 
         try {
             await executeApiCall(payload);

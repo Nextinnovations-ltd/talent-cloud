@@ -52,14 +52,14 @@ export const SignUpForm = ({
               <p className=" leading-6 mt-[-5px] text-text-semilight">
                 By signing up, you are agreeing to our{" "}
                 <Link
-                  to={"/"}
+                  to={"/terms-conditions"}
                   className="text-sm text-text-lightblue hover:underline hover:text-text-hoverskyblue transition duration-100"
                 >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
                 <Link
-                  to={"/"}
+                  to={"/privacy-policy"}
                   className="text-sm text-text-lightblue hover:underline hover:text-text-hoverskyblue transition duration-100"
                 >
                   {" "}

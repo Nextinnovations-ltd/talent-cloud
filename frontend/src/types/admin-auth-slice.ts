@@ -93,7 +93,8 @@ export interface Applicant {
   profile_image_url: string | null;
   job_post_id: string | null;
   application_status: string | null;
-  resume_url: string | null
+  resume_url: string | null ;
+  cover_letter_url: string | null;
 }
 
 export interface ApplicantsApiResponse {

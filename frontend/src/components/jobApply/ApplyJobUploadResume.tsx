@@ -79,6 +79,12 @@ const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFi
                 // call your UploadToS3 helper — adjust return handling if it returns more data
                 const result = await UploadToS3({ file, type: type, postId: id });
 
+                console.log("upload resume");
+                console.log(result);
+                console.log("upload resume");
+
+                
+
                 if (cancelled) return;
 
                 // if UploadToS3 returns a boolean

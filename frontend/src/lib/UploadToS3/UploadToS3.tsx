@@ -14,9 +14,6 @@ export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise
         // Generate presigned URL using the dedicated function
         const presignedUrlData = await generatePresignedUrl({ file,type });
 
-        console.log("Project File Upload")
-        console.log(file)
-        console.log("Project File Upload")
 
 
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
