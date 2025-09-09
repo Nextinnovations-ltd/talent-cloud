@@ -287,7 +287,18 @@ class JobApplication(TimeStampModel):
           super().delete(*args, **kwargs)
           job_post.applicant_count = job_post.applications.count()
           job_post.save(update_fields=['applicant_count'])
-          
+     
+     @property
+     def cover_letter_url_link(self):
+         """Get the application cover letter url"""
+         from services.storage.s3_service import S3Service
+         return S3Service.get_public_url(self.cover_letter_url)
+     
+     @property
+     def resume_url_link(self):
+         """Get the application resume url"""
+         from services.storage.s3_service import S3Service
+         return S3Service.get_public_url(self.resume_url)
 # End Job Application
 
 # Job Post Bookmark

@@ -85,17 +85,13 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           return obj.job_seeker.get_address
      
      def get_profile_image_url(self, obj: JobApplication):
-          if obj.job_seeker.profile_image_url:
-               return S3Service.get_public_url(obj.job_seeker.profile_image_url)
-          return None
+          return S3Service.get_public_url(obj.job_seeker.profile_image_url)
      
      def get_resume_url(self, obj: JobApplication):
-          return obj.job_seeker.resume_url_link
+          return S3Service.get_public_url(obj.resume_url)
      
      def get_cover_letter_url(self, obj: JobApplication):
-          if obj.cover_letter_url:
-               return S3Service.get_public_url(obj.cover_letter_url)
-          return None
+          return S3Service.get_public_url(obj.cover_letter_url)
 
 class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      profile_image_url = serializers.SerializerMethodField()
@@ -108,6 +104,32 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      recent_application = serializers.SerializerMethodField()
      recent_applied_jobs = serializers.SerializerMethodField()
      age = serializers.SerializerMethodField()
+     
+     def __init__(self, *args, **kwargs):
+          super().__init__(*args, **kwargs)
+          self._cached_application = None
+          self._application_fetched = False
+     
+     def get_application(self, obj: JobSeeker):
+          """Get and cache the application to avoid multiple queries"""
+          if self._application_fetched:
+               return self._cached_application
+          
+          application_id = self.context.get("application_id")
+          
+          if not application_id:
+               self._cached_application = None
+          else:
+               try:
+                    self._cached_application = JobApplication.objects.get(
+                         id=application_id, 
+                         job_seeker=obj
+                    )
+               except JobApplication.DoesNotExist:
+                    self._cached_application = None
+          
+          self._application_fetched = True
+          return self._cached_application
      
      class Meta:
           model=JobSeeker
@@ -125,20 +147,14 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
           return obj.profile_image_url_link
 
      def get_resume_url(self, obj:JobSeeker):
-          return obj.resume_url_link
+          application = self.get_application(obj)
+          
+          return application.resume_url_link
 
      def get_cover_letter_url(self, obj: JobSeeker):
-          application_id = self.context.get("application_id")
+          application = self.get_application(obj)
           
-          if not application_id:
-               return None
-          
-          try:
-               application = JobApplication.objects.get(id=application_id, job_seeker=obj)
-               
-               return application.cover_letter_url
-          except JobApplication.DoesNotExist:
-               return None
+          return application.cover_letter_url_link
 
      def get_phone_number(self, obj:JobSeeker):
           return obj.get_phone_number
