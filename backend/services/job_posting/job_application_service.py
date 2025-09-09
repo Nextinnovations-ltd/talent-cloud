@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.job_seekers.models import JobSeeker
 from apps.authentication.models import FileUpload
+from services.storage.upload_service import UploadService
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
@@ -13,7 +15,15 @@ logger = logging.getLogger(__name__)
 
 class JobApplicationService:
      @staticmethod
-     def perform_application_submission(user, job_post_id, cover_letter_upload_id, is_skipped=False):
+     def generate_application_cover_letter_upload_url(user, filename, file_size, content_type=None):
+          return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.COVER_LETTER)
+     
+     @staticmethod
+     def generate_application_resume_upload_url(user, filename, file_size, content_type=None):
+          return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.APPLICATION_RESUME)
+     
+     @staticmethod
+     def perform_application_submission(user, job_post_id, cover_letter_upload_id, resume_upload_id, is_cover_letter_skipped=False):
           try:
                # Get required objects
                job_post = get_object_or_404(JobPost, id=job_post_id)
@@ -23,18 +33,25 @@ class JobApplicationService:
                JobApplicationService._validate_application_eligibility(job_post, job_seeker)
                
                with transaction.atomic():
-                    file_upload_path = None
+                    cover_letter_upload_path = None
+                    resume_upload_path = None
                     
-                    if not is_skipped:
+                    if resume_upload_id:
+                         # Change upload status from pending_application to uploaded
+                         resume_upload = JobApplicationService.update_file_upload_status(user, resume_upload_id, old_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
+                         resume_upload_path = resume_upload.file_path
+                    
+                    if not is_cover_letter_skipped:
                          # Update File Upload
-                         file_upload = JobApplicationService.update_cover_upload_status(user, cover_letter_upload_id)
-                         file_upload_path = file_upload.file_path
-                         
+                         cover_letter_upload = JobApplicationService.update_file_upload_status(user, cover_letter_upload_id)
+                         cover_letter_upload_path = cover_letter_upload.file_path
+                    
                     # Create application
                     application = JobApplicationService._create_application(
                          job_post,
                          job_seeker,
-                         file_upload_path
+                         cover_letter_file_path=cover_letter_upload_path,
+                         resume_file_path=resume_upload_path
                     )
                     
                     # Send notification about the new application
@@ -51,38 +68,56 @@ class JobApplicationService:
                raise
 
      @staticmethod
-     def _create_application(job_post: JobPost, job_seeker: JobSeeker, cover_letter_file_path):
+     def _create_application(job_post: JobPost, job_seeker: JobSeeker, cover_letter_file_path, resume_file_path=None):
           """Create the job application instance"""
+          
+          if not resume_file_path:
+               resume_file_path = job_seeker.resume_url
           
           application = JobApplication.objects.create(
                job_post=job_post,
                job_seeker=job_seeker,
                application_status=ApplicationStatus.APPLIED,
                cover_letter_url = cover_letter_file_path,
-               resume_url=job_seeker.resume_url
+               resume_url=resume_file_path
           )
           
           return application
 
      @staticmethod
-     def update_cover_upload_status(user, upload_id) -> FileUpload:
+     def update_file_upload_status(user, upload_id, old_upload_status = UPLOAD_STATUS.PENDING, new_upload_status = None) -> FileUpload:
           try:
                file_upload = FileUpload.objects.get(
                     id=upload_id,
                     user=user,
-                    upload_status='pending'
+                    upload_status=old_upload_status
                )
           except FileUpload.DoesNotExist:
                raise ValidationError("Invalid upload_id or upload already processed")
 
           # Update upload record
-          file_upload.upload_status = 'uploaded'
+          new_upload_status = new_upload_status if new_upload_status else UPLOAD_STATUS.UPLOADED
+          file_upload.upload_status = new_upload_status
           file_upload.uploaded_at = datetime.now()
           file_upload.save()
           
           return file_upload
-               
 
+     @staticmethod
+     def confirm_job_application_resume_upload(user, upload_id):
+          # Update upload record
+          file_upload = JobApplicationService.update_file_upload_status(user, upload_id, new_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
+
+          response_data = {
+               'upload_id': str(file_upload.id),
+               'uploaded_at': file_upload.uploaded_at.isoformat(),
+               'upload_status': file_upload.upload_status
+          }
+          
+          logger.info(f"Confirmed job application resume upload {file_upload.id} for user {user.id}")
+          
+          return response_data
+          
      @staticmethod
      def _validate_application_eligibility(job_post: JobPost, job_seeker: JobSeeker):
           """Validate if job seeker can apply for this job"""

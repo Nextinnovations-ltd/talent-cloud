@@ -20,8 +20,8 @@ export type UserProfile = {
   portfolio_url?:string;
   github_url?:string;
   facebook_url?:string;
-  country:number,
-  city:number,
+  country:string,
+  city:string,
 };
 
 export type WorkExperience = {

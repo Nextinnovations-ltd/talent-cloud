@@ -1,5 +1,6 @@
 class FILE_TYPES:
      RESUME = 'resume'
+     APPLICATION_RESUME = 'application_resume'
      PROFILE_IMAGE = 'profile_image'
      COVER_LETTER = 'cover_letter'
      COMPANY_LOGO = 'company_logo'
@@ -53,6 +54,10 @@ class UPLOAD_MAPPER:
                'content_types': ALLOWED_CONTENT_TYPES.DOCUMENT,
                'max_size': FILE_SIZE_LIMITS.RESUME
           },
+          FILE_TYPES.APPLICATION_RESUME: {
+               'content_types': ALLOWED_CONTENT_TYPES.DOCUMENT,
+               'max_size': FILE_SIZE_LIMITS.RESUME
+          },
           FILE_TYPES.COVER_LETTER: {
                'content_types': ALLOWED_CONTENT_TYPES.DOCUMENT,
                'max_size': FILE_SIZE_LIMITS.COVER_LETTER
@@ -70,6 +75,7 @@ OVERRIDE_FILE_TYPES = [
 
 class UPLOAD_STATUS:
      PENDING = 'pending'
+     PENDING_APPLICATION = 'pending_application'
      CANCELLED = 'cancelled'
      UPLOADED = 'uploaded'
      FAILED = 'failed'
