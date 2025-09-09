@@ -31,12 +31,20 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   isUploading = false,
   errorMessage,
 }) => {
+  const stablePreview = React.useRef<string | ArrayBuffer | null>(preview);
+  React.useEffect(() => {
+    if (!isUploading) {
+      stablePreview.current = preview;
+    }
+  }, [preview, isUploading]);
   const handleRotateClick = () => {
     rotateImage();
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog open={isModalOpen} onOpenChange={(open) => {
+      setIsModalOpen(open);
+    }}>
       <DialogContent 
         onInteractOutside={(e) => {
           e.preventDefault();
@@ -52,16 +60,17 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
         )}
         
         <div className="flex flex-col items-center">
-          {typeof preview === "string" && (
+          {typeof (isUploading ? stablePreview.current : preview) === "string" && (
             <div className="relative md:w-[396px] md:h-[342px] rounded-[10px] border-2 overflow-hidden">
               {/* Show real-time transformations during editing */}
               <img
-                src={preview}
+                src={(isUploading ? stablePreview.current : preview) as string}
                 alt="Editing Preview"
                 className="w-full h-full object-contain rounded-[10px] bg-slate-100"
                 style={{
                   transform: `rotate(${rotation}deg) scale(${scale})`,
-                  transition: "transform 0.3s ease",
+                  transformOrigin: "50% 50%",
+                  transition: isUploading ? "none" : "transform 0.3s ease",
                 }}
               />
             </div>

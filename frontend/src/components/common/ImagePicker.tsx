@@ -56,20 +56,26 @@ const ImagePicker = ({
       const radians = (normalizedRotation * Math.PI) / 180;
   
       const { width, height } = image;
-  
-      // calculate rotated bounding box
-      const rotatedWidth =
-        Math.abs(width * Math.cos(radians)) + Math.abs(height * Math.sin(radians));
-      const rotatedHeight =
-        Math.abs(width * Math.sin(radians)) + Math.abs(height * Math.cos(radians));
-  
-      canvas.width = rotatedWidth * scale;
-      canvas.height = rotatedHeight * scale;
-  
+
+      // Use exact dimensions for multiples of 90° to avoid subpixel shifts
+      const isQuarterTurn = normalizedRotation % 180 !== 0;
+      if (isQuarterTurn) {
+        canvas.width = height;
+        canvas.height = width;
+      } else {
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      // Fill background to avoid black/transparent edges when exporting JPEG
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(radians);
+      // Apply scale so the saved image matches the editor zoom level
       ctx.scale(scale, scale);
-      ctx.drawImage(image, -width / 2, -height / 2);
+      ctx.drawImage(image, -width / 2, -height / 2, width, height);
   
       canvas.toBlob((blob) => {
         if (!blob) {
@@ -104,9 +110,7 @@ const ImagePicker = ({
               // Update the preview with the final rotated image
               setPreview(fr.result);
               
-              // DON'T reset rotation and scale here - the preview should maintain its edited state
-              // setRotation(0);
-              // setScale(1);
+              // Defer resetting rotation/scale until the modal fully closes
             };
             fr.readAsDataURL(compressedBlob);
   
@@ -117,11 +121,15 @@ const ImagePicker = ({
             if (imageUploadType === 'project') {
               form.setValue("project_image_url", rotatedFile);
               setIsModalOpen(false);
+              setRotation(0);
+              setScale(1);
             } else {
               setIsUploading(true);
               UploadToS3({ file: rotatedFile, type: imageUploadType })
                 .then(() => {
                   setIsModalOpen(false);
+                  setRotation(0);
+                  setScale(1);
                   refetch();
                 })
                 .finally(() => {
@@ -202,7 +210,7 @@ const ImagePicker = ({
               src={preview as string}
               width={110}
               height={110}
-              className={`object-cover w-full h-full ${
+              className={`object-contain w-full h-full ${
                 type === "circle" ? "rounded-full" : "rounded-[16px]"
               }`}
             />

@@ -11,15 +11,26 @@ import { URL } from "@/services/api/apiurls";
 type ConfirmUploadProps = {
     uploadId: string;
     fileSize:number;
+    type? : "profile" | "resume" | "coverLetter" | "project"
 }
 
-export async function ComfirmUpload({uploadId,fileSize}:ConfirmUploadProps):Promise<unknown>{
+export async function ComfirmUpload({uploadId,fileSize,type}:ConfirmUploadProps):Promise<unknown>{
     try {
 
         const token: string | null = getTokenFromLocalStorage() || getTokenFromSessionStorage();
 
+        let url;
+
+        if(type === 'profile'){
+          url = "jobseeker/profile/upload/confirm/"
+        }else{
+          url = "jobseeker/application/upload/confirm/"
+        }
+
+
+
        const response =  await axios.post(
-            `${URL}jobseeker/application/upload/confirm/`,
+            `${URL}${url}`,
             {
               upload_id: uploadId,
               file_size: fileSize
