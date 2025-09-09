@@ -5,9 +5,15 @@ import map from '@/assets/Employee/map.svg';
 import phone from '@/assets/Employee/phone.svg';
 import SendEmailForm from './SendEmailForm';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 const Form = () => {
   const [step, setStep] = useState(1);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); 
+  }, [pathname]);
   return (
     <div className="">
   

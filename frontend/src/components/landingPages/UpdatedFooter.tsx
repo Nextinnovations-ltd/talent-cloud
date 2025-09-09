@@ -10,10 +10,14 @@ import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 const UpdatedFooter = () => {
   const location = useLocation();
-  const isEmpLp = location.pathname === "/emp/lp";
+  const pathName =  location.pathname
+  const isEmpLp =
+  location.pathname === "/emp/lp" || 
+  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp");
+  const pathParam = location.pathname.startsWith("/emp/lp") ? "emp" : "jp";
 
   return (
-    <div className='bg-[#000] w-full relative'>
+    <div className='bg-[#000] w-full relative overflow-hidden'>
       <div className="max-w-[1240px] mx-auto pt-[40px] md:pt-[77px] pl-5 pr-5">
 
         <div className="flex flex-col justify-start md:flex-row md:justify-between gap-5">
@@ -58,7 +62,8 @@ const UpdatedFooter = () => {
           >
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
-            <Link to='/contact-us' target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
+            <Link to={`/contact-us?path=${pathParam}`} target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
+           <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mt-[12px] "> <HashLink smooth to="#faq">FAQ</HashLink></p>
           </motion.div>
 
           {/* Upcoming Section */}
@@ -94,7 +99,7 @@ const UpdatedFooter = () => {
           className="flex flex-col md:flex-row justify-between items-start md:items-center mt-[64px] md:mt-[166px] gap-[25px] md:gap-0"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.7}}
           viewport={{ once: true }}
         >
           <p className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Copyright © Talent Cloud 2025</p>
@@ -122,7 +127,7 @@ const UpdatedFooter = () => {
         className='mt-[44px] md:mt-[132px]'
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: "easeOut" , delay: 0.8}}
         viewport={{ once: true }}
       />
     </div>
