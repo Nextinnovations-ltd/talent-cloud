@@ -55,14 +55,19 @@ export const SpecializationSkillSet = ({
     if (value !== null && id !== null) {
       const formData = new FormData();
       formData.append("specialization_id", `${id.toString()}`);
-      formData.append("role_id", `${value.toString()}` );
       formData.append("step", "2");
 
   
       const res = await executeApiCall(formData); // ✅ send formData directly
   
       if (res?.success) {
-        goToNextStep();
+        formData.append("role_id", `${value.toString()}` );
+        formData.append("step", "3");
+        const res = await executeApiCall(formData); // ✅ send formData directly
+        if(res?.success){
+          goToNextStep();
+        }
+       
       } else {
         showNotification({
           message: res?.data?.message || "Submission failed. Try again.",

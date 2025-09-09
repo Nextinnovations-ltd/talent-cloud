@@ -1,5 +1,5 @@
 //admin
-import adminLogin from './admin_login.png';
+import adminLogin from './adminLogin.png';
 
 
 

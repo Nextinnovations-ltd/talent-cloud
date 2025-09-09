@@ -61,8 +61,8 @@ export const ProfileUser = () => {
       behance_url: profileData?.data?.behance_url || "",
       portfolio_url: profileData?.data?.portfolio_url || "",
       github_url: profileData?.data?.github_url || "",
-      country: `${profileData?.data?.address?.country?.id}`|| '',
-      city: `${profileData?.data?.address?.city?.id}`  || '',
+      country: profileData?.data?.address?.country?.id?.toString() ?? '',
+      city: profileData?.data?.address?.city?.id?.toString() ?? '',
       address: profileData?.data?.address?.address || "",
     },
   });
@@ -92,8 +92,8 @@ export const ProfileUser = () => {
         portfolio_url: profileData?.data?.portfolio_url || "",
         facebook_url: profileData?.data?.facebook_url || "",
         github_url: profileData?.data?.github_url || "",
-        country: `${profileData?.data?.address?.country?.id}` || '',
-        city: `${profileData?.data?.address?.city?.id}`   || '',
+        country: profileData?.data?.address?.country?.id?.toString() ?? '',
+        city: profileData?.data?.address?.city?.id?.toString() ?? '',
         address: profileData?.data?.address?.address || "",
       });
     }

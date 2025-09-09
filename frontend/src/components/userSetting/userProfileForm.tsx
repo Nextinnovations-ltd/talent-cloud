@@ -46,6 +46,9 @@ export const UserProfileForm = ({
 
 
   const selectedRole = form.watch("role");
+
+
+
   const firstRender = useRef(true);
   const prevSpecializationId = useRef<number | string | null>(null);
 
@@ -68,8 +71,8 @@ export const UserProfileForm = ({
     // Only reset role if specialization has changed
     if (prevSpecializationId.current !== selectedSpecializationId) {
       prevSpecializationId.current = selectedSpecializationId;
-  
-      const isValidRole = ROLEDATA.some(role => role.value === selectedRole);
+
+      const isValidRole = ROLEDATA.some((role) => role.value?.toString() === selectedRole?.toString());
 
       if (!isValidRole) {
         form.setValue('role', '');

@@ -38,7 +38,7 @@ const VideoIntroductionSection: React.FC<VideoIntroductionSectionProps> = ({
     const handleDelete = async () => {
         try {
             await deleteVideo().unwrap();
-            showNotification({ message: 'Video introduction deleted', type: 'success' });
+            showNotification({ message: 'Video introduction deleted successfully', type: 'success' });
         } catch {
             showNotification({ message: 'Failed to delete video introduction', type: 'danger' });
         }
