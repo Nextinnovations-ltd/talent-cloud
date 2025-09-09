@@ -33,7 +33,7 @@ export const WorkExperienceCard = ({
     const handleDelete = async () => {
         if (id) {
             await deleteExperienceById(id);
-            showNotification({ message: "DeleteSucces", type: 'success' })
+            showNotification({ message: "Work experience deleted successfully", type: 'success' })
             setOpen(false);
             // Optionally, show a toast or update UI
         }
