@@ -10,6 +10,7 @@ import TextAreaField from '@/components/common/form/fields/text-area-field'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import emailjs from '@emailjs/browser';
+import { motion } from "framer-motion";
 
 const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
   const [formData, setFormData] = useState<any>(null);
@@ -38,7 +39,7 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
       message: values.description,
     };
 
-    emailjs
+   emailjs
       .send("service_uioedbr", "template_4ntnxm9", templateParams, "h2goBVoT1oRHu1ML8")
       .then((response) => {
         console.log("SUCCESS!", response.status, response.text);
@@ -49,7 +50,7 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
       })
      .finally(() => {
       setIsLoading(false); // stop loading
-    });
+    }); 
   };
 
   return (
@@ -76,7 +77,7 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
               <InputField languageName={''} fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required />
               <TextAreaField languageName={''} fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" required={false} />
             </div>
-            <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]" type="submit">
+            <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500] hover:text-[#0481EF] hover:bg-white border border-[#0481EF] transition-all duration-300 ease" type="submit">
               Next
             </Button>
           </form>
@@ -100,27 +101,82 @@ const SendEmailForm = ({ step, setStep }: { step: any; setStep: any }) => {
               <InputField languageName={''} fieldName="subject" lableName="Your Subject" {...register("subject")} fieldWidth="w-full" required/>
               <TextAreaField languageName={''} fieldName="description" lableName="Message" {...register("description")} fieldWidth="w-full" fieldHeight="h-[200px]" required={false} />
             </div>
-            <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]" type="submit"  disabled={isLoading} >
+            <Button className="bg-[#0481EF] mt-[48px] md:mt-[38px] w-full h-[71px] text-white text-[18px] font-[500]  hover:text-[#0481EF] hover:bg-white border border-[#0481EF] transition-all duration-300 ease" type="submit"  disabled={isLoading} >
               {isLoading ? "Sending..." : "Send Message"}
             </Button>
           </form>
         )}
 
         {step === 3 && (
-          <div className="flex flex-col h-[100%] justify-end items-center gap-[72px] md:gap-[162px]">
-            <div>
-              <svg className="mx-auto" xmlns="http://www.w3.org/2000/svg" width="68" height="67" viewBox="0 0 68 67" fill="none">
-                <path d="M61.9164 30.9317V33.5C61.9129 39.52 59.9636 45.3777 56.3591 50.1993C52.7546 55.0209 47.688 58.5482 41.915 60.2551C36.1421 61.962 29.972 61.757 24.3251 59.6707C18.6781 57.5845 13.8568 53.7287 10.5803 48.6785C7.30371 43.6283 5.74742 37.6542 6.14352 31.6472C6.53962 25.6403 8.86688 19.9223 12.7782 15.346C16.6895 10.7698 21.9754 7.58047 27.8474 6.25377C33.7194 4.92707 39.8629 5.53405 45.3618 7.9842" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M61.9167 11.1665L34 39.1111L25.625 30.7361" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <p className="text-black text-[20px] md:text-[24px] font-[500] leading-[35px] md:leading-[42px] text-center mt-6">Thanks for reaching out!</p>
-              <p className="text-[#484747] text-[14px] md:text-[24px] font-[500] leading-[25px] md:leading-[42px] text-center mt-3">We’ve received your inquiry and will respond <br/> as soon as possible.</p>
-            </div>
+        <motion.div
+          key="thank-you-step"
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -40, scale: 0.95 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col h-[100%] justify-end items-center gap-[72px] md:gap-[162px]"
+        >
+          <div>
+            <motion.svg
+              className="mx-auto"
+              xmlns="http://www.w3.org/2000/svg"
+              width="68"
+              height="67"
+              viewBox="0 0 68 67"
+              fill="none"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: "backOut" }}
+            >
+              <path
+                d="M61.9164 30.9317V33.5C61.9129 39.52 59.9636 45.3777 56.3591 50.1993C52.7546 55.0209 47.688 58.5482 41.915 60.2551C36.1421 61.962 29.972 61.757 24.3251 59.6707C18.6781 57.5845 13.8568 53.7287 10.5803 48.6785C7.30371 43.6283 5.74742 37.6542 6.14352 31.6472C6.53962 25.6403 8.86688 19.9223 12.7782 15.346C16.6895 10.7698 21.9754 7.58047 27.8474 6.25377C33.7194 4.92707 39.8629 5.53405 45.3618 7.9842"
+                stroke="#22C55E"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M61.9167 11.1665L34 39.1111L25.625 30.7361"
+                stroke="#22C55E"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </motion.svg>
 
-            <Link to="/emp/lp" className="bg-[#0481EF] w-full h-[71px] text-white text-[18px] font-[500] text-center rounded-[12px] flex justify-center items-center">
+            <motion.p
+              className="text-black text-[20px] md:text-[24px] font-[500] leading-[35px] md:leading-[42px] text-center mt-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              Thanks for reaching out!
+            </motion.p>
+
+            <motion.p
+              className="text-[#484747] text-[14px] md:text-[24px] font-[500] leading-[25px] md:leading-[42px] text-center mt-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              We’ve received your inquiry and will respond <br /> as soon as possible.
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="w-full"
+          >
+            <Link
+              to="/emp/lp"
+              className="bg-[#0481EF] w-full h-[71px] text-white text-[18px] font-[500] text-center rounded-[12px] flex justify-center items-center  hover:text-[#0481EF] hover:bg-white border border-[#0481EF] transition-all duration-300 ease"
+            >
               Back to Home
             </Link>
-          </div>
+          </motion.div>
+          </motion.div>
         )}
       </Form>
     </div>

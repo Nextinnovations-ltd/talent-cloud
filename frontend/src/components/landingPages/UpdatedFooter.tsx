@@ -14,7 +14,23 @@ const UpdatedFooter = () => {
   const isEmpLp =
   location.pathname === "/emp/lp" || 
   (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp");
-  const pathParam = location.pathname.startsWith("/emp/lp") ? "emp" : "jp";
+
+
+  // Parse query string
+  const searchParams = new URLSearchParams(location.search);
+  const queryPath = searchParams.get("path"); // "emp", "tc", etc. or null
+
+  // Check pathname first
+  let pathParam: string;
+
+  if (location.pathname.startsWith("/emp/lp")) {
+    pathParam = "emp";
+  } else if (location.pathname === "/contact-us" && queryPath === "emp") {
+    pathParam = "emp";
+  } else {
+    pathParam = "jp"; // fallback
+  }
+
 
   return (
     <div className='bg-[#000] w-full relative overflow-hidden'>
@@ -33,23 +49,38 @@ const UpdatedFooter = () => {
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">Explore</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[20px] md:mb-[25px]"></div>
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">
-              <HashLink smooth to="#why-us">Why us</HashLink>
+               {isEmpLp ? (
+                <HashLink smooth to="/emp/lp#why-us">Why us</HashLink>
+              ) : !isEmpLp ? (
+                <HashLink smooth to="/tc/lp#why-us">Why us</HashLink>
+              ) : (
+                <HashLink smooth to="/#why-us">Why us</HashLink> 
+              )}
             </p>
             {!isEmpLp && (
               <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
-                <HashLink smooth to="#about-us">About us</HashLink>
+                <HashLink smooth to="/tc/lp/#about-us">About us</HashLink>
               </p>
             )}
-            {isEmpLp && (
+            {(isEmpLp || location.pathname.startsWith("/emp/lp")) && (
               <>
                 <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
-                  <HashLink smooth to="#what-you-get">What You Get</HashLink>
+                  <HashLink smooth to="/emp/lp#what-you-get">What You Get</HashLink>
                 </p>
                 <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[45px] md:mb-0">
-                  <HashLink smooth to="#find-jobs">Find Jobs</HashLink>
+                  <HashLink smooth to="/emp/lp#find-jobs">Find Jobs</HashLink>
                 </p>
               </>
             )}
+             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mt-[12px] "> 
+            
+            {isEmpLp ? (
+            <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
+            ) : !isEmpLp ? (
+            <HashLink smooth to="/tc/lp#faq">FAQ</HashLink>
+            ) : (
+            <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
+            )}</p>
           </motion.div>
 
           {/* About Section */}
@@ -63,7 +94,7 @@ const UpdatedFooter = () => {
             <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
             <Link to={`/contact-us?path=${pathParam}`} target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
-           <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mt-[12px] "> <HashLink smooth to="#faq">FAQ</HashLink></p>
+         
           </motion.div>
 
           {/* Upcoming Section */}
