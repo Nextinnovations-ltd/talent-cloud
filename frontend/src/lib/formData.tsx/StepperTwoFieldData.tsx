@@ -9,6 +9,7 @@ export const nameFields: FieldDataType[] = [
     type: "text",
     showPasswordIcon: null,
     hidePasswordIcon: null,
+    maxLength: 50
   },
   {
     fieldName:"tagline",
@@ -21,7 +22,8 @@ export const nameFields: FieldDataType[] = [
     showPasswordIcon:null,
     hidePasswordIcon:null,
     description:true,
-    descriptionText:"The community will see job title after your name"
+    descriptionText:"The community will see job title after your name",
+    maxLength: 50
   }
 ];
 

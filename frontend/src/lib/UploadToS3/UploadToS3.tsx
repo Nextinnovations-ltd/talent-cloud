@@ -22,7 +22,8 @@ export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise
          if (type === 'profile' || type === 'resume'){
             const response = await ComfirmUpload({
                 uploadId:presignedUrlData?.data?.upload_id,
-                fileSize:file.size
+                fileSize:file.size,
+                type:type
             });
 
 

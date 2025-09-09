@@ -18,6 +18,7 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import { useFormattedExperience } from "@/lib/dropData.tsx/ReturnExperience";
 import { OnBoardingStepTwoSchema } from "@/lib/OnBoardingStepTwoSchema";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
+import clsx from "clsx";
 
 
 type OnBoardingStepTwoType = {
@@ -56,7 +57,6 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
 
   useEffect(() => {
     // Type-safe required fields check
-    console.log(formValues)
     const isFormValid =
       !!formValues.name &&
       !!formValues.workExperience &&
@@ -208,11 +208,14 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                   requiredLabel={field.requiredLabel}
                   type={field.type}
                   languageName={"stepTwo"}
+                  showLetterCount
+                  maxLength={field?.maxLength}
                   fieldHeight={""}
                   fieldWidth={""}
                 />
               ))}
-              <SelectField
+             <div className="flex justify-between gap-5 mt-[24px] items-center">
+             <SelectField
                 name={"level"}
                 labelName={'Level'}
                 isRequired={true}
@@ -220,7 +223,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                 showRequiredLabel={true}
                 placeholder={"eg. Junior Level"}
                 data={EXPERIENCEDATA}
-                width=" max-w-[672px] mt-[24px]"
+                width={clsx(' w-[50%]   ' , !!form.formState.errors.workExperience &&  'mt-[-25px]')}
               />
                <InputField
                   fieldName={"workExperience"}
@@ -228,11 +231,14 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                   isError={!!form.formState.errors.workExperience}
                   required={true}
                   requiredLabel={true}
+                  maxLength={3}
+                  showLetterCount
                   type={'number'}
                   languageName={"stepTwo"}
                   fieldHeight={""}
-                  fieldWidth={""}
+                  fieldWidth={"w-[50%]  mt-[-3px]"}
                 />
+             </div>
             </div>
             {/* Image Uploader */}
             <div className="md:w-[50%]  flex flex-col items-center justify-start">
@@ -296,10 +302,11 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
           </div>
 
           {/* Submit Button */}
-          <div className="w-[200px]">
+          <div className=" flex items-center w-[50%] justify-end">
             <PrimaryButton
               title="Continue"
               isButtonDisabled={isButtonDisabled}
+              width={'w-[200px]'}
             />
           </div>
         </form>
