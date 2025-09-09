@@ -22,7 +22,7 @@ export interface ImageEditorProps {
 export const ImageEditor: React.FC<ImageEditorProps> = ({
   isModalOpen,
   setIsModalOpen,
-  preview,
+  preview, // This should be the editingPreview
   rotation,
   scale,
   rotateImage,
@@ -31,30 +31,33 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
   isUploading = false,
   errorMessage,
 }) => {
-  // This function will trigger the rotation and animation for the button
   const handleRotateClick = () => {
-    rotateImage(); // Apply the rotation to the image
+    rotateImage();
   };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent onInteractOutside={(e) => {
-        e.preventDefault();
-      }}
-        className="w-[90%] rounded-[15px]  md:w-full" >
-        <h3 className=" mx-auto font-[600] text-[28px]">Adjust Photo</h3>
+      <DialogContent 
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+        className="w-[90%] rounded-[15px] md:w-full"
+      >
+        <h3 className="mx-auto font-[600] text-[28px]">Adjust Photo</h3>
      
         {errorMessage && (
           <div className="mx-auto mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600 text-sm font-medium text-center">{errorMessage}</p>
           </div>
         )}
-        <div className="flex flex-col  items-center">
+        
+        <div className="flex flex-col items-center">
           {typeof preview === "string" && (
             <div className="relative md:w-[396px] md:h-[342px] rounded-[10px] border-2 overflow-hidden">
+              {/* Show real-time transformations during editing */}
               <img
                 src={preview}
-                alt="Preview"
+                alt="Editing Preview"
                 className="w-full h-full object-contain rounded-[10px] bg-slate-100"
                 style={{
                   transform: `rotate(${rotation}deg) scale(${scale})`,
@@ -64,13 +67,13 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
             </div>
           )}
 
-          {
-            isUploading && <Skeleton className="h-[20px] w-[87%] mt-4 bg-slate-200 " />
-          }
-          {
-            !isUploading && <div className="flex px-[30px] flex-row mt-4 justify-center w-full items-cente gap-4">
+          {isUploading && <Skeleton className="h-[20px] w-[87%] mt-4 bg-slate-200" />}
+          
+          {!isUploading && (
+            <div className="flex px-[30px] flex-row mt-4 justify-center w-full items-center gap-4">
               {/* Zoom Slider */}
-              <div className="flex w-full items-center">
+              <div className="flex w-full items-center gap-2">
+                <span className="text-sm text-gray-500">Zoom:</span>
                 <input
                   id="scale"
                   type="range"
@@ -81,11 +84,10 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                   onChange={handleScaleChange}
                   className="w-full h-2 bg-[#CBD5E1] rounded-lg appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #0389FF 0%, #0389FF ${((scale - 0.5) * 100) / 1.5
-                      }%, #CBD5E1 ${((scale - 0.5) * 100) / 1.5}%, #CBD5E1 100%)`,
+                    background: `linear-gradient(to right, #0389FF 0%, #0389FF ${((scale - 0.5) * 100) / 1.5}%, #CBD5E1 ${((scale - 0.5) * 100) / 1.5}%, #CBD5E1 100%)`,
                   }}
                 />
-                {/* <span className="text-sm">{scale.toFixed(1)}x</span> */}
+                <span className="text-sm text-gray-600 w-8">{scale.toFixed(1)}x</span>
               </div>
 
               {/* Rotation Button */}
@@ -93,27 +95,24 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 type="button"
                 variant={"ghost"}
                 onClick={handleRotateClick}
-                style={{
-                  transform: `rotate(${rotation}deg)`,
-                  transition: "transform 0.5s ease",
-                }}
+                className="flex items-center gap-2"
+                title="Rotate 90°"
               >
                 <RotateCwIcon />
+                <span className="text-sm">Rotate</span>
               </Button>
-
-              {/* Chosen Button */}
             </div>
-          }
+          )}
+          
           <DialogFooter className="w-full mt-[10px] px-[30px]">
             <div className="flex w-full flex-col">
               <PrimaryButton
                 handleClick={saveEditedImage}
-                title="Choose"
+                title="Save Changes"
                 width={"w-full"}
                 isButtonDisabled={isUploading}
                 loading={isUploading}
               />
-              {/* <Button className="bg-green-500 text-white">Chosen</Button> */}
               <Button
                 type="button"
                 variant={"ghost"}
@@ -121,7 +120,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({
                 className="mt-[16px] text-[#0389FF] font-bold"
                 disabled={isUploading}
               >
-                Close
+                Cancel
               </Button>
             </div>
           </DialogFooter>

@@ -34,8 +34,6 @@ export const ProfileUser = () => {
     refetch,
   } = useGetJobSeekerProfileQuery();
 
-  console.log(profileData)
-
 
 
   const form = useForm<UserProfile>({
@@ -107,11 +105,20 @@ export const ProfileUser = () => {
     try {
       // Destructure to remove flat address fields
       const { country, city, address, role, specializations, experience_level, ...rest } = values;
+
+      const formatLocalDate = (date: Date) => {
+        const tzOffset = date.getTimezoneOffset() * 60000; // in ms
+        const localISO = new Date(date.getTime() - tzOffset).toISOString();
+        return localISO.split("T")[0];
+      };
+
       // Convert date_of_birth to YYYY-MM-DD format if it exists
+
       const formattedValues = {
         ...rest,
         date_of_birth: values.date_of_birth
-          ? new Date(values.date_of_birth).toISOString().split('T')[0]
+          ? 
+          formatLocalDate(new Date(values.date_of_birth))
           : null,
         address: {
           country_id: country,

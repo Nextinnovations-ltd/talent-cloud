@@ -148,6 +148,9 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     lableName={clsx(formMethods?.watch('salary_mode') === 'range' ? 'Minimum Salary' : 'Fixed Salary')}
                                     required={true}
                                     placeholder="0000 MMK"
+                                    showLetterCount={true}
+                                    maxLength={12}
+
                                 />
                                 {formMethods.watch('salary_mode') === 'range' && (
                                     <InputField
@@ -162,6 +165,8 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                         lableName="Maximum Salary"
                                         required={true}
                                         placeholder="0000 MMK"
+                                        showLetterCount
+                                        maxLength={12}
                                     />
                                 )}
                             </div>
@@ -212,7 +217,8 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                             languageName=""
                             fieldWidth="w-full"
                             type="number"
-                            maxLength={2}
+                            showLetterCount
+                            maxLength={3}
                             labelSize="text-[20px] mb-3 font-[500]"
                             fieldHeight="border-[#6B6B6B] rounded-[12px]"
                             isError={!!formMethods.formState.errors?.experience_years}

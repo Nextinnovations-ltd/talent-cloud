@@ -39,45 +39,47 @@ const ImagePicker = ({
     setScale(parseFloat(event.target.value));
   };
 
+ 
   const saveEditedImage = () => {
     if (!preview) return;
-
+  
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
+  
     const image = new Image();
     image.src = preview as string;
-
+  
     image.onload = () => {
-      const radians = (rotation * Math.PI) / 180;
+      // 🔥 normalize rotation so it doesn't keep stacking
+      const normalizedRotation = ((rotation % 360) + 360) % 360;
+      const radians = (normalizedRotation * Math.PI) / 180;
+  
       const { width, height } = image;
-
+  
+      // calculate rotated bounding box
       const rotatedWidth =
-        Math.abs(width * Math.cos(radians)) +
-        Math.abs(height * Math.sin(radians));
+        Math.abs(width * Math.cos(radians)) + Math.abs(height * Math.sin(radians));
       const rotatedHeight =
-        Math.abs(width * Math.sin(radians)) +
-        Math.abs(height * Math.cos(radians));
-
-      canvas.width = rotatedWidth;
-      canvas.height = rotatedHeight;
-
+        Math.abs(width * Math.sin(radians)) + Math.abs(height * Math.cos(radians));
+  
+      canvas.width = rotatedWidth * scale;
+      canvas.height = rotatedHeight * scale;
+  
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(radians);
       ctx.scale(scale, scale);
       ctx.drawImage(image, -width / 2, -height / 2);
-
-      // Get canvas as JPEG blob first, then compress to under 2MB using library
+  
       canvas.toBlob((blob) => {
         if (!blob) {
           setErrorMessage("Failed to process image. Please try again.");
           return;
         }
-
+  
         const originalName = selectedFile?.name || "image";
         const baseName = originalName.replace(/\.[^/.]+$/, "");
-
+  
         const options = {
           maxSizeMB: 2,
           useWebWorker: true,
@@ -86,25 +88,32 @@ const ImagePicker = ({
           fileType: 'image/jpeg',
           alwaysKeepResolution: true,
         } as const;
-
+  
         const intermediateFile = new File([blob], `${baseName}-edited-source.jpg`, { type: 'image/jpeg' });
-
+  
         imageCompression(intermediateFile, options)
           .then((compressedBlob) => {
             if (!compressedBlob || compressedBlob.size > 2 * 1024 * 1024) {
               setErrorMessage("Edited image is too large (over 2MB). Please reduce scale or choose a smaller image.");
               return;
             }
-
-            // Update preview to compressed image
+  
+            // Create a new FileReader to read the final compressed and rotated image
             const fr = new FileReader();
-            fr.onload = () => setPreview(fr.result);
+            fr.onload = () => {
+              // Update the preview with the final rotated image
+              setPreview(fr.result);
+              
+              // DON'T reset rotation and scale here - the preview should maintain its edited state
+              // setRotation(0);
+              // setScale(1);
+            };
             fr.readAsDataURL(compressedBlob);
-
+  
             const rotatedFile = new File([compressedBlob], `${baseName}-edited.jpg`, {
               type: "image/jpeg",
             });
-
+  
             if (imageUploadType === 'project') {
               form.setValue("project_image_url", rotatedFile);
               setIsModalOpen(false);

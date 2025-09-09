@@ -29,7 +29,7 @@ const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData,setResumeUpl
           <RadioGroupItem value="upload" id="r1" />
           <Label className="font-medium cursor-pointer" htmlFor="r1">
             <h3 className="text-[16px]">Upload New Resume</h3>
-            <p className="text-[12px] mt-[10px] font-light">Upload a resume</p>
+            {/* <p className="text-[12px] mt-[10px] font-light">Upload a resume</p> */}
           </Label>
         </div>
         {

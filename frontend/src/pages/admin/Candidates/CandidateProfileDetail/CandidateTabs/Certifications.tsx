@@ -52,32 +52,39 @@ type CertificateProps = {
   credential_id:number
 }
 
-const CertificateCard:React.FC<CertificateProps> = ({duration,organization,title,url,credential_id})=> {
+const CertificateCard: React.FC<CertificateProps> = ({ duration, organization, title, url, credential_id }) => {
   return (
-      <div className="w-[490px]">
-        {/* PDF Preview */}
-        <img src={DefaultCertifi} alt="Certification" />
+    <div className="w-[490px]">
+      {/* PDF Preview */}
+      <img src={DefaultCertifi} alt="Certification" />
 
-        <div>
-          <h3 className="text-[23px] font-semibold mt-[26px] mb-[17px]">
-            {title}
-          </h3>
-          <p className="text-[15px] mb-[12px]">
-            {organization}
-          </p>
-          <p className="mb-[12px] text-[14px] text-[#6B6B6B]">Credential ID: {credential_id || 0}</p>
-          <p className="text-[#6B6B6B] text-[14px]">{duration}</p>
-          
-          {/* Button to open full certificate */}
-          <a href={url} target="_blank" rel="noopener noreferrer" 
-            className="inline-block mt-3 text-blue-600 underline">
+      <div>
+        <h3 className="text-[23px] font-semibold mt-[26px] mb-[17px]">
+          {title}
+        </h3>
+        <p className="text-[15px] mb-[12px]">{organization}</p>
+        <p className="mb-[12px] text-[14px] text-[#6B6B6B]">
+          Credential ID: {credential_id || 0}
+        </p>
+        <p className="text-[#6B6B6B] text-[14px]">{duration}</p>
+
+        {/* Conditionally render the button */}
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-3 text-blue-600 underline"
+          >
             View Certificate
           </a>
-        </div>
+        ) : (
+          <p className="mt-3 text-red-500 text-sm italic">No certificate link provided</p>
+        )}
       </div>
-  )
-}
-
+    </div>
+  );
+};
 
 
 
