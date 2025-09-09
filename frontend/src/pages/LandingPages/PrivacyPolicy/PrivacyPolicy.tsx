@@ -5,7 +5,6 @@ const PrivacyPolicy = () => {
   return (
   <div>
           <Navbar />
-          
           <Privacy/>
   <UpdatedFooter/>
 </div>

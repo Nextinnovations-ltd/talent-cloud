@@ -26,7 +26,7 @@ const SuccessStory = () => {
         transition={{ duration: 0.7, delay: 0.2 }}
         viewport={{ once: true }}
       >
-        <h1 className="max-w-full md:max-w-[524px] text-[24px] md:text-[40px] leading-[38px] md:leading-[51px] font-[500] mb-4">
+        <h1 className="max-w-full md:max-w-[524px] text-[20px] md:text-[40px] leading-[32px] md:leading-[51px] font-[500] mb-4">
           ENGINEERFORCE SCALES EFFICIENTY IN MYANMAR WITH EOR SERVICES
         </h1>
         <p className="max-w-full md:max-w-[665px] text-[12px] md:text-[16px] leading-[26px] md:leading-[32px] font-[500] text-black">
@@ -51,12 +51,12 @@ const SuccessStory = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <img src={profile1} alt="" className="w-[80px] h-[80px] md:w-[112px] md:h-[112px]" />
-          <p className="text-black text-[18px] md:text-[24px] font-[500] leading-[32px] md:leading-[40px] mt-[16px] md:mt-[32px]">
+          <p className="text-black text-[16px] md:text-[24px] font-[500] leading-[21px] md:leading-[40px] mt-[16px] md:mt-[32px]">
             “We highly recommend <span className="text-[#0481EF]">Talent Cloud</span> to companies seeking a comprehensive and effective solution to our recruitment need.”
           </p>
           <div className="flex flex-col gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
             <p className="satisfy-font">Iida-san</p>
-            <p className="md:text-[20px] text-[16px] font-[500] leading-[32px] md:leading-[40px] text-black">
+            <p className="md:text-[20px] text-[10px] font-[500] leading-[21px] md:leading-[40px] text-black">
               CEO of Engineerforce Inc
             </p>
           </div>
@@ -71,12 +71,12 @@ const SuccessStory = () => {
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         >
           <img src={profile2} alt="" className="w-[80px] h-[80px] md:w-[112px] md:h-[112px]" />
-          <p className="text-black text-[18px] md:text-[24px] font-[500] leading-[32px] md:leading-[40px] mt-[16px] md:mt-[32px]">
+          <p className="text-black text-[16px] md:text-[24px] font-[500] leading-[21px] md:leading-[40px] mt-[16px] md:mt-[32px]">
             “I started as a Junior Developer and now lead an engineering team. Their seamless support and genuine care have been one the keys to my growth.”
           </p>
           <div className="flex flex-col gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
             <p className="satisfy-font">Min Min Latt</p>
-            <p className="md:text-[20px] text-[16px] font-[500] leading-[32px] md:leading-[40px] text-black">
+            <p className="md:text-[20px] text-[10px] font-[500] leading-[21px] md:leading-[40px] text-black">
               CTO of Engineerforce Inc
             </p>
           </div>

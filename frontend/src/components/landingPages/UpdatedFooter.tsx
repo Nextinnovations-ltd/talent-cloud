@@ -31,6 +31,12 @@ const UpdatedFooter = () => {
     pathParam = "jp"; // fallback
   }
 
+  
+  const isTcLp =
+  location.pathname === "/tc/lp" || 
+  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "jp");
+
+
 
   return (
     <div className='bg-[#000] w-full relative overflow-hidden'>
@@ -57,12 +63,18 @@ const UpdatedFooter = () => {
                 <HashLink smooth to="/#why-us">Why us</HashLink> 
               )}
             </p>
-            {!isEmpLp && (
+            {isTcLp && (
               <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
                 <HashLink smooth to="/tc/lp/#about-us">About us</HashLink>
               </p>
             )}
-            {(isEmpLp || location.pathname.startsWith("/emp/lp")) && (
+              {(
+                isEmpLp ||
+                 (location.pathname === "/contact-us" && !location.search) ||
+                location.pathname.startsWith("/terms-conditions") ||
+                location.pathname.startsWith("/privacy-policy") ||
+                location.pathname.startsWith("/emp/lp")
+              ) && (
               <>
                 <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
                   <HashLink smooth to="/emp/lp#what-you-get">What You Get</HashLink>
@@ -91,7 +103,7 @@ const UpdatedFooter = () => {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] ">About</h1>
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] mt-[45px]">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
             <Link to={`/contact-us?path=${pathParam}`} target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
          
@@ -105,7 +117,7 @@ const UpdatedFooter = () => {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] md:mb-[15px] mb-[15px] mt-[57px] md:mt-0">Upcoming</h1>
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] md:mb-[15px] mb-[15px] mt-[45px] md:mt-0">Upcoming</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
             <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Blog</p>
           </motion.div>
