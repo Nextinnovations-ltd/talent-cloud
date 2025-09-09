@@ -86,6 +86,7 @@ class JobSeekerRoleStatisticsAPIView(APIView):
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
 
+
 # region Applicant
 
 @extend_schema(tags=["NI Dashboard"])
@@ -267,6 +268,7 @@ class JobSeekerCertificationListAPIView(APIView):
 
 
 # endregion Applicant/Job Seeker Overview/Details
+
 
 # region Job Post Listing
 
