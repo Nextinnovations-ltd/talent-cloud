@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 const UpdatedFooter = () => {
   const location = useLocation();
-  const pathName =  location.pathname
+
   const isEmpLp =
   location.pathname === "/emp/lp" || 
   (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp");

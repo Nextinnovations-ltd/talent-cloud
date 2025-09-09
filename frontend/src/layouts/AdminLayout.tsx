@@ -6,11 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
 import { useGetJobSeekerNotificationsQuery, useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
+import { createReconnectingWebSocket } from "@/lib/reconnectingWebSocket";
 
 const AdminLayout = () => {
 
   const token = useSelector((state: any) => state.auth.token); 
-  const socketRef = useRef<WebSocket | null>(null);
+  const socketRef = useRef<ReturnType<typeof createReconnectingWebSocket> | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_messages, setMessages] = useState<string[]>([]);
   const { showNotification } = useToast();
@@ -33,15 +34,19 @@ const AdminLayout = () => {
       Notification.requestPermission();
     }
 
-    const wsUrl = `ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`;
-    socketRef.current = new WebSocket(wsUrl);
+    socketRef.current = createReconnectingWebSocket({
+      makeUrl: () => `ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`,
+      initialBackoffMs: 1000,
+      maxBackoffMs: 30000,
+      heartbeatMs: 30000,
+    });
 
-    socketRef.current.onopen = () => {
+    socketRef.current.onOpen(() => {
       console.log('✅ WebSocket connected');
-    };
+    });
 
-    socketRef.current.onmessage = (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
+    socketRef.current.onMessage((event) => {
+      const data = JSON.parse(event.data as string);
       
       if (data.type === 'notification') {
         setMessages((prev) => [...prev, data.message]);
@@ -68,20 +73,13 @@ const AdminLayout = () => {
           });
         }
       }
-    };
+    });
 
-    socketRef.current.onclose = () => {
+    socketRef.current.onClose(() => {
       console.log('❌ WebSocket disconnected');
-    };
-
-    const interval = setInterval(() => {
-      if (socketRef.current?.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, 30000);
+    });
 
     return () => {
-      clearInterval(interval);
       socketRef.current?.close();
     };
   }, [RefetchIsRead, refetch, showNotification, token]);

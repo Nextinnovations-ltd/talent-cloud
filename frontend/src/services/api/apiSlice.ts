@@ -59,7 +59,6 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 
       result = await baseQuery(args, api, extraOptions);
     } else {
-      console.warn("Token expired:", refreshResult);
 
       const { revertAll } = await import("../slices/authSlice");
       api.dispatch(revertAll());

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import InputField from "@/components/common/form/fields/input-field";
 import { NavLink } from "@/components/common/NavLink";
+import PortalCopyRight from "@/components/common/PortalCopyRight";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import {
   Card,
@@ -88,6 +89,8 @@ export const CreateUsername = () => {
                 languageName={fields.languageName}
                 fieldHeight={cn("w-full", fieldHeight)}
                 fieldWidth={filedWidth}
+                showLetterCount
+                maxLength={50}
               />
               <PrimaryButton loading={isLoading} title="Submit" isButtonDisabled={isLoading} />
             </form>
@@ -97,6 +100,7 @@ export const CreateUsername = () => {
           <NavLink to={`/auth/${routesMap.login.path}`} title="Back to Login" />
         </CardFooter>
       </Card>
+      <PortalCopyRight boarding/>
     </div>
   );
 };

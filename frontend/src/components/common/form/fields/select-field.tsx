@@ -78,7 +78,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                       field.value === "" || field.value === undefined ?
                       "text-slate-300" : "text-black",
                       error &&
-                      "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
+                      "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error",
+                      'border-[#CBD5E1]'
                     )}
                   >
                  <SelectValue  placeholder={placeholder} />

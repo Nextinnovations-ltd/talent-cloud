@@ -96,7 +96,7 @@ const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFi
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
                 const result = await UploadToS3({ file, type: type, postId: id });
-
+                
 
                 if (result) {
                     //@ts-ignore

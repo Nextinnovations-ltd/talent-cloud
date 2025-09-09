@@ -65,11 +65,12 @@ export const StepThree = ({
 
   // Combine specialization data with corresponding SVG image
   const combinedData: CombinedData[] | undefined = data?.data.map(
-    (item: Specialization) => {
-      const image = images.find((img) => img.id === item.id);
+    (item: Specialization, index: number) => {
+      const image = images[index];
       return { ...item, SVGImg: image ? image.SVGImg : null };
     }
   );
+  
 
   const renderSkeletons = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-4">

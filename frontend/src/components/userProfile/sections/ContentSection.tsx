@@ -168,7 +168,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
 
       <ScrollVelocity
         texts={[userData?.name || '']}
-        className="custom-scroll-text text-[#0389FF] h-[110px] mt-[80px]  text-[190px]"
+        className="custom-scroll-text text-[#0389FF] mb-[100px] h-[110px] mt-[80px]  text-[190px]"
       />
     </>
   );
