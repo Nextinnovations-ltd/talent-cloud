@@ -232,10 +232,14 @@ class DashboardJobSeekerExperienceSerializer(serializers.ModelSerializer):
           return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_present_work)
 
 class DashboardJobSeekerEducationSerializer(serializers.ModelSerializer):
+     institution = serializers.SerializerMethodField()
      duration = serializers.SerializerMethodField()
      class Meta:
           model = JobSeekerEducation
           fields = ['id', 'degree', 'institution', 'description', 'duration']
+
+     def get_institution(self, obj:JobSeekerEducation):
+          return obj.institution_name
 
      def get_duration(self, obj:JobSeekerEducation):
           return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_currently_attending)

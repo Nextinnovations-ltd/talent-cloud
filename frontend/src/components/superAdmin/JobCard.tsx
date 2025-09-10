@@ -100,7 +100,7 @@ const JobCard = ({
         <button onClick={() => navigate(`/admin/dashboard/allJobs/details/applicants/${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">
           <Users color="#575757" size={20} />
         </button>
-        <button onClick={() => navigate(`${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">
+        <button onClick={() => navigate(`/admin/dashboard/allJobs/${id}`)} className="bg-[#F3F9FF] hover:bg-[#e2e8ee] hover:scale-105 p-2 rounded-full group">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1.3335 8C1.3335 8 3.3335 3.33333 8.00016 3.33333C12.6668 3.33333 14.6668 8 14.6668 8C14.6668 8 12.6668 12.6667 8.00016 12.6667C3.3335 12.6667 1.3335 8 1.3335 8Z"
               className="stroke-[#575757] group-hover:stroke-black transition-colors"

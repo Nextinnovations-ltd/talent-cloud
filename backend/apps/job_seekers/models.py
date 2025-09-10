@@ -43,8 +43,93 @@ class JobSeeker(TalentCloudUser):
           """Get job seeker latest job applications"""
           from services.job_seeker.job_seeker_service import JobSeekerService
           return JobSeekerService.get_latest_job_applications(self)
+
+class University(TimeStampModel):
+     """
+     University/Institution model for job seeker education
+     """
+     UNIVERSITY_TYPES = (
+          ('public', 'Public University'),
+          ('private', 'Private University'),
+          ('international', 'International University'),
+          ('institute', 'Institute/College'),
+          ('academy', 'Academy'),
+          ('college', 'Education College'),
+          ('other', 'Other'),
+     )
+     id = models.CharField(
+          max_length=10,
+          primary_key=True,
+          unique=True
+     )
+     name = models.CharField(max_length=255, help_text="Full university name")
+     short_name = models.CharField(max_length=100, null=True, blank=True, help_text="Abbreviated name")
+     university_type = models.CharField(max_length=20, choices=UNIVERSITY_TYPES, default='public')
+     country = models.CharField(max_length=100, help_text="Country where university is located")
+     state = models.CharField(max_length=100, null=True, blank=True, help_text="State/Region in Myanmar")
+     website_url = models.URLField(max_length=500, null=True, blank=True, help_text="Official website")
+     is_verified = models.BooleanField(default=True, help_text="Is this an officially verified university")
      
-# region PROFILE DETAILS
+     class Meta:
+          verbose_name = "University"
+          verbose_name_plural = "Universities"
+          ordering = ['country', 'state', 'name']
+          indexes = [
+               models.Index(fields=['country']),
+               models.Index(fields=['state']),
+          ]
+     
+     def __str__(self):
+          if self.state:
+               return f"{self.name} ({self.state})"
+          return f"{self.name} ({self.country})"
+
+     @classmethod
+     def get_universities_by_region(cls, state):
+          """Get universities by Myanmar state/region"""
+          return cls.objects.filter(
+               status=True,
+               state=state
+          ).order_by('name')
+     
+     @classmethod
+     def get_all_active_universities(cls):
+          """Get all active universities"""
+          return cls.objects.filter(status=True).order_by('country', 'state', 'name')
+
+class JobSeekerEducation(TimeStampModel):
+     user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='educations')
+     degree = models.CharField(max_length=100)
+     custom_institution = models.CharField(max_length=255, null=True, blank=True)
+     institution = models.ForeignKey(University, on_delete=models.SET_NULL, null=True, blank=True)
+     start_date = models.DateField(null=True, blank=True)
+     end_date = models.DateField(null=True, blank=True)
+     description = models.TextField(null=True, blank=True)
+     is_currently_attending = models.BooleanField(default=False)
+
+     class Meta:
+          ordering = ['-start_date', '-created_at']
+     
+     def __str__(self):
+          return f'{self.degree} from {self.custom_institution}'
+
+     def clean(self):
+          """Validate that either university or custom_institution is provided"""
+          from django.core.exceptions import ValidationError
+          
+          if not self.institution and not self.custom_institution:
+               raise ValidationError("Either select a university or provide a custom institution name.")
+          
+          if self.institution and self.custom_institution:
+               raise ValidationError("Please select either a university from dropdown OR provide custom institution, not both.")
+
+     @property
+     def institution_name(self):
+          """Get the institution name (either from university or custom)"""
+          if self.institution:
+               return self.institution.name
+          return self.custom_institution
+          
 class JobSeekerExperience(TimeStampModel):
      WORK_TYPE_CHOICES = (
           ('fulltime', 'Full-time'),
@@ -73,18 +158,6 @@ class JobSeekerExperience(TimeStampModel):
      def __str__(self):
           return f"{self.title} - {self.organization}"
 
-class JobSeekerEducation(TimeStampModel):
-     user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='educations')
-     degree = models.CharField(max_length=100)
-     institution = models.CharField(max_length=255)
-     start_date = models.DateField(null=True, blank=True)
-     end_date = models.DateField(null=True, blank=True)
-     description = models.TextField(null=True, blank=True)
-     is_currently_attending = models.BooleanField(default=False)
-
-     def __str__(self):
-          return f'{self.degree} from {self.institution}'
-
 class JobSeekerCertification(TimeStampModel):
      user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='certifications')
      title = models.CharField(max_length=255)
@@ -95,10 +168,11 @@ class JobSeekerCertification(TimeStampModel):
      url = models.URLField(max_length=2048, null=True, blank=True)
      credential_id = models.PositiveIntegerField(null=True, blank=True)
 
+     class Meta:
+          ordering = ['-issued_date', '-created_at']
+
      def __str__(self):
           return f'{self.title} from {self.organization}'
-
-# endregion PROFILE DETAILS
 
 class JobSeekerProject(TimeStampModel):
      """
@@ -141,7 +215,6 @@ class JobSeekerProject(TimeStampModel):
      def __str__(self):
           return f"{self.user.username} - {self.title}"
 
-# region OCCUPATIONS
 class JobSeekerSpecialization(TimeStampModel):
      id = models.CharField(
           max_length=10, 
@@ -263,5 +336,3 @@ class JobSeekerLanguageProficiency(TimeStampModel):
      user = models.ForeignKey(JobSeeker, related_name='language_proficiencies', on_delete=models.CASCADE)
      language = models.ForeignKey(SpokenLanguage, on_delete=models.CASCADE)
      proficiency_level = models.CharField(max_length=255, choices=PROFICIENCY_CHOICE, default='basic')
-
-# endregion OCCUPATION

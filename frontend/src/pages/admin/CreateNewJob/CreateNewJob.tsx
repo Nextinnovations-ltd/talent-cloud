@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Stepper } from "@/components/ui/stepper";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import StepOneForm from "./StepsForms/StepOneForm";
@@ -15,8 +15,9 @@ import { useApiCaller } from "@/hooks/useApicaller";
 import { useCreateJobMutation } from "@/services/slices/adminSlice";
 import { useJobFormStore } from "@/state/zustand/create-job-store";
 
-import { useNavigate } from "react-router-dom";
 import useToast from "@/hooks/use-toast";
+import { useNavigationGuard } from "@/hooks/useNavigationGuard";
+import { NavigationConfirmModal } from "@/components/common/NavigationConfirmModal";
 
 
 const steps = [
@@ -40,7 +41,6 @@ const CreateNewJob = () => {
         resetForm
     } = useJobFormStore();
     const { executeApiCall, isLoading } = useApiCaller(useCreateJobMutation);
-    const navigate = useNavigate();
 
     // Step One Form 
     const stepOneForm = useForm({
@@ -62,6 +62,109 @@ const CreateNewJob = () => {
         resolver: yupResolver(StepThreeFormYupSchema),
         defaultValues: formData.stepThree,
         mode: 'onSubmit'
+    });
+
+    // State to track if there are unsaved changes
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+    // Function to check for unsaved changes
+    const checkUnsavedChanges = useCallback(() => {
+        const stepOneValues = stepOneForm.getValues();
+        const stepTwoValues = stepTwoForm.getValues();
+        const stepThreeValues = stepThreeForm.getValues();
+
+        // Default values from the store
+        const defaultStepOne = {
+            title: '',
+            specialization: '',
+            role: '',
+            job_type: '',
+            location: '',
+            work_type: '',
+            description: ''
+        };
+
+        const defaultStepTwo = {
+            responsibilities: '',
+            requirements: '',
+            offered_benefits: ''
+        };
+
+        const defaultStepThree = {
+            salary_mode: '',
+            salary_type: '',
+            salary_min: '',
+            salary_max: '',
+            is_salary_negotiable: false,
+            project_duration: '',
+            skills: [],
+            experience_level: '',
+            experience_years: 1,
+            salary_fixed: '',
+            number_of_positions: 1,
+            last_application_date: ''
+        };
+
+        // Check if current values differ from default values
+        const hasStepOneData = JSON.stringify(stepOneValues) !== JSON.stringify(defaultStepOne);
+        const hasStepTwoData = JSON.stringify(stepTwoValues) !== JSON.stringify(defaultStepTwo);
+        const hasStepThreeData = JSON.stringify(stepThreeValues) !== JSON.stringify(defaultStepThree);
+
+        const hasChanges = hasStepOneData || hasStepTwoData || hasStepThreeData;
+        setHasUnsavedChanges(hasChanges);
+        console.log('Form changes detected:', { 
+            stepOneValues, 
+            stepTwoValues, 
+            stepThreeValues,
+            hasStepOneData, 
+            hasStepTwoData, 
+            hasStepThreeData, 
+            hasChanges 
+        });
+        return hasChanges;
+    }, [stepOneForm, stepTwoForm, stepThreeForm]);
+
+    // Initial check and update unsaved changes state when forms change
+    useEffect(() => {
+        checkUnsavedChanges();
+    }, [checkUnsavedChanges]);
+
+    // Initial check on mount
+    useEffect(() => {
+        // Small delay to ensure forms are fully initialized
+        const timer = setTimeout(() => {
+            checkUnsavedChanges();
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [checkUnsavedChanges]);
+
+    // Add form change listeners
+    useEffect(() => {
+        const subscription1 = stepOneForm.watch(() => checkUnsavedChanges());
+        const subscription2 = stepTwoForm.watch(() => checkUnsavedChanges());
+        const subscription3 = stepThreeForm.watch(() => checkUnsavedChanges());
+
+        return () => {
+            subscription1.unsubscribe();
+            subscription2.unsubscribe();
+            subscription3.unsubscribe();
+        };
+    }, [checkUnsavedChanges, stepOneForm, stepTwoForm, stepThreeForm]);
+
+    // Navigation guard
+    const {
+        showConfirmModal,
+        confirmNavigation,
+        cancelNavigation,
+        navigateBypassingGuard
+    } = useNavigationGuard({
+        hasUnsavedChanges: hasUnsavedChanges,
+        onConfirmNavigation: () => {
+            showNotification({
+                message: "Form data has been cleared",
+                type: "success",
+            });
+        }
     });
 
     // Reset forms when store data changes to ensure synchronization
@@ -247,60 +350,72 @@ const CreateNewJob = () => {
             setCurrentStep(0);
 
             console.log("Job created successfully!");
-            navigate("/admin/dashboard/allJobs");
+            // Navigate once without showing the modal
+            navigateBypassingGuard("/admin/dashboard/allJobs");
         } catch (error) {
             console.error("Error creating job:", error);
         }
     };
 
     return (
-        <div className="py-[44px] w-[calc(100svw-300px)]">
-            <h3 className="text-[24px] font-semibold">Post a New Job</h3>
-            <p className="text-[#575757] mb-[77px]">Create a amazing opportunity for talented professional.</p>
-            <Stepper steps={steps} currentStep={currentStep} />
+        <>
+            <div className="py-[44px] w-[calc(100svw-300px)]">
+                <h3 className="text-[24px] font-semibold">Post a New Job</h3>
+                <p className="text-[#575757] mb-[77px]">Create a amazing opportunity for talented professional.</p>
+                <Stepper steps={steps} currentStep={currentStep} />
 
-            {currentStep !== 3 && (
-                <div className="my-[50px] rounded-md">
-                    <h2 className="text-[24px] font-semibold mb-1">
-                        Step {currentStep + 1} : {TITLES[currentStep]}
-                    </h2>
-                    <p className="text-[#575757] text-[16px]">{DESCRIPTION[currentStep]}</p>
-                </div>
-            )}
-
-            {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
-            {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
-            {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
-            {currentStep === 3 && <PreviewForm />}
-
-            <div className="flex justify-between max-w-[700px] items-center   mt-[50px]">
-                <Button
-                    className="text-[#000000] text-[16px] w-[150px] h-[53px]"
-                    variant="outline"
-                    onClick={() => setCurrentStep(currentStep - 1)}
-                    disabled={currentStep === 0}
-                >
-                    <ChevronLeft size={16} className="mr-3" /> Previous
-                </Button>
-
-                {currentStep === steps.length - 1 ? (
-                    <Button
-                        className="bg-[#0481EF] text-white  text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
-                        onClick={handlePublish}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? "Publishing..." : "Publish"}
-                    </Button>
-                ) : (
-                    <Button
-                        className="bg-[#0481EF] text-white text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
-                        onClick={handleNext}
-                    >
-                        Next <ChevronRight size={16} />
-                    </Button>
+                {currentStep !== 3 && (
+                    <div className="my-[50px] rounded-md">
+                        <h2 className="text-[24px] font-semibold mb-1">
+                            Step {currentStep + 1} : {TITLES[currentStep]}
+                        </h2>
+                        <p className="text-[#575757] text-[16px]">{DESCRIPTION[currentStep]}</p>
+                    </div>
                 )}
+
+                {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
+                {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
+                {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
+                {currentStep === 3 && <PreviewForm />}
+
+                <div className="flex justify-between max-w-[700px] items-center   mt-[50px]">
+                    <Button
+                        className="text-[#000000] text-[16px] w-[150px] h-[53px]"
+                        variant="outline"
+                        onClick={() => setCurrentStep(currentStep - 1)}
+                        disabled={currentStep === 0}
+                    >
+                        <ChevronLeft size={16} className="mr-3" /> Previous
+                    </Button>
+
+                    {currentStep === steps.length - 1 ? (
+                        <Button
+                            className="bg-[#0481EF] text-white  text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
+                            onClick={handlePublish}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "Publishing..." : "Publish"}
+                        </Button>
+                    ) : (
+                        <Button
+                            className="bg-[#0481EF] text-white text-[16px]  w-[150px] h-[53px] flex items-center justify-center gap-5"
+                            onClick={handleNext}
+                        >
+                            Next <ChevronRight size={16} />
+                        </Button>
+                    )}
+                </div>
             </div>
-        </div>
+
+            {/* Navigation Confirmation Modal */}
+            <NavigationConfirmModal
+                isOpen={showConfirmModal}
+                onConfirm={confirmNavigation}
+                onCancel={cancelNavigation}
+                title="Unsaved Changes"
+                description="You have unsaved changes in your job posting form. Are you sure you want to leave? Your progress will be lost."
+            />
+        </>
     );
 };
 
