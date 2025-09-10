@@ -108,7 +108,7 @@ const EorSection = () => {
     >
       {/* Heading */}
       <motion.h1
-        className="text-[16px] md:text-[32px] font-[600] leading-[14px] md:leading-[56px] text-right md:mb-[30px] mb-[38px]"
+        className="text-[20px] md:text-[32px] font-[600] leading-[14px] md:leading-[56px] text-right md:mb-[30px] mb-[38px]"
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
@@ -151,7 +151,7 @@ const EorSection = () => {
                   className="max-w-[714px] flex flex-col gap-2"
                  
                 >
-                  <h1 className="text-[#0481EF] text-[14px] md:text-[36px] font-[600] leading-[14px] md:leading-[34px]">
+                  <h1 className="text-[#0481EF] text-[16px] md:text-[36px] font-[600] leading-[14px] md:leading-[34px]">
                     {slide.title}
                   </h1>
                   <p className="text-[#575757] text-[12px] md:text-[20px] font-[500] leading-[26px] md:leading-[43px] h-[110px]">

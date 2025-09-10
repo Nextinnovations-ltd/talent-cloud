@@ -703,23 +703,23 @@ const HeroSection = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
-          className="md:w-[409px] w-[100%] h-[313px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]"
+          className="md:w-[409px] w-[100%] h-[295px] md:h-[313px] bg-[#FAFAFA] rounded-[12px] shadow-[0px_1px_3px_0px_rgba(166,175,195,0.4)] flex flex-col justify-center items-start pl-[38px] pr-[24px] lg:gap-[32px] gap-[24px]"
         >
-          <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF]"> Legal Compliance Guarantee</p>
+          <div className="flex gap-[20px] md:gap-[24px] items-center">
+            <img src={CheckCircle} alt="" className="w-[26px] h-[26px] md:w-[32px] md:h-[32px] object-cover" />
+            <p className="text-[#0389FF] text-[14px] md:text-[20px] font-[500]"> Legal Compliance Guarantee</p>
           </div>
           <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF]"> Full HR & Payroll Management</p>
+            <img src={CheckCircle} alt="" className="w-[26px] h-[26px] md:w-[32px] md:h-[32px] object-cover" />
+            <p className="text-[#0389FF] text-[14px] md:text-[20px] font-[500]"> Full HR & Payroll Management</p>
           </div>
           <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF]"> IT Talent Specialization</p>
+            <img src={CheckCircle} alt="" className="w-[26px] h-[26px] md:w-[32px] md:h-[32px] object-cover" />
+            <p className="text-[#0389FF] text-[14px] md:text-[20px] font-[500]"> IT Talent Specialization</p>
           </div>
           <div className="flex gap-[24px] items-center">
-            <img src={CheckCircle} alt="" />
-            <p className="text-[#0389FF]"> Stable & Productive Work Environment</p>
+            <img src={CheckCircle} alt="" className="w-[26px] h-[26px] md:w-[32px] md:h-[32px] object-cover" />
+            <p className="text-[#0389FF] text-[14px] md:text-[20px] font-[500]"> Stable & Productive Work Environment</p>
           </div>
         </motion.div>
       </div>
