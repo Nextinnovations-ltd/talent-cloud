@@ -3,9 +3,9 @@ import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfo
 import { StepOneFormYupSchema, StepThreeFormYupSchema, StepTwoFormYupSchema } from "@/lib/admin/uploadJob/StepFormSchema";
 import { useGetJobDetailOfEditQuery, useUpdateJobMutation } from "@/services/slices/adminSlice";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useBlocker, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import StepOneForm from "../CreateNewJob/StepsForms/StepOneForm";
 import { JobPostDetails } from "@/types/admin-auth-slice";
 import StepTwoForm from "../CreateNewJob/StepsForms/StepTwoForm";
@@ -15,9 +15,11 @@ import { useJobFormStore } from "@/state/zustand/create-job-store";
 import StepThreeForm from "../CreateNewJob/StepsForms/StepThreeForm";
 import PreviewForm from "../CreateNewJob/StepsForms/PreviewForm";
 import useToast from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import SanitizeNumber from "@/components/common/SanitizeNumber";
 import SanitizeNumberCurrency from "@/components/common/SanitizeNumberCurrency";
+import { useNavigationGuard } from "@/hooks/useNavigationGuard";
+import { NavigationConfirmModal } from "@/components/common/NavigationConfirmModal";
 
 
 const steps = [
@@ -30,7 +32,7 @@ const steps = [
 const AllJobsEditJobs = () => {
   const { id } = useParams<{ id: string }>();
   const { showNotification } = useToast();
-  const navigation = useNavigate();
+  // const navigation = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const {
     formData, 
@@ -47,16 +49,10 @@ const AllJobsEditJobs = () => {
   });
 
 
-  const blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    return currentLocation.pathname !== nextLocation.pathname;
-  });
-
-  useEffect(() => {
-    if (blocker.state === "blocked") {
-      resetForm();
-      blocker.proceed(); // Continue with navigation after reset
-    }
-  }, [blocker, resetForm]);
+  // Track the initial (loaded) values to detect unsaved changes accurately
+  const initialStepOneRef = useRef<Record<string, unknown> | null>(null);
+  const initialStepTwoRef = useRef<Record<string, unknown> | null>(null);
+  const initialStepThreeRef = useRef<Record<string, unknown> | null>(null);
 
   const JobData: JobPostDetails | undefined = data?.data;
 
@@ -136,8 +132,55 @@ const AllJobsEditJobs = () => {
         number_of_positions: JobData?.number_of_positions,
         last_application_date: JobData?.last_application_date
       })
+
+      // Capture initial snapshots for change detection
+      initialStepOneRef.current = stepOneForm.getValues();
+      initialStepTwoRef.current = stepTwoForm.getValues();
+      initialStepThreeRef.current = stepThreeForm.getValues();
     }
   }, [JobData, isLoading, stepOneForm, stepTwoForm]);
+
+  // Detect unsaved changes by comparing current values against initial snapshots
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const checkUnsavedChanges = useCallback(() => {
+    const stepOneValues = stepOneForm.getValues();
+    const stepTwoValues = stepTwoForm.getValues();
+    const stepThreeValues = stepThreeForm.getValues();
+
+    const hasStepOneData = initialStepOneRef.current
+      ? JSON.stringify(stepOneValues) !== JSON.stringify(initialStepOneRef.current)
+      : false;
+    const hasStepTwoData = initialStepTwoRef.current
+      ? JSON.stringify(stepTwoValues) !== JSON.stringify(initialStepTwoRef.current)
+      : false;
+    const hasStepThreeData = initialStepThreeRef.current
+      ? JSON.stringify(stepThreeValues) !== JSON.stringify(initialStepThreeRef.current)
+      : false;
+
+    const hasChanges = hasStepOneData || hasStepTwoData || hasStepThreeData;
+    setHasUnsavedChanges(hasChanges);
+    return hasChanges;
+  }, [stepOneForm, stepTwoForm, stepThreeForm]);
+
+  useEffect(() => {
+    checkUnsavedChanges();
+  }, [checkUnsavedChanges]);
+
+  useEffect(() => {
+    const s1 = stepOneForm.watch(() => checkUnsavedChanges());
+    const s2 = stepTwoForm.watch(() => checkUnsavedChanges());
+    const s3 = stepThreeForm.watch(() => checkUnsavedChanges());
+    return () => { s1.unsubscribe(); s2.unsubscribe(); s3.unsubscribe(); };
+  }, [checkUnsavedChanges, stepOneForm, stepTwoForm, stepThreeForm]);
+
+  // Navigation guard (blocks all route changes when hasUnsavedChanges is true)
+  const { showConfirmModal, confirmNavigation, cancelNavigation, navigateBypassingGuard } = useNavigationGuard({
+    hasUnsavedChanges,
+    onConfirmNavigation: () => {
+      // No-op here; form reset will be handled explicitly where needed
+    },
+  });
 
 
   const handleNext = async () => {
@@ -241,9 +284,9 @@ const AllJobsEditJobs = () => {
 
        // Enhanced reset sequence
        resetForm(); // Reset Zustand store
-            
+
        // Reset all form instances with empty values
-       stepOneForm.reset({
+       const clearedStepOne = {
            title: '',
            specialization: '',
            role: '',
@@ -251,15 +294,13 @@ const AllJobsEditJobs = () => {
            location: '',
            work_type: '',
            description: ''
-       });
-       
-       stepTwoForm.reset({
+       };
+       const clearedStepTwo = {
            responsibilities: '',
            requirements: '',
            offered_benefits: ''
-       });
-       
-       stepThreeForm.reset({
+       };
+       const clearedStepThree = {
            salary_mode: '',
            salary_type: '',
            salary_min: '',
@@ -272,18 +313,31 @@ const AllJobsEditJobs = () => {
            salary_fixed: '',
            number_of_positions: 0,
            last_application_date: ''
-       });
-       
+       };
+
+       stepOneForm.reset(clearedStepOne);
+       stepTwoForm.reset(clearedStepTwo);
+       stepThreeForm.reset(clearedStepThree);
+
+       // Sync snapshots to cleared values so the guard sees no changes
+       initialStepOneRef.current = clearedStepOne;
+       initialStepTwoRef.current = clearedStepTwo;
+       initialStepThreeRef.current = clearedStepThree;
+       setHasUnsavedChanges(false);
+
        setCurrentStep(0);
-       console.log("Job created successfully!");
+       console.log("Job updated successfully!");
        if(response?.data?.status){
-        navigation('/admin/dashboard/allJobs');
+        // Bypass guard exactly once during success navigation
+        navigateBypassingGuard('/admin/dashboard/allJobs');
        }
       
 
     } catch (error){
-      console.error("Error creating job",error)
-       navigation('/admin/dashboard/allJobs');
+      console.error("Error updating job",error)
+      // Best-effort bypass if needed
+      setHasUnsavedChanges(false);
+      navigateBypassingGuard('/admin/dashboard/allJobs');
     }
     
 
@@ -350,6 +404,14 @@ const AllJobsEditJobs = () => {
         )}
       </div>
      </div>
+      {/* Navigation Confirmation Modal */}
+      <NavigationConfirmModal
+        isOpen={showConfirmModal}
+        onConfirm={confirmNavigation}
+        onCancel={cancelNavigation}
+        title="Unsaved Changes"
+        description="You have unsaved changes to this job. Are you sure you want to leave?"
+      />
       </div>
 
 
