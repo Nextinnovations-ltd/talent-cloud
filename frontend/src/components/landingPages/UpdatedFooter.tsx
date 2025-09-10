@@ -13,7 +13,8 @@ const UpdatedFooter = () => {
 
   const isEmpLp =
   location.pathname === "/emp/lp" || 
-  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp");
+  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp")  ;
+
 
 
   // Parse query string
@@ -25,7 +26,7 @@ const UpdatedFooter = () => {
 
   if (location.pathname.startsWith("/emp/lp")) {
     pathParam = "emp";
-  } else if (location.pathname === "/contact-us" && queryPath === "emp") {
+  } else if (location.pathname === "/contact-us" && queryPath === "emp"||location.pathname === "/privacy-policy" && queryPath === "emp"||location.pathname === "/terms-conditions" && queryPath === "emp") {
     pathParam = "emp";
   } else {
     pathParam = "jp"; // fallback
@@ -37,6 +38,12 @@ const UpdatedFooter = () => {
   (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "jp");
 
 
+  const privacyEmpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp")
+
+  const privacyJpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "jp")
+  const termsEmpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp")
+
+  const termsJpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "jp")
 
   return (
     <div className='bg-[#000] w-full relative overflow-hidden'>
@@ -60,7 +67,7 @@ const UpdatedFooter = () => {
               ) : !isEmpLp ? (
                 <HashLink smooth to="/tc/lp#why-us">Why us</HashLink>
               ) : (
-                <HashLink smooth to="/#why-us">Why us</HashLink> 
+                <HashLink smooth to="/emp/lp#why-us">Why us</HashLink> 
               )}
             </p>
             {isTcLp && (
@@ -79,19 +86,19 @@ const UpdatedFooter = () => {
                 <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
                   <HashLink smooth to="/emp/lp#what-you-get">What You Get</HashLink>
                 </p>
-                <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[45px] md:mb-0">
+                <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-0">
                   <HashLink smooth to="/emp/lp#find-jobs">Find Jobs</HashLink>
                 </p>
               </>
             )}
              <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mt-[12px] "> 
             
-            {isEmpLp ? (
+            {!privacyEmpPath&&!termsEmpPath && isEmpLp ? (
             <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
-            ) : !isEmpLp ? (
+            ) : privacyJpPath||termsJpPath || isTcLp ? (
             <HashLink smooth to="/tc/lp#faq">FAQ</HashLink>
             ) : (
-            <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
+            <HashLink smooth to="/emp/lp#faq"></HashLink>
             )}</p>
           </motion.div>
 
@@ -103,7 +110,7 @@ const UpdatedFooter = () => {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] mt-[45px]">About</h1>
+            <h1 className="text-[20px] text-[#F2F2F2] font-[500] leading-[32px] mb-[15px] mt-[45px] md:mt-0">About</h1>
             <div className="w-full h-[1px] bg-[#0481EF] mb-[25px]"></div>
             <Link to={`/contact-us?path=${pathParam}`} target='_blank' className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px] ">Contact us</Link>
          
@@ -158,8 +165,14 @@ const UpdatedFooter = () => {
             </Link>
           </div>
           <div className="flex md:flex-row flex-col gap-[30px] md:gap-4 flex-wrap">
-            <Link to='/privacy-policy' target='_blank' className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Privacy Policy</Link>
-            <Link to='/terms-conditions' target='_blank' className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </Link>
+             <Link
+              to={`/privacy-policy?path=${pathParam}`}
+              target="_blank"
+              className="text-white text-[16px] font-[500] leading-[25px] tracking-[0.64px]"
+            >
+              Privacy Policy
+            </Link>           
+             <Link  to={`/terms-conditions?path=${pathParam}`}  target='_blank' className='text-white text-[16px] font-[500] leading-[25px ] tracking-[0.64px] '>Terms & Conditions </Link>
           </div>
         </motion.div>
       </div>
