@@ -57,41 +57,45 @@ class University(TimeStampModel):
           ('college', 'Education College'),
           ('other', 'Other'),
      )
-     
-     name = models.CharField(max_length=255, unique=True, help_text="Full university name")
+     id = models.CharField(
+          max_length=10,
+          primary_key=True,
+          unique=True
+     )
+     name = models.CharField(max_length=255, help_text="Full university name")
      short_name = models.CharField(max_length=100, null=True, blank=True, help_text="Abbreviated name")
      university_type = models.CharField(max_length=20, choices=UNIVERSITY_TYPES, default='public')
      country = models.CharField(max_length=100, help_text="Country where university is located")
-     state_region = models.CharField(max_length=100, null=True, blank=True, help_text="State/Region in Myanmar")
+     state = models.CharField(max_length=100, null=True, blank=True, help_text="State/Region in Myanmar")
      website_url = models.URLField(max_length=500, null=True, blank=True, help_text="Official website")
      is_verified = models.BooleanField(default=True, help_text="Is this an officially verified university")
      
      class Meta:
           verbose_name = "University"
           verbose_name_plural = "Universities"
-          ordering = ['country', 'state_region', 'name']
+          ordering = ['country', 'state', 'name']
           indexes = [
                models.Index(fields=['country']),
-               models.Index(fields=['state_region']),
+               models.Index(fields=['state']),
           ]
      
      def __str__(self):
-          if self.state_region:
-               return f"{self.name} ({self.state_region})"
+          if self.state:
+               return f"{self.name} ({self.state})"
           return f"{self.name} ({self.country})"
 
      @classmethod
-     def get_universities_by_region(cls, state_region):
+     def get_universities_by_region(cls, state):
           """Get universities by Myanmar state/region"""
           return cls.objects.filter(
                status=True,
-               state_region=state_region
+               state=state
           ).order_by('name')
      
      @classmethod
      def get_all_active_universities(cls):
           """Get all active universities"""
-          return cls.objects.filter(status=True).order_by('country', 'state_region', 'name')
+          return cls.objects.filter(status=True).order_by('country', 'state', 'name')
 
 class JobSeekerEducation(TimeStampModel):
      user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='educations')

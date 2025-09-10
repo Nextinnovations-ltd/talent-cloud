@@ -1,12 +1,24 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from utils.response import CustomResponse
 from rest_framework import status
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import IsJobSeekerAndOwnerPermission
-from ..serializers.education_serializer import EducationSerializer
-from ..models import JobSeekerEducation
+from core.middleware.permission import IsJobSeekerAndOwnerPermission, TalentCloudUserPermission
+from ..serializers.education_serializer import EducationSerializer, UniversitySerializer
+from ..models import JobSeekerEducation, University
+
+@extend_schema(tags=["Import Data"])
+class UniversityAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     def get(self, request):
+          universities = University.objects.all()
+          serializer = UniversitySerializer(universities, many=True)
+
+          return Response(CustomResponse.success("Successfully fetched university list.", serializer.data), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker"])
 class EducationViewSet(ModelViewSet):
