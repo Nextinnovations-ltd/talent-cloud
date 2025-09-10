@@ -8,7 +8,7 @@ from core.middleware.permission import TalentCloudAllPermission
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 
-@extend_schema(tags=["Address Data"])
+@extend_schema(tags=["Import Data"])
 class CountryAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudAllPermission]
@@ -19,7 +19,7 @@ class CountryAPIView(APIView):
 
           return Response(CustomResponse.success("Successfully fetched country list.", serializer.data), status=status.HTTP_200_OK)
 
-@extend_schema(tags=["Address Data"])
+@extend_schema(tags=["Import Data"])
 class CityAPIView(APIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudAllPermission]

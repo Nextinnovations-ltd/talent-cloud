@@ -2,8 +2,14 @@ from rest_framework import serializers
 from apps.job_seekers.models import JobSeekerEducation, University
 from services.job_seeker.shared_service import JobSeekerSharedService
 
+class UniversitySerializer(serializers.ModelSerializer):
+     class Meta:
+          model = University
+          fields = ['id', 'name', 'country', 'state']
+
 class EducationSerializer(serializers.ModelSerializer):
      institution = serializers.CharField(write_only=False)
+     
      class Meta:
           model = JobSeekerEducation
           fields = ('id', 'degree', 'institution', 'start_date', 'end_date', 'description', 'is_currently_attending', 'user')
@@ -16,28 +22,27 @@ class EducationSerializer(serializers.ModelSerializer):
           if not value:
                raise serializers.ValidationError("Institution is required.")
           
-          # Check if value is numeric
-          if str(value).isdigit():
-               try:
-                    university_id = int(value)
-                    university = University.objects.get(id=university_id, status=True)
-                    return {'type': 'university', 'university': university, 'custom_name': None}
-               except University.DoesNotExist:
-                    raise serializers.ValidationError("Selected university does not exist or is not active.")
-          else:
-               # It's a custom institution name
+          try:
+               university_id = value
+               
+               university = University.objects.get(id=university_id, status=True)
+               
+               return { 'institution': university, 'custom_institution': None }
+          except University.DoesNotExist:
+               # raise serializers.ValidationError("Selected university does not exist or is not active.")
                custom_name = str(value).strip()
+               
                if not custom_name:
                     raise serializers.ValidationError("Institution name cannot be empty.")
                
-               # Check if the custom name matches an existing university
+               # Check if custom name matches an existing university
                existing_university = University.objects.filter(
                     name__iexact=custom_name,
                     status=True
                ).first()
                
                if existing_university:
-                    # If exact match found, use the university
+                    # Use the existing university
                     return { 'institution': existing_university, 'custom_institution': None}
                else:
                     # Use as custom institution
