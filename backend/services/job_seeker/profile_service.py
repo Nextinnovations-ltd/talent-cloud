@@ -1,7 +1,10 @@
 from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
-from services.storage.s3_service import S3Service
+from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
+from services.storage.s3_service import S3Service
+from rest_framework import serializers
+from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
@@ -75,3 +78,23 @@ class CertificationService:
      @staticmethod
      def get_certifications(user_id):
           return JobSeekerCertification.objects.filter(user__id=user_id).order_by('-issued_date')
+     
+     @staticmethod
+     def validate_date_range(issued_date, expiration_date, has_expiration):
+          if not issued_date:
+               raise ValidationError("Issued date is required.")
+          
+          today = timezone.now().date()
+          
+          # Check if dates are not in the future
+          if issued_date and issued_date > today:
+               raise ValidationError("Issued date cannot be in the future.")
+          
+          if has_expiration and not expiration_date:
+               raise ValidationError('Expiration date is required.')
+          
+          if not has_expiration and expiration_date:
+               raise ValidationError("Cannot set expiration date for non-expiring certification.")
+          
+          if issued_date and expiration_date and issued_date >= expiration_date:
+                    raise ValidationError("Issued date must be before expiration date.")

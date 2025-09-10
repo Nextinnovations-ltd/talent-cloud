@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeekerCertification
+from services.job_seeker.profile_service import CertificationService
 
 class CertificationSerializer(serializers.ModelSerializer):
      expiration_date = serializers.DateField(required=False, allow_null=True)
@@ -26,9 +26,9 @@ class CertificationSerializer(serializers.ModelSerializer):
      
      def validate(self, attrs):
           has_expiration = attrs.get('has_expiration_date', False)
+          issued_date = attrs.get('issued_date')
           expiration_date = attrs.get('expiration_date')
           
-          if has_expiration and not expiration_date:
-               raise ValidationError('Expiration date is required.')
+          CertificationService.validate_date_range(issued_date, expiration_date, has_expiration)
           
           return attrs
