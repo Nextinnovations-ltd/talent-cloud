@@ -41,7 +41,7 @@ export const CertificationCard = ({
             try {
                 const response = await deleteCertificationById(id) as { data: DeleteCertificationResponse };
                 if (response?.data?.status) {
-                    showNotification({ message: response.data.message || "Delete Success", type: 'success' });
+                    showNotification({ message: "Certificate deleted successfully", type: 'success' });
                 } else {
                     showNotification({ message: response?.data?.message || "Delete failed", type: 'danger' });
                 }

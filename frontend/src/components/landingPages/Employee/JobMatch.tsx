@@ -17,7 +17,7 @@ const JobMatch = () => {
   })) ?? [];
 
   return (
-    <div id='find-jobs' className='w-full bg-[#EEF4FF] pt-[48x] md:pt-[74px] pb-[48px] md:pb-[74px] flex flex-col gap-[69px]'>
+    <div id='find-jobs' className='w-full bg-[#EEF4FF] pt-[48px] md:pt-[74px] pb-[48px] md:pb-[74px] flex flex-col gap-[69px]'>
       <motion.h1 className='text-black text-[20px] md:text-[40px] font-[600] text-center mb-6 md:mb-[48px]' initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}

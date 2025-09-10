@@ -56,9 +56,6 @@ const ApplyJob = () => {
       return;
     }
 
-    console.log("kdkdkdk")
-    console.log(resumeUploadId)
-    console.log("kdkdkdk")
 
 
     try {

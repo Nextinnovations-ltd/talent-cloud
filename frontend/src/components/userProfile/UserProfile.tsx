@@ -258,7 +258,7 @@ export const UserProfile = () => {
               <h1 className='text-[30px] font-[500]'>
                 {userData?.date_of_birth ? calculateAge(userData.date_of_birth) : "--"}
               </h1>
-              <p className='text-[14px]'>Age</p>
+              <p className='text-[14px]'>Years Old</p>
             </StarBorder>
           </>
         )}

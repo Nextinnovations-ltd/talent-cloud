@@ -5,6 +5,7 @@
   border-radius: 20px;
   overflow: hidden;
   width: 275px;
+  z-index: 0;
 }
 
 /* Adjusted gradient styles */

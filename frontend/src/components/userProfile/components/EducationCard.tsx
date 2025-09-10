@@ -51,7 +51,7 @@ export const EducationCard = ({ hasSchoolLogo = false, isEdit = false, id, insti
     const handleDelete = async () => {
         if (id) {
             await deleteEducationById(id);
-            showNotification({message:"DeleteSucces",type:'success'})
+            showNotification({message:"Education deleted successfully",type:'success'})
             setOpen(false);
             // Optionally, show a toast or update UI
         }

@@ -52,7 +52,7 @@ const AdminLoginForm = () => {
                 onSubmit={form.handleSubmit(onSubmitHandler)}
                 className="space-y-6 my-4 mx-auto  w-[500px]"
             >
-                <h3 className="text-[26px] font-semibold">Login</h3>
+                <h3 className="text-[26px]  font-semibold">Login</h3>
                 {fields.map((field) => (
                     <InputField
                         key={field.fieldName}
@@ -66,7 +66,7 @@ const AdminLoginForm = () => {
                         showPasswordIcon={field.showPasswordIcon}
                         hidePasswordIcon={field.hidePasswordIcon}
                         languageName={field.languageName}
-                        fieldHeight={cn("w-full", fieldHeight)}
+                        fieldHeight={cn("w-full", fieldHeight, 'bg-transparent')}
                         fieldWidth={filedWidth}
                     />
                 ))}

@@ -11,14 +11,14 @@ const ReasonToChoose = () => {
   id="why-us"
   className="bg-[#F9FAFB] md:mt-[96px] mt-[31px] pl-[20px] pr-[20px]"
 >
-  <div className="max-w-[1240px] mx-auto md:pt-[83px] pt-[26px] pb-[61px]">
+  <div className="max-w-[1240px] mx-auto md:pt-[83px] pt-[79px] pb-[61px]">
     {/* Title */}
     <motion.h1
       initial={{ opacity: 0, y: -30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 1, ease: "easeOut" }}
-      className="md:text-[40px] text-[16px] leading-[57px] font-[600] md:mb-[81px] mb-[35px]"
+      className="md:text-[40px] text-[20px] leading-[32px] md:leading-[57px] font-[600] md:mb-[81px] mb-[35px]"
     >
       WHY CHOOSE TALENT CLOUD ?
     </motion.h1>
@@ -33,18 +33,17 @@ const ReasonToChoose = () => {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <img src={teamwork} className="md:mb-[30px] mb-[43px] md:ml-[49px]" />
-        <p className="md:mb-[17px] mb-[8px]">
+        <p className="md:mb-[17px] mb-[8px] text-[16px] md:text-[20px] font-[500] leading-[38px]  ">
           The EOR service is already in operation.
         </p>
 
         {/* Animated SVG curve */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="373"
-          height="41"
+        
           viewBox="0 0 373 41"
           fill="none"
-          className="sm:w-full md:w-[373px]"
+          className="sm:w-[80%] md:w-[373px]"
         >
           <motion.path
             viewport={{ once: true }}
@@ -83,7 +82,7 @@ const ReasonToChoose = () => {
           className="flex flex-col gap-[8px]"
         >
           <img src={icon1} alt="" className="w-[38px] h-[38px] md:w-[52px] md:h-[50px]" />
-          <h1 className="md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]">
+          <h1 className="md:text-[20px] text-[16px] md:leading-[48px] leading-[39px] font-[600]">
             Hire Without a Local Entity
           </h1>
           <p className="text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]">
@@ -102,7 +101,7 @@ const ReasonToChoose = () => {
           className="flex flex-col gap-[8px]"
         >
           <img src={icon3} alt="" className="w-[38px] h-[38px] md:w-[52px] md:h-[50px]" />
-          <h1 className="md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]">
+          <h1 className="md:text-[20px] text-[16px] md:leading-[48px] leading-[39px] font-[600]">
             Specialized in IT Talent
           </h1>
           <p className="text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]">
@@ -122,7 +121,7 @@ const ReasonToChoose = () => {
           className="flex flex-col gap-[8px]"
         >
           <img src={icon2} alt="" className="w-[38px] h-[38px] md:w-[52px] md:h-[50px]" />
-          <h1 className="md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600]">
+          <h1 className="md:text-[20px] text-[16px] md:leading-[48px] leading-[39px] font-[600]">
             Full HR & Payroll Compliance
           </h1>
           <p className="text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]">
@@ -142,7 +141,7 @@ const ReasonToChoose = () => {
           className="flex flex-col gap-[8px]"
         >
           <img src={icon4} alt="" className="w-[38px] h-[38px] md:w-[52px] md:h-[50px]" />
-          <h1 className="md:text-[20px] text-[14px] md:leading-[48px] leading-[39px] font-[600] lg:text-nowrap">
+          <h1 className="md:text-[20px] text-[16px] md:leading-[48px] leading-[39px] font-[600] lg:text-nowrap">
             Workplace & Equipment Support
           </h1>
           <p className="text-[#484747] font-[500] leading-[23px] md:text-[16px] text-[12px]">

@@ -74,11 +74,13 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                   <SelectTrigger
                     {...field}
                     className={cn(
-                      height,
+                     
                       field.value === "" || field.value === undefined ?
                       "text-slate-300" : "text-black",
                       error &&
-                      "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error"
+                      "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error",
+                      'border-[#CBD5E1]',
+                      height,
                     )}
                   >
                  <SelectValue  placeholder={placeholder} />

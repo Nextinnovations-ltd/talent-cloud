@@ -119,7 +119,8 @@ export const Title = ({ title, isEdit, onEditToggle, onpressAdd, isTitle = true,
                 )}
                 {onDelete && (
                     <ActiveActionsButtons
-                        icon={<SvgDelete />}
+                        icon={<SvgDelete color={'#ffffff'} />}
+                        className='bg-[#E50914] border-[#E50914]'
                         title={'Delete'}
                         onClick={onDelete}
                     />

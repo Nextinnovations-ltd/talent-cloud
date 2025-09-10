@@ -1,17 +1,25 @@
-import { adminLogin } from "@/assets/images";
+import { adminLogin, adminLoginHalf } from "@/assets/images";
 import AdminLoginForm from "./AdminLoginForm";
 
-
- const AdminLogin = () => {
+const AdminLogin = () => {
   return (
-    <div className="flex h-[100svh] overflow-hidden items-center justify-center">
-       <div className="w-[50%] "> <img src={adminLogin}/></div>
-        <div className="w-[50%] bg-slate-50  h-full flex items-center justify-center">
-            <AdminLoginForm/>
-        </div>
-    </div>
-  )
-}
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+      {/* Left side with image */}
+      <div className="w-full md:w-1/2 h-64 md:h-auto">
+        <img src={adminLogin} className="w-full h-full object-cover" alt="Admin" />
+      </div>
 
+      {/* Right side with background and form */}
+      <div
+        className="w-full md:w-1/2 flex items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${adminLoginHalf})` }}
+      >
+        <div className="w-full max-w-md p-6 bg-transparent rounded">
+          <AdminLoginForm />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AdminLogin;
