@@ -29,6 +29,7 @@ import { motion,AnimatePresence  } from "framer-motion";
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const navigate = useNavigate();
+  const [hasAnimated, setHasAnimated] = useState(false);
   const wordsToDisplay = [
     'Frontend Developer', 'Python Developer', 'UI/UX Designer', 
     'DevOps Engineers', 'Backend  Developer', 'Full-Stack Developers', 'React Developer','QA Engineers'
@@ -47,12 +48,16 @@ const HeroSection = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      // Clamp Safari's weird negative values to 0
+      const currentScrollY = Math.max(0, window.scrollY);
 
-      if (currentScrollY > lastScrollY) {
+      // Add a small threshold so tiny scroll jitters don't trigger toggle
+      const threshold = 5;
+
+      if (currentScrollY - lastScrollY > threshold) {
         // scrolling down → hide
         setShowNavbar(false);
-      } else {
+      } else if (lastScrollY - currentScrollY > threshold) {
         // scrolling up → show
         setShowNavbar(true);
       }
@@ -60,12 +65,13 @@ const HeroSection = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
+
 
   useEffect(() => {
     if (!containerRef.current || !matterContainerRef.current) return;
@@ -459,17 +465,16 @@ const HeroSection = () => {
                 />
 
                 {/* Nav Links + Buttons */}
-                <motion.ul
-                  className="hidden md:flex items-center gap-[48px]"
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    hidden: {},
-                    visible: {
-                      transition: { staggerChildren: 0.15, delayChildren: 0.3 },
-                    },
-                  }}
-                >
+                  <motion.ul
+                    className="hidden md:flex items-center gap-[42px]"
+                    initial={!hasAnimated ? "hidden" : false}  // only "hidden" on first mount
+                    animate="visible"
+                    variants={{
+                      hidden: {},
+                      visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+                    }}
+                    onAnimationComplete={() => setHasAnimated(true)} // mark as done
+                  >
                   {/* Nav Links */}
                   {[
                     { to: "#why-us", label: "Why us" },

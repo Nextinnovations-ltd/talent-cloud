@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 const HeroSection = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const location = useLocation();
-
+  const [hasAnimated, setHasAnimated] = useState(false);
   const linkClass = (hash: string) =>
     `transition-colors duration-300 hover:text-[#0389FF] ${
       location.hash === hash ? "text-[#0389FF]" : ""
@@ -22,12 +22,16 @@ const HeroSection = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      // Clamp Safari's weird negative values to 0
+      const currentScrollY = Math.max(0, window.scrollY);
 
-      if (currentScrollY > lastScrollY) {
+      // Add a small threshold so tiny scroll jitters don't trigger toggle
+      const threshold = 5;
+
+      if (currentScrollY - lastScrollY > threshold) {
         // scrolling down → hide
         setShowNavbar(false);
-      } else {
+      } else if (lastScrollY - currentScrollY > threshold) {
         // scrolling up → show
         setShowNavbar(true);
       }
@@ -35,7 +39,7 @@ const HeroSection = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -64,15 +68,16 @@ const HeroSection = () => {
               />
 
               {/* Desktop Links + Buttons */}
-              <motion.ul
-                className="hidden md:flex items-center gap-[42px]"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
-                }}
-              >
+                <motion.ul
+                  className="hidden md:flex items-center gap-[42px]"
+                  initial={!hasAnimated ? "hidden" : false}  // only "hidden" on first mount
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+                  }}
+                  onAnimationComplete={() => setHasAnimated(true)} // mark as done
+                >
                 {/* Nav Links */}
                 <motion.li
                   variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
