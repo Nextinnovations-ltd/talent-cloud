@@ -11,8 +11,8 @@ import routesMap from "@/constants/routesMap";
 import { useState } from "react";
 import GITHUB from '@/assets/images/github.png';
 
-const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://localhost:8000/api/v1/auth/accounts/google&response_type=code&scope=email profile';
-const linkedinAuthUrl = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://localhost:8000/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile';
+const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile';
+const linkedinAuthUrl = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile';
 const githubAuthUrl = "https://github.com/login/oauth/authorize?client_id=Ov23li8OorJeQrCKjngl&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/github&scope=user:email";
 
 type AuthFormFrameType = {
