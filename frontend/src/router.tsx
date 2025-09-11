@@ -99,11 +99,11 @@ export const router = createBrowserRouter([
    
   {
    path: "/",
-   element:<VerifyToken shouldSkip={false} /> ,
+   element:<MainLayout />  ,
     children: [
       {
         path: "/",
-        element:<MainLayout /> ,
+        element:<VerifyToken shouldSkip={false} /> ,
         children: [
           {
             index: true,

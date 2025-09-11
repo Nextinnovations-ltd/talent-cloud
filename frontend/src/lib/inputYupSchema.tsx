@@ -38,7 +38,7 @@ export const ForgotPasswordSchema = yup.object({
 
 // Forgot username
 export const UsernameSchema = yup.object({
-  username:yup.string().required("Username is required").max(20)
+  username:yup.string().required("Username is required").max(50)
 })
 
 // Reset password schema

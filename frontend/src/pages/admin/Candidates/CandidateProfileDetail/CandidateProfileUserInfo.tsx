@@ -16,7 +16,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useGetJobSeekersOverViewQuery } from "@/services/slices/adminSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
 import DownloadInfoItem from "@/components/common/ApplyJob/DownloadInfoItem";
-
+import { Tooltip } from 'react-tooltip'
 
 
 
@@ -35,8 +35,6 @@ const CandidateProfileUserInfo = () => {
     );
 
     const ProfileData = data?.data;
-
-    console.log(ProfileData)
 
 
 
@@ -59,14 +57,19 @@ const CandidateProfileUserInfo = () => {
                     <div className="flex gap-[21px]">
                         <AvatarProfile src={ProfileData?.profile_image_url || ''} size="w-[120px] h-[120px]" />
                         <div className=" flex gap-2 flex-col justify-between">
-                            <h3 className=" text-[32px]  font-semibold">{ProfileData?.name || ''}</h3>
+
+                            <h3 className=" text-[32px] w-[250px] truncate  my-anchor-element font-semibold">{ProfileData?.name || ''}</h3>
+
+                            <Tooltip anchorSelect=".my-anchor-element" className="bg-white text-black" place="top">
+                            {ProfileData?.name || ''}
+                            </Tooltip>
+
                             <h3 className="text-[#6B6B6B] text-[20px]">{ProfileData?.occupation?.role_name || '-'}</h3>
                             <CandidateProfileAvaliable status={ProfileData?.is_open_to_work || false} />
                         </div>
                     </div>
 
                     <CandidateDescription description={ProfileData?.bio || ''} />
-
                     <CandidateSkills skillArray={ProfileData?.occupation?.skills || []} />
 
 
