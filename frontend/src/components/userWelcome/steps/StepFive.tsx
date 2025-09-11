@@ -26,6 +26,7 @@ export const StepFive = ({
       const formData = new FormData();
       formData.append("experience_level_id", `${id}`);
       formData.append("step", "5");
+      localStorage.setItem("isnew", "isnew");
 
       const res = await executeApiCall(formData);
 
@@ -65,6 +66,8 @@ export const StepFive = ({
       });
     }
   };
+
+
 
   if (isFinished)
     return (

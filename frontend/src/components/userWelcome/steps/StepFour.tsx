@@ -69,6 +69,9 @@ export const StepFour = ({
         });
 
         setFinished(true);
+        
+        // Set flag to show profile completion modal
+        localStorage.setItem("isnew", "isnew");
 
         setTimeout(() => {
           window.location.href = "/";
