@@ -6,7 +6,7 @@ from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, Jo
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
 from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
 from .views.certification_view import CertificationViewSet
-from .views.education_view import EducationViewSet
+from .views.education_view import EducationViewSet, UniversityAPIView
 from .views.experience_view import ExperienceViewSet
 from .views.occupation_view import JobSeekerLanguageOptionViewSet, JobSeekerSpecializationViewSet, JobSeekerRoleViewSet, JobSeekerSkillViewSet, JobSeekerExperienceLevelViewSet, JobSeekerOccupationViewSet
 from .views.onboarding_view import OnboardingAPIView, ModifyUsernameAPIView, S3UploadAPIView
@@ -27,6 +27,8 @@ router.register(r'occupations', JobSeekerOccupationViewSet, basename='occupation
 urlpatterns = [
      path('onboarding/', OnboardingAPIView.as_view(), name='perform-onboarding'),
      path('update-username/', ModifyUsernameAPIView.as_view(), name='update-username'),
+     
+     path('university-list/', UniversityAPIView.as_view(), name='university-data'),
      
      # Location Data
      path('location/country-list/', CountryAPIView.as_view(), name='country-data'),
