@@ -1,12 +1,10 @@
-import string
-import requests
-from django.conf import settings
-from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from core.constants.constants import OAUTH_PROVIDERS
+from utils.oauth.validation import OAuthValidator
 from apps.users.models import TalentCloudUser
 from utils.token.jwt import TokenUtil
-from utils.oauth.validation import OAuthValidator
-import logging
+from django.conf import settings
+import logging, requests
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +19,7 @@ class OAuthService:
                payload: Request payload
                headers: Request headers
                isPost: Whether to use POST or GET request
-               provider: OAuth provider name ('facebook', 'google', 'linkedin')
+               provider: OAuth provider name ('facebook', 'google', 'linkedin', 'github')
                
           Returns:
                str: Redirect URL with access token
@@ -46,7 +44,7 @@ class OAuthService:
                     raise ValidationError(f"OAuth authentication failed: {token_data.get('error_description', 'Unknown error')}")
 
                # Additional handler for facebook
-               if provider == 'facebook':
+               if provider == OAUTH_PROVIDERS.FACEBOOK:
                     access_token = token_data.get("access_token")
                     
                     if not access_token:
@@ -65,9 +63,29 @@ class OAuthService:
                     user_info = user_response.json()
                     
                     email = user_info.get("email")
+               elif provider == OAUTH_PROVIDERS.GITHUB:
+                    access_token = token_data.get("access_token")
+                    
+                    if not access_token:
+                         raise ValidationError("No access token received from Github")
+                    
+                    # Fetch user info from Github user info API
+                    user_info_url = f'https://api.github.com/user/emails'
+                    
+                    headers = {
+                         "Authorization": f"Bearer {access_token}",
+                         "Accept": "application/json",
+                    }
+                    
+                    user_response = requests.get(user_info_url, headers=headers, timeout=30)
+                    user_response.raise_for_status()
+                    user_info = user_response.json()[0] # User email info is in first []
+                    
+                    email = user_info.get("email")
                else:
                     # Google and LinkedIn provide id_token with user info
                     token = token_data["id_token"] if isPost else token_data["access_token"]
+
                     decoded_user_info = TokenUtil.decode_oauth_access_token(token)
                     email = decoded_user_info.get("email")
                
@@ -106,7 +124,7 @@ class GoogleOAuthService:
                str: Redirect URL with access token
           """
           # Validate authorization code (additional validation in service layer)
-          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, 'google')
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, OAUTH_PROVIDERS.GOOGLE)
                
           # Exchange auth code for access token and user info
           token_url = "https://oauth2.googleapis.com/token"
@@ -120,7 +138,39 @@ class GoogleOAuthService:
           }
           
           # Exchange code with access token and decode the token for user information
-          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, provider='google')
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, provider=OAUTH_PROVIDERS.GOOGLE)
+          
+          return redirect_url
+
+class GithubOAuthService:
+     @staticmethod
+     def process_github_oauth(auth_code) -> str:
+          """
+          Process Github OAuth authentication
+          
+          Args:
+               auth_code: Authorization code from Github
+               
+          Returns:
+               str: Redirect URL with access token
+          """
+          # Validate authorization code
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, OAUTH_PROVIDERS.GITHUB)
+               
+          # Exchange auth code for access token and user info
+          token_url = "https://github.com/login/oauth/access_token"
+          
+          payload = {
+               "code": validated_auth_code,
+               "client_id": settings.GITHUB_CLIENT_ID,
+               "client_secret": settings.GITHUB_CLIENT_SECRET,
+               "redirect_uri": settings.GITHUB_REDIRECT_URI,
+          }
+          
+          headers = {'Accept': 'application/json'}
+          
+          # Exchange code with access token and decode the token for user information
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, headers=headers, provider=OAUTH_PROVIDERS.GITHUB)
           
           return redirect_url
           
@@ -137,7 +187,7 @@ class LinkedinOAuthService:
                str: Redirect URL with access token
           """
           # Validate authorization code (additional validation in service layer)
-          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, 'linkedin')
+          validated_auth_code = OAuthValidator.validate_auth_code(auth_code, OAUTH_PROVIDERS.LINKEDIN)
                
           # Exchange auth code for access token and user info
           token_url = "https://www.linkedin.com/oauth/v2/accessToken"
@@ -153,7 +203,7 @@ class LinkedinOAuthService:
           headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
           # Exchange code with access token and decode the token for user information
-          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, headers, provider='linkedin')
+          redirect_url = OAuthService.perform_oauth_process_and_generate_redirect_url(token_url, payload, headers, provider=OAUTH_PROVIDERS.LINKEDIN)
           
           return redirect_url
 

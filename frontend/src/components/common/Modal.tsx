@@ -21,7 +21,7 @@ export const AlertDialogDemo: React.FC<ModalProps> = ({
 }) => {
   return (
     <AlertDialog open={modalValue}>
-      <AlertDialogContent>
+      <AlertDialogContent >
         <AlertDialogHeader>
           <AlertDialogTitle>Token Expired?</AlertDialogTitle>
           <AlertDialogDescription>

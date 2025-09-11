@@ -53,3 +53,4 @@ export const OTPSchema = yup.object({
   .required("Verification code is required")
   .length(6, "Verification code must be exactly 6 characters"),
 })
+

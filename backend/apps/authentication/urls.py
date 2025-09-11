@@ -26,7 +26,8 @@ from apps.authentication.views.s3_view import (
     GetDownloadURLAPIView
 )
 from apps.authentication.views.oauth_view import (
-    FacebookAuthAPIView, 
+    FacebookAuthAPIView,
+    GithubAuthAPIView, 
     GoogleAuthAPIView, 
     LinkedinAuthAPIView, 
     OAuthStateGenerationAPIView, 
@@ -51,6 +52,7 @@ urlpatterns=[
     path('auth/oauth/generate-state/', OAuthStateGenerationAPIView.as_view(), name="generate-oauth-state"),
     path('auth/accounts/google/', GoogleAuthAPIView.as_view(), name="google-auth-callback"),
     path('auth/accounts/linkedin/', LinkedinAuthAPIView.as_view(), name="linkedin-auth-callback"),
+    path('auth/accounts/github/', GithubAuthAPIView.as_view(), name="github-auth-callback"),
     path('auth/accounts/facebook/', FacebookAuthAPIView.as_view(), name="facebook-auth-callback"),
     path('auth/verify-oauth/', OAuthVerifyTokenAPIView.as_view(), name="verify-oauth"),
     

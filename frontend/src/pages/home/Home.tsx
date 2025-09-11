@@ -127,7 +127,7 @@ export const Home: React.FC = () => {
   const handleScroll = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop
-      >= document.documentElement.offsetHeight - 200
+      >= document.documentElement.offsetHeight - 100
     ) {
       if (data?.data.next && !isFetching && !isLoadingMore) {
         setIsLoadingMore(true);
