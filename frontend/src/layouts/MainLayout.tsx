@@ -99,7 +99,7 @@ export const MainLayout = () => {
       
 
       <CompleteProfileModal 
-        isOpen={true} 
+        isOpen={isNewUser} 
         onClose={() => setIsNewUser(false)} 
       />
 
