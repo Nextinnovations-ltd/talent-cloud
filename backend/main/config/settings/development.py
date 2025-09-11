@@ -96,6 +96,8 @@ AWS_S3_FILE_OVERWRITE = False
 # OAuth Configuration
 GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
+GITHUB_CLIENT_ID = config('GITHUB_CLIENT_ID', default='')
+GITHUB_CLIENT_SECRET = config('GITHUB_CLIENT_SECRET', default='')
 LINKEDIN_CLIENT_ID = config('LINKEDIN_CLIENT_ID', default='')
 LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
 FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
@@ -103,6 +105,7 @@ FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
 OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://localhost:5173/oauth/callback")
 GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/google")
+GITHUB_REDIRECT_URI = config('GITHUB_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/github")
 LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/linkedin")
 FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
 FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')

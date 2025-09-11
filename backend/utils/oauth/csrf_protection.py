@@ -1,14 +1,8 @@
-"""
-OAuth CSRF protection utilities using state parameter validation
-"""
-import secrets
-import hashlib
-import time
-from typing import Dict
+from rest_framework.exceptions import ValidationError
+import logging, secrets, hashlib, time
 from django.core.cache import cache
 from django.conf import settings
-from rest_framework.exceptions import ValidationError
-import logging
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +33,7 @@ class OAuthStateManager:
           random_bytes = secrets.token_urlsafe(32)
           timestamp = str(int(time.time()))
           
-          # Create a hash of request context for additional validation
+          # Create a hash of request context
           context_data = f"{provider}:{ip_address}:{user_agent[:100]}:{timestamp}"
           context_hash = hashlib.sha256(context_data.encode()).hexdigest()[:16]
           
@@ -102,20 +96,19 @@ class OAuthStateManager:
           if not isinstance(state, str):
                raise ValidationError("State parameter must be a string")
           
-          # Check if this is our generated state format (random.hash.timestamp)
+          # Check generated state format or not
           state_parts = state.split('.')
           if len(state_parts) == 3:
                try:
                     random_part, context_hash, timestamp = state_parts
                     
-                    # Validate timestamp (check if state is not too old)
+                    # Validate timestamp
                     state_time = int(timestamp)
                     current_time = int(time.time())
                     
                     if current_time - state_time > OAuthStateManager.STATE_EXPIRY_SECONDS:
                          raise ValidationError("State parameter has expired")
                     
-                    # This looks like our generated state - validate it fully
                     return OAuthStateManager._validate_our_generated_state(
                          state, provider, ip_address, user_agent, context_hash, timestamp
                     )
@@ -124,8 +117,7 @@ class OAuthStateManager:
                     # If parsing fails, treat as external state
                     pass
           
-          # This is likely an external state parameter from OAuth provider
-          # Log it but allow it through with basic validation
+          # External state parameter from OAuth provider
           logger.info(f"External state parameter received from {provider}: {state[:20]}... from IP: {ip_address[:15]}")
           return True
      

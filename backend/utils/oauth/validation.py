@@ -3,21 +3,22 @@ OAuth input validation utilities
 """
 import re
 from rest_framework.exceptions import ValidationError
+from core.constants.constants import OAUTH_PROVIDERS
 
 class OAuthValidator:
      """Validator class for OAuth parameters"""
      
      # Authorization code patterns for different providers
      AUTH_CODE_PATTERNS = {
-          'google': r'^[A-Za-z0-9._/-]+$',  # Google auth codes can contain letters, numbers, dots, underscores, slashes, hyphens
-          'linkedin': r'^[A-Za-z0-9._-]+$',  # LinkedIn auth codes
-          'facebook': r'^[A-Za-z0-9._#-]+$'  # Facebook auth codes can contain hash
+          OAUTH_PROVIDERS.GITHUB: r'^[A-Za-z0-9._/-]+$', # Github auth codes
+          OAUTH_PROVIDERS.GOOGLE: r'^[A-Za-z0-9._/-]+$',  # Google auth codes
+          OAUTH_PROVIDERS.LINKEDIN: r'^[A-Za-z0-9._-]+$',  # LinkedIn auth codes
+          OAUTH_PROVIDERS.FACEBOOK: r'^[A-Za-z0-9._#-]+$'  # Facebook auth codes
      }
      
-     # Maximum length for auth codes (reasonable limit)
      MAX_AUTH_CODE_LENGTH = 2048
      
-     # State parameter pattern (for CSRF protection - future use)
+     # State parameter pattern
      STATE_PATTERN = r'^[A-Za-z0-9._-]+$'
      MAX_STATE_LENGTH = 128
      
@@ -28,7 +29,7 @@ class OAuthValidator:
           
           Args:
                auth_code: The authorization code to validate
-               provider: OAuth provider name ('google', 'linkedin', 'facebook')
+               provider: OAuth provider name ('google', 'linkedin', 'github', 'facebook')
                
           Returns:
                str: The validated authorization code
@@ -60,7 +61,7 @@ class OAuthValidator:
           if not re.match(pattern, auth_code):
                raise ValidationError(f"Invalid authorization code format for {provider}")
           
-          return auth_code.strip()  # Remove any whitespace
+          return auth_code.strip()
      
      @staticmethod
      def validate_state_parameter(state: str) -> str:
@@ -82,24 +83,19 @@ class OAuthValidator:
           if not isinstance(state, str):
                raise ValidationError("State parameter must be a string")
           
-          # Updated maximum length for state parameters
-          max_length = 200  # Increased to accommodate various state formats
+          max_length = 200
           if len(state) > max_length:
                raise ValidationError(f"State parameter too long (max {max_length} characters)")
           
-          # Check for null bytes or other dangerous characters
           if '\x00' in state or '\n' in state or '\r' in state:
                raise ValidationError("State parameter contains invalid characters")
           
-          # Check if it's our generated state format: base64.hash.timestamp
+          # Check state pattern
           our_state_pattern = r'^[A-Za-z0-9_-]+\.[A-Za-z0-9a-f_-]+\.[0-9]+$'
           
           if re.match(our_state_pattern, state.strip()):
-               # This is our generated state format - apply strict validation
                return state.strip()
-          
-          # For other state formats (from OAuth providers), apply basic validation
-          # Allow alphanumeric, common separators, and URL-safe characters
+
           general_state_pattern = r'^[A-Za-z0-9._=,\-:;]+$'
           
           if not re.match(general_state_pattern, state.strip()):
@@ -129,7 +125,7 @@ class OAuthValidator:
           
           provider = provider.lower().strip()
           
-          valid_providers = ['google', 'linkedin', 'facebook']
+          valid_providers = [OAUTH_PROVIDERS.GOOGLE, OAUTH_PROVIDERS.LINKEDIN, OAUTH_PROVIDERS.GITHUB, OAUTH_PROVIDERS.FACEBOOK]
           if provider not in valid_providers:
                raise ValidationError(f"Unsupported provider. Valid providers: {', '.join(valid_providers)}")
           
