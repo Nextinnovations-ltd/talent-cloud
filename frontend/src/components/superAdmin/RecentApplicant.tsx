@@ -56,7 +56,7 @@ const RecentApplicant = ({ data }: { data?: Applicant }) => {
             }}
           />
           <div className='text-[12px] space-y-[5px]'>
-            <p className='font-semibold text-[#000]'>{data.name || 'No name'}</p>
+            <p className='font-semibold  text-[#000] w-[150px] truncate'>{data.name || 'No name'}</p>
             <p className='font-normal text-[#575757]'>
               {data.role || 'Role not specified'}
             </p>

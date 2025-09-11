@@ -78,17 +78,24 @@ export const useNavigationGuard = ({
   };
 
   const confirmNavigation = () => {
-    if (pendingNavigation) {
-      resetForm(); // Clear form data
-      if (blocker.state === 'blocked') {
-        blocker.proceed();
-      } else {
-        navigate(pendingNavigation);
-      }
-      setPendingNavigation(null);
-    }
+    // Bypass guard for this one transition
+    bypassNextRef.current = true;
     setShowConfirmModal(false);
-    onConfirmNavigation?.();
+
+    if (blocker.state === 'blocked') {
+      // Proceed with the blocked transition (works for browser back/forward)
+      blocker.proceed();
+      setPendingNavigation(null);
+      onConfirmNavigation?.();
+      return;
+    }
+
+    if (pendingNavigation) {
+      navigate(pendingNavigation);
+      setPendingNavigation(null);
+      onConfirmNavigation?.();
+      return;
+    }
   };
 
   const cancelNavigation = () => {

@@ -3,10 +3,11 @@ OAuth Rate Limiting Configuration and Utilities
 """
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
-from functools import wraps
+from core.constants.constants import OAUTH_PROVIDERS
+from utils.response import CustomResponse
 from django.http import JsonResponse
 from rest_framework import status
-from utils.response import CustomResponse
+from functools import wraps
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,14 @@ class OAuthRateLimitConfig:
           """Get rate limit key based on OAuth provider"""
           # Extract provider from URL path
           path = request.path
-          if 'google' in path:
-               provider = 'google'
-          elif 'linkedin' in path:
-               provider = 'linkedin'
-          elif 'facebook' in path:
-               provider = 'facebook'
+          if OAUTH_PROVIDERS.GOOGLE in path:
+               provider = OAUTH_PROVIDERS.GOOGLE
+          elif OAUTH_PROVIDERS.LINKEDIN in path:
+               provider = OAUTH_PROVIDERS.LINKEDIN
+          elif OAUTH_PROVIDERS.GITHUB in path:
+               provider = OAUTH_PROVIDERS.GITHUB
+          elif OAUTH_PROVIDERS.FACEBOOK in path:
+               provider = OAUTH_PROVIDERS.FACEBOOK
           else:
                provider = 'unknown'
           

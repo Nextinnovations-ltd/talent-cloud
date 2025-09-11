@@ -99,8 +99,6 @@ const AllJobsEditJobs = () => {
   useEffect(() => {
     if (JobData && !isLoading) {
 
-      console.log(JobData);
-
 
       stepOneForm.reset({
         title: JobData.title,

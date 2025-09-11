@@ -31,9 +31,6 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
   const navigate = useNavigate();
 
 
-  console.log(data)
-
-
 
   const handleAddToShortList = async () => {
     if (!data?.job_post_id || !data?.applicant_id) return;
@@ -155,7 +152,7 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
               alt="profile"
             />
             <div className="text-[14px] space-y-1">
-              <p className="font-semibold text-black">{data.name || 'No Name'}</p>
+              <p className="font-semibold text-black w-[150px] truncate">{data.name || 'No Name'}</p>
               <p className="text-gray-600">{data.role || 'Not specified'}</p>
             </div>
           </div>

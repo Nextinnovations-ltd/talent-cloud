@@ -58,8 +58,8 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
   }
 
   return (
-    <div className="mt-10 lg:mt-0 lg:w-[60%]  rounded sticky top-[190px] h-[100svh]  self-start">
-      <ScrollArea className="h-[calc(100vh-200px)] p-[30px]">
+    <div className="mt-10 lg:mt-0 lg:w-[60%]   rounded sticky top-[190px] h-[100svh]  self-start">
+      <ScrollArea className="h-[calc(100vh-250px)] pb-[500px] p-[30px] ">
         <h3 className="text-[24px] mb-[24px] font-semibold">{jobDetails?.title || selectedJob.title}</h3>
 
         {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}

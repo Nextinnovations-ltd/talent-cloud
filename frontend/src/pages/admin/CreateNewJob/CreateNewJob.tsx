@@ -164,6 +164,7 @@ const CreateNewJob = () => {
                 message: "Form data has been cleared",
                 type: "success",
             });
+            resetForm()
         }
     });
 
