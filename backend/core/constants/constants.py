@@ -38,3 +38,10 @@ class PARENT_COMPANY:
     contact_email = "info@example.com"
     contact_phone = "555-123-4567"
     founded_date = "2010-05-15"
+
+class OAUTH_PROVIDERS:
+    GOOGLE = 'google'
+    GITHUB = 'github'
+    LINKEDIN = 'linkedin'
+    FACEBOOK = 'facebook'
+    

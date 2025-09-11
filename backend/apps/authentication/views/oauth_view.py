@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework import views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from core.constants.constants import OAUTH_PROVIDERS
 from services.auth.token_service import TokenService
-from services.auth.oauth_service import FacebookOAuthService, GoogleOAuthService, LinkedinOAuthService
+from services.auth.oauth_service import FacebookOAuthService, GithubOAuthService, GoogleOAuthService, LinkedinOAuthService
 from utils.response import CustomResponse
 from utils.oauth.validation import OAuthValidator
 from utils.oauth.rate_limiting import oauth_rate_limited
@@ -16,7 +17,8 @@ logger = logging.getLogger(__name__)
 
 @extend_schema(tags=["OAuth-Job Seeker"])
 class GoogleAuthAPIView(views.APIView):
-     oauth_provider = 'google'  # For CSRF protection decorator
+     # CSRF protection decorator
+     oauth_provider = OAUTH_PROVIDERS.GOOGLE
      
      @oauth_rate_limited
      def get(self, request, *args, **kwargs):
@@ -32,7 +34,7 @@ class GoogleAuthAPIView(views.APIView):
                     )
                
                # Validate authorization code format
-               auth_code = OAuthValidator.validate_auth_code(raw_auth_code, 'google')
+               auth_code = OAuthValidator.validate_auth_code(raw_auth_code, OAUTH_PROVIDERS.GOOGLE)
                
                # Get client information for logging and state validation
                ip_address = OAuthValidator.sanitize_ip_address(request.META.get('REMOTE_ADDR', ''))
@@ -46,7 +48,7 @@ class GoogleAuthAPIView(views.APIView):
                          state = OAuthValidator.validate_state_parameter(raw_state)
                          # Then validate and consume state for CSRF protection
                          OAuthStateManager.validate_and_consume_state(
-                         state, 'google', 
+                         state, OAUTH_PROVIDERS.GOOGLE,
                          request.META.get('REMOTE_ADDR', ''), 
                          request.META.get('HTTP_USER_AGENT', '')
                          )
@@ -77,10 +79,75 @@ class GoogleAuthAPIView(views.APIView):
                     CustomResponse.error("Google authentication service temporarily unavailable"), 
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                )
+               
+@extend_schema(tags=["OAuth-Job Seeker"])
+class GithubAuthAPIView(views.APIView):
+     # CSRF protection decorator
+     oauth_provider = OAUTH_PROVIDERS.GITHUB
+     
+     @oauth_rate_limited
+     def get(self, request, *args, **kwargs):
+          try:
+               # Get and validate input parameters
+               raw_auth_code = request.query_params.get("code")
+               raw_state = request.query_params.get("state")
+               
+               if not raw_auth_code:
+                    return Response(
+                         CustomResponse.error("Authorization code is required"), 
+                         status=status.HTTP_400_BAD_REQUEST
+                    )
+               
+               # Validate authorization code format
+               auth_code = OAuthValidator.validate_auth_code(raw_auth_code, OAUTH_PROVIDERS.GITHUB)
+               
+               # Get client information for logging and state validation
+               ip_address = OAuthValidator.sanitize_ip_address(request.META.get('REMOTE_ADDR', ''))
+               user_agent = OAuthValidator.sanitize_user_agent(request.META.get('HTTP_USER_AGENT', ''))
+               logger.info(f"Github OAuth attempt from IP: {ip_address}, User-Agent: {user_agent[:100]}")
+               
+               # Validate state parameter for CSRF protection
+               if raw_state:
+                    try:
+                         # Validate state format first
+                         state = OAuthValidator.validate_state_parameter(raw_state)
+                         # Then validate and consume state for CSRF protection
+                         OAuthStateManager.validate_and_consume_state(
+                         state, OAUTH_PROVIDERS.GITHUB, 
+                         request.META.get('REMOTE_ADDR', ''), 
+                         request.META.get('HTTP_USER_AGENT', '')
+                         )
+                         logger.info(f"Github OAuth state validation successful from IP: {ip_address}")
+                    except ValidationError as e:
+                         logger.warning(f"Github OAuth CSRF protection failed: {str(e)} from IP: {ip_address}")
+                         return Response(
+                         CustomResponse.error(f"CSRF protection failed.", {str(e)}), 
+                         status=status.HTTP_400_BAD_REQUEST
+                         )
+               else:
+                    # Log missing state parameter but don't fail (for backward compatibility)
+                    logger.warning(f"Github OAuth missing state parameter from IP: {ip_address}")
+
+               redirect_url = GithubOAuthService.process_github_oauth(auth_code)
+               
+               return redirect(redirect_url)
+               
+          except ValidationError as e:
+               logger.warning(f"Github OAuth validation failed: {str(e)} from IP: {request.META.get('REMOTE_ADDR', 'Unknown')}")
+               return Response(
+                    CustomResponse.error(str(e)), 
+                    status=status.HTTP_400_BAD_REQUEST
+               )
+          except Exception as e:
+               logger.error(f"Github OAuth authentication failed: {str(e)} from IP: {request.META.get('REMOTE_ADDR', 'Unknown')}")
+               return Response(
+                    CustomResponse.error("Github authentication service temporarily unavailable"), 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+               )
 
 @extend_schema(tags=["OAuth-Job Seeker"])
 class LinkedinAuthAPIView(views.APIView):
-     oauth_provider = 'linkedin'  # For CSRF protection decorator
+     oauth_provider = OAUTH_PROVIDERS.LINKEDIN  # For CSRF protection decorator
      
      @oauth_rate_limited
      def get(self, request, *args, **kwargs):
@@ -96,7 +163,7 @@ class LinkedinAuthAPIView(views.APIView):
                     )
                
                # Validate authorization code format
-               auth_code = OAuthValidator.validate_auth_code(raw_auth_code, 'linkedin')
+               auth_code = OAuthValidator.validate_auth_code(raw_auth_code, OAUTH_PROVIDERS.LINKEDIN)
                
                # Get client information for logging and state validation
                ip_address = OAuthValidator.sanitize_ip_address(request.META.get('REMOTE_ADDR', ''))
@@ -110,7 +177,7 @@ class LinkedinAuthAPIView(views.APIView):
                          state = OAuthValidator.validate_state_parameter(raw_state)
                          # Then validate and consume state for CSRF protection
                          OAuthStateManager.validate_and_consume_state(
-                         state, 'linkedin', 
+                         state, OAUTH_PROVIDERS.LINKEDIN,
                          request.META.get('REMOTE_ADDR', ''), 
                          request.META.get('HTTP_USER_AGENT', '')
                          )
