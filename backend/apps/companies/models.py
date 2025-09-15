@@ -60,18 +60,6 @@ class Company(TimeStampModel):
           blank=True,
           help_text="Reasons why a candidate should join the company."
      )
-     image_url = models.URLField(
-          null=True,
-          blank=True,
-          max_length=1024,
-          help_text="URL to the company's logo."
-     )
-     website = models.URLField(
-          null=True,
-          blank=True,
-          max_length=1024,
-          help_text="The official website URL of the company."
-     )
      description = models.TextField(
           null=True,
           blank=True,
@@ -117,8 +105,41 @@ class Company(TimeStampModel):
           default=False,
           help_text="Whether the company profile has been verified by the platform."
      )
+     image_url = models.URLField(
+          null=True,
+          blank=True,
+          max_length=2048,
+          help_text="URL to the company's logo."
+     )
+     cover_image_url = models.URLField(
+          null=True,
+          blank=True,
+          max_length=2048,
+          help_text="URL to the company's Cover image."
+     )
      company_image_urls = models.JSONField(
           default=list, blank=True
+     )
+     website = models.URLField(
+          null=True,
+          blank=True,
+          max_length=2048,
+          help_text="The official website URL of the company."
+     )
+     facebook_url = models.URLField(
+          max_length=2048,
+          null=True,
+          blank= True
+     )
+     linkedin_url = models.URLField(
+          max_length=2048,
+          null=True,
+          blank= True
+     )
+     instagram_url = models.URLField(
+          max_length=2048,
+          null=True,
+          blank= True
      )
 
      class Meta:
