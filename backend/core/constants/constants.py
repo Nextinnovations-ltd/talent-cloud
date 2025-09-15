@@ -27,18 +27,28 @@ class PARENT_COMPANY:
     """
     name = 'Next Innovations'
     description = "We are a leading tech company specializing in innovative solutions."
-    image_url = 'https://picsum.photos/200/200'
-    website = "https://example.com"
     industry = "Technology"
     size = "1-10"
     tagline = "Innovate. Create. Lead."
     city = "389453"
     country = "1034"
-    address = 'Room No (602), Gandamar Residence, Gandamar Road, Mayangone Township, , Yangon, Myanmar'
-    contact_email = "info@example.com"
-    contact_phone = "555-123-4567"
-    founded_date = "2010-05-15"
-
+    address = 'Mayangone, Yangon, Myanmar'
+    contact_phone = "09-451663606"
+    founded_date = "2020-01-01"
+    contact_email = "talentcloud-contact@next-innovations.ltd"
+    image_url = 'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/ni_logo.png'
+    cover_image_url = 'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/ni_cover_image.JPG'
+    company_image_urls = [
+        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_1.JPG',
+        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_1.JPG',
+        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_2.JPG',
+        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_2.JPG'
+    ]
+    website = "http://next-innovations.ltd"
+    facebook_url = "https://www.facebook.com/profile.php?id=61578628769861"
+    linkedin_url = "https://www.linkedin.com/company/next-innovations2020"
+    instagram_url = "https://www.instagram.com/next_innovations_myanmar"
+    
 class OAUTH_PROVIDERS:
     GOOGLE = 'google'
     GITHUB = 'github'

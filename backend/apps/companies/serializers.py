@@ -7,13 +7,15 @@ class CompanySerializer(serializers.ModelSerializer):
      Serializer for the Company model.
      Handles creation and partial updates.
      """
+     industry_name = serializers.SerializerMethodField()
      class Meta:
           model = Company
           fields = [
                'id', 'name', 'slug', 'address', 'image_url', 'website', 'why_join_us',
-               'description', 'industry', 'size', 'tagline', 'contact_email',
-               'contact_phone', 'founded_date', 'is_verified', 'company_image_urls',
-               'created_at', 'updated_at'
+               'description', 'industry', 'industry_name', 'size', 'tagline', 'contact_email',
+               'contact_phone', 'founded_date', 'is_verified', 'company_image_urls', 
+               'cover_image_url', 'facebook_url', 'linkedin_url', 
+               'instagram_url', 'created_at', 'updated_at'
           ]
           read_only_fields = ['id', 'slug', 'created_at', 'updated_at']
      
@@ -39,6 +41,11 @@ class CompanySerializer(serializers.ModelSerializer):
           instance.save()
           
           return instance
+     
+     
+     def get_industry_name(self, obj: Company):
+          """Retrieves Industry Name"""
+          return obj.industry.name if hasattr(obj, 'industry') else None
 
 class CompanyListSerializer(serializers.ModelSerializer):
      """
@@ -69,11 +76,13 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
           model = Company
           fields = [
                'id', 'name', 'description', 'image_url', 'industry', 'size',
-               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us'
+               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us',
+               'cover_image_url', 'facebook_url', 'linkedin_url', 'instagram_url',
           ]
           read_only_fields = [
                'id', 'name', 'description', 'image_url', 'industry', 'size', 
-               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us'
+               'founded_date', 'is_verified', 'company_image_urls', 'why_join_us',
+               'cover_image_url', 'facebook_url', 'linkedin_url', 'instagram_url',
           ]
      
 class CompanyApproveSerializer(serializers.ModelSerializer):
@@ -86,7 +95,7 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
      Serializer for Company details, including related job posts.
      """
      job_posts = serializers.SerializerMethodField()
-     industry = serializers.StringRelatedField()
+     industry = serializers.SerializerMethodField()
 
      class Meta:
           model = Company
@@ -94,6 +103,7 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
                'id', 'name', 'slug', 'address', 'image_url', 'website', 'why_join_us',
                'description', 'industry', 'size', 'tagline', 'contact_email',
                'contact_phone', 'founded_date', 'is_verified', 'company_image_urls',
+               'cover_image_url', 'facebook_url', 'linkedin_url', 'instagram_url',
                'job_posts', 'created_at', 'updated_at'
           ]
           read_only_fields = fields
@@ -114,6 +124,10 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
                'role', 'experience_level', 'posted_by').prefetch_related('skills')
           serializer = JobPostListSerializer(job_posts, many=True, context={'request': request})
           return serializer.data
+     
+     def get_industry(self, obj: Company):
+          """Retrieves Industry Name"""
+          return obj.industry.name if hasattr(obj, 'industry') else None
 
 class IndustrySerializer(serializers.ModelSerializer):
      class Meta:
