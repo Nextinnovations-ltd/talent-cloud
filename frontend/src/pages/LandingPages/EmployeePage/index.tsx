@@ -23,14 +23,13 @@ const EmployeePage = () => {
       <JoinBanner/>
       <Whatugot />
       <TalentCloudSay />
-      <TalentCloudDone />
+{/*       <TalentCloudDone /> */}
       <JoinBanner/>
       <WorkingEnviroment /> 
       <JobMatch />
       <HowWork />
       <JoinBanner />
       <FAQ />
-    {/*   <Footer /> */}
      <UpdatedFooter />
     </div>
   )
