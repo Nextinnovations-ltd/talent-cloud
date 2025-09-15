@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useBlocker } from 'react-router-dom';
-import { useJobFormStore } from '@/state/zustand/create-job-store';
 
 interface UseNavigationGuardOptions {
   hasUnsavedChanges: boolean;
@@ -16,7 +15,6 @@ export const useNavigationGuard = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { resetForm } = useJobFormStore();
   const bypassNextRef = useRef(false);
 
   // Block all navigation when there are unsaved changes
