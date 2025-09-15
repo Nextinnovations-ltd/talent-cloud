@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema
 from apps.companies.serializers import CompanySerializer, IndustrySerializer, CompanyWithJobsSerializer
 from apps.users.models import TalentCloudUser
-from services.company.company_service import BulkUploadService
+from services.company.company_service import BulkUploadService, update_parent_company
 from utils.response import CustomResponse
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudAdminOrSuperAdminPermission, TalentCloudAllPermission, TalentCloudSuperAdminPermission, TalentCloudUserPermission
@@ -51,6 +51,24 @@ class RelatedCompanyInfoAPIView(views.APIView):
                }), status=status.HTTP_200_OK)
           
           return Response(CustomResponse.error('Related company not found.'), status=status.HTTP_404_NOT_FOUND)
+
+@extend_schema(tags=["Company"])
+class UpdateParentCompanyAPIView(views.APIView):
+     """
+     API view to update parent company.
+     Handles POST (create) request.
+     """
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+
+     def post(self, request):
+          """
+          Update parent company.
+          """
+          
+          updated_company = update_parent_company()
+          
+          return Response(CompanySerializer(updated_company).data, status=status.HTTP_201_CREATED)
 
 @extend_schema(tags=["Company"])
 class CompanyCreateAPIView(views.APIView):

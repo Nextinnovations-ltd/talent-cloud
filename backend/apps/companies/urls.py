@@ -9,9 +9,13 @@ from .views import (
     IndustryListAPIView,
     RelatedCompanyInfoAPIView,
     UnauthenticatedCompanyCreateAPIView,
+    UpdateParentCompanyAPIView,
 )
 
 urlpatterns = [
+    # Update Parent Company
+    path('company/update-parent-company/', UpdateParentCompanyAPIView.as_view(), name='company-create'),
+    
     path('industries/', IndustryListAPIView.as_view(), name='industry-list'),
     path('company/register/', UnauthenticatedCompanyCreateAPIView.as_view(), name='company-register-unauthenticated'),
     path('related-company-info/', RelatedCompanyInfoAPIView.as_view(), name='related-company-info'),
