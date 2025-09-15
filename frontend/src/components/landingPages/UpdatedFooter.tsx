@@ -95,7 +95,7 @@ const UpdatedFooter = () => {
             
                {location.pathname === "/emp/lp" ? (
                 // ✅ Show FAQ when on emp/lp
-                <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
+                <HashLink smooth to="/emp/lp#faq"></HashLink>
               ) : location.pathname === "/contact-us" && queryPath === "emp" ? (
                 // 🚫 Hide FAQ when on contact-us?path=emp
                 null
