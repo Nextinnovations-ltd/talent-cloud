@@ -38,10 +38,10 @@ const UpdatedFooter = () => {
   (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "jp");
 
 
-  const privacyEmpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp")
+ // const privacyEmpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp")
 
   const privacyJpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "jp")
-  const termsEmpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp")
+ // const termsEmpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp")
 
   const termsJpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "jp")
 
