@@ -34,14 +34,14 @@ const UpdatedFooter = () => {
 
   
   const isTcLp =
-  location.pathname === "/tc/lp" || 
+  location.pathname === "/tc/lp" || location.pathname.startsWith("/tc/lp")||
   (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "jp");
 
 
-  const privacyEmpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp")
+ // const privacyEmpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp")
 
   const privacyJpPath = (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "jp")
-  const termsEmpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp")
+ // const termsEmpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp")
 
   const termsJpPath = (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "jp")
 
@@ -70,36 +70,40 @@ const UpdatedFooter = () => {
                 <HashLink smooth to="/emp/lp#why-us">Why us</HashLink> 
               )}
             </p>
-            {isTcLp && (
+            {/* About Us vs What You Get & Find Jobs */}
+            {(
+              location.pathname.startsWith("/tc/lp") ||
+              (location.pathname === "/contact-us" && queryPath === "jp") ||
+              (location.pathname === "/privacy-policy" && queryPath === "jp") ||
+              (location.pathname === "/terms-conditions" && queryPath === "jp")
+            ) ? (
               <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
-                <HashLink smooth to="/tc/lp/#about-us">About us</HashLink>
+                <HashLink smooth to="/tc/lp#about-us">About us</HashLink>
               </p>
-            )}
-              {(
-                isEmpLp ||
-                 (location.pathname === "/contact-us" && !location.search) ||
-                location.pathname.startsWith("/terms-conditions") ||
-                location.pathname.startsWith("/privacy-policy") ||
-                location.pathname.startsWith("/emp/lp")
-              ) && (
+            ) : (
               <>
                 <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-[12px]">
                   <HashLink smooth to="/emp/lp#what-you-get">What You Get</HashLink>
                 </p>
-                <p className="text-[16px] text-[#fff] font-[500] leading-[28px]  mb-0">
+                <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mb-0">
                   <HashLink smooth to="/emp/lp#find-jobs">Find Jobs</HashLink>
                 </p>
               </>
             )}
+
              <p className="text-[16px] text-[#fff] font-[500] leading-[28px] mt-[12px] "> 
             
-            {!privacyEmpPath&&!termsEmpPath && isEmpLp ? (
-            <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
-            ) : privacyJpPath||termsJpPath || isTcLp ? (
-            <HashLink smooth to="/tc/lp#faq">FAQ</HashLink>
-            ) : (
-            <HashLink smooth to="/emp/lp#faq"></HashLink>
-            )}</p>
+               {location.pathname === "/emp/lp" ? (
+                // ✅ Show FAQ when on emp/lp
+                <HashLink smooth to="/emp/lp#faq">FAQ</HashLink>
+              ) : location.pathname === "/contact-us" && queryPath === "emp" ? (
+                // 🚫 Hide FAQ when on contact-us?path=emp
+                null
+              ) : privacyJpPath || termsJpPath || isTcLp ? (
+                // ✅ Show TC FAQ when on JP paths
+                <HashLink smooth to="/tc/lp#faq">FAQ</HashLink>
+              ) : null}
+            </p>
           </motion.div>
 
           {/* About Section */}
