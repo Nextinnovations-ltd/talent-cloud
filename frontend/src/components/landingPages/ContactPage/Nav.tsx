@@ -13,15 +13,21 @@ const Nav = () => {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
   const navigate = useNavigate();
+  const [hasAnimated, setHasAnimated] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      // Clamp Safari's weird negative values to 0
+      const currentScrollY = Math.max(0, window.scrollY);
 
-      if (currentScrollY > lastScrollY) {
+      // Add a small threshold so tiny scroll jitters don't trigger toggle
+      const threshold = 5;
+
+      if (currentScrollY - lastScrollY > threshold) {
         // scrolling down → hide
         setShowNavbar(false);
-      } else {
+      } else if (lastScrollY - currentScrollY > threshold) {
         // scrolling up → show
         setShowNavbar(true);
       }
@@ -29,7 +35,7 @@ const Nav = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -75,17 +81,16 @@ const Nav = () => {
               />
 
               {/* Nav Links + Buttons */}
-              <motion.ul
-                className="hidden md:flex items-center gap-[48px]"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: {
-                    transition: { staggerChildren: 0.15, delayChildren: 0.3 },
-                  },
-                }}
-              >
+                <motion.ul
+                  className="hidden md:flex items-center gap-[42px]"
+                  initial={!hasAnimated ? "hidden" : false}  // only "hidden" on first mount
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+                  }}
+                  onAnimationComplete={() => setHasAnimated(true)} // mark as done
+                >
                 {/* Nav Links */}
                 {[
                   { to: "/tc/lp#why-us", label: "Why us" },
@@ -213,15 +218,16 @@ const Nav = () => {
               />
 
               {/* Desktop Links + Buttons with stagger animation */}
-              <motion.ul
-                className="hidden md:flex items-center gap-[48px]"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
-                }}
-              >
+                 <motion.ul
+                  className="hidden md:flex items-center gap-[42px]"
+                  initial={!hasAnimated ? "hidden" : false}  // only "hidden" on first mount
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
+                  }}
+                  onAnimationComplete={() => setHasAnimated(true)} // mark as done
+                >
                 {/* Nav Links */}
                 <motion.li
                   variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}

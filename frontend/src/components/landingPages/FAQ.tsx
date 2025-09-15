@@ -100,7 +100,7 @@ const FAQ = () => {
                 <div className="flex justify-between items-start gap-[33px]">
                   <h1
                     onClick={() => toggleIndex(index)}
-                    className="cursor-pointer duration-300 transition-all text-[#000] text-[12px] md:text-[20px] font-[600] leading-[20px] md:leading-[48px]"
+                    className="cursor-pointer duration-200 transition-all text-[#000] text-[12px] md:text-[20px] font-[600] leading-[20px] md:leading-[48px]"
                   >
                     {faq.question}
                   </h1>
@@ -121,7 +121,7 @@ const FAQ = () => {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
                       className="overflow-hidden mt-2 md:mt-[13px]"
                     >
                       <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[20px] md:leading-[48px]">
