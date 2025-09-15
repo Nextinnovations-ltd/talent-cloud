@@ -54,17 +54,12 @@ import Contact from "./pages/LandingPages/ContactPage/Contact";
 import PrivacyPolicy from "./pages/LandingPages/PrivacyPolicy/PrivacyPolicy";
 import TermsConditions from "./pages/LandingPages/TermsConditions/TermsConditions";
 import PushNotification from "./pages/admin/PushNotification/PushNotification";
-import Shine from "./pages/Shine";
 import CandidateProfileDetail from "./pages/admin/Candidates/CandidateProfileDetail/CandidateProfileDetail";
 
 
 
 
 export const router = createBrowserRouter([
-  {
-    path: "/shine",
-    element: <Shine/>
-  },
   {
     path: "/",
     element: <Navigate to="/employee/lp" replace />,

@@ -112,7 +112,7 @@ export const StepThreeFormYupSchema = yup.object({
     }
     return value;
   })
-  .required("Year of experience is required")
+  .required("Year of Experience is required")
   .min(1, "Number of experience must be greater than 0")
   .integer("Experience years must be an integer"),
 
