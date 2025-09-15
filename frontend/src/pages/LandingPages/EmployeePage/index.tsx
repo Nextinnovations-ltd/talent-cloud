@@ -9,7 +9,6 @@ import JoinBanner from '@/components/landingPages/Employee/JoinBanner'
 import HowWork from '@/components/landingPages/Employee/HowWork'
 import JobMatch from '@/components/landingPages/Employee/JobMatch'
 import WorkingEnviroment from '@/components/landingPages/Employee/WorkingEnviroment'
-import TalentCloudDone from '@/components/landingPages/Employee/TalentCloudDone'
 import TalentCloudSay from '@/components/landingPages/Employee/TalentCloudSay'
 
 
