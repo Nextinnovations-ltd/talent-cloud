@@ -308,6 +308,7 @@ const CreateNewJob = () => {
             salary_fixed: sanitizeNumberPayload(stepThreeData.salary_fixed),
             last_application_date: formattedDate
         };
+
      
 
         try {

@@ -7,6 +7,7 @@ import { useGetOrganizationDetailByAdminQuery } from "@/services/slices/adminSli
 import { useGetDetailJobApplyCardQuery } from "@/services/slices/jobApplySlice";
 import { useParams } from 'react-router-dom';
 import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
+import DescriptionsContent from "../CreateNewJob/StepsForms/Components/DescriptionsContent";
 
 const AllJobsDetails = () => {
     const { id } = useParams();
@@ -54,7 +55,8 @@ const AllJobsDetails = () => {
 
                 <JobInfoGrid job={jobDetails} />
                 <SkillsSection skills={jobDetails?.skills || []} />
-                <p className="mt-2">{jobDetails?.description}</p>
+                <DescriptionsContent content={jobDetails?.description || ""}/>
+
 
                 <AboutJob
                     jobTitle={jobDetails?.title || ''}

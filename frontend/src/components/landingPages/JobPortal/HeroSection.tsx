@@ -623,7 +623,7 @@ const HeroSection = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 0.3 }}
-                  className="text-left md:text-center mx-auto md:mt-[64px] mt-[11px] text-[#000] md:max-w-[963px] w-[100%] text-[16px] md:text-[20px] font-[500] leading-[26px] md:leading-[32px]"
+                  className="text-left md:text-center mx-auto md:mt-[0px] mt-[11px] text-[#000] md:max-w-[963px] w-[100%] text-[16px] md:text-[20px] font-[500] leading-[26px] md:leading-[32px]"
                 >
                   Talent Cloud by Next Innovations handles hiring talents, HR & admin,
                   payroll, management and compliance—making global hiring easy for employers

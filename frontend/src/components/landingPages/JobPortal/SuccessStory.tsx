@@ -54,8 +54,8 @@ const SuccessStory = () => {
           <p className="text-black text-[16px] md:text-[24px] font-[500] leading-[21px] md:leading-[40px] mt-[16px] md:mt-[32px]">
             “We highly recommend <span className="text-[#0481EF]">Talent Cloud</span> to companies seeking a comprehensive and effective solution to our recruitment need.”
           </p>
-          <div className="flex flex-col gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
-            <p className="satisfy-font">Iida-san</p>
+          <div className="flex flex-col gap-2 md:gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
+            <p className="text-black text-[24px] md:text-[48px] font-[400] leading-[21px] md:leading-[40px]">Iida-san</p>
             <p className="md:text-[20px] text-[10px] font-[500] leading-[21px] md:leading-[40px] text-black">
               CEO of Engineerforce Inc
             </p>
@@ -74,8 +74,8 @@ const SuccessStory = () => {
           <p className="text-black text-[16px] md:text-[24px] font-[500] leading-[21px] md:leading-[40px] mt-[16px] md:mt-[32px]">
             “I started as a Junior Developer and now lead an engineering team. Their seamless support and genuine care have been one the keys to my growth.”
           </p>
-          <div className="flex flex-col gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
-            <p className="satisfy-font">Min Min Latt</p>
+          <div className="flex flex-col gap-2 md:gap-4 max-w-[457px] mt-[32px] md:mt-[48px] pl-3 md:pl-5">
+            <p className="text-black text-[24px] md:text-[48px] font-[400] leading-[21px] md:leading-[40px]">Min Min Latt</p>
             <p className="md:text-[20px] text-[10px] font-[500] leading-[21px] md:leading-[40px] text-black">
               CTO of Engineerforce Inc
             </p>

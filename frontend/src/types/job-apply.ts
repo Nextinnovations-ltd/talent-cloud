@@ -35,6 +35,7 @@ export  interface JOBDETAILTYPES {
       size: string | null;
       founded_date: string | null;
       is_verified: boolean;
+      company_image_urls:string[]
     };
     job_poster_name: string | null;
   }

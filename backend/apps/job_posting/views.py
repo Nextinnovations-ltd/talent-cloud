@@ -169,7 +169,7 @@ class MatchedJobPostAPIView(CustomListAPIView):
      serializer_class = JobPostListSerializer
      filter_backends = [DjangoFilterBackend, SearchFilter]
      filterset_class = JobPostFilter
-     search_fields = [ 'title', 'description', 'location' ] 
+     search_fields = [ 'title', 'description', 'location' ]
      
      def get_queryset(self):
           try:
@@ -627,6 +627,7 @@ class JobApplicationCreateView(APIView):
           }
      )
      def post(self, request, job_post_id):
+          is_cv_skip = request.data.get('is_cv_skip', False)
           cover_letter_upload_id = request.data.get('cover_letter_upload_id', None)
           resume_upload_id = request.data.get('resume_upload_id', None)
           is_cover_letter_skipped = request.data.get('is_skipped', False)
@@ -642,7 +643,7 @@ class JobApplicationCreateView(APIView):
                user=request.user,
                job_post_id=job_post_id,
                cover_letter_upload_id=cover_letter_upload_id,
-               resume_upload_id=resume_upload_id,
+               resume_upload_id=resume_upload_id if not is_cv_skip else None,
                is_cover_letter_skipped=is_cover_letter_skipped,
           )
           

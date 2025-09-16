@@ -1,20 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import TextAreaField from "@/components/common/form/fields/text-area-field";
+import TextAreaFieldEditor from "@/components/common/form/fields/text-area-field-editor";
 
 type StepTwoFormProps = {
-    formMethods: UseFormReturn<any>;
-  };
-  
+  formMethods: UseFormReturn<any>;
+};
 
- const StepTwoForm = ({ formMethods }: StepTwoFormProps) => {
+
+const StepTwoForm = ({ formMethods }: StepTwoFormProps) => {
   return (
     <div className="max-w-[700px]">
       <Form {...formMethods}>
 
-      <form>
-      <TextAreaField
+        <form>
+          <TextAreaFieldEditor
+            name="responsibilities"
+            lableName="Responsibilities"
+            maxLength={800}
+            isError={!!formMethods.formState.errors.responsibilities}
+          />
+          {/* <TextAreaField
             disabled={false}
             fieldName={'responsibilities'}
             lableName="Responsibilities"
@@ -28,8 +34,14 @@ type StepTwoFormProps = {
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
             maxLength={800}
+          /> */}
+          <TextAreaFieldEditor
+            name="requirements"
+            lableName="Requirements"
+            maxLength={800}
+            isError={!!formMethods.formState.errors.requirements}
           />
-           <TextAreaField
+          {/* <TextAreaField
             disabled={false}
             lableName="Requirements"
             fieldName={'requirements'}
@@ -43,8 +55,14 @@ type StepTwoFormProps = {
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
             maxLength={800}
+          /> */}
+           <TextAreaFieldEditor
+            name="offered_benefits"
+            lableName="What we offer"
+            maxLength={800}
+            isError={!!formMethods.formState.errors.offered_benefits}
           />
-           <TextAreaField
+          {/* <TextAreaField
             disabled={false}
             lableName="What we offer"
             fieldName={'offered_benefits'}
@@ -58,11 +76,11 @@ type StepTwoFormProps = {
             fieldWidth="w-full mt-[50px]"
             showLetterCount={true}
             maxLength={800}
-          />
-      </form>
+          /> */}
+        </form>
 
       </Form>
-      </div>
+    </div>
   )
 }
 

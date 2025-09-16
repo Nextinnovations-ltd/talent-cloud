@@ -61,12 +61,12 @@ const TalentCloudSay = () => {
    
 
         {/* First Row */}
-        <div className="flex flex-col md:flex-row gap-[24px] md:gap-[32px] justify-center items-center">
+        <div className="flex flex-col lg:flex-row gap-[24px] md:gap-[32px] justify-center items-center">
           {/* Image with left slide */}
           <motion.img
             src={CTOImg}
             alt=""
-            className="max-w-full md:max-w-[373px] rounded-[26px]"
+            className="max-w-[373px] rounded-[26px]"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -75,9 +75,9 @@ const TalentCloudSay = () => {
 
           {/* Text Card with fade up */}
           <motion.div
-            className="pt-4 pb-[40px] pl-[47px] pr-[17px] w-[765px] min-h-[359px] bg-white rounded-[26px]"
+            className="pt-4 pb-[40px] pl-[17px] lg:pl-[47px] pr-[32px] lg:pr-[17px] w-[100%] max-w-[372px] lg:max-w-[765px] min-h-[359px] bg-white rounded-[26px]"
             initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}  
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             viewport={{ once: true }}
           >
@@ -87,10 +87,10 @@ const TalentCloudSay = () => {
                 alt=""
                 whileHover={{ x: 5, scale: 1.1 }} // move slightly right + scale up
                 transition={{ type: "spring", stiffness: 300 }}
-                className="cursor-pointer"
+                className="cursor-pointer w-[32px] h-[32px] md:w-[48px] md:h-[48px]"
               />
             </Link>
-            <p className="text-[#484747] text-[16px] font-[600] leading-[27px] mt-[7px] mb-[27px] text-center max-w-[571px]">
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[600] leading-[20px] lg:leading-[27px] mt-[50px] lg:mt-[7px] mb-[32px] lg:mb-[27px] text-center max-w-[571px]">
               “ I began my career as a Junior Developer through their EOR service, and
               today, I lead an engineering team. From the very start, their onboarding,
               payroll, and support were seamless and professional. More than just a
@@ -98,7 +98,7 @@ const TalentCloudSay = () => {
               commitment to care and excellence is raising the bar for EOR services in
               Myanmar. “
             </p>
-            <h1 className="text-[20px] font-[500] leading-[32px]">
+            <h1 className="text-[16px] lg:text-[20px] font-[500] leading-[25px] lg:leading-[32px] whitespace-nowrap lg:whitespace-normal text-center lg:text-left">
               Min Min Latt (CTO) Engineerforce Inc
             </h1>
           </motion.div>
@@ -108,7 +108,7 @@ const TalentCloudSay = () => {
         <div className="flex flex-col md:flex-row gap-[24px] md:gap-[32px] justify-center items-center w-full">
           {/* Left Card */}
           <motion.div
-            className="pt-4 pb-[40px] pl-[35px] pr-[17px] w-[50%] min-h-[359px] bg-white rounded-[26px]"
+            className="pt-4 pb-[28px] md:pb-[40px] pl-[17px] md:pl-[35px] pr-[17px] w-[372px] lg:w-[50%] min-h-[322px] md:min-h-[359px] bg-white rounded-[26px]"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -120,35 +120,33 @@ const TalentCloudSay = () => {
                 alt=""
                 whileHover={{ x: 5, scale: 1.1 }} // move slightly right + scale up
                 transition={{ type: "spring", stiffness: 300 }}
-                className="cursor-pointer"
+                className="cursor-pointer w-[32px] h-[32px] md:w-[48px] md:h-[48px]"
               />
             </Link>
-            <p className="text-[#484747] text-[16px] font-[600] leading-[27px] mt-[35px] text-center max-w-[462px]">
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[600] leading-[20px] md:leading-[27px] mt-[27px] md:mt-[35px] text-center max-w-[462px]">
               “ I began my career as a Junior Developer through their EOR service, and
               today, I lead an engineering team. From the very start, their onboarding,
               payroll, and support were seamless and professional. “
             </p>
-            <div className="flex items-center gap-6 mt-[80px]">
+            <div className="flex items-center gap-[18px] md:gap-6 mt-[32px] md:mt-[80px]">
               <img
                 src={CTOImg}
                 alt=""
-                className="w-[72px] h-[72px] object-cover rounded-full"
+                className="w-[57px] md:w-[72px] h-[57px] md:h-[72px] object-cover rounded-full"
               />
               <div>
-                <p className="text-[18px] font-[500] leading-[28px]">
-                  Than Myo Htet (Backend Developer)
+                <p className="text-[14px] md:text-[18px] font-[500] leading-[22px] md:leading-[28px]">
+                  Than Myo Htet <span className="text-[12px] leading-[19px] md:text-[18px] md:leading-[28px]">(Backend Developer)</span>
                 </p>
-                <p className="text-[20px] font-[500] leading-[32px]">
+                <p className="text-[12px] md:text-[20px] font-[500] leading-[32px]">
                   Engineerforce Inc
                 </p>
               </div>
             </div>
           </motion.div>
-
-          {/* Right Card */}
           <motion.div
-            className="pt-4 pb-[40px] pl-[35px] pr-[17px] w-[50%] min-h-[359px] bg-white rounded-[26px]"
-            initial={{ opacity: 0, y: 50 }}
+            className="pt-4 pb-[28px] md:pb-[40px] pl-[17px] md:pl-[35px] pr-[17px] w-[372px] lg:w-[50%] min-h-[322px] md:min-h-[359px] bg-white rounded-[26px]"
+             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             viewport={{ once: true }}
@@ -159,30 +157,32 @@ const TalentCloudSay = () => {
                 alt=""
                 whileHover={{ x: 5, scale: 1.1 }} // move slightly right + scale up
                 transition={{ type: "spring", stiffness: 300 }}
-                className="cursor-pointer"
+                className="cursor-pointer w-[32px] h-[32px] md:w-[48px] md:h-[48px]"
               />
             </Link>
-            <p className="text-[#484747] text-[16px] font-[600] leading-[27px] mt-[35px] text-center max-w-[462px]">
+            <p className="text-[#484747] text-[12px] md:text-[16px] font-[600] leading-[20px] md:leading-[27px] mt-[27px] md:mt-[35px] text-center max-w-[462px]">
               “ I began my career as a Junior Developer through their EOR service, and
               today, I lead an engineering team. From the very start, their onboarding,
               payroll, and support were seamless and professional. “
             </p>
-            <div className="flex items-center gap-6 mt-[80px]">
+            <div className="flex items-center gap-[18px] md:gap-6 mt-[32px] md:mt-[80px]">
               <img
                 src={CTOImg}
                 alt=""
-                className="w-[72px] h-[72px] object-cover rounded-full"
+                className="w-[57px] md:w-[72px] h-[57px] md:h-[72px] object-cover rounded-full"
               />
               <div>
-                <p className="text-[18px] font-[500] leading-[28px]">
-                  Than Myo Htet (Backend Developer)
+                <p className="text-[14px] md:text-[18px] font-[500] leading-[22px] md:leading-[28px]">
+                  Than Myo Htet <span className="text-[12px] leading-[19px] md:text-[18px] md:leading-[28px]">(Backend Developer)</span>
                 </p>
-                <p className="text-[20px] font-[500] leading-[32px]">
+                <p className="text-[12px] md:text-[20px] font-[500] leading-[32px]">
                   Engineerforce Inc
                 </p>
               </div>
             </div>
           </motion.div>
+
+         
         </div>
 
            

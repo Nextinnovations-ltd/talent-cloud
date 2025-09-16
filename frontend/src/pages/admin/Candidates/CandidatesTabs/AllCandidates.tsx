@@ -1,11 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import AllCandidateActionHeader from "./AllCandidateActionHeader";
+import * as yup from "yup";
 
- const AllCandidates = () => {
-  return (
-    <div>
-        <AllCandidateActionHeader/>
-    </div>
-  )
+
+export const StepTwoFormYupSchema = yup.object({
+    description:yup.string().required("description is required"),});
+
+const AllCandidates = () => {
+    const [sortBy, setSortBy] = useState("-created_at");
+    // const [filters,setFilters] = useState({
+
+    // })
+    // const {data} = useGetJobSeekerCandidatesQuery({
+
+    // });
+
+
+
+
+    return (
+        <div>
+            <AllCandidateActionHeader setSortBy={setSortBy} sortBy={sortBy} />
+        </div>
+    )
 }
 
 export default AllCandidates;

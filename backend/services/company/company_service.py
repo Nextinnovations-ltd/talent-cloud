@@ -31,8 +31,6 @@ def get_or_create_parent_company(name):
           company_data = {
                'name': PARENT_COMPANY.name,
                'description': PARENT_COMPANY.description,
-               'image_url': PARENT_COMPANY.image_url,
-               'website': PARENT_COMPANY.website,
                'industry': industry,
                'size': PARENT_COMPANY.size,
                'tagline': PARENT_COMPANY.tagline,
@@ -41,10 +39,160 @@ def get_or_create_parent_company(name):
                'contact_phone': PARENT_COMPANY.contact_phone,
                'founded_date': PARENT_COMPANY.founded_date,
                'is_verified': True,
+               'image_url': PARENT_COMPANY.image_url,
+               'cover_image_url': PARENT_COMPANY.cover_image_url,
+               'company_image_urls': PARENT_COMPANY.company_image_urls,
+               'website': PARENT_COMPANY.website,
+               'facebook_url': PARENT_COMPANY.facebook_url,
+               'linkedin_url': PARENT_COMPANY.linkedin_url,
+               'instagram_url': PARENT_COMPANY.instagram_url,
           }
           
           company = Company.objects.create(**company_data)
 
+     return company
+
+def update_parent_company():
+     """
+     Update parent company with latest data from PARENT_COMPANY constants.
+     Finds the parent company automatically and updates it.
+     
+     Returns:
+          Updated Company instance
+          
+     Raises:
+          ValidationError: If parent company doesn't exist or update fails
+     """
+     from apps.companies.models import Company
+     
+     try:
+          # Find parent company by name from constants
+          company = Company.objects.get(name=PARENT_COMPANY.name)
+          
+          logger.info(f"Found parent company '{PARENT_COMPANY.name}', starting update...")
+          
+          # Update the company
+          updated_company = _update_parent_company_internal(company)
+          
+          return updated_company
+          
+     except Company.DoesNotExist:
+          logger.error(f"Parent company '{PARENT_COMPANY.name}' not found. Cannot update.")
+          raise ValidationError(f"Parent company '{PARENT_COMPANY.name}' does not exist. Create it first.")
+     except Exception as e:
+          logger.error(f"Failed to update parent company: {str(e)}")
+          raise ValidationError(f"Failed to update parent company: {str(e)}")
+
+def _update_parent_company_internal(company):
+     """
+     Internal method to update parent company with PARENT_COMPANY constants
+     
+     Args:
+          company: Existing Company instance
+          
+     Returns:
+          Updated Company instance
+     """
+     from apps.companies.models import Industry
+     from apps.users.models import Address
+     
+     try:
+          with transaction.atomic():
+               logger.info(f"Updating parent company '{company.name}' with PARENT_COMPANY constants")
+               
+               # Update industry if needed
+               current_industry_name = company.industry.name if company.industry else None
+               if current_industry_name != PARENT_COMPANY.industry:
+                    logger.info(f"Updating industry from '{current_industry_name}' to '{PARENT_COMPANY.industry}'")
+                    industry, created = Industry.objects.get_or_create(name=PARENT_COMPANY.industry)
+                    
+                    company.industry = industry
+                    
+                    if created:
+                         logger.info(f"Created new industry: {PARENT_COMPANY.industry}")
+               
+               # Update address if needed
+               address_updated = False
+               
+               if company.address:
+                    address_changes = []
+                    
+                    if company.address.country_id != PARENT_COMPANY.country:
+                         address_changes.append(f"country_id: {company.address.country_id} -> {PARENT_COMPANY.country}")
+                         company.address.country_id = PARENT_COMPANY.country
+                    
+                    if company.address.city_id != PARENT_COMPANY.city:
+                         address_changes.append(f"city_id: {company.address.city_id} -> {PARENT_COMPANY.city}")
+                         company.address.city_id = PARENT_COMPANY.city
+                    
+                    if company.address.address != PARENT_COMPANY.address:
+                         address_changes.append(f"address: '{company.address.address}' -> '{PARENT_COMPANY.address}'")
+                         company.address.address = PARENT_COMPANY.address
+                    
+                    if address_changes:
+                         company.address.save()
+                         address_updated = True
+                         logger.info(f"Updated address: {', '.join(address_changes)}")
+               else:
+                    # Create new address using constants
+                    company.address = Address.objects.create(
+                         country_id=PARENT_COMPANY.country,
+                         city_id=PARENT_COMPANY.city,
+                         address=PARENT_COMPANY.address
+                    )
+                    address_updated = True
+                    logger.info("Created new address from PARENT_COMPANY constants")
+               
+               # Update company fields
+               updated_fields = []
+               company_updates = {
+                    'name': PARENT_COMPANY.name,
+                    'description': PARENT_COMPANY.description,
+                    'size': PARENT_COMPANY.size,
+                    'tagline': PARENT_COMPANY.tagline,
+                    'contact_email': PARENT_COMPANY.contact_email,
+                    'contact_phone': PARENT_COMPANY.contact_phone,
+                    'founded_date': PARENT_COMPANY.founded_date,
+                    'image_url': PARENT_COMPANY.image_url,
+                    'cover_image_url': PARENT_COMPANY.cover_image_url,
+                    'company_image_urls': PARENT_COMPANY.company_image_urls,
+                    'website': PARENT_COMPANY.website,
+                    'facebook_url': PARENT_COMPANY.facebook_url,
+                    'linkedin_url': PARENT_COMPANY.linkedin_url,
+                    'instagram_url': PARENT_COMPANY.instagram_url,
+               }
+               
+               for field, new_value in company_updates.items():
+                    current_value = getattr(company, field, None)
+                    
+                    if current_value != new_value:
+                         logger.debug(f"Updating {field}: '{current_value}' -> '{new_value}'")
+                         setattr(company, field, new_value)
+                         updated_fields.append(field)
+               
+               # Ensure parent company is verified
+               if not company.is_verified:
+                    company.is_verified = True
+                    updated_fields.append('is_verified')
+               
+               # Save company if any updates were made
+               if updated_fields or address_updated:
+                    company.save(update_fields=updated_fields if updated_fields else None)
+                    
+                    update_summary = []
+                    if updated_fields:
+                         update_summary.append(f"company fields: {updated_fields}")
+                    if address_updated:
+                         update_summary.append("address")
+                    
+                    logger.info(f"Successfully updated parent company: {', '.join(update_summary)}")
+               else:
+                    logger.info("Parent company is already up to date with PARENT_COMPANY constants")
+                    
+     except Exception as e:
+          logger.error(f"Failed to update parent company: {str(e)}")
+          raise ValidationError(f"Failed to update parent company: {str(e)}")
+     
      return company
 
 class BulkUploadService:

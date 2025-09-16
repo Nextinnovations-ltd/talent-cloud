@@ -1,5 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
+
+interface JobApplyCardParams {
+    search?:string;
+  }
+  
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -61,8 +67,8 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         getDashboardAnalytics: builder.query<JobSeekerCountResponse, void>({
             query: () => `/dashboard/ni/statistics`
         }),
-        getDashboardRoleAnalytics:builder.query<unknown,void>({
-            query:()=> `dashboard/ni/statistics/role/`
+        getDashboardRoleAnalytics: builder.query<unknown, void>({
+            query: () => `dashboard/ni/statistics/role/`
         }),
 
         //short list
@@ -73,28 +79,38 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['NotificationList']
         }),
-         //candidates
-         getJobSeekersOverView: builder.query<JobSeekerOverviewResponse,{id:string|number,applicationId:string| number}>({
-            query: ({id,applicationId}) => `/dashboard/ni/job-seekers/${id}/overview?application_id=${applicationId}`
+        //candidates
+        getJobSeekersOverView: builder.query<JobSeekerOverviewResponse, { id: string | number, applicationId: string | number }>({
+            query: ({ id, applicationId }) => `/dashboard/ni/job-seekers/${id}/overview?application_id=${applicationId}`
         }),
-        getJobSeekersProjects:builder.query<JobSeekerProjectListResponse,{id:string|number}>({
-         query: ({id})=> `/dashboard/ni/job-seekers/${id}/projects/`
+        getJobSeekersProjects: builder.query<JobSeekerProjectListResponse, { id: string | number }>({
+            query: ({ id }) => `/dashboard/ni/job-seekers/${id}/projects/`
         }),
-        getJobSeekerDetailVideo:builder.query<JobSeekerDetailVideoResponse,{id:string| number}>({
-            query: ({id})=> `/dashboard/ni/job-seekers/${id}/video/`
+        getJobSeekerDetailVideo: builder.query<JobSeekerDetailVideoResponse, { id: string | number }>({
+            query: ({ id }) => `/dashboard/ni/job-seekers/${id}/video/`
         }),
-        getJobSeekerDetailExperience:builder.query<JobSeekerDetailExperience,{id:string| number}>({
-            query:({id})=> `/dashboard/ni/job-seekers/${id}/experiences/`
+        getJobSeekerDetailExperience: builder.query<JobSeekerDetailExperience, { id: string | number }>({
+            query: ({ id }) => `/dashboard/ni/job-seekers/${id}/experiences/`
         }),
-        getJobSeekerDetailEducation:builder.query<JobSeekerEducationDetail,{id:string | number}>({
-            query:({id})=> `/dashboard/ni/job-seekers/${id}/educations/`
+        getJobSeekerDetailEducation: builder.query<JobSeekerEducationDetail, { id: string | number }>({
+            query: ({ id }) => `/dashboard/ni/job-seekers/${id}/educations/`
         }),
-        getJobSeekerDetailCertification:builder.query<JobSeekerCertificationDetail,{id:string | number}>({
-            query:({id})=> `/dashboard/ni/job-seekers/${id}/certifications/`
+        getJobSeekerDetailCertification: builder.query<JobSeekerCertificationDetail, { id: string | number }>({
+            query: ({ id }) => `/dashboard/ni/job-seekers/${id}/certifications/`
+        }),
+        getJobSeekerCandidates: builder.query<unknown, JobApplyCardParams>({
+            query: (params) => {
+                const filterParams = Object.fromEntries(
+                    Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== "")
+                );
+
+                return {
+                    url: '/dashboard/ni/applicants/',
+                    params: filterParams,
+                }
+            }
         })
-        
-       
     })
 });
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery,useGetJobSeekersProjectsQuery,useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery,useGetJobSeekerDetailEducationQuery,useGetJobSeekerDetailCertificationQuery,useGetDashboardRoleAnalyticsQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery } = extendedAdminSlice
