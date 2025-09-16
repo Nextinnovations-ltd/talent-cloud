@@ -32,7 +32,6 @@ export const Home: React.FC = () => {
   });
 
   
-
   useEffect(() => {
     if (data?.data.results) {
       if (page === 1) {
