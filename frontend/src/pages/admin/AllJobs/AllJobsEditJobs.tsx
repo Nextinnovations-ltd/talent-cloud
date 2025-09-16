@@ -35,7 +35,7 @@ const AllJobsEditJobs = () => {
   // const navigation = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const {
-    formData, 
+    formData,
     setStepOneData,
     setStepTwoData,
     setStepThreeData,
@@ -119,14 +119,14 @@ const AllJobsEditJobs = () => {
       stepThreeForm.reset({
         salary_mode: JobData?.salary_mode,
         salary_type: JobData?.salary_type,
-        salary_min: `${SanitizeNumberCurrency(JobData?.salary_min) }`  || '', 
-        salary_max: `${SanitizeNumberCurrency(JobData?.salary_max) }`  || '',
+        salary_min: `${SanitizeNumberCurrency(JobData?.salary_min)}` || '',
+        salary_max: `${SanitizeNumberCurrency(JobData?.salary_max)}` || '',
         is_salary_negotiable: JobData?.is_salary_negotiable,
         project_duration: JobData?.project_duration,
         skills: JobData?.skills,
         experience_level: JobData?.experience_level,
-        experience_years: SanitizeNumber(JobData?.experience_years) || undefined  ,
-        salary_fixed: `${SanitizeNumberCurrency(JobData?.salary_fixed) }`   || "",
+        experience_years: SanitizeNumber(JobData?.experience_years) || undefined,
+        salary_fixed: `${SanitizeNumberCurrency(JobData?.salary_fixed)}` || "",
         number_of_positions: JobData?.number_of_positions,
         last_application_date: JobData?.last_application_date
       })
@@ -217,7 +217,7 @@ const AllJobsEditJobs = () => {
     }
   };
 
-  const handlePublish =  async () => {
+  const handlePublish = async () => {
     const date = formData.stepThree.last_application_date;
     let formattedDate = '';
 
@@ -237,8 +237,6 @@ const AllJobsEditJobs = () => {
         String(value).replace(/[^0-9.-]+/g, "") // remove $, commas, etc.
       );
     }
-
-
 
     const payload = {
       title: formData.stepOne.title,
@@ -260,84 +258,78 @@ const AllJobsEditJobs = () => {
       salary_type: formData.stepThree.salary_type,
       salary_mode: formData.stepThree.salary_mode,
       salary_min: sanitizeNumberPayload(formData.stepThree.salary_min),
-      salary_max:  sanitizeNumberPayload(formData.stepThree.salary_max),
-      salary_fixed:  sanitizeNumberPayload(formData.stepThree.salary_fixed),
+      salary_max: sanitizeNumberPayload(formData.stepThree.salary_max),
+      salary_fixed: sanitizeNumberPayload(formData.stepThree.salary_fixed),
       last_application_date: formattedDate
     };
 
-
-
-
     try {
 
-    const response =   await updateJob({id:id || '',credentials:payload})
+      const response = await updateJob({ id: id || '', credentials: payload })
+      showNotification({
+        message: response.data?.message,
+        type: "success",
+      });
 
 
+      // Enhanced reset sequence
+      resetForm(); // Reset Zustand store
 
-    showNotification({
-      message:response.data?.message,
-      type: "success",
-    });
+      // Reset all form instances with empty values
+      const clearedStepOne = {
+        title: '',
+        specialization: '',
+        role: '',
+        job_type: '',
+        location: '',
+        work_type: '',
+        description: ''
+      };
+      const clearedStepTwo = {
+        responsibilities: '',
+        requirements: '',
+        offered_benefits: ''
+      };
+      const clearedStepThree = {
+        salary_mode: '',
+        salary_type: '',
+        salary_min: '',
+        salary_max: '',
+        is_salary_negotiable: false,
+        project_duration: '',
+        skills: [],
+        experience_level: '',
+        experience_years: 1,
+        salary_fixed: '',
+        number_of_positions: 0,
+        last_application_date: ''
+      };
 
+      stepOneForm.reset(clearedStepOne);
+      stepTwoForm.reset(clearedStepTwo);
+      stepThreeForm.reset(clearedStepThree);
 
-       // Enhanced reset sequence
-       resetForm(); // Reset Zustand store
+      // Sync snapshots to cleared values so the guard sees no changes
+      initialStepOneRef.current = clearedStepOne;
+      initialStepTwoRef.current = clearedStepTwo;
+      initialStepThreeRef.current = clearedStepThree;
+      setHasUnsavedChanges(false);
 
-       // Reset all form instances with empty values
-       const clearedStepOne = {
-           title: '',
-           specialization: '',
-           role: '',
-           job_type: '',
-           location: '',
-           work_type: '',
-           description: ''
-       };
-       const clearedStepTwo = {
-           responsibilities: '',
-           requirements: '',
-           offered_benefits: ''
-       };
-       const clearedStepThree = {
-           salary_mode: '',
-           salary_type: '',
-           salary_min: '',
-           salary_max: '',
-           is_salary_negotiable: false,
-           project_duration: '',
-           skills: [],
-           experience_level: '',
-           experience_years: 1,
-           salary_fixed: '',
-           number_of_positions: 0,
-           last_application_date: ''
-       };
-
-       stepOneForm.reset(clearedStepOne);
-       stepTwoForm.reset(clearedStepTwo);
-       stepThreeForm.reset(clearedStepThree);
-
-       // Sync snapshots to cleared values so the guard sees no changes
-       initialStepOneRef.current = clearedStepOne;
-       initialStepTwoRef.current = clearedStepTwo;
-       initialStepThreeRef.current = clearedStepThree;
-       setHasUnsavedChanges(false);
-
-       setCurrentStep(0);
-       console.log("Job updated successfully!");
-       if(response?.data?.status){
+      setCurrentStep(0);
+      console.log("Job updated successfully!");
+      if (response?.data?.status) {
         // Bypass guard exactly once during success navigation
         navigateBypassingGuard('/admin/dashboard/allJobs');
-       }
-      
+      }
 
-    } catch (error){
-      console.error("Error updating job",error)
+
+    } catch (error) {
+      console.error("Error updating job", error)
       // Best-effort bypass if needed
       setHasUnsavedChanges(false);
       navigateBypassingGuard('/admin/dashboard/allJobs');
     }
-    
+
 
   };
 
@@ -366,42 +358,42 @@ const AllJobsEditJobs = () => {
   return (
     <div className="mt-3">
       <JobCandidatesInfoHeader id={id} side="preview" />
-      
 
-     <div className="ml-10">
-     {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
-      {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
-      {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
-      {currentStep === 3 && <PreviewForm />}
 
-      <div className="flex  justify-between max-w-[700px]  mt-[50px]">
-        <Button
-          className="text-[#000000] text-[16px] w-[150px] h-[53px]"
-          variant="outline"
-          onClick={() => setCurrentStep(currentStep - 1)}
-          disabled={currentStep === 0}
-        >
-          <ChevronLeft size={16} className="mr-3" /> Previous
-        </Button>
+      <div className="ml-10">
+        {currentStep === 0 && <StepOneForm formMethods={stepOneForm} />}
+        {currentStep === 1 && <StepTwoForm formMethods={stepTwoForm} />}
+        {currentStep === 2 && <StepThreeForm formMethods={stepThreeForm} />}
+        {currentStep === 3 && <PreviewForm />}
 
-        {currentStep === steps.length - 1 ? (
+        <div className="flex  justify-between max-w-[700px]  mt-[50px]">
           <Button
-            className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px]"
-            onClick={handlePublish}
-            disabled={isLoading}
+            className="text-[#000000] text-[16px] w-[150px] h-[53px]"
+            variant="outline"
+            onClick={() => setCurrentStep(currentStep - 1)}
+            disabled={currentStep === 0}
           >
-            {isLoading ? "Updating..." : "Update"}
+            <ChevronLeft size={16} className="mr-3" /> Previous
           </Button>
-        ) : (
-          <Button
-            className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px] flex items-center justify-center gap-2"
-            onClick={handleNext}
-          >
-            Next <ChevronRight size={16} />
-          </Button>
-        )}
+
+          {currentStep === steps.length - 1 ? (
+            <Button
+              className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px]"
+              onClick={handlePublish}
+              disabled={isLoading}
+            >
+              {isLoading ? "Updating..." : "Update"}
+            </Button>
+          ) : (
+            <Button
+              className="bg-[#0481EF] text-[16px] text-white w-[150px] h-[53px] flex items-center justify-center gap-2"
+              onClick={handleNext}
+            >
+              Next <ChevronRight size={16} />
+            </Button>
+          )}
+        </div>
       </div>
-     </div>
       {/* Navigation Confirmation Modal */}
       <NavigationConfirmModal
         isOpen={showConfirmModal}
@@ -410,7 +402,7 @@ const AllJobsEditJobs = () => {
         title="Unsaved Changes"
         description="You have unsaved changes to this job. Are you sure you want to leave?"
       />
-      </div>
+    </div>
 
 
 

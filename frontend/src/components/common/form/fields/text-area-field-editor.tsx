@@ -1,122 +1,39 @@
-// SafeQuillEditor.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import ReactQuill, { Quill } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
-import * as Lucide from "lucide-react";
 import "./index.css";
-
-// ------------------ Types ------------------
-type FormatType = {
-  header?: number | null;
-  bold?: boolean;
-  italic?: boolean;
-  underline?: boolean;
-  strike?: boolean;
-  list?: "ordered" | "bullet";
-};
-
-interface CustomToolbarProps {
-  onToggle: (format: keyof FormatType, value?: boolean) => void;
-  onHeader: (level: number | null) => void;
-  onList: (type: "ordered" | "bullet") => void;
-  formats: FormatType;
-}
+import FormatType from "@/types/customtollbar";
+import CustomToolbar from "./text-area-filed-editor-header";
+import clsx from "clsx";
+import { Controller, useFormContext, Control } from "react-hook-form";
 
 interface TextAreaFieldEditorProps {
+  name: string;
+  control?: Control<any>; // optional, for direct usage
   initialValue?: string;
-  onContentChange?: (html: string, plainText: string) => void;
+  maxLength?: number;
+  isError?: boolean;
+  lableName?:string
 }
 
-// ------------------ Toolbar ------------------
-const CustomToolbar: React.FC<CustomToolbarProps> = ({
-  onToggle,
-  onHeader,
-  onList,
-  formats,
-}) => {
-  return (
-    <div
-      className="ql-custom-toolbar"
-      role="toolbar"
-      aria-label="Editor toolbar"
-    >
-      {/* Header dropdown */}
-      <select
-        className="ql-header-dropdown p-3s"
-        value={formats.header ?? "normal"}
-        onChange={(e) =>
-          onHeader(e.target.value === "normal" ? null : parseInt(e.target.value, 10))
-        }
-      >
-        <option value="normal">Normal</option>
-        <option value="1">Heading 1</option>
-        <option value="2">Heading 2</option>
-        <option value="3">Heading 3</option>
-      </select>
-
-      {/* Inline formatting */}
-      <button
-        type="button"
-        className={`ql-btn ${formats.bold ? "active" : ""}`}
-        title="Bold"
-        onClick={() => onToggle("bold")}
-      >
-        <Lucide.Bold size={16} />
-      </button>
-      <button
-        type="button"
-        className={`ql-btn ${formats.italic ? "active" : ""}`}
-        title="Italic"
-        onClick={() => onToggle("italic")}
-      >
-        <Lucide.Italic size={16} />
-      </button>
-      <button
-        type="button"
-        className={`ql-btn ${formats.underline ? "active" : ""}`}
-        title="Underline"
-        onClick={() => onToggle("underline")}
-      >
-        <Lucide.Underline size={16} />
-      </button>
-      <button
-        type="button"
-        className={`ql-btn ${formats.strike ? "active" : ""}`}
-        title="Strike"
-        onClick={() => onToggle("strike")}
-      >
-        <Lucide.Strikethrough size={16} />
-      </button>
-
-      {/* Lists */}
-      <button
-        type="button"
-        className={`ql-btn ${formats.list === "ordered" ? "active" : ""}`}
-        title="Ordered list"
-        onClick={() => onList("ordered")}
-      >
-        <Lucide.ListOrdered size={16} />
-      </button>
-      <button
-        type="button"
-        className={`ql-btn ${formats.list === "bullet" ? "active" : ""}`}
-        title="Bullet list"
-        onClick={() => onList("bullet")}
-      >
-        <Lucide.List size={16} />
-      </button>
-    </div>
-  );
-};
-
-// ------------------ Editor ------------------
 const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
+  name,
+  control,
   initialValue = "",
-  onContentChange,
+  maxLength = 800,
+  isError = false,
+  lableName
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
-  const [value, setValue] = useState<string>(initialValue);
   const [formats, setFormats] = useState<FormatType>({});
+  const [isFocused, setIsFocused] = useState(false);
+  const [charCount, setCharCount] = useState(0);
+
+  // Get control from context if not passed
+  const formContext = useFormContext();
+  const formControl = control || formContext?.control;
 
   const updateFormats = useCallback(() => {
     const editor = quillRef.current?.getEditor();
@@ -128,22 +45,33 @@ const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
 
-    updateFormats();
+    setCharCount(editor.getText().trim().length);
 
-    const handleSelection = () => updateFormats();
-    const handleTextChange = () => updateFormats();
+    const inputEl = editor.root as HTMLElement;
+    const handleFocus = () => setIsFocused(true);
+    const handleBlur = () => setIsFocused(false);
 
-    editor.on("selection-change", handleSelection);
-    editor.on("text-change", handleTextChange);
+    inputEl.addEventListener("focus", handleFocus);
+    inputEl.addEventListener("blur", handleBlur);
+
+    // Enforce max length
+    editor.on("text-change", () => {
+      const text = editor.getText().trimEnd();
+      const length = text.length;
+
+      if (length > maxLength) {
+        editor.deleteText(maxLength, length);
+      }
+      setCharCount(Math.min(length, maxLength));
+    });
 
     return () => {
-      editor.off("selection-change", handleSelection);
-      editor.off("text-change", handleTextChange);
+      inputEl.removeEventListener("focus", handleFocus);
+      inputEl.removeEventListener("blur", handleBlur);
     };
-  }, [updateFormats]);
+  }, [maxLength]);
 
   const modules = { toolbar: false };
-
   const formatsWhitelist = [
     "header",
     "bold",
@@ -154,68 +82,102 @@ const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
     "bullet",
   ];
 
-  const handleChange = (
-    content: string,
-    _delta: any,
-    _source: string,
-    editor: Quill
-  ) => {
-    setValue(content);
-    if (onContentChange) onContentChange(content, editor.getText());
-  };
-
-  const handleToggle = (format: keyof FormatType, value?: boolean) => {
-    const editor = quillRef.current?.getEditor();
-    if (!editor) return;
-    const current = editor.getFormat() as FormatType;
-
-    if (value === undefined) {
-      editor.format(format, !current[format]);
-    } else {
-      editor.format(format, value);
-    }
-    updateFormats();
-  };
-
-  const handleHeader = (level: number | null) => {
-    const editor = quillRef.current?.getEditor();
-    if (!editor) return;
-    editor.format("header", level);
-    updateFormats();
-  };
-
-  const handleList = (type: "ordered" | "bullet") => {
-    const editor = quillRef.current?.getEditor();
-    if (!editor) return;
-    const current = editor.getFormat() as FormatType;
-    if (current.list === type) editor.format("list", false);
-    else editor.format("list", type);
-    updateFormats();
-  };
+  if (!formControl) {
+    console.error(
+      "TextAreaFieldEditor must be used inside a FormProvider or a control must be passed."
+    );
+    return null;
+  }
 
   return (
-    <div className="editor-wrapper">
-      <CustomToolbar
-        onToggle={handleToggle}
-        onHeader={handleHeader}
-        onList={handleList}
-        formats={formats}
-      />
-      <div className="quill-container">
-        <ReactQuill
-          ref={quillRef}
-          className="rounded-lg p-2 border"
-          theme="snow"
-          value={value}
-          onChange={handleChange}
-          modules={modules}
-          formats={formatsWhitelist}
-          placeholder="Write something..."
-          style={{
-          }}
-        />
-      </div>
-    </div>
+    <Controller
+      control={formControl}
+      name={name}
+      defaultValue={initialValue}
+      rules={{
+        required: "Description is required",
+        validate: () => {
+          const text = quillRef.current?.getEditor().getText().trim() || "";
+          return text.length > 0 || "Description is required";
+        },
+      }}
+      render={({ field, fieldState }) => (
+        <div className="my-[40px] ">
+          <h3 className="text-[20px]  mb-3 font-[500]">{lableName}<span className="ms-1 text-red-500">*</span></h3>
+          <div className="editor-wrapper">
+            <CustomToolbar
+              onToggle={(format, value) => {
+                const editor = quillRef.current?.getEditor();
+                if (!editor) return;
+                const current = editor.getFormat() as FormatType;
+                if (value === undefined) {
+                  editor.format(format, !current[format]);
+                } else {
+                  editor.format(format, value);
+                }
+                updateFormats();
+              }}
+              onHeader={(level) => {
+                const editor = quillRef.current?.getEditor();
+                if (!editor) return;
+                editor.format("header", level);
+                updateFormats();
+              }}
+              onList={(type) => {
+                const editor = quillRef.current?.getEditor();
+                if (!editor) return;
+                const current = editor.getFormat() as FormatType;
+                if (current.list === type) editor.format("list", false);
+                else editor.format("list", type);
+                updateFormats();
+              }}
+              formats={formats}
+              classname={clsx(
+                isFocused && "border-blue-500 border-2",
+                (isError || fieldState.error) && isFocused && "border-red-500 border-2"
+              )}
+            />
+
+            <div
+              className={clsx(
+                "quill-container relative border rounded-b-[12px]",
+                isFocused ? "border-blue-500 border-2" : "border-[#6B6B6B]",
+                (isError || fieldState.error) && isFocused && "border-red-500 border-2"
+              )}
+            >
+              <ReactQuill
+                ref={quillRef}
+                className="rounded-t-none p-2"
+                value={field.value || ""}
+                //@ts-ignore
+                onChange={(content, _delta, _source, editor) => {
+                  const plainText = editor.getText().trim();
+                  field.onChange(plainText.length === 0 ? "" : content); // normalize empty
+                  setCharCount(plainText.length);
+                  updateFormats();
+                }}
+                onBlur={() => field.onBlur()} // triggers validation on blur
+                modules={modules}
+                formats={formatsWhitelist}
+                placeholder="Describe the role, responsibilities and what make this opportunity exciting..."
+              />
+              <span
+                className={`absolute right-3 bottom-2 text-sm ${
+                  charCount >= maxLength ? "text-red-500" : "text-[#B9BABC]"
+                }`}
+              >
+                {charCount}/{maxLength}
+              </span>
+            </div>
+          </div>
+          {(isError || fieldState.error) && (
+            <p className="text-[0.8rem] mt-2 font-medium text-destructive">
+              {fieldState.error?.message || "Description is required"}
+            </p>
+          )}
+        </div>
+      )}
+    />
   );
 };
 

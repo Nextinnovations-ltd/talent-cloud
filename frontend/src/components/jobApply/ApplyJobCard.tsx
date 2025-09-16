@@ -10,7 +10,7 @@ import SKILLS from '@/assets/Skills.svg'
 import DOT from '@/assets/Ellipse.svg'
 import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import DescriptionSplit from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit";
+import DescriptionsContent from "@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionsContent";
 
 export type Job = {
   id: number;
@@ -58,13 +58,12 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
     <div className="relative w-[400px] 2xl:w-[400px] flex items-center justify-center mx-auto">
       <div
         ref={cardRef}
-        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[480px] h-full w-[350px] md:w-[360px]  2xl:w-[450px] xl:w-[400px] lg:w-[300px]   rounded-[17px] transition-colors flex flex-col ${
-          isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
-        } ${job?.is_expired && 'opacity-100'}`}
+        className={`p-[30px] bg-white border-[#CBD5E1B2] duration-700 relative border-[2px] cursor-pointer min-h-[480px] h-full w-[350px] md:w-[360px]  2xl:w-[450px] xl:w-[400px] lg:w-[300px]   rounded-[17px] transition-colors flex flex-col ${isSelected ? " border-blue-500 border-[3px] " : "hover:border-blue-500"
+          } ${job?.is_expired && 'opacity-100'}`}
         onClick={() => onClick(job)}
       >
         {job?.is_new && <img width={64} className="absolute top-[-15px] left-[-2px]" height={48} src={NEWIMAGE} />}
-        
+
         <div className="flex justify-between items-start">
           <div style={{ position: 'relative', width: 64, height: 64, marginBottom: 14 }}>
             {!isImageLoaded && (
@@ -96,8 +95,8 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
             </Tooltip>
           </TooltipProvider>
         </div>
-        
-        <h4   className="text-[18px] font-semibold mt-2 text-[#000] w-full line-clamp-2">{job.title}</h4>
+
+        <h4 className="text-[18px] font-semibold mt-2 text-[#000] w-full line-clamp-2">{job.title}</h4>
         <h4 className="text-[#6B6B6B] text-[16px]">{job.company_name}</h4>
 
         <div className="gap-[10px] mt-4">
@@ -112,7 +111,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           <h3 className="text-[#6B6B6B] text-[14px]">{job.job_type}</h3>
         </div>
 
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2 mt-2 mb-5">
           <img width={18} height={18} src={SKILLS} />
           <div className="text-[#6B6B6B] flex flex-wrap gap-2 items-center">
             {job.skills.slice(0, 2).map((item, index) => (
@@ -131,7 +130,7 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           </div>
         </div>
 
-        <DescriptionSplit content={job?.description}/>
+        <DescriptionsContent maxLines={3} content={job?.description} />
 
         <div className="border-t-[1px] border-slate-300 my-[20px]"></div>
 
@@ -141,12 +140,12 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
             <img width={4} height={4} src={DOT} />
             <h3 className="text-[#6B6B6B]">{job.applicant_count} Applicants</h3>
           </div>
-          {job?.is_expired 
+          {job?.is_expired
             ? null
             : job.is_applied && <h3 className="text-[#0481EF]">Applied</h3>
           }
         </div>
-        
+
         {/* Absolutely positioned Expired text */}
         {job?.is_expired && (
           <h3 className="text-red-500 absolute bottom-6 right-6 bg-white px-2 py-1 rounded opacity-100">

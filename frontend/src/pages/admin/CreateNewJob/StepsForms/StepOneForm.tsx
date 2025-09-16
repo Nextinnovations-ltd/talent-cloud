@@ -5,10 +5,10 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import { useFormattedSpecialization } from "@/lib/dropData.tsx/ReturnSpecialization";
 import { useFormattedRolesBySpecializationList } from "@/lib/dropData.tsx/ReturnRoleOptionsBySpecialization";
 import { JOB_TYPE_DATA, WORK_TYPE_DATA } from "@/constants/workTypeConstants";
-import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { UseFormReturn, useWatch } from "react-hook-form";
 
 import { useEffect, useRef } from "react";
+import TextAreaFieldEditor from "@/components/common/form/fields/text-area-field-editor";
 
 type StepOneFormProps = {
   formMethods: UseFormReturn<any>;
@@ -38,7 +38,7 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
 
   const firstRender = useRef(true);
   const prevSpecializationId = useRef<number | string | null>(null);
-  
+
   useEffect(() => {
     // Skip on first render
     if (firstRender.current) {
@@ -47,17 +47,17 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
       return;
     }
 
-  
+
     // Only proceed if role data has loaded
     if (!isSuccessRole || !ROLEDATA.length) return;
 
 
 
-  
+
     // Only reset role if specialization has changed
     if (prevSpecializationId.current !== selectedSpecializationId) {
       prevSpecializationId.current = selectedSpecializationId;
-  
+
       const isValidRole = ROLEDATA.some(role => role.value === selectedRole);
 
       if (!isValidRole) {
@@ -65,10 +65,10 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
       }
     }
   }, [selectedSpecializationId, ROLEDATA, isSuccessRole]);
-  
-  
-  
-  
+
+
+
+
 
 
   return (
@@ -165,7 +165,15 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
             maxLength={100}
             showLetterCount
           />
-          <TextAreaField
+
+          <TextAreaFieldEditor
+            name="description"
+            lableName="Description"
+            maxLength={800}
+            isError={!!formMethods.formState.errors.description}
+          />
+
+          {/* <TextAreaField
             disabled={false}
             fieldName="description"
             placeholder="Describe the role, responsibilities and what make this opportunity exciting..."
@@ -178,7 +186,7 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
             fieldWidth="w-full mt-[50px]"
             showLetterCount
             maxLength={800}
-          />
+          /> */}
         </form>
       </Form>
     </div>

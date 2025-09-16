@@ -10,7 +10,7 @@
     display: flex;
     gap: 8px;
     padding: 6px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #e5e7eb;
     border-radius: 8px;
     background: #fafafa;
     flex-wrap: wrap;
