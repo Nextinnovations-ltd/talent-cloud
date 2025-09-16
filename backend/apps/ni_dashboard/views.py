@@ -1,4 +1,3 @@
-from unittest import result
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +8,7 @@ from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
 from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer
 from apps.job_posting.models import StatusChoices
+from apps.ni_dashboard.applicant_filter import ApplicantOrderingFilter
 from utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
@@ -94,6 +94,10 @@ class NIApplicantListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = ApplicantDashboardSerializer
+     # filter_backends = [OrderingFilter]
+     filter_backends = [ApplicantOrderingFilter]
+     ordering_fields = ['created_at', 'experience_years', 'open_to_work']
+     ordering = ['-created_at']
      
      def get_queryset(self):
           company = SharedDashboardService.get_company(self.request.user)
