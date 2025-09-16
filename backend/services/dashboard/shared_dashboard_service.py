@@ -139,7 +139,7 @@ class SharedDashboardService:
                'job_post__posted_by', 
                'job_seeker__user', 
                'job_seeker__occupation',
-               'job_seeker__occupation__role'
+               'job_seeker__occupation__role',
           ).only(
                'created_at',
                'job_post__id',
@@ -147,6 +147,7 @@ class SharedDashboardService:
                'job_seeker__user__id',
                'job_seeker__user__name',
                'job_seeker__user__profile_image_url',
+               'job_seeker__occupation__experience_years',
                'job_seeker__occupation__role__name'
           ).order_by('-created_at')
      

@@ -42,8 +42,9 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      phone_number = serializers.SerializerMethodField()
      email = serializers.CharField(source='job_seeker.email')
      role = serializers.SerializerMethodField()
-     is_open_to_work = serializers.BooleanField(source='job_seeker.is_open_to_work')
      address = serializers.SerializerMethodField()
+     experience_years = serializers.SerializerMethodField()
+     is_open_to_work = serializers.BooleanField(source='job_seeker.is_open_to_work')
      applied_date = serializers.DateTimeField(source='created_at', read_only=True)
      profile_image_url = serializers.SerializerMethodField()
      resume_url = serializers.SerializerMethodField()
@@ -60,11 +61,12 @@ class ApplicantDashboardSerializer(serializers.Serializer):
                'phone_number',
                'email',
                'role',
-               'is_open_to_work',
                'address',
+               'experience_years',
+               'is_open_to_work',
                'applied_date',
                'profile_image_url',
-               'resume_url'
+               'resume_url',
                'cover_letter_url'
           ]
      
@@ -80,6 +82,11 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           job_seeker: JobSeeker = obj.job_seeker
           occupation = getattr(job_seeker, 'occupation', None)
           return getattr(occupation.role, 'name', None) if occupation and occupation.role else None
+     
+     def get_experience_years(self, obj: JobApplication):
+          job_seeker: JobSeeker = obj.job_seeker
+          occupation = getattr(job_seeker, 'occupation', None)
+          return occupation.experience_years
           
      def get_address(self, obj: JobApplication):
           return obj.job_seeker.get_address
