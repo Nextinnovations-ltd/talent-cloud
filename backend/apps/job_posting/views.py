@@ -169,7 +169,7 @@ class MatchedJobPostAPIView(CustomListAPIView):
      serializer_class = JobPostListSerializer
      filter_backends = [DjangoFilterBackend, SearchFilter]
      filterset_class = JobPostFilter
-     search_fields = [ 'title', 'description', 'location' ] 
+     search_fields = [ 'title', 'description', 'location' ]
      
      def get_queryset(self):
           try:
