@@ -9,6 +9,14 @@ export const StepTwoFormYupSchema = yup.object({
 
 const AllCandidates = () => {
     const [sortBy, setSortBy] = useState("-created_at");
+    // const [filters,setFilters] = useState({
+
+    // })
+    // const {data} = useGetJobSeekerCandidatesQuery({
+
+    // });
+
+
 
 
     return (

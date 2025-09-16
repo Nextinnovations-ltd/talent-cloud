@@ -5,18 +5,12 @@ import { JOBDETAILTYPES } from '@/types/job-apply';
 import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-
-
-
-
 interface CompanyAbout {
   job: JOBDETAILTYPES;
 }
 
 
 export const CompanyAbout: React.FC<CompanyAbout> = ({ job }) => (
-
-  
 
   <>
     <div className='mb-[30px] border-2 p-[20px] rounded-[20px] mt-[30px]'>
