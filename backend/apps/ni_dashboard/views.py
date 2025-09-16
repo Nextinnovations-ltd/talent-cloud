@@ -15,6 +15,7 @@ from core.constants.constants import PARENT_COMPANY, ROLES
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import IsSuperadminForJobPost, TalentCloudSuperAdminPermission
 from services.dashboard.ni_dashboard_service import NIDashboardService
+from rest_framework.filters import SearchFilter
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 import logging
@@ -94,8 +95,8 @@ class NIApplicantListAPIView(CustomListAPIView):
      authentication_classes = [TokenAuthentication]
      permission_classes = [TalentCloudSuperAdminPermission]
      serializer_class = ApplicantDashboardSerializer
-     # filter_backends = [OrderingFilter]
-     filter_backends = [ApplicantOrderingFilter]
+     filter_backends = [ApplicantOrderingFilter, SearchFilter]
+     search_fields = [ 'job_seeker__name', 'job_seeker__email', 'job_seeker__occupation__role__name']
      ordering_fields = ['created_at', 'experience_years', 'open_to_work']
      ordering = ['-created_at']
      
