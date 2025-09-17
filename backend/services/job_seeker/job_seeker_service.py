@@ -25,6 +25,19 @@ class JobSeekerService:
           return None
 
      @staticmethod
+     def get_job_seeker_experience_year(job_seeker=None):
+          """
+          Retrieves the job seeker experience year from occupation model
+          """
+          if not job_seeker:
+               return 0
+          
+          if hasattr(job_seeker, 'occupation'):
+               return job_seeker.occupation.experience_years
+          return 0
+
+     
+     @staticmethod
      def get_job_seeker_resume_info(user):
           """
           Retrieves the job seeker resume url and uploaded time.
