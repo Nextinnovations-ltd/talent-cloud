@@ -100,6 +100,45 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      def get_cover_letter_url(self, obj: JobApplication):
           return S3Service.get_public_url(obj.cover_letter_url)
 
+
+# Job Seeker Serializers
+
+class JobSeekerListDashboardSerializer(serializers.ModelSerializer):
+     phone_number = serializers.SerializerMethodField()
+     role = serializers.SerializerMethodField()
+     experience_years = serializers.SerializerMethodField()
+     profile_image_url = serializers.SerializerMethodField()
+     resume_url = serializers.SerializerMethodField()
+     
+     class Meta:
+          model = JobSeeker
+          fields = [
+               'id',
+               'name',
+               'email',
+               'phone_number',
+               'role',
+               'experience_years',
+               'is_open_to_work',
+               'profile_image_url',
+               'resume_url',
+          ]
+     
+     def get_phone_number(self, obj: JobSeeker):
+          return obj.get_phone_number
+     
+     def get_role(self, obj: JobSeeker):
+          return obj.get_role
+     
+     def get_experience_years(self, obj: JobSeeker):
+          return obj.get_experience_year
+     
+     def get_profile_image_url(self, obj: JobSeeker):
+          return obj.profile_image_url_link
+     
+     def get_resume_url(self, obj: JobSeeker):
+          return obj.resume_url_link
+
 class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      profile_image_url = serializers.SerializerMethodField()
      resume_url = serializers.SerializerMethodField()
@@ -156,10 +195,16 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      def get_resume_url(self, obj:JobSeeker):
           application = self.get_application(obj)
           
+          if not application:
+               return obj.resume_url_link
+          
           return application.resume_url_link
 
      def get_cover_letter_url(self, obj: JobSeeker):
           application = self.get_application(obj)
+          
+          if not application:
+               return None
           
           return application.cover_letter_url_link
 

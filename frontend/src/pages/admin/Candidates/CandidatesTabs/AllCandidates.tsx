@@ -9,45 +9,46 @@ import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 import Pagination from "@/components/common/Pagination";
 import { Applicant } from "@/types/admin-auth-slice";
 
-
 export const StepTwoFormYupSchema = yup.object({
     description: yup.string().required("description is required"),
 });
 
-const AllCandidates = () => {
+type AllCandidatesProps = {
+    setTotalApplicants: React.Dispatch<React.SetStateAction<number | undefined>>;
+}
+
+const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState("-created_at");
-    const [applicantPage, setApplicantPage] = useState(1);
 
-    const { data, isFetching } = useGetJobSeekerCandidatesQuery({
-        page, ordering: sortBy, search: search
-    }, { refetchOnMountOrArgChange: true });
+    const { data, isFetching } = useGetJobSeekerCandidatesQuery(
+        { page, ordering: sortBy, search },
+        { refetchOnMountOrArgChange: true }
+    );
 
-
-    // Reset to page 1 when sorting changes
+    // Reset to page 1 when sorting or search changes
     useEffect(() => {
         setPage(1);
-    }, [sortBy]);
-
-
-
+    }, [sortBy, search]);
 
     const CANDIDATES = data?.data;
 
     const handleNextPage = () => {
         if (CANDIDATES?.next) {
-            setApplicantPage(applicantPage + 1);
+            setPage((prev) => prev + 1);
         }
     };
 
     const handlePrevPage = () => {
-        if (CANDIDATES?.previous) {
-            setApplicantPage(applicantPage - 1);
+        if (CANDIDATES?.previous && page > 1) {
+            setPage((prev) => prev - 1);
         }
     };
 
-
+    useEffect(()=>{
+        setTotalApplicants(CANDIDATES?.count  || 0)
+    },[CANDIDATES]);
 
     return (
         <div>
@@ -55,37 +56,39 @@ const AllCandidates = () => {
                 setSearch={setSearch}
                 search={search}
                 setSortBy={setSortBy}
-                sortBy={sortBy} />
+                sortBy={sortBy}
+            />
 
-            {
-                !CANDIDATES?.results.length && <div className="py-8 mt-[50px] text-center text-gray-500">
+            {!CANDIDATES?.results?.length && (
+                <div className="py-8 mt-[50px] text-center text-gray-500">
                     <CommonError image={EMPTY} title="No one has applied yet" description="" />
                 </div>
-            }
+            )}
 
             <table className="w-full table-fixed mt-[50px] text-left border-collapse">
                 <tbody>
-
-                    {CANDIDATES?.results.map((applicant:Applicant,index) => (
+                    {CANDIDATES?.results?.map((applicant: Applicant, index: number) => (
                         <ApplicantsJobItems
-                            isShortList={false}
+                            isShortList={true}
                             key={index}
                             data={applicant}
+                            isDownLoadCover={false}
                         />
                     ))}
                 </tbody>
             </table>
+
             <Pagination
                 handlePrevPage={handlePrevPage}
                 handleNextPage={handleNextPage}
-                page={applicantPage}
+                page={page}
                 totalPages={Math.ceil((CANDIDATES?.count ?? 0) / 15)}
                 isPreviousDisabled={!CANDIDATES?.previous}
                 isNextDisabled={!CANDIDATES?.next}
                 isFetching={isFetching}
             />
         </div>
-    )
-}
+    );
+};
 
 export default AllCandidates;

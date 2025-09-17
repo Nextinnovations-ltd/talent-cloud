@@ -225,6 +225,11 @@ class NIDashboardService:
                raise ValidationError("Failed to retrieve admin list")
 
      @staticmethod
+     def get_registered_job_seeker_list():
+          qs = JobSeeker.objects.filter(status=True).order_by('-created_at')
+          return  qs
+
+     @staticmethod
      def get_job_seeker_statistics_by_occupation_role():
           """
           Generate statistics about job seeker counts based on top six occupation roles
@@ -291,6 +296,7 @@ class NIDashboardService:
                logger.error(f"Error in get_job_seeker_statistics_by_occupation_role: {str(e)}", exc_info=True)
                raise ValidationError("Failed to generate occupation role statistics")
      
+     @staticmethod
      def _get_user_status(user):
           """
           Helper method to determine user status consistently

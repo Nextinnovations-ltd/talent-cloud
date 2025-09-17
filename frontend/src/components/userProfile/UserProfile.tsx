@@ -136,7 +136,10 @@ export const UserProfile = () => {
           //@ts-expect-error
           variants={itemVariants}
         >
+           {isProfileLoading ? <div className="w-[118px] h-[48px] rounded bg-gray-200 animate-pulse" /> : <ResumeIconButton />}
           {isProfileLoading ? <div className="w-[118px] h-[48px] rounded bg-gray-200 animate-pulse" /> : <IconButton />}
+         
+
         </motion.div>
       </motion.div>
 
@@ -326,6 +329,21 @@ const IconButton = () => {
          <img src={EDITPEN} />
         Edit
        
+      </motion.button>
+    </Link>
+  )
+}
+
+const ResumeIconButton = () => {
+  return (
+    <Link to={'/user/resume'}>
+      <motion.button
+        className='w-[118px] h-[48px] bg-[#ffffff] border drop-shadow flex items-center justify-center gap-[12px] rounded-[8px] text-[16px] font-[600] text-black z-40'
+        whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(3, 137, 255, 0.3)" }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      >
+         Resume
       </motion.button>
     </Link>
   )

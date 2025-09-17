@@ -1,42 +1,191 @@
-import django_filters
-from django.db.models import Q
-from datetime import datetime, timedelta
-from .models import JobPost, JobType, ProjectDurationType, WorkType
+import logging
+from rest_framework.filters import OrderingFilter
+from django.db.models import Case, When, IntegerField, F, FloatField
 
-class DashboardJobPostFilter(django_filters.FilterSet):
-     title = django_filters.CharFilter(lookup_expr='icontains')
-     description = django_filters.CharFilter(lookup_expr='icontains')
-     location = django_filters.CharFilter(lookup_expr='icontains')
-     specialization = django_filters.NumberFilter(field_name='specialization_id')
-     role = django_filters.NumberFilter(field_name='role_id')
-     experience_level = django_filters.NumberFilter(field_name='experience_level_id')
-     job_type = django_filters.ChoiceFilter(choices=JobType.choices)
-     work_type = django_filters.ChoiceFilter(choices=WorkType.choices)
-     project_duration = django_filters.ChoiceFilter(choices=ProjectDurationType.choices)
-     salary_rate = django_filters.CharFilter(method='filter_salary_range')
-     experience_year = django_filters.CharFilter(method='filter_experience_year')
-     list_by_any_time = django_filters.CharFilter(method='filter_posted_time')
-     company_size = django_filters.CharFilter(method='filter_company_size')
-     
-     class Meta:
-          model = JobPost
-          fields = [
-               'title', 'description', 'location',
-               'specialization', 'role', 'experience_level', 
-               'job_type', 'work_type', 'is_salary_negotiable',
-               'project_duration'
-          ]
-     
-     def filter_posted_time(self, queryset, name, value):
-          print(f"Filtering filter_posted_time with value: {value}")
-          now = datetime.now()
-          mapping = {
-               '24h': now - timedelta(hours=24),
-               '7d': now - timedelta(days=7),
-               '30d': now - timedelta(days=30)
-          }
-          filter_date = mapping.get(value)
-          if not filter_date:
-               return queryset.none()
+logger = logging.getLogger(__name__)
 
-          return queryset.filter(created_at__gte=filter_date)
+class ApplicantOrderingFilter(OrderingFilter):
+     """
+     Custom ordering filter that handles experience_years and open_to_work sorting
+     """
+     
+     def filter_queryset(self, request, queryset, view):
+          ordering = self.get_ordering(request, queryset, view)
+          
+          if ordering:
+               custom_ordering = []
+               
+               for order_field in ordering:
+                    field_name = order_field.lstrip('-')
+                    
+                    if field_name == 'experience_years':
+                         queryset = self._ensure_experience_annotation(queryset)
+                         custom_ordering.append(order_field)
+                    elif field_name == 'open_to_work':
+                         queryset = self._ensure_open_to_work_annotation(queryset)
+                         custom_ordering.append(order_field.replace('open_to_work', 'open_to_work_sort'))
+                    else:
+                         custom_ordering.append(order_field)
+               
+               if custom_ordering:
+                    queryset = queryset.order_by(*custom_ordering)
+          
+          return queryset
+     
+     def _ensure_experience_annotation(self, queryset):
+          """Add experience_years annotation using occupation experience_years"""
+          if not self._has_annotation(queryset, 'experience_years'):
+               logger.debug("Adding experience_years annotation from occupation")
+               return self._add_experience_annotation(queryset)
+          else:
+               logger.debug("experience_years annotation already exists")
+               return queryset
+     
+     def _ensure_open_to_work_annotation(self, queryset):
+          """Ensure open_to_work_sort annotation exists"""
+          if not self._has_annotation(queryset, 'open_to_work_sort'):
+               logger.debug("Adding open_to_work_sort annotation")
+               return self._add_open_to_work_annotation(queryset)
+          else:
+               logger.debug("open_to_work_sort annotation already exists")
+               return queryset
+     
+     def _add_experience_annotation(self, queryset):
+          """
+          Add experience years annotation using the existing occupation experience_years field
+          This is much simpler and more efficient than calculating from experiences
+          """
+          try:
+               return queryset.annotate(
+                    experience_years=Case(
+                         When(
+                         job_seeker__occupation__experience_years__isnull=False,
+                         then=F('job_seeker__occupation__experience_years')
+                         ),
+                         default=0,
+                         output_field=FloatField()
+                    )
+               )
+          except Exception as e:
+               logger.error(f"Error adding experience annotation: {str(e)}")
+               return queryset
+     
+     def _add_open_to_work_annotation(self, queryset):
+          """Add open_to_work annotation"""
+          try:
+               return queryset.annotate(
+                    open_to_work_sort=Case(
+                         When(job_seeker__is_open_to_work=True, then=1),
+                         When(job_seeker__is_open_to_work=False, then=0),
+                         default=0,
+                         output_field=IntegerField()
+                    )
+               )
+          except Exception as e:
+               logger.error(f"Error adding open_to_work annotation: {str(e)}")
+               return queryset
+     
+     def _has_annotation(self, queryset, annotation_name):
+          """Check if queryset already has a specific annotation"""
+          try:
+               if (hasattr(queryset, 'query') and 
+                    hasattr(queryset.query, 'annotations') and 
+                    annotation_name in queryset.query.annotations):
+                    return True
+               return False
+          except (AttributeError, TypeError):
+               return False
+          
+class JobSeekerOrderingFilter(OrderingFilter):
+     """
+     Custom ordering filter that handles experience_years and open_to_work sorting
+     """
+     
+     def filter_queryset(self, request, queryset, view):
+          ordering = self.get_ordering(request, queryset, view)
+          
+          if ordering:
+               custom_ordering = []
+               
+               for order_field in ordering:
+                    field_name = order_field.lstrip('-')
+                    
+                    if field_name == 'experience_years':
+                         queryset = self._ensure_experience_annotation(queryset)
+                         custom_ordering.append(order_field)
+                    elif field_name == 'open_to_work':
+                         queryset = self._ensure_open_to_work_annotation(queryset)
+                         custom_ordering.append(order_field.replace('open_to_work', 'open_to_work_sort'))
+                    else:
+                         custom_ordering.append(order_field)
+               
+               if custom_ordering:
+                    queryset = queryset.order_by(*custom_ordering)
+          
+          return queryset
+     
+     def _ensure_experience_annotation(self, queryset):
+          """Add experience_years annotation using occupation experience_years"""
+          if not self._has_annotation(queryset, 'experience_years'):
+               logger.debug("Adding experience_years annotation from occupation")
+               return self._add_experience_annotation(queryset)
+          else:
+               logger.debug("experience_years annotation already exists")
+               return queryset
+     
+     def _ensure_open_to_work_annotation(self, queryset):
+          """Ensure open_to_work_sort annotation exists"""
+          if not self._has_annotation(queryset, 'open_to_work_sort'):
+               logger.debug("Adding open_to_work_sort annotation")
+               return self._add_open_to_work_annotation(queryset)
+          else:
+               logger.debug("open_to_work_sort annotation already exists")
+               return queryset
+     
+     def _add_experience_annotation(self, queryset):
+          """
+          Add experience years annotation using the existing occupation experience_years field
+          This is much simpler and more efficient than calculating from experiences
+          """
+          try:
+               return queryset.annotate(
+                    experience_years=Case(
+                         When(
+                         occupation__experience_years__isnull=False,
+                         then=F('occupation__experience_years')
+                         ),
+                         default=0,
+                         output_field=FloatField()
+                    )
+               )
+          except Exception as e:
+               logger.error(f"Error adding experience annotation: {str(e)}")
+               return queryset
+     
+     def _add_open_to_work_annotation(self, queryset):
+          """Add open_to_work annotation"""
+          try:
+               return queryset.annotate(
+                    open_to_work_sort=Case(
+                         When(is_open_to_work=True, then=1),
+                         When(is_open_to_work=False, then=0),
+                         default=0,
+                         output_field=IntegerField()
+                    )
+               )
+          except Exception as e:
+               logger.error(f"Error adding open_to_work annotation: {str(e)}")
+               return queryset
+     
+     def _has_annotation(self, queryset, annotation_name):
+          """Check if queryset already has a specific annotation"""
+          try:
+               if (hasattr(queryset, 'query') and 
+                    hasattr(queryset.query, 'annotations') and 
+                    annotation_name in queryset.query.annotations):
+                    return True
+               return False
+          except (AttributeError, TypeError):
+               return False
+          
+          

@@ -15,10 +15,10 @@ type applyJobUploadResumeProps = {
     type: "profile" | "resume" | "coverLetter",
     setFileData?: Dispatch<SetStateAction<any>>,
     coverError?: boolean,
-    setResumeUploadId?: (id:string | undefined)=> void
+    setResumeUploadId?: (id: string | undefined) => void
 }
 
-const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFileData, coverError,setResumeUploadId }) => {
+const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFileData, coverError, setResumeUploadId }) => {
     const [error, setError] = useState<string>("");
     const [rejections, setRejections] = useState<FileRejection[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -64,12 +64,12 @@ const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFi
 
     useEffect(() => {
         if (file) {
-          const url = URL.createObjectURL(file);
-          setPreviewUrl(url);
-          return () => URL.revokeObjectURL(url);
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+            return () => URL.revokeObjectURL(url);
         }
         setPreviewUrl(null);
-      }, [file]);
+    }, [file]);
 
 
 
@@ -96,16 +96,16 @@ const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFi
             try {
                 // call your UploadToS3 helper — adjust return handling if it returns more data
                 const result = await UploadToS3({ file, type: type, postId: id });
-                
+
 
                 if (result) {
                     //@ts-ignore
                     setUploadData(file);
-                    if(typeof result === "string" ){
-                        if(setResumeUploadId){
+                    if (typeof result === "string") {
+                        if (setResumeUploadId) {
                             setResumeUploadId(result)
                         }
-                       
+
                     }
                 }
 
@@ -153,22 +153,22 @@ const ApplyJobUploadResume: React.FC<applyJobUploadResumeProps> = ({ type, setFi
                         {file.name}
                     </div>
                     {previewUrl && (
-                <Button
-                  type="button"
-                  onClick={() => window.open(previewUrl, "_blank")}
-                  className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
-                >
-                  <SvgEye />
-                </Button>
-              )}
+                        <Button
+                            type="button"
+                            onClick={() => window.open(previewUrl, "_blank")}
+                            className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
+                        >
+                            <SvgEye />
+                        </Button>
+                    )}
 
                     <Button
                         type="button"
                         onClick={() => {
                             setUploadData(null)
-                           if(setResumeUploadId){
-                            setResumeUploadId(undefined)
-                           }
+                            if (setResumeUploadId) {
+                                setResumeUploadId(undefined)
+                            }
                         }}
                         className="w-[48px] hover:bg-gray-300 flex items-center justify-center h-[48px] rounded-full bg-gray-200"
                     >
