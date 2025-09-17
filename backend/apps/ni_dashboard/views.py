@@ -6,9 +6,9 @@ from rest_framework.exceptions import NotFound, ValidationError
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
-from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer
+from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer, JobSeekerListDashboardSerializer
 from apps.job_posting.models import StatusChoices
-from apps.ni_dashboard.applicant_filter import ApplicantOrderingFilter
+from apps.ni_dashboard.filters import ApplicantOrderingFilter, JobSeekerOrderingFilter
 from utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
@@ -86,6 +86,26 @@ class JobSeekerRoleStatisticsAPIView(APIView):
           result = NIDashboardService.get_job_seeker_statistics_by_occupation_role()
           
           return Response(CustomResponse.success(result['message'], result['data']), status=status.HTTP_200_OK)
+
+
+# region All Job Seeker List
+
+
+@extend_schema(tags=["NI Dashboard"])
+class NIRegisteredJobSeekerListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = JobSeekerListDashboardSerializer
+     filter_backends = [JobSeekerOrderingFilter, SearchFilter]
+     search_fields = [ 'name', 'email', 'occupation__role__name']
+     ordering_fields = ['created_at', 'experience_years', 'open_to_work']
+     ordering = ['-created_at']
+     
+     def get_queryset(self):
+          return NIDashboardService.get_registered_job_seeker_list()
+
+
+# endregion All Job Seeker List
 
 
 # region Applicant
