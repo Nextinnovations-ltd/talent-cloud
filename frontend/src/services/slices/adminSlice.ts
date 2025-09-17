@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCandidatesResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
 
-interface JobApplyCardParams {
-    search?:string;
-  }
-  
+
 
 export const extendedAdminSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -98,19 +95,11 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         getJobSeekerDetailCertification: builder.query<JobSeekerCertificationDetail, { id: string | number }>({
             query: ({ id }) => `/dashboard/ni/job-seekers/${id}/certifications/`
         }),
-        getJobSeekerCandidates: builder.query<unknown, JobApplyCardParams>({
-            query: (params) => {
-                const filterParams = Object.fromEntries(
-                    Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== "")
-                );
-
-                return {
-                    url: '/dashboard/ni/applicants/',
-                    params: filterParams,
-                }
-            }
+        getJobSeekerCandidates: builder.query<JobSeekerCandidatesResponse, {page:string | number, ordering?: string, search?:string}>({
+            query:(data)=> `/dashboard/ni/applicants/?search=${data?.search}&page=${data?.page}&ordering=${data?.ordering}`
         })
     })
 });
+
 
 export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery } = extendedAdminSlice

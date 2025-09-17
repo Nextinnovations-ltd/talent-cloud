@@ -248,3 +248,27 @@ export type JobSeekerCertificationDetail = {
   message: string;
   data: Certifications[]
 }
+
+export type CandidatesResponse = {
+  address: string,
+  applicant_id: number,
+  application_id: number,
+  application_status: string,
+  applied_date: string,
+  cover_letter_url: string,
+  email: string,
+  experience_years: number,
+  is_open_to_work: boolean,
+  job_post_id: number,
+  name: string,
+  phone_number: string,
+  profile_image_url: string,
+  resume_url: string,
+  role: string,
+}
+
+export type JobSeekerCandidatesResponse = {
+  status: boolean;
+  message: string;
+  data:PaginatedData<Applicant>
+}
