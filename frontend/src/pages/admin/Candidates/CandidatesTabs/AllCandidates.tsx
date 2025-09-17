@@ -27,6 +27,7 @@ const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
         { refetchOnMountOrArgChange: true }
     );
 
+
     // Reset to page 1 when sorting or search changes
     useEffect(() => {
         setPage(1);
