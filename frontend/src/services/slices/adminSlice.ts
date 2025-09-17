@@ -96,10 +96,11 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
             query: ({ id }) => `/dashboard/ni/job-seekers/${id}/certifications/`
         }),
         getJobSeekerCandidates: builder.query<JobSeekerCandidatesResponse, {page:string | number, ordering?: string, search?:string}>({
-            query:(data)=> `/dashboard/ni/applicants/?search=${data?.search}&page=${data?.page}&ordering=${data?.ordering}`
+            query:(data)=> `/dashboard/ni/job-seekers/all/?search=${data?.search}&page=${data?.page}&ordering=${data?.ordering}`
         })
     })
 });
+
 
 
 export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery } = extendedAdminSlice

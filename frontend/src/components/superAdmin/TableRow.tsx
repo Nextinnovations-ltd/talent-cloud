@@ -20,10 +20,12 @@ import clsx from 'clsx';
 
 interface ApplicantsJobItemsProps {
   data: Applicant;
-  isShortList: boolean
+  isShortList: boolean;
+  isDownLoadCover?:boolean;
+
 }
 
-const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsProps) => {
+const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }: ApplicantsJobItemsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
   const { showNotification } = useToast();
@@ -233,13 +235,16 @@ const ApplicantsJobItems = ({ data, isShortList = false }: ApplicantsJobItemsPro
               >
                 View user profile
               </DropdownMenuItem>
-              <DropdownMenuItem
+              {
+                isDownLoadCover && <DropdownMenuItem
                 disabled={!data?.cover_letter_url}
                 onSelect={handleDownLoadCover}
                 className={clsx(' focus:bg-gray-100', data?.cover_letter_url ? 'cursor-pointer' : 'cursor-not-allowed' )}
               >
                 Download Cover Letter
               </DropdownMenuItem>
+              }
+              
             
             </DropdownMenuContent>
           </DropdownMenu>
