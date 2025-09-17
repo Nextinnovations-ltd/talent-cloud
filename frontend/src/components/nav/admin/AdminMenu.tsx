@@ -25,7 +25,7 @@ const AdminMenu = () => {
                  <AdminMenuItems
                     targetPath="/admin/dashboard/candidates"
                     icon={<Users />}
-                    text="Candidates"
+                    text="Jobseekers"
                 /> 
             </div>
         </div>

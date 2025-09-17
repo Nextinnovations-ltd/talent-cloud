@@ -60,7 +60,8 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
 
   const handleUserDetail = () => {
     // Implement view profile logic
-    navigate(`/admin/dashboard/candiates/profile/${data.applicant_id}?application_id=${data.application_id}`)
+    //@ts-ignore
+    navigate(`/admin/dashboard/candiates/profile/${data.applicant_id || data?.id}?application_id=${data.application_id || data?.id}`)
   };
 
   const handleDownLoadCover = async()=> {
