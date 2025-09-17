@@ -44,6 +44,17 @@ class JobSeeker(TalentCloudUser):
           from services.job_seeker.job_seeker_service import JobSeekerService
           return JobSeekerService.get_latest_job_applications(self)
 
+     @property
+     def get_role(self):
+          occupation = getattr(self, 'occupation', None)
+          return getattr(occupation.role, 'name', None) if occupation and occupation.role else None
+
+     @property
+     def get_experience_year(self):
+          """Get Job Seeker Experience Year"""
+          from services.job_seeker.job_seeker_service import JobSeekerService
+          return JobSeekerService.get_job_seeker_experience_year(self)
+     
 class University(TimeStampModel):
      """
      University/Institution model for job seeker education
