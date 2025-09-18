@@ -9,6 +9,7 @@ export type ReconnectingSocket = {
   onMessage: (listener: Listener) => void;
   onOpen: (listener: () => void) => void;
   onClose: (listener: (ev?: CloseEvent | undefined) => void) => void;
+  clearListeners: () => void;
 };
 
 type Options = {
@@ -29,6 +30,7 @@ export function createReconnectingWebSocket({
   let heartbeatTimer: number | null = null;
   let reconnectTimer: number | null = null;
   let manuallyClosed = false;
+  let isConnecting = false;
 
   const openListeners: Array<() => void> = [];
   const closeListeners: Array<(ev?: CloseEvent) => void> = [];
@@ -66,11 +68,16 @@ export function createReconnectingWebSocket({
   };
 
   const connect = () => {
+    if (isConnecting || manuallyClosed) return;
+    
+    isConnecting = true;
+    
     try {
       const url = makeUrl();
       socket = new WebSocket(url);
 
       socket.onopen = () => {
+        isConnecting = false;
         backoffMs = initialBackoffMs; // reset backoff on success
         startHeartbeat();
         openListeners.forEach((l) => l());
@@ -81,16 +88,19 @@ export function createReconnectingWebSocket({
       };
 
       socket.onclose = (ev) => {
+        isConnecting = false;
         clearHeartbeat();
         closeListeners.forEach((l) => l(ev));
         scheduleReconnect();
       };
 
       socket.onerror = () => {
+        isConnecting = false;
         // error will usually be followed by close; ensure reconnect
         try { socket?.close(); } catch (_) { /* noop */ }
       };
     } catch (_) {
+      isConnecting = false;
       scheduleReconnect();
     }
   };
@@ -106,17 +116,24 @@ export function createReconnectingWebSocket({
     },
     close: () => {
       manuallyClosed = true;
+      isConnecting = false;
       clearHeartbeat();
       if (reconnectTimer) {
         window.clearTimeout(reconnectTimer);
         reconnectTimer = null;
       }
       try { socket?.close(); } catch (_) { /* noop */ }
+      socket = null;
     },
     isOpen: () => socket?.readyState === WebSocket.OPEN,
     onMessage: (listener: Listener) => { messageListeners.push(listener); },
     onOpen: (listener: () => void) => { openListeners.push(listener); },
     onClose: (listener: (ev?: CloseEvent) => void) => { closeListeners.push(listener); },
+    clearListeners: () => {
+      messageListeners.length = 0;
+      openListeners.length = 0;
+      closeListeners.length = 0;
+    },
   };
 }
 

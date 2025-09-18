@@ -34,10 +34,8 @@ const AdminLayout = () => {
 
   // Stable refetch handler
   const handleRefetch = useCallback(() => {
-    setTimeout(() => {
-      refetch();
-      refetchIsRead();
-    }, 500);
+    refetch();
+    refetchIsRead();
   }, [refetch, refetchIsRead]);
 
   useEffect(() => {
@@ -46,6 +44,13 @@ const AdminLayout = () => {
     // Request notification permission once
     if (Notification.permission !== "granted") {
       Notification.requestPermission();
+    }
+
+    // Clean up existing socket connection before creating a new one
+    if (socketRef.current) {
+      socketRef.current.clearListeners();
+      socketRef.current.close();
+      socketRef.current = null;
     }
 
     const socket = createReconnectingWebSocket({
@@ -74,7 +79,7 @@ const AdminLayout = () => {
             type: "success",
           });
 
-          // Trigger refetch
+          // Trigger immediate refetch
           handleRefetch();
 
           // Browser notification
@@ -96,9 +101,13 @@ const AdminLayout = () => {
 
     // Cleanup on unmount or token change
     return () => {
-      socket.close();
+      if (socketRef.current) {
+        socketRef.current.clearListeners();
+        socketRef.current.close();
+        socketRef.current = null;
+      }
     };
-  }, [token, handleRefetch, showNotification]);
+  }, [token]); // Only depend on token to prevent unnecessary reconnections
 
   return (
     <div>

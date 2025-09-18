@@ -1,154 +1,132 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavBar } from "@/components/nav/NavBar";
 import { Outlet, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import useToast from "@/hooks/use-toast";
-import {
-  useGetJobSeekerNotificationsQuery,
-  useGetUnReadNotificationsCountQuery,
-} from "@/services/slices/notificationSlice";
+import { useGetJobSeekerNotificationsQuery, useGetUnReadNotificationsCountQuery } from "@/services/slices/notificationSlice";
 import PortalCopyRight from "@/components/common/PortalCopyRight";
+import { createReconnectingWebSocket } from "@/lib/reconnectingWebSocket";
 import { CompleteProfileModal } from "@/components/common/CompleteProfileModal";
 
 export const MainLayout = () => {
-  const socketRef = useRef<WebSocket | null>(null);
-  const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const heartbeatTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const refetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isConnectingRef = useRef(false); // ✅ prevents duplicate connections
-
-  const token = useSelector((state: any) => state.auth.token);
+  const socketRef = useRef<ReturnType<typeof createReconnectingWebSocket> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_messages, setMessages] = useState<string[]>([]);
+  const token = useSelector((state: any) => state.auth.token); // Get token from Redux state
   const { showNotification } = useToast();
   const { refetch } = useGetUnReadNotificationsCountQuery();
-  const { refetch: refetchIsRead } = useGetJobSeekerNotificationsQuery({
-    limit: 10,
-    offset: 0,
-  });
+  const { refetch: RefetchIsRead } = useGetJobSeekerNotificationsQuery({ limit: 10, offset: 0 });
   const { pathname } = useLocation();
-  const [isNewUser, setIsNewUser] = useState(false);
+  const [isNewUser,setIsNewUser] = useState(false);
 
-  // Scroll to top on route change
+  // Stable refetch handler
+  const handleRefetch = useCallback(() => {
+    refetch();
+    RefetchIsRead();
+  }, [refetch, RefetchIsRead]);
+
   useEffect(() => {
+    // Scroll to top whenever route changes
     window.scrollTo({ top: 0, behavior: "instant" });
+    // use "smooth" instead of "instant" if you want smooth scrolling
   }, [pathname]);
 
-  // Debounced refetch handler
-  const handleRefetch = useCallback(() => {
-    if (refetchTimeoutRef.current) {
-      clearTimeout(refetchTimeoutRef.current);
+  useEffect(() => {
+    if (!token) return;
+
+    // Request notification permission
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
     }
-    refetchTimeoutRef.current = setTimeout(() => {
-      refetch();
-      refetchIsRead();
-    }, 500);
-  }, [refetch, refetchIsRead]);
 
-  const connectSocket = useCallback(() => {
-    if (!token || isConnectingRef.current) return;
+    const isNewUserFlag = localStorage.getItem('isnew');
+    
+    if (isNewUserFlag === 'isnew') {
+      setIsNewUser(true);
+    }
 
-    isConnectingRef.current = true;
-
-    // Close any existing socket
+    // Clean up existing socket connection before creating a new one
     if (socketRef.current) {
-      socketRef.current.onopen = null;
-      socketRef.current.onmessage = null;
-      socketRef.current.onclose = null;
-      socketRef.current.onerror = null;
+      socketRef.current.clearListeners();
       socketRef.current.close();
+      socketRef.current = null;
     }
 
-    const ws = new WebSocket(`ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`);
-    socketRef.current = ws;
+    socketRef.current = createReconnectingWebSocket({
+      makeUrl: () => `ws://localhost:8000/ws/notifications/?token=${token}`,
+      initialBackoffMs: 1000,
+      maxBackoffMs: 30000,
+      heartbeatMs: 30000,
+    });
 
-    ws.onopen = () => {
-      console.log("✅ WebSocket connected");
-      isConnectingRef.current = false;
+    //staging.talent-cloud.asia
 
-      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
+    socketRef.current.onOpen(() => {
+      console.log('✅ WebSocket connected');
+    });
 
-      // Start heartbeat
-      if (heartbeatTimerRef.current) clearInterval(heartbeatTimerRef.current);
-      heartbeatTimerRef.current = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: "ping" }));
-        }
-      }, 30000);
-    };
-
-    ws.onmessage = (event) => {
+    socketRef.current.onMessage((event) => {
       try {
         const data = JSON.parse(event.data as string);
-        if (data.type === "notification") {
+
+        if (data.type === 'notification') {
+          setMessages((prev) => [...prev, data.message]);
+
+          // Show notification toast
           showNotification({
             message: data.message,
             type: "success",
           });
 
+          // Refetch immediately when notification is received
           handleRefetch();
 
-          if (Notification.permission === "granted") {
-            new Notification("Talent Cloud", {
+          // Show browser notification if permission is granted
+          if (Notification.permission === 'granted') {
+            new Notification('Talent Cloud', {
               body: data.message,
-              icon: "./talent_logo.svg",
+              icon: './talent_logo.svg'
             });
           }
         }
-      } catch (err) {
-        console.error("❌ Failed to parse WebSocket message", err);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
       }
-    };
+    });
 
-    ws.onclose = () => {
-      console.log("❌ WebSocket disconnected. Retrying...");
-      isConnectingRef.current = false;
-      if (heartbeatTimerRef.current) clearInterval(heartbeatTimerRef.current);
-
-      reconnectTimerRef.current = setTimeout(connectSocket, 3000);
-    };
-
-    ws.onerror = (err) => {
-      console.error("⚠️ WebSocket error", err);
-      ws.close();
-    };
-  }, [token, handleRefetch, showNotification]);
-
-  useEffect(() => {
-    if (!token) return;
-
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-
-    if (localStorage.getItem("isnew") === "isnew") {
-      setIsNewUser(true);
-    }
-
-    connectSocket();
+    socketRef.current.onClose(() => {
+      console.log('❌ WebSocket disconnected');
+    });
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.onopen = null;
-        socketRef.current.onmessage = null;
-        socketRef.current.onclose = null;
-        socketRef.current.onerror = null;
+        socketRef.current.clearListeners();
         socketRef.current.close();
+        socketRef.current = null;
       }
-      if (heartbeatTimerRef.current) clearInterval(heartbeatTimerRef.current);
-      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
-      if (refetchTimeoutRef.current) clearTimeout(refetchTimeoutRef.current);
     };
-  }, [token, connectSocket]);
+  }, [token, handleRefetch, showNotification]); // Include all dependencies
 
   return (
     <>
+      {/* <ProtectRoute> */}
       <NavBar />
       <div className="mt-[100px]">
         <Outlet />
       </div>
       <PortalCopyRight />
+      
 
-      <CompleteProfileModal isOpen={isNewUser} onClose={() => setIsNewUser(false)} />
+      <CompleteProfileModal 
+        isOpen={isNewUser} 
+        onClose={() => setIsNewUser(false)} 
+      />
+
+
+
+      {/* <Footer /> */}
+      {/* </ProtectRoute> */}
     </>
   );
 };
