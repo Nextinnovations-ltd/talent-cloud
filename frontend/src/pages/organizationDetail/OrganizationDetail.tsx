@@ -15,11 +15,17 @@ import SHIELD from '@/assets/shield-check.svg';
 import { Skeleton } from "@/components/ui/skeleton";
 import JobCardGrid from "@/components/jobApply/JobCardGrid";
 import { useGetOrganizationDetailQuery } from "@/services/slices/organizationSlice";
-import OFFICEONE from "@/assets/Employee/Rectangle 5668.png";
+import { Link } from "react-router-dom";
 
 const OrganizationDetail = () => {
   const [loading, setLoading] = useState(true);
   const { data: organization, isLoading, isError } = useGetOrganizationDetailQuery('next-innovations');
+
+
+  console.log(organization)
+
+
+
 
   const jobs = organization?.job_posts ?? [];
 
@@ -36,7 +42,7 @@ const OrganizationDetail = () => {
       <>
         <div
       className="w-full pt-[200px] h-[400px] bg-cover bg-center"
-      style={{ backgroundImage: `url(${OFFICEONE})` }}
+      style={{ backgroundImage: `url(${organization?.cover_image_url})` }}
     >
           <div className="bg-white container flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
             <div>
@@ -98,16 +104,16 @@ const OrganizationDetail = () => {
     <>
       <div
       className="w-full pt-[200px] h-[400px] bg-cover bg-center"
-      style={{ backgroundImage: `url(${OFFICEONE})` }}
+      style={{ backgroundImage: `url(${organization?.cover_image_url})` }}
     >
         <div className="bg-white container 2xl:px-[50px] flex gap-[60px] rounded-lg px-[50px] items-center p-[20px] mx-auto w-full drop-shadow-md h-[400px] ">
           <div className="">
-            <img src={organization.image_url} width={160} className="rounded-full"/>
+            <img  src={organization.image_url} width={160} className="rounded-full"/>
             <div className="flex gap-[32px] mt-[48px]">
-              <div className="text-center flex flex-col items-center justify-center">
+              <Link to={organization?.linkedin_url} className="text-center flex flex-col items-center justify-center">
                 <img src={LINKEDIN} width={32}/>
                 <p className="text-[12px] mt-[5px]">LinkedIn</p>
-              </div>
+              </Link>
               <div className="text-center flex flex-col items-center justify-center">
                 <img src={INSTAGRAM} width={32}/>
                 <p className="text-[12px] mt-[5px]">Instagram</p>

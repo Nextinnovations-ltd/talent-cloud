@@ -17,18 +17,18 @@ const CandidateTabs: React.FC<CandidateTabsProps> = ({
         <Tabs value={tabValues} onValueChange={setTabValues} className="w-[400px]">
             <TabsList className="h-[50px]">
                 <TabsTrigger className="px-[24px] py-[10px]" value="all">
-                    All Candidates
+                    All Jobseeker
                 </TabsTrigger>
                 <span className="w-[48px] ml-[8px] h-[48px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">
                     {totalApplicants}
                 </span>
 
-                <TabsTrigger className="px-[24px] ml-[35px] py-[10px]" value="favourite">
+                <TabsTrigger className="px-[24px] ml-[38px] py-[10px]" value="favourite">
                     Favorites
-                    <span className="w-[48px] ml-[8px] h-[48px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">
-                        {favourite}
-                    </span>
                 </TabsTrigger>
+                <span className="w-[48px] ml-[8px] h-[48px] rounded-full bg-[#CAE6FF] flex items-center justify-center text-[#0389FF]">
+                    {favourite}
+                </span>
             </TabsList>
         </Tabs>
     )

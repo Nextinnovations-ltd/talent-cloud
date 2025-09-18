@@ -4,9 +4,12 @@ import AllCandidates from "./CandidatesTabs/AllCandidates";
 import Favourites from "./CandidatesTabs/Favourites";
 
 
+
 const Candidates = () => {
 
   const [tabValues, setTabValues] = useState('all');
+  const [totalApplicant,setTotalApplicants] = useState<number | undefined>(0);
+
 
 
   return (
@@ -20,11 +23,11 @@ const Candidates = () => {
           tabValues={tabValues}
           setTabValues={setTabValues}
           favourite={0}
-          totalApplicants={0}
+          totalApplicants={totalApplicant || 0}
         />
       </div>
       {
-        tabValues === 'all' ? <AllCandidates/>: <Favourites/>
+        tabValues === 'all' ? <AllCandidates setTotalApplicants={setTotalApplicants} />: <Favourites/>
       }
     </div>
   )

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { Job } from './ApplyJobCard';
 import { ScrollArea } from '../ui/scroll-area';
@@ -8,7 +9,7 @@ import { CompanyAbout } from '../common/ApplyJob/CompanyAbout';
 import AboutJob from '../common/ApplyJob/AboutJob';
 import { useGetDetailJobApplyCardQuery } from '@/services/slices/jobApplySlice';
 import { X } from 'lucide-react';
-import DescriptionSplit from '@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionSplit';
+import DescriptionsContent from '@/pages/admin/CreateNewJob/StepsForms/Components/DescriptionsContent';
 
 
 type ApplyJobSideBarProps = {
@@ -59,7 +60,7 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
 
   return (
     <div className="mt-10 lg:mt-0 lg:w-[60%]   rounded sticky top-[190px] h-[100svh]  self-start">
-      <ScrollArea className="h-[calc(100vh-250px)] pb-[500px] p-[30px] ">
+      <ScrollArea className="h-[calc(100vh-200px)] pb-[500px] p-[30px] ">
         <h3 className="text-[24px] mb-[24px] font-semibold">{jobDetails?.title || selectedJob.title}</h3>
 
         {/* <CompanyHeader companyLogo={null} companyName={jobDetails?.company?.name || ''} /> */}
@@ -73,8 +74,9 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
           isBookmarked={jobDetails?.is_bookmarked}
         />
 
-        <DescriptionSplit content={jobDetails?.description || ""} isline={false} />
+        <DescriptionsContent content={jobDetails?.description || ""} />
         {
+          //@ts-ignore
           jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
         }
         <AboutJob

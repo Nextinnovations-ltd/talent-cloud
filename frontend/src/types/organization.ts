@@ -20,5 +20,7 @@ export interface Company {
   job_posts: Job[];
   created_at: string;
   updated_at: string;
+  cover_image_url:string;
+  linkedin_url:string
 }
   

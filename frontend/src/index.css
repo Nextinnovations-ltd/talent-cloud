@@ -342,3 +342,93 @@ backdrop-filter: blur( 4px );
 border-radius: 10px;
 border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
+
+
+
+/* Ordered list items (numbers) */
+ol {
+  padding:0px !important;
+}
+
+li[data-list="ordered"] {
+  list-style-type: decimal !important; /* force numbers */
+  list-style-position: inside !important;
+  padding: 3px 0 !important;
+}
+
+/* Bullet list items */
+li[data-list="bullet"] {
+  list-style-type: disc !important; /* force bullets */
+  list-style-position: inside !important;
+  padding: 3px 0 !important;
+}
+
+/* Style markers for visibility */
+li[data-list="ordered"]::marker,
+li[data-list="bullet"]::marker {
+  font-size: 1em !important;
+}
+
+/* Remove any default counter hack */
+li[data-list]::before {
+  content: none !important;
+}
+
+
+.editor-wrapper {
+  width: 720px;
+  margin: 0px !important;
+}
+
+.ql-custom-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid #6B6B6B !important;
+  border-radius: 12px !important;
+  background: #fafafa;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: none !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+.ql-snow{
+  border:none !important;
+}
+
+.ql-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.ql-btn svg {
+  width: 18px;
+  height: 18px;
+  pointer-events: none; /* ensure click reaches button */
+  color: #374151;
+}
+
+.ql-btn:hover {
+  background: #f3f4f6;
+}
+
+.ql-btn.active,
+.ql-btn.active svg {
+  background: transparent;
+  color: #1d4ed8; /* active tint */
+}
+
+.quill-container .ql-editor {
+  min-height: 220px;
+  max-height: 800px;
+  overflow: auto;
+}
+

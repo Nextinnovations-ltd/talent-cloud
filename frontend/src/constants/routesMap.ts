@@ -105,6 +105,10 @@ const routesMap: RoutesMap = {
   expiredJobDetails:{
     path:"expiredJobDetails/:id",
     name:"expiredJobDetails"
+  },
+  resume:{
+    path:"resume",
+    name:"resume"
   }
 };
 

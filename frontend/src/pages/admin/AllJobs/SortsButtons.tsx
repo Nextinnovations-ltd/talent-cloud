@@ -18,14 +18,17 @@ const SortsButtons = ({ title, field, currentSort, onToggle }: SortsButtonProps)
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      type="button"
-      className={`px-7 h-[48px] rounded-[20px] bg-[#F3F4F6] flex items-center gap-2 ${isActive ? "ring-2 ring-blue-300 " : ""}`}
-    >
-      <p className={`text-[#575757] ${isActive ? " font-semibold" : ""} `}>{title}</p>
-      {isDesc ?  <ChevronDown /> :  <ChevronUp /> }
-    </Button>
+    <div className="flex items-center gap-[12px] ">
+      <p className="text-[12px] text-[#6B6B6B] font-medium">SORT BY</p>
+      <Button
+        onClick={handleClick}
+        type="button"
+        className={`px-[16px]  border-[#515151] border h-[36px] rounded-[8px] bg-[#ffffff] flex items-center gap-2`}
+      >
+        <p className={`text-[#575757] ${isActive ? " " : ""} `}>{title}</p>
+        {isDesc ? <ChevronDown /> : <ChevronUp />}
+      </Button>
+    </div>
   );
 };
 

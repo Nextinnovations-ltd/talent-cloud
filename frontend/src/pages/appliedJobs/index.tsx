@@ -3,7 +3,6 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import CommonError from "@/components/CommonError/CommonError";
 import JobCardGrid from "@/components/jobApply/JobCardGrid";
 import { useGetJobSeekerAppliedJobsQuery } from "@/services/slices/jobApplySlice";
-import { Job } from "@/types/job-apply";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +18,8 @@ export const AppliedJobs = () => {
 
 
 
-  const handleJobClick = (job: Job) => {
+  const handleJobClick = () => {
 
-    console.log(job)
   }
 
   const handleAction = ()=>{

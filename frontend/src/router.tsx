@@ -55,6 +55,7 @@ import PrivacyPolicy from "./pages/LandingPages/PrivacyPolicy/PrivacyPolicy";
 import TermsConditions from "./pages/LandingPages/TermsConditions/TermsConditions";
 import PushNotification from "./pages/admin/PushNotification/PushNotification";
 import CandidateProfileDetail from "./pages/admin/Candidates/CandidateProfileDetail/CandidateProfileDetail";
+import JobSeekerResume from "./pages/jobSeekerresume/Resume";
 
 
 
@@ -122,6 +123,10 @@ export const router = createBrowserRouter([
               {
                 path: routesMap.expiredJobDetails.path,
                 element: <ExpiredJobsDetail />
+              },
+              {
+                path: routesMap.resume.path,
+                element: <JobSeekerResume />
               },
               {
                 path: 'job_apply/:id',

@@ -1,0 +1,53 @@
+.editor-wrapper {
+    width: 720px;
+    margin: 20px;
+
+
+    
+  }
+  
+  .ql-custom-toolbar {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fafafa;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .ql-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+  }
+  
+  .ql-btn svg {
+    width: 18px;
+    height: 18px;
+    pointer-events: none; /* ensure click reaches button */
+    color: #374151;
+  }
+  
+  .ql-btn:hover {
+    background: #f3f4f6;
+  }
+  
+  .ql-btn.active,
+  .ql-btn.active svg {
+    background: transparent;
+    color: #1d4ed8; /* active tint */
+  }
+  
+  .quill-container .ql-editor {
+    min-height: 220px;
+    max-height: 800px;
+    overflow: auto;
+  }
+  
