@@ -86,6 +86,7 @@ const apiSlice = createApi({
     "NotificationList",
     "ShortList",
     "JobPostEdit",
+    "CandidateFavList"
   ],
   endpoints: () => ({}),
 });

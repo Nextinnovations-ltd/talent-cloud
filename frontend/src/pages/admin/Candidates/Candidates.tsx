@@ -1,14 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CandidateTabs from "./CandidatesTabs/CandidateTabs";
 import AllCandidates from "./CandidatesTabs/AllCandidates";
 import Favourites from "./CandidatesTabs/Favourites";
+import { useGetJobSeekerCandidatesFavouriteQuery } from "@/services/slices/adminSlice";
 
 
 
 const Candidates = () => {
 
   const [tabValues, setTabValues] = useState('all');
-  const [totalApplicant,setTotalApplicants] = useState<number | undefined>(0);
+  const [totalApplicant, setTotalApplicants] = useState<number | undefined>(0);
+  const [favouriteTotal, setFavouritesTotal] = useState<number | undefined>(0);
+
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("-created_at");
+
+
+  const { data,isFetching } = useGetJobSeekerCandidatesFavouriteQuery(
+    { page, ordering: sortBy, search },
+    { refetchOnMountOrArgChange: true }
+  );
+
+  useEffect(()=> {
+    setFavouritesTotal(data?.data?.count)
+  },[data]);
+  
+
 
 
 
@@ -22,12 +40,24 @@ const Candidates = () => {
         <CandidateTabs
           tabValues={tabValues}
           setTabValues={setTabValues}
-          favourite={0}
+          favourite={favouriteTotal || 0}
           totalApplicants={totalApplicant || 0}
         />
       </div>
       {
-        tabValues === 'all' ? <AllCandidates setTotalApplicants={setTotalApplicants} />: <Favourites/>
+        tabValues === 'all' ? 
+        <AllCandidates setTotalApplicants={setTotalApplicants} /> :
+        <Favourites 
+        setFavouritesTotal={setFavouritesTotal}
+        setSearch={setSearch}
+        setPage={setPage}
+        setSortBy={setSortBy}
+        search={search}
+        page={page}
+        sortBy={sortBy}
+        isFetching={isFetching}
+        data={data}
+        />
       }
     </div>
   )

@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { useShortListApplicantsMutation } from '@/services/slices/adminSlice';
+import { useGetJobSeekerCandidateFavouritesMutation, useShortListApplicantsMutation } from '@/services/slices/adminSlice';
 import { Applicant } from '@/types/admin-auth-slice';
 import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
@@ -21,16 +21,21 @@ import clsx from 'clsx';
 interface ApplicantsJobItemsProps {
   data: Applicant;
   isShortList: boolean;
-  isDownLoadCover?:boolean;
+  isDownLoadCover?: boolean;
+  favourite?: boolean
 
 }
 
-const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }: ApplicantsJobItemsProps) => {
+const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true, favourite = false }: ApplicantsJobItemsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFavOpen, setIsFavOpen] = useState(false);
+
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
+  const [favouriteApplicant, { isLoading: favouriteApplicantLoading }] = useGetJobSeekerCandidateFavouritesMutation();
   const { showNotification } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
   const navigate = useNavigate();
+
 
 
 
@@ -58,13 +63,39 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
     }
   };
 
+  const handleAddToFavourites = async () => {
+    //@ts-ignore
+    if (!data?.id) return;
+
+    try {
+      const response = await favouriteApplicant({
+        //@ts-ignore
+        id: data.id,
+      }).unwrap();
+
+      showNotification({
+        //@ts-ignore
+        message: response?.message || 'Applicant shortlisted successfully',
+        type: 'success',
+      });
+    } catch (err) {
+      showNotification({
+        //@ts-ignore
+        message: err?.data?.message || 'Failed to shortlist applicant',
+        type: 'danger',
+      });
+    } finally {
+      setIsDialogOpen(false);
+    }
+  }
+
   const handleUserDetail = () => {
     // Implement view profile logic
     //@ts-ignore
     navigate(`/admin/dashboard/candiates/profile/${data.applicant_id || data?.id}?application_id=${data.application_id || data?.id}`)
   };
 
-  const handleDownLoadCover = async()=> {
+  const handleDownLoadCover = async () => {
     if (!data?.cover_letter_url) {
       showNotification({
         message: "No cover letter available for this applicant",
@@ -75,14 +106,14 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
     try {
       const response = await fetch(data.cover_letter_url);
       const blob = await response.blob();
-  
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `${data.name || "resume"}.pdf`);
       document.body.appendChild(link);
       link.click();
-  
+
       // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
@@ -91,7 +122,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
         message: "Download started",
         type: "success",
       });
-    } catch  {
+    } catch {
       showNotification({
         message: "Failed to download CV",
         type: "danger",
@@ -109,19 +140,19 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
       });
       return;
     }
-  
+
     try {
       setIsDownloading(true);
       const response = await fetch(data.resume_url);
       const blob = await response.blob();
-  
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `${data.name || "resume"}.pdf`);
       document.body.appendChild(link);
       link.click();
-  
+
       // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
@@ -130,7 +161,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
         message: "Download started",
         type: "success",
       });
-    } catch  {
+    } catch {
       showNotification({
         message: "Failed to download CV",
         type: "danger",
@@ -139,9 +170,9 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
       setIsDownloading(false);
     }
   };
-  
-  
-  
+
+
+
 
   return (
     <>
@@ -190,26 +221,26 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
           </div>
         </td>
 
-       {/* Download CV Column */}
-<td className="w-[15%] min-w-[100px] max-w-[150px] px-2 align-middle">
-  {data?.resume_url ? (
-    <button
-      onClick={handleDownloadCV}
-      disabled={isDownloading}
-      aria-busy={isDownloading}
-      className="bg-[#0481EF] px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm hover:shadow-none transition-shadow disabled:opacity-70 disabled:cursor-not-allowed"
-    >
-      {isDownloading ? 'Downloading…' : 'Download CV'}
-    </button>
-  ) : (
-    <button
-      disabled
-      className="bg-gray-300 px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm cursor-not-allowed"
-    >
-      No CV
-    </button>
-  )}
-</td>
+        {/* Download CV Column */}
+        <td className="w-[15%] min-w-[100px] max-w-[150px] px-2 align-middle">
+          {data?.resume_url ? (
+            <button
+              onClick={handleDownloadCV}
+              disabled={isDownloading}
+              aria-busy={isDownloading}
+              className="bg-[#0481EF] px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm hover:shadow-none transition-shadow disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isDownloading ? 'Downloading…' : 'Download CV'}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="bg-gray-300 px-[10px] py-2 text-[14px] font-semibold rounded-md text-white shadow-sm cursor-not-allowed"
+            >
+              No CV
+            </button>
+          )}
+        </td>
 
 
         {/* Actions Column */}
@@ -221,13 +252,21 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-          
+
               {
                 !isShortList && <DropdownMenuItem
                   onSelect={() => setIsDialogOpen(true)}
                   className="cursor-pointer focus:bg-gray-100"
                 >
                   Add to shortlist
+                </DropdownMenuItem>
+              }
+              {
+                favourite && <DropdownMenuItem
+                  onSelect={() => setIsFavOpen(true)}
+                  className="cursor-pointer focus:bg-gray-100"
+                >
+                  Add to favourite
                 </DropdownMenuItem>
               }
               <DropdownMenuItem
@@ -238,15 +277,15 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
               </DropdownMenuItem>
               {
                 isDownLoadCover && <DropdownMenuItem
-                disabled={!data?.cover_letter_url}
-                onSelect={handleDownLoadCover}
-                className={clsx(' focus:bg-gray-100', data?.cover_letter_url ? 'cursor-pointer' : 'cursor-not-allowed' )}
-              >
-                Download Cover Letter
-              </DropdownMenuItem>
+                  disabled={!data?.cover_letter_url}
+                  onSelect={handleDownLoadCover}
+                  className={clsx(' focus:bg-gray-100', data?.cover_letter_url ? 'cursor-pointer' : 'cursor-not-allowed')}
+                >
+                  Download Cover Letter
+                </DropdownMenuItem>
               }
-              
-            
+
+
             </DropdownMenuContent>
           </DropdownMenu>
         </td>
@@ -258,6 +297,14 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
         onConfirm={handleAddToShortList}
         isLoading={isLoading}
         title="Confirm Action"
+        description="Are you sure you want to perform this action?"
+      />
+      <ConfirmationDialog
+        open={isFavOpen}
+        onOpenChange={setIsFavOpen}
+        onConfirm={handleAddToFavourites}
+        isLoading={favouriteApplicantLoading}
+        title="Add to favourite"
         description="Are you sure you want to perform this action?"
       />
     </>
