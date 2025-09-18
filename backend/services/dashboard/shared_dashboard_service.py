@@ -1,5 +1,6 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.ni_dashboard.serializers import DashboardJobSeekerCertificationSerializer, DashboardJobSeekerEducationSerializer, DashboardJobSeekerExperienceSerializer, DashboardJobSeekerProjectSerializer, JobSeekerOverviewSerializer
+from apps.ni_dashboard.models import FavouriteJobSeeker
 from services.job_seeker.profile_service import EducationService, ExperienceService, CertificationService
 from services.job_seeker.project_service import ProjectService
 from services.notification.notification_service import NotificationHelpers
@@ -215,6 +216,26 @@ class SharedDashboardService:
                     'new_status': new_status
                }
           }
+     
+
+     # Job Seeker
+     
+     @staticmethod
+     def perform_favourite_job_seeker(job_seeker_id, company, action_email):
+          if FavouriteJobSeeker.objects.filter(user_id = job_seeker_id, company = company).exists():
+               raise ValidationError("Job Seeker already in favourite.")
+          
+          favourite_job_seeker = FavouriteJobSeeker.objects.create(
+               user_id = job_seeker_id,
+               company = company,
+               created_by = action_email
+          )
+          
+          return favourite_job_seeker
+     
+     @staticmethod
+     def get_favourite_job_seeker_list(company):
+          return FavouriteJobSeeker.objects.filter(company = company).select_related('user', 'user__occupation', 'user__occupation__role')
      
      @staticmethod
      def get_job_seeker_overview(user_id, application_id):
