@@ -85,16 +85,16 @@ const ApplyJob = () => {
         payload.is_skipped = true;
       }
 
-      const response = await applyJob({
+      await applyJob({
         jobId: numericJobId,
         credentials: payload,
       }).unwrap();
 
-      showNotification({
-        //@ts-ignore
-        message: response?.message,
-        type: "success",
-      });
+      // showNotification({
+      //   //@ts-ignore
+      //   message: response?.message,
+      //   type: "success",
+      // });
 
       navigation('/admin/dashboard/allJobs');
 
