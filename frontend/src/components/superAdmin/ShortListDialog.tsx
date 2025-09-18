@@ -45,7 +45,7 @@ const ConfirmationDialog = ({
             disabled={isLoading}
             className="text-blue-500 drop-shadow-none shadow-none"
           >
-            {isLoading ? <LoadingSpinner /> : "Delete"}
+            {isLoading ? <LoadingSpinner /> : "Confirm"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import AllCandidateActionHeader from "./AllCandidateActionHeader";
 import * as yup from "yup";
-import { useGetJobSeekerCandidatesQuery } from "@/services/slices/adminSlice";
+import {  useGetJobSeekerCandidatesQuery } from "@/services/slices/adminSlice";
 import CommonError from "@/components/CommonError/CommonError";
 import EMPTY from '@/assets/SuperAdmin/noApplicants.png'
 import ApplicantsJobItems from "@/components/superAdmin/TableRow";
@@ -26,6 +26,8 @@ const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
         { page, ordering: sortBy, search },
         { refetchOnMountOrArgChange: true }
     );
+
+  
 
 
     // Reset to page 1 when sorting or search changes
@@ -51,6 +53,10 @@ const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
         setTotalApplicants(CANDIDATES?.count  || 0)
     },[CANDIDATES]);
 
+   
+
+
+
     return (
         <div>
             <AllCandidateActionHeader
@@ -74,6 +80,7 @@ const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
                             key={index}
                             data={applicant}
                             isDownLoadCover={false}
+                            favourite={true}
                         />
                     ))}
                 </tbody>

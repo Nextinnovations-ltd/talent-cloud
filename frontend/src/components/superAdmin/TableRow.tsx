@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { useShortListApplicantsMutation } from '@/services/slices/adminSlice';
+import { useGetJobSeekerCandidateFavouritesMutation, useShortListApplicantsMutation } from '@/services/slices/adminSlice';
 import { Applicant } from '@/types/admin-auth-slice';
 import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
@@ -22,15 +22,20 @@ interface ApplicantsJobItemsProps {
   data: Applicant;
   isShortList: boolean;
   isDownLoadCover?:boolean;
+  favourite?:boolean
 
 }
 
-const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }: ApplicantsJobItemsProps) => {
+const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true,favourite=false }: ApplicantsJobItemsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFavOpen, setIsFavOpen] = useState(false);
+
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
+  const [favouriteApplicant,{isLoading : favouriteApplicantLoading}] = useGetJobSeekerCandidateFavouritesMutation();
   const { showNotification } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
   const navigate = useNavigate();
+
 
 
 
@@ -57,6 +62,30 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
       setIsDialogOpen(false);
     }
   };
+
+  const handleAddToFavourites = async()=> {
+    console.log(data)
+    if (!data?.id) return;
+
+    try {
+      const response = await favouriteApplicant({
+        id: data.id,
+      }).unwrap();
+
+      showNotification({
+        message: response?.message || 'Applicant shortlisted successfully',
+        type: 'success',
+      });
+    } catch (err) {
+      showNotification({
+        //@ts-ignore
+        message: err?.data?.message || 'Failed to shortlist applicant',
+        type: 'danger',
+      });
+    } finally {
+      setIsDialogOpen(false);
+    }
+  }
 
   const handleUserDetail = () => {
     // Implement view profile logic
@@ -230,6 +259,14 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
                   Add to shortlist
                 </DropdownMenuItem>
               }
+               {
+                favourite && <DropdownMenuItem
+                  onSelect={() => setIsFavOpen(true)}
+                  className="cursor-pointer focus:bg-gray-100"
+                >
+                  Add to favourite
+                </DropdownMenuItem>
+              }
               <DropdownMenuItem
                 onSelect={handleUserDetail}
                 className="cursor-pointer focus:bg-gray-100"
@@ -258,6 +295,14 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover=true }:
         onConfirm={handleAddToShortList}
         isLoading={isLoading}
         title="Confirm Action"
+        description="Are you sure you want to perform this action?"
+      />
+      <ConfirmationDialog
+        open={isFavOpen}
+        onOpenChange={setIsFavOpen}
+        onConfirm={handleAddToFavourites}
+        isLoading={isLoading}
+        title="Add to favourite"
         description="Are you sure you want to perform this action?"
       />
     </>
