@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.job_posting.models import JobSeeker, JobApplication, JobPost
 from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, JobSeekerProject
+from apps.ni_dashboard.models import FavouriteJobSeeker
 from services.job_seeker.job_seeker_service import JobSeekerService
 from services.storage.s3_service import S3Service
 from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display, calculate_age
@@ -109,6 +110,7 @@ class JobSeekerListDashboardSerializer(serializers.ModelSerializer):
      experience_years = serializers.SerializerMethodField()
      profile_image_url = serializers.SerializerMethodField()
      resume_url = serializers.SerializerMethodField()
+     is_favourite = serializers.BooleanField()
      
      class Meta:
           model = JobSeeker
@@ -122,6 +124,7 @@ class JobSeekerListDashboardSerializer(serializers.ModelSerializer):
                'is_open_to_work',
                'profile_image_url',
                'resume_url',
+               'is_favourite'
           ]
      
      def get_phone_number(self, obj: JobSeeker):
@@ -138,6 +141,60 @@ class JobSeekerListDashboardSerializer(serializers.ModelSerializer):
      
      def get_resume_url(self, obj: JobSeeker):
           return obj.resume_url_link
+
+class FavouriteJobSeekerListDashboardSerializer(serializers.ModelSerializer):
+     id = serializers.IntegerField(source='user.id')
+     name = serializers.CharField(source='user.name')
+     email = serializers.CharField(source='user.email')
+     phone_number = serializers.SerializerMethodField()
+     role = serializers.SerializerMethodField()
+     experience_years = serializers.SerializerMethodField()
+     is_open_to_work = serializers.BooleanField(source='user.is_open_to_work')
+     profile_image_url = serializers.SerializerMethodField()
+     resume_url = serializers.SerializerMethodField()
+     favorited_date = serializers.DateTimeField(source='created_at', read_only=True)
+     
+     class Meta:
+          model = FavouriteJobSeeker
+          fields = [
+               'id',
+               'name',
+               'email',
+               'phone_number',
+               'role',
+               'experience_years',
+               'is_open_to_work',
+               'profile_image_url',
+               'resume_url',
+               'favorited_date'
+          ]
+     
+     def get_phone_number(self, obj: FavouriteJobSeeker):
+        return obj.user.get_phone_number
+    
+     def get_role(self, obj: FavouriteJobSeeker):
+          return obj.user.get_role
+     
+     def get_experience_years(self, obj: FavouriteJobSeeker):
+          return obj.user.get_experience_year
+     
+     def get_profile_image_url(self, obj: FavouriteJobSeeker):
+          return obj.user.profile_image_url_link
+     
+     def get_resume_url(self, obj: FavouriteJobSeeker):
+          return obj.user.resume_url_link
+
+class FavouriteJobSeekerDashboardSerializer(serializers.Serializer):
+     id = serializers.CharField(source='user.id')
+     name = serializers.CharField(source='user.name')
+     email = serializers.CharField(source='user.email')
+     company_name = serializers.CharField(source='company.name')
+     
+     class Meta:
+          model = FavouriteJobSeeker
+          fields = [
+               'id', 'name', 'email', 'company_name'
+          ]
 
 class JobSeekerOverviewSerializer(serializers.ModelSerializer):
      profile_image_url = serializers.SerializerMethodField()
