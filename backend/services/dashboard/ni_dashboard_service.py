@@ -1,8 +1,10 @@
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError
+from django.db.models import Exists, OuterRef
 from apps.job_seekers.models import JobSeeker
 from apps.users.models import TalentCloudUser
 from apps.job_posting.models import JobPost
 from apps.job_posting.models import StatusChoices
+from apps.ni_dashboard.models import FavouriteJobSeeker
 from services.storage.s3_service import S3Service
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import ROLES
@@ -12,7 +14,60 @@ import logging
 
 logger = logging.getLogger('dashboard_service')
 
-class NIDashboardService:
+class NIDashboardService:  
+     @staticmethod
+     def get_ni_admin_list():
+          """
+          Get list of all NI super administrators
+          """
+          try:
+               ni_super_admins = TalentCloudUser.objects.filter(
+                    role__name=ROLES.SUPERADMIN
+               ).select_related('role').order_by('-created_at')
+
+               if not ni_super_admins.exists():
+                    logger.info("No super admin users found")
+                    
+                    return {
+                         'message': 'No super admin users found',
+                         'data': {
+                              'ni_admin_list': []
+                         }
+                    }
+
+               # Build admin list
+               ni_super_admins_list = []
+
+               for user in ni_super_admins:
+                    try:
+                         admin_data = {
+                              'id': user.id,
+                              'email': user.email,
+                              'name': user.name,
+                              'username': user.username,
+                              'status': NIDashboardService._get_user_status(user),
+                              'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
+                              'registered_date': user.created_at,
+                         }
+                         
+                         ni_super_admins_list.append(admin_data)
+                    except Exception as e:
+                         logger.warning(f"Error processing admin user {user.id}: {str(e)}")
+                         # Continue processing other users
+                         continue
+               
+               logger.info(f"Successfully retrieved {len(ni_super_admins_list)} super admin users")
+               
+               return {
+                    'message': 'Succefully retrieved NI super admin listing.',
+                    'data': {
+                         'ni_admin_list': ni_super_admins_list
+                    }
+               }
+          except Exception as e:
+               logger.error(f"Error in get_ni_admin_list: {str(e)}", exc_info=True)
+               raise ValidationError("Failed to retrieve admin list")
+
      @staticmethod
      def get_ni_admin_profile_information(user):
           pass
@@ -102,133 +157,7 @@ class NIDashboardService:
                logger.error(f"Unexpected error in get_job_seeker_statistics: {str(e)}", exc_info=True)
                raise ValidationError("Failed to generate job seeker statistics")
      
-     @staticmethod
-     def _calculate_completed_profiles():
-          """
-          Calculate completed profiles using chunked processing for performance
-          """
-          try:
-               job_seeker_users = JobSeeker.objects.all()
-               completed_profile_count = 0
-               
-               for chunked_user_list in chunked_queryset(job_seeker_users, 50):
-                    for user in chunked_user_list:
-                         try:
-                              completion_percentage = ProfileScoreService.get_profile_completion_percentage(user)
-                              if completion_percentage >= 80:
-                                   completed_profile_count += 1
-                         except Exception as e:
-                              logger.warning(f"Error calculating profile completion for user {user.id}: {str(e)}")
-                              # Continue processing other users
-                              continue
-               
-               return completed_profile_count
-               
-          except Exception as e:
-               logger.error(f"Error in _calculate_completed_profiles: {str(e)}")
-               # Return 0 instead of failing the entire operation
-               return 0
      
-     @staticmethod
-     def get_job_seeker_detail(user_id):
-          """
-          Get detailed information for a specific job seeker
-          """
-          try:
-               if not user_id:
-                    raise ValidationError("User ID is required")
-
-               try:
-                    user = JobSeeker.objects.get(id=user_id)
-               except JobSeeker.DoesNotExist:
-                    raise NotFound("Job seeker not found")
-
-               # Calculate profile completion score
-               try:
-                    profile_completion_score = ProfileScoreService.calculate_profile_completion_percentage(user)
-               except Exception as e:
-                    logger.warning(f"Error calculating profile completion for user {user_id}: {str(e)}")
-                    profile_completion_score = 0
-
-               logger.debug(f"Successfully retrieved job seeker details for user {user_id}")
-
-               return {
-                    'message': 'Successfully fetched job seeker details',
-                    'data': {
-                         'id': user.id,
-                         'email': user.email,
-                         'name': user.name if user.name is not None else None,
-                         'username': user.username,
-                         'phone_number': f"{user.country_code}{user.phone_number}" if user.country_code is not None and user.phone_number is not None else None,
-                         'address': user.address if user.address is not None else None,
-                         'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
-                         'is_verified': user.is_verified,
-                         'status': 'Inactive' if user.status is False else ('Verified' if user.is_verified is True else 'Unverified'),
-                         'profile_completion_score': profile_completion_score,
-                    }
-               }
-          except Exception as e:
-               logger.error(f"Unexpected error in get_job_seeker_detail for user {user_id}: {str(e)}", exc_info=True)
-               raise ValidationError("Failed to retrieve job seeker details")
-
-     @staticmethod
-     def get_ni_admin_list():
-          """
-          Get list of all NI super administrators
-          """
-          try:
-               ni_super_admins = TalentCloudUser.objects.filter(
-                    role__name=ROLES.SUPERADMIN
-               ).select_related('role').order_by('-created_at')
-
-               if not ni_super_admins.exists():
-                    logger.info("No super admin users found")
-                    
-                    return {
-                         'message': 'No super admin users found',
-                         'data': {
-                              'ni_admin_list': []
-                         }
-                    }
-
-               # Build admin list
-               ni_super_admins_list = []
-
-               for user in ni_super_admins:
-                    try:
-                         admin_data = {
-                              'id': user.id,
-                              'email': user.email,
-                              'name': user.name,
-                              'username': user.username,
-                              'status': NIDashboardService._get_user_status(user),
-                              'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
-                              'registered_date': user.created_at,
-                         }
-                         
-                         ni_super_admins_list.append(admin_data)
-                    except Exception as e:
-                         logger.warning(f"Error processing admin user {user.id}: {str(e)}")
-                         # Continue processing other users
-                         continue
-               
-               logger.info(f"Successfully retrieved {len(ni_super_admins_list)} super admin users")
-               
-               return {
-                    'message': 'Succefully retrieved NI super admin listing.',
-                    'data': {
-                         'ni_admin_list': ni_super_admins_list
-                    }
-               }
-          except Exception as e:
-               logger.error(f"Error in get_ni_admin_list: {str(e)}", exc_info=True)
-               raise ValidationError("Failed to retrieve admin list")
-
-     @staticmethod
-     def get_registered_job_seeker_list():
-          qs = JobSeeker.objects.filter(status=True).order_by('-created_at')
-          return  qs
-
      @staticmethod
      def get_job_seeker_statistics_by_occupation_role():
           """
@@ -296,6 +225,53 @@ class NIDashboardService:
                logger.error(f"Error in get_job_seeker_statistics_by_occupation_role: {str(e)}", exc_info=True)
                raise ValidationError("Failed to generate occupation role statistics")
      
+     @staticmethod
+     def get_registered_job_seeker_list(user):
+          company = SharedDashboardService.get_company(user)
+          
+          favourite_subquery = FavouriteJobSeeker.objects.filter(
+               user=OuterRef('pk'),
+               company=company
+          )
+          return JobSeeker.objects.annotate(
+               is_favourite=Exists(favourite_subquery)
+          ).filter(status=True).select_related(
+               'occupation',
+               'occupation__role'
+          ).only(
+               'id', 'name', 'email', 'is_open_to_work',
+               'profile_image_url', 'resume_url', 'tagline',
+               'country_code', 'phone_number',
+               'occupation__experience_years', 'occupation__role__name'
+          ).order_by('-created_at')
+
+     @staticmethod
+     def _calculate_completed_profiles():
+          """
+          Calculate completed profiles using chunked processing for performance
+          """
+          try:
+               job_seeker_users = JobSeeker.objects.all()
+               completed_profile_count = 0
+               
+               for chunked_user_list in chunked_queryset(job_seeker_users, 50):
+                    for user in chunked_user_list:
+                         try:
+                              completion_percentage = ProfileScoreService.get_profile_completion_percentage(user)
+                              if completion_percentage >= 80:
+                                   completed_profile_count += 1
+                         except Exception as e:
+                              logger.warning(f"Error calculating profile completion for user {user.id}: {str(e)}")
+                              # Continue processing other users
+                              continue
+               
+               return completed_profile_count
+               
+          except Exception as e:
+               logger.error(f"Error in _calculate_completed_profiles: {str(e)}")
+               # Return 0 instead of failing the entire operation
+               return 0
+
      @staticmethod
      def _get_user_status(user):
           """

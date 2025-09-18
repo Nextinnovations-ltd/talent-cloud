@@ -3,6 +3,8 @@ from apps.ni_dashboard.views import (
     ApplicantRejectAPIView,
     ApplicantShortListAPIView,
     CompanyListAPIView,
+    FavouriteJobSeekerAPIView,
+    FavouriteJobSeekerListAPIView,
     JobSeekerCertificationListAPIView,
     JobSeekerEducationListAPIView,
     JobSeekerExperienceListAPIView,
@@ -43,6 +45,8 @@ urlpatterns = [
     
     # Registered Job Seekers
     path('dashboard/ni/job-seekers/all/', NIRegisteredJobSeekerListAPIView.as_view(), name='registered-job-seeker-list'),
+    path('dashboard/ni/job-seekers/favourites/', FavouriteJobSeekerListAPIView.as_view(), name='favourite-job-seeker-list'),
+    path('dashboard/ni/job-seekers/<int:user_id>/favourite/', FavouriteJobSeekerAPIView.as_view(), name='favourite-job-seeker'),
     
     # Job Seeker Details(same with applicant details)
     path('dashboard/ni/job-seekers/<int:user_id>/overview/', JobSeekerOverviewAPIView.as_view(), name='job-seeker-overview'),
