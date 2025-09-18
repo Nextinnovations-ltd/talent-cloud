@@ -54,13 +54,13 @@ export const MainLayout = () => {
     }
 
     socketRef.current = createReconnectingWebSocket({
-      makeUrl: () => `ws://localhost:8000/ws/notifications/?token=${token}`,
+      makeUrl: () => `ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`,
       initialBackoffMs: 1000,
       maxBackoffMs: 30000,
       heartbeatMs: 30000,
     });
 
-    //staging.talent-cloud.asia
+    //
 
     socketRef.current.onOpen(() => {
       console.log('✅ WebSocket connected');
