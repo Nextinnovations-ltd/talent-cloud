@@ -79,6 +79,7 @@ export const ApplyJobSideBar: React.FC<ApplyJobSideBarProps> = ({
           //@ts-ignore
           jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
         }
+        
         <AboutJob
           jobTitle={jobDetails?.title || ''}
           requirements={jobDetails?.requirements || ''}

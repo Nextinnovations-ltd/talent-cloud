@@ -6,9 +6,9 @@ from rest_framework.exceptions import NotFound, ValidationError
 from apps.companies.models import Company
 from apps.users.models import TalentCloudUser
 from apps.companies.serializers import CompanyListSerializer
-from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, JobPostDashboardSerializer, JobSeekerListDashboardSerializer
+from apps.ni_dashboard.serializers import ApplicantDashboardSerializer, FavouriteJobSeekerDashboardSerializer, FavouriteJobSeekerListDashboardSerializer, JobPostDashboardSerializer, JobSeekerListDashboardSerializer
 from apps.job_posting.models import StatusChoices
-from apps.ni_dashboard.filters import ApplicantOrderingFilter, JobSeekerOrderingFilter
+from apps.ni_dashboard.filters import ApplicantOrderingFilter, FavouriteJobSeekerOrderingFilter, JobSeekerOrderingFilter
 from utils.view.custom_api_views import CustomListAPIView
 from services.dashboard.shared_dashboard_service import SharedDashboardService
 from core.constants.constants import PARENT_COMPANY, ROLES
@@ -98,12 +98,44 @@ class NIRegisteredJobSeekerListAPIView(CustomListAPIView):
      serializer_class = JobSeekerListDashboardSerializer
      filter_backends = [JobSeekerOrderingFilter, SearchFilter]
      search_fields = [ 'name', 'email', 'occupation__role__name']
+     ordering_fields = ['created_at', 'experience_years', 'open_to_work', 'is_favourite']
+     ordering = ['-created_at']
+     
+     def get_queryset(self):
+          return NIDashboardService.get_registered_job_seeker_list(self.request.user)
+
+@extend_schema(tags=["NI Dashboard"])
+class FavouriteJobSeekerAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def post(self, request, user_id):
+          company = SharedDashboardService.get_company(request.user)
+          
+          job_seeker = SharedDashboardService.perform_favourite_job_seeker(user_id, company, request.user.email)
+          
+          return Response(
+               CustomResponse.success(
+                    'Successfully favourited the job seeker.',
+                    FavouriteJobSeekerDashboardSerializer(job_seeker).data),
+               status=status.HTTP_200_OK
+          )
+          
+
+@extend_schema(tags=["NI Dashboard"])
+class FavouriteJobSeekerListAPIView(CustomListAPIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     serializer_class = FavouriteJobSeekerListDashboardSerializer
+     filter_backends = [FavouriteJobSeekerOrderingFilter, SearchFilter]
+     search_fields = [ 'user__name', 'user__email', 'user__occupation__role__name']
      ordering_fields = ['created_at', 'experience_years', 'open_to_work']
      ordering = ['-created_at']
      
      def get_queryset(self):
-          return NIDashboardService.get_registered_job_seeker_list()
+          company = SharedDashboardService.get_company(self.request.user)
 
+          return SharedDashboardService.get_favourite_job_seeker_list(company)
 
 # endregion All Job Seeker List
 
