@@ -58,7 +58,7 @@ export const MainLayout = () => {
       socketRef.current.close();
     }
 
-    const ws = new WebSocket(`wss://staging.talent-cloud.asia/ws/notifications/?token=${token}`);
+    const ws = new WebSocket(`ws://staging.talent-cloud.asia/ws/notifications/?token=${token}`);
     socketRef.current = ws;
 
     ws.onopen = () => {
