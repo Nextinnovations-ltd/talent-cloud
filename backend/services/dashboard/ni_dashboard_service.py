@@ -46,7 +46,7 @@ class NIDashboardService:
                               'name': user.name,
                               'username': user.username,
                               'status': NIDashboardService._get_user_status(user),
-                              'profile_image_url': S3Service.get_public_url(user.profile_image_url) if user.profile_image_url else None,
+                              'profile_image_url': user.profile_image_url,
                               'registered_date': user.created_at,
                          }
                          
@@ -240,7 +240,7 @@ class NIDashboardService:
                'occupation__role'
           ).only(
                'id', 'name', 'email', 'is_open_to_work',
-               'profile_image_url', 'resume_url', 'tagline',
+               'profile_image_url', 'tagline',
                'country_code', 'phone_number',
                'occupation__experience_years', 'occupation__role__name'
           ).order_by('-created_at')

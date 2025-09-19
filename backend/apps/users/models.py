@@ -1,6 +1,7 @@
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from rest_framework.exceptions import ValidationError
+from services.storage.file_service import FileUrlService
 from core.constants.constants import PARENT_COMPANY, ROLES, ROLE_LIST
 from services.company.company_service import get_or_create_parent_company
 from services.models import TimeStampModel
@@ -182,7 +183,7 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     bio = models.TextField(null=True, blank=True)
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, related_name='users', null= True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    profile_image_url = models.URLField(null=True, blank=True, max_length=200)
+    profile_image_path = models.URLField(null=True, blank=True, max_length=200)
     address = models.OneToOneField(
         Address, 
         on_delete=models.CASCADE, 
@@ -270,6 +271,12 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
 
         return UserService.get_phone_number(self.country_code, self.phone_number)
 
+    @property
+    def profile_image_url(self):
+        """Get the profile image url"""
+        return FileUrlService.get_profile_image_public_url(self.profile_image_path)
+
+    
 class Token(TimeStampModel):
     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE) 
     token = models.CharField(max_length=255, unique=True)

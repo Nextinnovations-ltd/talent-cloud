@@ -8,7 +8,7 @@ import csv
 
 @admin.register(JobSeeker)
 class JobSeekerAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'resume_url')  # Adjust these fields as necessary
+    list_display = ('email', 'username')
 
 admin.site.register(JobSeekerCertification)
 admin.site.register(JobSeekerEducation)

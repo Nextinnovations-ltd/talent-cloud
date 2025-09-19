@@ -19,7 +19,7 @@ app.conf.beat_schedule = {
     # },
     'update-expired-jobs-daily': {
         'task': 'job_tasks.update_expired_jobs',
-        'schedule': crontab(hour=12, minute=0),  # Daily at 12:00 PM
+        'schedule': crontab(hour=0, minute=0),  # Daily at 12:00 AM
         'options': {
             'expires': 3600,
         }
