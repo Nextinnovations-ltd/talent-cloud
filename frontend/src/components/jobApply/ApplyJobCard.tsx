@@ -130,7 +130,13 @@ const ApplyJobCard: React.FC<ApplyJobCardProps> = ({ job, onClick, isSelected = 
           </div>
         </div>
 
-        <DescriptionsContent maxLines={3} content={job?.description} />
+      {/* Description section with fixed height */}
+<div className="flex-1">
+  <div className="h-[72px] overflow-hidden">
+    <DescriptionsContent maxLines={3} content={job?.description} />
+  </div>
+</div>
+
 
         <div className="border-t-[1px] border-slate-300 my-[20px]"></div>
 

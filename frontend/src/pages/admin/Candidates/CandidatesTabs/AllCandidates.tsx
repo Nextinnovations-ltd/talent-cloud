@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import AllCandidateActionHeader from "./AllCandidateActionHeader";
 import * as yup from "yup";
-import {  useGetJobSeekerCandidatesQuery } from "@/services/slices/adminSlice";
+import { useGetJobSeekerCandidatesQuery } from "@/services/slices/adminSlice";
 import CommonError from "@/components/CommonError/CommonError";
 import EMPTY from '@/assets/SuperAdmin/noApplicants.png'
 import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 import Pagination from "@/components/common/Pagination";
 import { Applicant } from "@/types/admin-auth-slice";
+import { useDebounce } from "@/hooks/use-debounce";
+
 
 export const StepTwoFormYupSchema = yup.object({
     description: yup.string().required("description is required"),
@@ -17,23 +18,23 @@ type AllCandidatesProps = {
     setTotalApplicants: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
+const AllCandidates: React.FC<AllCandidatesProps> = ({ setTotalApplicants }) => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState("-created_at");
 
+    // ✅ Debounced search value
+    const debouncedSearch = useDebounce(search, 1000);
+
     const { data, isFetching } = useGetJobSeekerCandidatesQuery(
-        { page, ordering: sortBy, search },
+        { page, ordering: sortBy, search: debouncedSearch },
         { refetchOnMountOrArgChange: true }
     );
-
-  
-
 
     // Reset to page 1 when sorting or search changes
     useEffect(() => {
         setPage(1);
-    }, [sortBy, search]);
+    }, [sortBy, debouncedSearch]);
 
     const CANDIDATES = data?.data;
 
@@ -49,13 +50,9 @@ const AllCandidates:React.FC<AllCandidatesProps> = ({setTotalApplicants}) => {
         }
     };
 
-    useEffect(()=>{
-        setTotalApplicants(CANDIDATES?.count  || 0)
-    },[CANDIDATES]);
-
-   
-
-
+    useEffect(() => {
+        setTotalApplicants(CANDIDATES?.count || 0)
+    }, [CANDIDATES, setTotalApplicants]);
 
     return (
         <div>

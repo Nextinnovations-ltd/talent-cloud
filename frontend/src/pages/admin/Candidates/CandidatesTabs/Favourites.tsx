@@ -6,19 +6,20 @@ import CommonError from "@/components/CommonError/CommonError";
 import EMPTY from '@/assets/SuperAdmin/noApplicants.png'
 import ApplicantsJobItems from "@/components/superAdmin/TableRow";
 import Pagination from "@/components/common/Pagination";
+import { useDebounce } from "@/hooks/use-debounce";
 
 
 type FavouritesProps = {
   setFavouritesTotal: React.Dispatch<React.SetStateAction<number | undefined>>;
-  setSearch:React.Dispatch<React.SetStateAction<string>>;
-  setPage:React.Dispatch<React.SetStateAction<number>>;
-  setSortBy:React.Dispatch<React.SetStateAction<string>>;
-  search:string;
-  page:number;
-  sortBy:string;
-  isFetching:boolean;
-  data:any
-}
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  search: string;
+  page: number;
+  sortBy: string;
+  isFetching: boolean;
+  data: any;
+};
 
 const Favourites: React.FC<FavouritesProps> = ({ 
   setFavouritesTotal,
@@ -31,12 +32,12 @@ const Favourites: React.FC<FavouritesProps> = ({
   isFetching,
   data
 }) => {
+  const debouncedSearch = useDebounce(search, 1000);
 
 
-  // Reset to page 1 when sorting or search changes
   useEffect(() => {
     setPage(1);
-  }, [sortBy, search]);
+  }, [sortBy, debouncedSearch, setPage]);
 
   const CANDIDATES = data?.data;
 
@@ -53,9 +54,8 @@ const Favourites: React.FC<FavouritesProps> = ({
   };
 
   useEffect(() => {
-    setFavouritesTotal(CANDIDATES?.count || 0)
-  }, [CANDIDATES]);
-
+    setFavouritesTotal(CANDIDATES?.count || 0);
+  }, [CANDIDATES, setFavouritesTotal]);
 
   return (
     <div>
@@ -96,7 +96,7 @@ const Favourites: React.FC<FavouritesProps> = ({
         isFetching={isFetching}
       />
     </div>
-  )
-}
+  );
+};
 
 export default Favourites;
