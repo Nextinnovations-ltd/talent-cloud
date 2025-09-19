@@ -93,13 +93,13 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           return obj.job_seeker.get_address
      
      def get_profile_image_url(self, obj: JobApplication):
-          return S3Service.get_public_url(obj.job_seeker.profile_image_url)
+          return obj.job_seeker.profile_image_url
      
      def get_resume_url(self, obj: JobApplication):
-          return S3Service.get_public_url(obj.resume_url)
+          return obj.resume_url_link
      
      def get_cover_letter_url(self, obj: JobApplication):
-          return S3Service.get_public_url(obj.cover_letter_url)
+          return obj.cover_letter_url_link
 
 
 # Job Seeker Serializers
@@ -137,10 +137,10 @@ class JobSeekerListDashboardSerializer(serializers.ModelSerializer):
           return obj.get_experience_year
      
      def get_profile_image_url(self, obj: JobSeeker):
-          return obj.profile_image_url_link
+          return obj.profile_image_url
      
      def get_resume_url(self, obj: JobSeeker):
-          return obj.resume_url_link
+          return obj.resume_url
 
 class FavouriteJobSeekerListDashboardSerializer(serializers.ModelSerializer):
      id = serializers.IntegerField(source='user.id')
@@ -179,10 +179,10 @@ class FavouriteJobSeekerListDashboardSerializer(serializers.ModelSerializer):
           return obj.user.get_experience_year
      
      def get_profile_image_url(self, obj: FavouriteJobSeeker):
-          return obj.user.profile_image_url_link
+          return obj.user.profile_image_url
      
      def get_resume_url(self, obj: FavouriteJobSeeker):
-          return obj.user.resume_url_link
+          return obj.user.resume_url
 
 class FavouriteJobSeekerDashboardSerializer(serializers.Serializer):
      id = serializers.CharField(source='user.id')
@@ -247,13 +247,13 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
           return calculate_age(obj.date_of_birth)
      
      def get_profile_image_url(self, obj:JobSeeker):
-          return obj.profile_image_url_link
+          return obj.profile_image_url
 
      def get_resume_url(self, obj:JobSeeker):
           application = self.get_application(obj)
           
           if not application:
-               return obj.resume_url_link
+               return obj.resume_url
           
           return application.resume_url_link
 

@@ -1,5 +1,5 @@
 # Core Framework
-Django==5.1.1
+Django==5.2.6
 djangorestframework==3.15.2
 
 # Database
@@ -19,7 +19,7 @@ PyJWT==2.7.0
 
 # Async/Celery
 redis==5.2.1
-django-celery-beat==2.7.0
+django-celery-beat==2.8.1
 celery==5.5.2
 
 # Test

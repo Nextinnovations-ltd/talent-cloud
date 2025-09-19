@@ -1,6 +1,7 @@
 from django.db import models
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
 from apps.users.models import TalentCloudUser
+from services.storage.file_service import FileUrlService
 from utils.job_posting.job_posting_utils import format_salary
 from services.models import TimeStampModel
 
@@ -291,14 +292,13 @@ class JobApplication(TimeStampModel):
      @property
      def cover_letter_url_link(self):
          """Get the application cover letter url"""
-         from services.storage.s3_service import S3Service
-         return S3Service.get_public_url(self.cover_letter_url)
+         return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
      
      @property
      def resume_url_link(self):
          """Get the application resume url"""
-         from services.storage.s3_service import S3Service
-         return S3Service.get_public_url(self.resume_url)
+         return FileUrlService.get_resume_public_url(self.resume_url)
+    
 # End Job Application
 
 # Job Post Bookmark

@@ -13,7 +13,7 @@ from apps.ws_channel.serializers import (
 )
 from services.notification.notification_service import NotificationService, NotificationHelpers
 from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudAllPermission, TalentCloudUserPermission
+from core.middleware.permission import TalentCloudAllPermission
 from utils.response import CustomResponse
 
 
