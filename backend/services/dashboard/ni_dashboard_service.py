@@ -240,7 +240,7 @@ class NIDashboardService:
                'occupation__role'
           ).only(
                'id', 'name', 'email', 'is_open_to_work',
-               'profile_image_url', 'tagline',
+               'profile_image_path', 'tagline',
                'country_code', 'phone_number',
                'occupation__experience_years', 'occupation__role__name'
           ).order_by('-created_at')

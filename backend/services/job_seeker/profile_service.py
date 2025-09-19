@@ -1,4 +1,5 @@
 from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, Resume
+from apps.job_seekers.serializers.profile_serializer import ResumeSerializer
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
@@ -74,13 +75,40 @@ class ProfileService:
                resume = Resume.objects.create(
                     job_seeker = user,
                     file_upload = file_upload,
-                    resume_path = file_upload.file_path,
-                    is_default = True
+                    resume_path = file_upload.file_path
                )
                
                return resume
           except:
                raise ValidationError("Failed to upload resume.")
+     
+     @staticmethod
+     def get_user_resume_list(user):
+          try:
+               resumes = Resume.objects.filter(
+                    job_seeker = user
+               ).order_by('-created_at')
+               
+               # Return resume data list
+               return ResumeSerializer(resumes, many=True).data
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to retrieve resume list.")
+     
+     @staticmethod
+     def set_default_resume(user, resume_id):
+          try:
+               resume = Resume.objects.get(
+                    job_seeker = user,
+                    id = resume_id
+               )
+               
+               resume.is_default = True
+               resume.save()
+               
+               # Return resume data 
+               return ResumeSerializer(resume).data
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to set resume as default.")
 
 class ExperienceService:
      @staticmethod
