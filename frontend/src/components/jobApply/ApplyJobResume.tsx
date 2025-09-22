@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Label } from "../ui/label";
 import { RadioGroupItem, RadioGroup } from "../ui/radio-group";
 import ApplyJobUploadResume from "./ApplyJobUploadResume";
@@ -9,12 +8,14 @@ import ApplyJobResumeItemContainer from "./ApplyJobResumeItemContainer";
 type ApplyJobResumeProps = {
   resumeData: string | undefined,
   setResumeUploadId: (id: string | undefined) => void,
+  radioValue: "upload" | "choose";
+  setRadioValue: (value: "upload" | "choose") => void;
 }
 
-const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUploadId }) => {
+const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUploadId,setRadioValue,radioValue }) => {
 
 
-  const [radioValue, setRadioValue] = useState("upload");
+
 
 
 
@@ -24,7 +25,7 @@ const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUp
     <div className="mt-[20px]">
       <h3 className="text-[22px]">Resume</h3>
       <p className="text-[14px] my-[10px]">Choose how you'd like to submit your resume</p>
-      <RadioGroup onValueChange={(e) => setRadioValue(e)} className="mt-[40px]" defaultValue={resumeData ? 'choose' : 'upload'}>
+      <RadioGroup onValueChange={(e) => setRadioValue(e as "upload"  | "choose")} className="mt-[40px]" defaultValue={resumeData ? 'choose' : 'upload'}>
         <div className="flex items-center cursor-pointer gap-3">
           <RadioGroupItem value="upload" id="r1" />
           <Label className="font-medium cursor-pointer" htmlFor="r1">
