@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { useGetJobSeekerCandidateFavouritesMutation, useShortListApplicantsMutation } from '@/services/slices/adminSlice';
+import { useGetJobSeekerCandidateFavouritesMutation, useGetJobSeekerCandidateFavouritesRemoveMutation, useShortListApplicantsMutation } from '@/services/slices/adminSlice';
 import { Applicant } from '@/types/admin-auth-slice';
 import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
@@ -22,15 +22,18 @@ interface ApplicantsJobItemsProps {
   data: Applicant;
   isShortList: boolean;
   isDownLoadCover?: boolean;
-  favourite?: boolean
+  favourite?: boolean;
+  removeFavourite?:boolean;
 
 }
 
-const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true, favourite = false }: ApplicantsJobItemsProps) => {
+const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true, favourite = false, removeFavourite = false }: ApplicantsJobItemsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFavOpen, setIsFavOpen] = useState(false);
 
   const [shortListApplicant, { isLoading }] = useShortListApplicantsMutation();
+  const [removeFavouriteMutation] = useGetJobSeekerCandidateFavouritesRemoveMutation();
+
   const [favouriteApplicant, { isLoading: favouriteApplicantLoading }] = useGetJobSeekerCandidateFavouritesMutation();
   const { showNotification } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
@@ -171,6 +174,32 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
     }
   };
 
+  const handleRemoveFavourite = async ()=> {
+    //@ts-ignore
+    if (!data?.id) return;
+
+    try {
+      const response = await removeFavouriteMutation({
+        //@ts-ignore
+        id: data.id,
+      }).unwrap();
+
+      showNotification({
+        //@ts-ignore
+        message: response?.message || 'Applicant shortlisted successfully',
+        type: 'success',
+      });
+    } catch (err) {
+      showNotification({
+        //@ts-ignore
+        message: err?.data?.message || 'Failed to shortlist applicant',
+        type: 'danger',
+      });
+    } finally {
+      setIsDialogOpen(false);
+    }
+  }
+
 
 
 
@@ -267,6 +296,14 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
                   className="cursor-pointer focus:bg-gray-100"
                 >
                   Add to favourite
+                </DropdownMenuItem>
+              }
+              {
+                removeFavourite && <DropdownMenuItem
+                  onSelect={handleRemoveFavourite}
+                  className="cursor-pointer focus:bg-gray-100"
+                >
+                  Remove from favourite
                 </DropdownMenuItem>
               }
               <DropdownMenuItem

@@ -100,13 +100,20 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         }),
         getJobSeekerCandidateFavourites: builder.mutation<unknown, { id: string }>({
             query: (data) => ({
-                url: `/dashboard/ni/job-seekers/${data?.id}/favourite/`,
+                url: `/dashboard/ni/favourites/job-seekers/${data?.id}/`,
+                method: "POST"
+            }),
+            invalidatesTags: ['CandidateFavList']
+        }),
+        getJobSeekerCandidateFavouritesRemove: builder.mutation<unknown, { id: string }>({
+            query: (data) => ({
+                url: `/dashboard/ni/favourites/job-seekers/${data?.id}/remove/`,
                 method: "POST"
             }),
             invalidatesTags: ['CandidateFavList']
         }),
         getJobSeekerCandidatesFavourite: builder.query<JobSeekerCandidatesResponse, { page: string | number, ordering?: string, search?: string }>({
-            query: (data) => `/dashboard/ni/job-seekers/favourites/?search=${data?.search}&ordering=${data?.ordering}&page=${data?.page}`,
+            query: (data) => `/dashboard/ni/favourites/job-seekers/?search=${data?.search}&ordering=${data?.ordering}&page=${data?.page}`,
             providesTags: ['CandidateFavList']
         }),
         getJobSeekerResumeList: builder.query<ResumeListResponse, void>({
@@ -123,4 +130,4 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
 
 
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery, useGetJobSeekerCandidateFavouritesMutation, useGetJobSeekerCandidatesFavouriteQuery, useGetJobSeekerResumeListQuery,useDefaultJobSeekerResumeMutation } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery, useGetJobSeekerCandidateFavouritesMutation, useGetJobSeekerCandidatesFavouriteQuery, useGetJobSeekerResumeListQuery,useDefaultJobSeekerResumeMutation,useGetJobSeekerCandidateFavouritesRemoveMutation } = extendedAdminSlice

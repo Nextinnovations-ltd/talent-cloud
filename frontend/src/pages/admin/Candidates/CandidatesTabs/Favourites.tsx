@@ -81,6 +81,7 @@ const Favourites: React.FC<FavouritesProps> = ({
               data={applicant}
               isDownLoadCover={false}
               favourite={false}
+              removeFavourite={true}
             />
           ))}
         </tbody>

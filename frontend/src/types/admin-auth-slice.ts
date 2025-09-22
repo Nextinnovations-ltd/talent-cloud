@@ -25,7 +25,7 @@ export interface PaginatedData<T> {
 export interface ResponseData<T>{
    status:boolean;
    message:string;
-   data:T[]
+   data:T
 }
 
 export type JobPostResponse  = ResponseData<PaginatedData<JobPost>>;
@@ -269,4 +269,4 @@ export type ResumeTypeItem = {
   uploaded_at:string
 }
 
-export type ResumeListResponse = ResponseData<ResumeTypeItem>;
+export type ResumeListResponse = ResponseData<ResumeTypeItem[]>;

@@ -27,9 +27,6 @@ const Candidates = () => {
   },[data]);
   
 
-
-
-
   return (
     <div className=" py-[44px] w-[calc(100svw-300px)]">
       <h3 className="text-[24px] font-semibold">Welcome Back!</h3>
