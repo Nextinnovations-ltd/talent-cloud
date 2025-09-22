@@ -43,6 +43,17 @@ class JobSeekerDefaultResumeAPIView(APIView):
           return Response(CustomResponse.success('Successfully set the resume as default.', default_resume), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker Profile"])
+class JobSeekerDeleteResumeAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     def post(self, request, resume_id):
+          ProfileService.delete_uploaded_resume(request.user, resume_id)
+          
+          return Response(CustomResponse.success('Successfully delete the resume.'), status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerProfileSelectionOptionsAPIView(APIView):
      """Retrieve selection option for specialization and experience level in profile section"""
      authentication_classes = [TokenAuthentication]

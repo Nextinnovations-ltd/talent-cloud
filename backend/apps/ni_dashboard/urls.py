@@ -36,17 +36,20 @@ urlpatterns = [
     # ADMIN MANAGEMENT
     # =============================================================================
     path('dashboard/ni/admin/all', NIAdminListAPIView.as_view(), name='ni_admin_list'),
+    
     # =============================================================================
     # COMPANY MANAGEMENT  
     # =============================================================================
     path('dashboard/ni/companies/', CompanyListAPIView.as_view(), name='company_list'),
     path('dashboard/ni/companies/<slug:slug>/approve/', CompanyApprovalAPIView.as_view(), name='ni-company-approval'),
     path('dashboard/ni/companies/pair/', SuperAdminPairingAPIView.as_view(), name='pair-superadmin-to-company'),
+    
     # =============================================================================
     # STATISTICS & ANALYTICS
     # =============================================================================
     path('dashboard/ni/statistics', JobSeekerStatisticsAPIView.as_view(), name='job_seeker_statistics'),
     path('dashboard/ni/statistics/role/', JobSeekerRoleStatisticsAPIView.as_view(), name='job_seeker_role_statistics'),
+    
     # =============================================================================
     # JOB POSTS MANAGEMENT
     # =============================================================================
@@ -56,6 +59,7 @@ urlpatterns = [
     path('dashboard/ni/job-posts/draft/', DraftJobPostListAPIView.as_view(), name='ni-draft-job-post-list'),
     path('dashboard/ni/job-posts/expired/', ExpiredJobPostListAPIView.as_view(), name='ni-expired-job-post-list'),
     path('dashboard/ni/job-posts/<int:job_post_id>/toggle-status/', ToggleJobPostStatusAPIView.as_view(), name='ni-toggle-job-post-status'),
+    
     # =============================================================================
     # JOB APPLICATIONS MANAGEMENT
     # =============================================================================
@@ -68,11 +72,11 @@ urlpatterns = [
     # Application Actions
     path('dashboard/ni/job-posts/<int:job_id>/applicants/<int:applicant_id>/shortlist/', ApplicantShortListAPIView.as_view(), name='ni-applicant-shortlist-action'),
     path('dashboard/ni/job-posts/<int:job_id>/applicants/<int:applicant_id>/reject/', ApplicantRejectAPIView.as_view(), name='ni-applicant-reject-action'),
+    
     # =============================================================================
     # JOB SEEKERS MANAGEMENT
     # =============================================================================
-    path('dashboard/ni/job-seekers/all/', NIRegisteredJobSeekerListAPIView.as_view(), name='registered-job-seeker-list'),
-    
+    path('dashboard/ni/job-seekers/all/', NIRegisteredJobSeekerListAPIView.as_view(), name='registered-job-seeker-list'), 
     # Job Seeker Details(same with applicant details)
     path('dashboard/ni/job-seekers/<int:user_id>/overview/', JobSeekerOverviewAPIView.as_view(), name='job-seeker-overview'),
     path('dashboard/ni/job-seekers/<int:user_id>/projects/', JobSeekerProjectListAPIView.as_view(), name='job-seeker-project-list'),
@@ -80,6 +84,7 @@ urlpatterns = [
     path('dashboard/ni/job-seekers/<int:user_id>/experiences/', JobSeekerExperienceListAPIView.as_view(), name='job-seeker-experience-list'),
     path('dashboard/ni/job-seekers/<int:user_id>/educations/', JobSeekerEducationListAPIView.as_view(), name='job-seeker-education-list'),
     path('dashboard/ni/job-seekers/<int:user_id>/certifications/', JobSeekerCertificationListAPIView.as_view(), name='job-seeker-certification-list'),
+    
     # =============================================================================
     # FAVOURITES MANAGEMENT
     # =============================================================================

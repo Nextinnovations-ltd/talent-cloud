@@ -81,3 +81,5 @@ class UPLOAD_STATUS:
      FAILED = 'failed'
      DELETED = 'deleted'
      DELETION_FAILED = 'deletion_failed'
+     ORPHANED = 'orphaned'
+     MARKED_FOR_DELETION = 'marked_for_deletion'
