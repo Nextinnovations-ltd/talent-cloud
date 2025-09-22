@@ -1,11 +1,12 @@
 from django.db import models
 from apps.users.models import TalentCloudUser
+from apps.authentication.models import FileUpload
+from services.storage.file_service import FileUrlService
 from services.models import TimeStampModel
 
 class JobSeeker(TalentCloudUser):
      user = models.OneToOneField(TalentCloudUser, on_delete=models.CASCADE, parent_link=True)
      onboarding_step = models.IntegerField(default=1)
-     resume_url = models.URLField(max_length=2048, null=True, blank=True)
      video_url = models.TextField(null=True, blank=True)
      is_open_to_work = models.BooleanField(default=True)
      tagline = models.CharField(max_length=150, null=True, blank=True)
@@ -14,23 +15,39 @@ class JobSeeker(TalentCloudUser):
      def __str__(self):
           return f'{self.user.username} - {self.user.email}'
      
-     @property
-     def resume_upload_time(self):
-         """Get the upload time of the resume"""
-         resume_upload = self.uploaded_files.filter(file_type='resume').first()
-         return resume_upload.updated_at if resume_upload else None
-    
-     @property
-     def resume_url_link(self):
-         """Get the resume url"""
-         from services.job_seeker.job_seeker_service import JobSeekerService
-         return JobSeekerService.get_resume_url(self.resume_url)
+     def resume(self):
+          """Get the default Resume"""
+          return self.resume_documents.filter(is_default=True).first()
 
      @property
-     def profile_image_url_link(self):
-         """Get the profile image url"""
-         from services.job_seeker.job_seeker_service import JobSeekerService
-         return JobSeekerService.get_profile_image_url(self.profile_image_url)
+     def resume_upload_time(self):
+          """Get the upload time of the resume"""
+          resume = self.resume()
+          
+          if not resume:
+               return None
+          
+          return resume.file_upload.uploaded_at if resume.file_upload else None
+
+     @property
+     def resume_url(self):
+          """Get the resume url"""
+          resume = self.resume()
+          
+          if not resume or not resume.resume_path:
+               return None
+          
+          return FileUrlService.get_resume_public_url(resume.resume_path)
+     
+     @property
+     def resume_path(self):
+          """Get the resume path"""
+          resume = self.resume()
+          
+          if not resume or not resume.resume_path:
+               return None
+          
+          return resume.resume_path
 
      @property
      def recent_application(self):
@@ -54,6 +71,51 @@ class JobSeeker(TalentCloudUser):
           """Get Job Seeker Experience Year"""
           from services.job_seeker.job_seeker_service import JobSeekerService
           return JobSeekerService.get_job_seeker_experience_year(self)
+     
+class Resume(TimeStampModel):
+     job_seeker = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='resume_documents')
+     title = models.CharField(max_length=255, help_text="Display name for this CV", null=True, blank=True)
+     resume_path = models.URLField(max_length=2048, null=True, blank=True)
+     file_upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+     is_default = models.BooleanField(default=False, help_text="Is this the default CV?")
+     
+     class Meta:
+          ordering = ['-is_default', '-created_at']
+          constraints = [
+               models.UniqueConstraint(
+                    fields=['job_seeker'],
+                    condition=models.Q(is_default=True),
+                    name='unique_default_cv_per_jobseeker'
+               )
+          ]
+
+     def __str__(self):
+          default_indicator = " (Default)" if self.is_default else ""
+          return f"{self.job_seeker.name} - {self.title}{default_indicator}"
+
+     def save(self, *args, **kwargs):
+          # If CV is being set as default, remove default from other CVs
+          if self.is_default:
+               Resume.objects.filter(
+                    job_seeker=self.job_seeker,
+                    is_default=True
+               ).exclude(pk=self.pk).update(is_default=False)
+          
+          # Make default
+          elif not Resume.objects.filter(job_seeker=self.job_seeker).exists():
+               self.is_default = True
+               
+          super().save(*args, **kwargs)
+
+     @property
+     def file_path(self):
+          """Get the file URL from the associated FileUpload"""
+          return self.file_upload.file_path if self.file_upload else None
+     
+     @property
+     def resume_url(self):
+          """Get the resume url"""
+          return FileUrlService.get_resume_public_url(self.resume_path)
      
 class University(TimeStampModel):
      """

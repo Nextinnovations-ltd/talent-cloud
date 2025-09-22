@@ -53,9 +53,6 @@ class UploadService:
                upload_url_expires_at=datetime.now() + timedelta(hours=1)
           )
 
-          # 'fields': upload_data['fields'],
-          # 'expires_in': 3600,
-          
           response_data = {
                'upload_id': str(file_upload.id),
                'upload_url': upload_data['upload_url'],

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from apps.users.models import Address, City, Country
+from apps.users.models import City, Country
 
 class CitySerializer(ModelSerializer):
      class Meta:

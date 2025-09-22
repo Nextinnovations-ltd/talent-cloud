@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCandidatesResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ShortListMutationResopnse } from "@/types/admin-auth-slice";
+import { ApplicantsApiResponse, EditJobDetailResponse, JobPostResponse, JobSeekerCandidatesResponse, JobSeekerCertificationDetail, JobSeekerCountResponse, JobSeekerDetailExperience, JobSeekerDetailVideoResponse, JobSeekerEducationDetail, JobSeekerOverviewResponse, JobSeekerProjectListResponse, RecentJobPost, RelatedInfoResponse, ResumeListResponse, ResumeTypeItem, ShortListMutationResopnse } from "@/types/admin-auth-slice";
 import apiSlice from "../api/apiSlice";
 
 
@@ -100,18 +100,34 @@ export const extendedAdminSlice = apiSlice.injectEndpoints({
         }),
         getJobSeekerCandidateFavourites: builder.mutation<unknown, { id: string }>({
             query: (data) => ({
-                url: `/dashboard/ni/job-seekers/${data?.id}/favourite/`,
+                url: `/dashboard/ni/favourites/job-seekers/${data?.id}/`,
+                method: "POST"
+            }),
+            invalidatesTags: ['CandidateFavList']
+        }),
+        getJobSeekerCandidateFavouritesRemove: builder.mutation<unknown, { id: string }>({
+            query: (data) => ({
+                url: `/dashboard/ni/favourites/job-seekers/${data?.id}/remove/`,
                 method: "POST"
             }),
             invalidatesTags: ['CandidateFavList']
         }),
         getJobSeekerCandidatesFavourite: builder.query<JobSeekerCandidatesResponse, { page: string | number, ordering?: string, search?: string }>({
-            query: (data) => `/dashboard/ni/job-seekers/favourites/?search=${data?.search}&ordering=${data?.ordering}&page=${data?.page}`,
+            query: (data) => `/dashboard/ni/favourites/job-seekers/?search=${data?.search}&ordering=${data?.ordering}&page=${data?.page}`,
             providesTags: ['CandidateFavList']
         }),
+        getJobSeekerResumeList: builder.query<ResumeListResponse, void>({
+            query: () => `/jobseeker/profile/resumes/list/`
+        }),
+        defaultJobSeekerResume: builder.mutation<ResumeTypeItem, { id: string | number }>({
+            query: (data) =>({
+               url:  `/jobseeker/profile/resumes/${data?.id}/set-default/`,
+               method:"POST"
+            })
+        })
     })
 });
 
 
 
-export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery, useGetJobSeekerCandidateFavouritesMutation, useGetJobSeekerCandidatesFavouriteQuery } = extendedAdminSlice
+export const { useCreateJobMutation, useGetOrganizationDetailByAdminQuery, useGetNIAllJobsByAdminQuery, useGetAllApplicantsQuery, useGetAllJobsApplicantsQuery, useGetAllRecentApplicantsListQuery, useGetAllRecentJobsListQuery, useGetDashboardAnalyticsQuery, useGetJobDetailOfEditQuery, useShortListApplicantsMutation, useGetAllShortListApplicantsQuery, useUpdateJobMutation, useDeleteJobMutation, useGetNIActivedJobsByAdminQuery, useGetNIExpiredJobsByAdminQuery, useGetJobSeekersOverViewQuery, useGetJobSeekersProjectsQuery, useGetJobSeekerDetailVideoQuery, useGetJobSeekerDetailExperienceQuery, useGetJobSeekerDetailEducationQuery, useGetJobSeekerDetailCertificationQuery, useGetDashboardRoleAnalyticsQuery, useGetJobSeekerCandidatesQuery, useGetJobSeekerCandidateFavouritesMutation, useGetJobSeekerCandidatesFavouriteQuery, useGetJobSeekerResumeListQuery,useDefaultJobSeekerResumeMutation,useGetJobSeekerCandidateFavouritesRemoveMutation } = extendedAdminSlice

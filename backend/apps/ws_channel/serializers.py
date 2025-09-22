@@ -6,7 +6,7 @@ class TalentCloudUserSerializer(serializers.ModelSerializer):
     """Basic user serializer for notifications"""
     class Meta:
         model = TalentCloudUser
-        fields = ['id', 'username', 'email', 'name', 'profile_image_url']
+        fields = ['id', 'username', 'email', 'name']
 
 class NotificationListSerializer(serializers.ModelSerializer):
     """Serializer for listing notifications"""

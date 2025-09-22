@@ -24,6 +24,11 @@ class FavouriteJobSeeker(TimeStampModel):
           null=True,
           blank=True
      )
+     updated_by = models.CharField(
+          max_length=255,
+          null=True,
+          blank=True
+     )
      
      class Meta:
           db_table = 'ni_dashboard_favorite_applicants'

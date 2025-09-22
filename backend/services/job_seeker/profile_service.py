@@ -1,9 +1,9 @@
-from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience
+from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, Resume
+from apps.job_seekers.serializers.profile_serializer import ResumeSerializer
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
 from services.storage.s3_service import S3Service
-from rest_framework import serializers
 from django.utils import timezone
 import logging
 
@@ -23,21 +23,21 @@ class ProfileService:
           # Update upload record
           file_upload = UploadService.update_file_upload_status(user, upload_id)
           
-          # Generate download URL for response
-          public_url = S3Service.get_public_url(
-               file_upload.file_path
-          )
-          
           # Update TalentCloudUser profile based on file type
           try:
                from apps.job_seekers.models import TalentCloudUser
                job_seeker = JobSeeker.objects.get(id=user.id)
                
                if file_upload.file_type == 'profile_image':
-                    job_seeker.profile_image_url = file_upload.file_path
-                    logger.info(f"Updated profile image for user {user.id}")
+                    job_seeker.profile_image_path = file_upload.file_path
+                    
+                    logger.info(f"Updated profile image path for user {user.id}")
+               
+               # Need to fix due to latest multiple resume change
                elif file_upload.file_type == 'resume':
-                    job_seeker.resume_url = file_upload.file_path
+                    # job_seeker.resume_url = file_upload.file_path
+                    ProfileService._upload_resume(job_seeker, file_upload)
+                    
                     logger.info(f"Updated resume for user {user.id}")
                
                job_seeker.save()
@@ -53,7 +53,12 @@ class ProfileService:
           #      file_type=file_upload.file_type,
           #      exclude_upload_id=file_upload.id
           # )
-               
+
+          # Generate download URL for response
+          public_url = S3Service.get_public_url(
+               file_upload.file_path
+          )
+          
           return {
                'upload_id': str(file_upload.id),
                'file_type': file_upload.file_type,
@@ -63,6 +68,47 @@ class ProfileService:
                'upload_status': UPLOAD_STATUS.UPLOADED,
                'profile_updated': profile_updated
           }
+     
+     @staticmethod
+     def _upload_resume(user, file_upload):
+          try:
+               resume = Resume.objects.create(
+                    job_seeker = user,
+                    file_upload = file_upload,
+                    resume_path = file_upload.file_path
+               )
+               
+               return resume
+          except:
+               raise ValidationError("Failed to upload resume.")
+     
+     @staticmethod
+     def get_user_resume_list(user):
+          try:
+               resumes = Resume.objects.filter(
+                    job_seeker = user
+               ).order_by('-created_at')
+               
+               # Return resume data list
+               return ResumeSerializer(resumes, many=True).data
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to retrieve resume list.")
+     
+     @staticmethod
+     def set_default_resume(user, resume_id):
+          try:
+               resume = Resume.objects.get(
+                    job_seeker = user,
+                    id = resume_id
+               )
+               
+               resume.is_default = True
+               resume.save()
+               
+               # Return resume data 
+               return ResumeSerializer(resume).data
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to set resume as default.")
 
 class ExperienceService:
      @staticmethod

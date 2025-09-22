@@ -72,7 +72,7 @@ class JobApplicationService:
           """Create the job application instance"""
           
           if not resume_file_path:
-               resume_file_path = job_seeker.resume_url
+               resume_file_path = job_seeker.resume_path
           
           application = JobApplication.objects.create(
                job_post=job_post,

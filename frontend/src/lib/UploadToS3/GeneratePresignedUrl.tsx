@@ -6,10 +6,11 @@ import {
 } from "@/helpers/operateBrowserStorage";
 import { URL } from '@/services/api/apiurls';
 import { PresignedUrlResponse } from '@/types/file-upload-types';
+import fileUploadTypes from '@/types/upload-s3-types';
 
 type GeneratePresignedUrlProps = {
   file: File,
-  type: "profile" | "resume" | "coverLetter" | "project",
+  type:fileUploadTypes,
 }
 
 
@@ -31,6 +32,8 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
     uploadEndpoint = 'application/upload/cover-letter/ '
   }else if (type === 'project'){
     uploadEndpoint = 'jobseeker/projects/upload/project-image/'
+  }else if (type === 'defaultResume'){
+    uploadEndpoint = 'jobseeker/profile/upload/resume/'
   }
 
 
@@ -49,8 +52,6 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
     }
   );
   
-
-  console.log(response.data)
 
   return response.data;
 }

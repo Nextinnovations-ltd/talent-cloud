@@ -17,18 +17,7 @@ class ProfileImageUploadAPIView(APIView):
      permission_classes = [TalentCloudUserPermission]
      
      @extend_schema(
-          summary="Generate presigned URL for profile image upload",
-          request={
-               'application/json': {
-                    'type': 'object',
-                    'properties': {
-                         'filename': {'type': 'string', 'description': 'Original filename'},
-                         'file_size': {'type': 'integer', 'description': 'File size in bytes'},
-                         'content_type': {'type': 'string', 'description': 'MIME type (optional)'},
-                    },
-                    'required': ['filename', 'file_size']
-               }
-          }
+          summary="Generate presigned URL for profile image upload"
      )
      def post(self, request):
           """
@@ -131,17 +120,7 @@ class ConfirmProfileUploadAPIView(APIView):
      permission_classes = [TalentCloudUserPermission]
      
      @extend_schema(
-          summary="Confirm profile file upload and update user profile",
-          request={
-               'application/json': {
-                    'type': 'object',
-                    'properties': {
-                         'upload_id': {'type': 'string', 'description': 'Upload ID from generate URL endpoint'},
-                         'file_size': {'type': 'integer', 'description': 'Actual uploaded file size (optional)'},
-                    },
-                    'required': ['upload_id']
-               }
-          }
+          summary="Confirm profile file upload and update user profile"
      )
      def post(self, request):
           """

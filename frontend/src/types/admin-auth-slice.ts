@@ -22,18 +22,15 @@ export interface PaginatedData<T> {
   previous: string | null;
   results: T[];
 }
-
-export interface JobPostResponse {
-  status: boolean;
-  message: string;
-  data: PaginatedData<JobPost>;
+export interface ResponseData<T>{
+   status:boolean;
+   message:string;
+   data:T
 }
 
-export interface RecentJobPost {
-  status: boolean;
-  message: string;
-  data: JobPost[];
-}
+export type JobPostResponse  = ResponseData<PaginatedData<JobPost>>;
+
+export type RecentJobPost =  ResponseData<JobPost[]> ;
 
 export interface RelatedInfoResponse {
   status: boolean;
@@ -73,11 +70,7 @@ export type JobPostDetails = {
   last_application_date: string;
 };
 
-export interface EditJobDetailResponse {
-  status: boolean;
-  message: string;
-  data: JobPostDetails;
-}
+export type  EditJobDetailResponse = ResponseData<JobPostDetails> ;
 
 
 export interface Applicant {
@@ -97,11 +90,7 @@ export interface Applicant {
   cover_letter_url: string | null;
 }
 
-export interface ApplicantsApiResponse {
-  status: boolean;
-  message: string;
-  data: PaginatedData<Applicant>;
-}
+export type  ApplicantsApiResponse = ResponseData<PaginatedData<Applicant>>;
 
 export interface JobSeekerCountResponse {
   status: boolean;
@@ -272,3 +261,12 @@ export type JobSeekerCandidatesResponse = {
   message: string;
   data:PaginatedData<Applicant>
 }
+
+export type ResumeTypeItem = {
+  id:number,
+  is_default:boolean,
+  resume_url:string,
+  uploaded_at:string
+}
+
+export type ResumeListResponse = ResponseData<ResumeTypeItem[]>;

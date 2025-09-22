@@ -47,28 +47,10 @@ class JobSeekerService:
           return {
                'message': "Successfully fetched job seeker resume.",
                'data': {
-                    'resume_url': JobSeekerService.get_resume_url(job_seeker.resume_url),
+                    'resume_url': job_seeker.resume_url,
                     'resume_uploaded_time': job_seeker.resume_upload_time,
                }
           }
-          
-     @staticmethod
-     def get_resume_url(resume_path):
-          """
-          Retrieves the job seeker resume url
-          """
-          from services.storage.s3_service import S3Service
-          
-          return S3Service.get_public_url(resume_path)
-     
-     @staticmethod
-     def get_profile_image_url(profile_image_path):
-          """
-          Retrieves the job seeker profile image url
-          """
-          from services.storage.s3_service import S3Service
-          
-          return S3Service.get_public_url(profile_image_path)
 
      @staticmethod
      def get_job_seeker_social_links(job_seeker):
@@ -152,14 +134,10 @@ class JobSeekerService:
      @staticmethod
      def _get_step_1_data(job_seeker: JobSeeker, occupation: JobSeekerOccupation):
           """Get step 1 onboarding data (profile basics)"""
-          from services.storage.s3_service import S3Service
-          
-          profile_url = S3Service.get_public_url(job_seeker.profile_image_url) if job_seeker.profile_image_url else None
-          
           return {
                'message': "Step 1 data retrieved successfully.",
                'data': {
-                    'profile_image_url': profile_url,
+                    'profile_image_url': job_seeker.profile_image_url,
                     'name': job_seeker.name,
                     'tagline': job_seeker.tagline,
                     'experience_level_id': occupation.experience_level_id if occupation else None,
@@ -478,14 +456,9 @@ class JobSeekerService:
           job_seeker: JobSeeker, 
           occupation: JobSeekerOccupation = None,
           social_links: JobSeekerSocialLink = None
-     ):
-          from services.storage.s3_service import S3Service
-
-          profile_url = S3Service.get_public_url(job_seeker.profile_image_url) if job_seeker.profile_image_url else None
-          resume_url = S3Service.get_public_url(job_seeker.resume_url) if job_seeker.resume_url else None
-          
+     ):        
           return {
-               'profile_image_url': profile_url,
+               'profile_image_url': job_seeker.profile_image_url,
                'name': job_seeker.name,
                'username': job_seeker.username,
                'email': job_seeker.email,
@@ -509,8 +482,9 @@ class JobSeekerService:
                'date_of_birth': job_seeker.date_of_birth,
                'tagline': job_seeker.tagline,
                'bio': job_seeker.bio,
-               'resume_url': resume_url,
+               'resume_url': job_seeker.resume_url,
                'resume_uploaded_time': job_seeker.resume_upload_time,
+               
                # Address
                'address': JobSeekerService._get_extracted_address(job_seeker),
                

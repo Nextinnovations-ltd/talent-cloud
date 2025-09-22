@@ -147,7 +147,7 @@ class SharedDashboardService:
                'job_post__posted_by__company',
                'job_seeker__user__id',
                'job_seeker__user__name',
-               'job_seeker__user__profile_image_url',
+               'job_seeker__user__profile_image_path',
                'job_seeker__occupation__experience_years',
                'job_seeker__occupation__role__name'
           ).order_by('-created_at')
@@ -222,6 +222,21 @@ class SharedDashboardService:
      
      @staticmethod
      def perform_favourite_job_seeker(job_seeker_id, company, action_email):
+          existing_favourite = FavouriteJobSeeker.objects.filter(
+               user_id=job_seeker_id, 
+               company=company
+          ).first()
+
+          if existing_favourite:
+               if existing_favourite.status:
+                    raise ValidationError("Job Seeker already in favourite.")
+               else:
+                    existing_favourite.status = True
+                    existing_favourite.updated_by = action_email
+                    existing_favourite.save()
+                    
+                    return existing_favourite
+          
           if FavouriteJobSeeker.objects.filter(user_id = job_seeker_id, company = company).exists():
                raise ValidationError("Job Seeker already in favourite.")
           
@@ -234,8 +249,21 @@ class SharedDashboardService:
           return favourite_job_seeker
      
      @staticmethod
+     def remove_favourite_job_seeker(job_seeker_id, company, action_email):
+          try:
+               favourite_job_seeker = FavouriteJobSeeker.objects.get(user_id = job_seeker_id, company = company)
+          
+               favourite_job_seeker.status = False
+               favourite_job_seeker.updated_by = action_email
+               favourite_job_seeker.save()
+               
+               return favourite_job_seeker
+          except FavouriteJobSeeker.DoesNotExist:
+               raise ValidationError("Job Seeker does not exist in favourite.")
+     
+     @staticmethod
      def get_favourite_job_seeker_list(company):
-          return FavouriteJobSeeker.objects.filter(company = company).select_related('user', 'user__occupation', 'user__occupation__role')
+          return FavouriteJobSeeker.objects.filter(company = company, status=True).select_related('user', 'user__occupation', 'user__occupation__role')
      
      @staticmethod
      def get_job_seeker_overview(user_id, application_id):

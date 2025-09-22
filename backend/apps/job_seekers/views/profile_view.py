@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
+from services.job_seeker.profile_service import ProfileService
 from services.job_seeker.job_seeker_service import JobSeekerService
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
@@ -19,6 +20,27 @@ class JobSeekerResumeAPIView(APIView):
           response = JobSeekerService.get_job_seeker_resume_info(request.user)
           
           return Response(CustomResponse.success(response['message'], response['data']), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Job Seeker Profile"])
+class JobSeekerResumeListAPIView(APIView):
+     """Retrieve job seeker resume"""
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     def get(self, request):
+          resume_list = ProfileService.get_user_resume_list(request.user)
+          
+          return Response(CustomResponse.success('Successfully retrieved resume list', resume_list), status=status.HTTP_200_OK)
+
+@extend_schema(tags=["Job Seeker Profile"])
+class JobSeekerDefaultResumeAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudUserPermission]
+     
+     def post(self, request, resume_id):
+          default_resume = ProfileService.set_default_resume(request.user, resume_id)
+          
+          return Response(CustomResponse.success('Successfully set the resume as default.', default_resume), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker Profile"])
 class JobSeekerProfileSelectionOptionsAPIView(APIView):
