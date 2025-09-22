@@ -16,6 +16,7 @@ import { ResumeTypeItem } from "@/types/admin-auth-slice";
 import { TooltipContent } from "@radix-ui/react-tooltip";
 import { useState } from "react";
 import useToast from '@/hooks/use-toast';
+import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
 
 type ResumeItemProps = {
     item: ResumeTypeItem
@@ -25,6 +26,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
     const resume_url = item?.resume_url;
     const [isDownloading, setIsDownloading] = useState(false);
     const [makeDeafult] = useDefaultJobSeekerResumeMutation();
+    const {refetch:ResumeRefetch} =  useGetJobSeekerResumeQuery()
     const { refetch } = useGetJobSeekerResumeListQuery();
     const { showNotification } = useToast();
     const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
@@ -32,6 +34,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
     const handleDefault = async (id: string | number) => {
         await makeDeafult({ id });
         refetch();
+        ResumeRefetch();
     };
 
     const handleDownloadCV = async () => {

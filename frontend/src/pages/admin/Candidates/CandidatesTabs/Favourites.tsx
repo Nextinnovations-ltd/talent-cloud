@@ -68,7 +68,7 @@ const Favourites: React.FC<FavouritesProps> = ({
 
       {!CANDIDATES?.results?.length && (
         <div className="py-8 mt-[50px] text-center text-gray-500">
-          <CommonError image={EMPTY} title="No one has applied yet" description="" />
+          <CommonError image={EMPTY} title="No favourite yet" description="" />
         </div>
       )}
 
