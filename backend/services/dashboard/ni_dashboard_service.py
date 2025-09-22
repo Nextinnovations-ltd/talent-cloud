@@ -231,7 +231,8 @@ class NIDashboardService:
           
           favourite_subquery = FavouriteJobSeeker.objects.filter(
                user=OuterRef('pk'),
-               company=company
+               company=company,
+               status=True
           )
           return JobSeeker.objects.annotate(
                is_favourite=Exists(favourite_subquery)

@@ -121,6 +121,22 @@ class FavouriteJobSeekerAPIView(APIView):
                status=status.HTTP_200_OK
           )
           
+@extend_schema(tags=["NI Dashboard"])
+class FavouriteJobSeekerRemovalAPIView(APIView):
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [TalentCloudSuperAdminPermission]
+     
+     def post(self, request, user_id):
+          company = SharedDashboardService.get_company(request.user)
+          
+          job_seeker = SharedDashboardService.remove_favourite_job_seeker(user_id, company, request.user.email)
+          
+          return Response(
+               CustomResponse.success(
+                    'Successfully removed the job seeker from favourites.',
+                    FavouriteJobSeekerDashboardSerializer(job_seeker).data),
+               status=status.HTTP_200_OK
+          )
 
 @extend_schema(tags=["NI Dashboard"])
 class FavouriteJobSeekerListAPIView(CustomListAPIView):
