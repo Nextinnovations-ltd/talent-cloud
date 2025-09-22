@@ -204,39 +204,3 @@ def send_job_expiration_error_notification(error_message, execution_time):
         
     except Exception as e:
         logger.error(f"Failed to send error notification: {str(e)}", exc_info=True)
-
-@shared_task(name='job_tasks.cleanup_expired_jobs')
-def cleanup_expired_jobs_data_task():
-    """
-    Optional cleanup task to handle additional cleanup for expired jobs.
-    This can be used for archiving old data, sending notifications, etc.
-    """
-    try:
-        # Get jobs that have been expired for more than 30 days
-        from datetime import timedelta
-        thirty_days_ago = date.today() - timedelta(days=30)
-        
-        old_expired_jobs = JobPost.objects.filter(
-            job_post_status=StatusChoices.EXPIRED,
-            updated_at__date__lt=thirty_days_ago
-        )
-        
-        count = old_expired_jobs.count()
-        
-        # Here you could add additional cleanup logic:
-        # - Archive to separate table
-        # - Send notifications
-        # - Generate reports
-        # - etc.
-        
-        logger.info(f"Found {count} jobs expired more than 30 days ago for potential cleanup")
-        
-        return {
-            'status': 'success',
-            'old_expired_count': count,
-            'message': 'Cleanup task completed'
-        }
-        
-    except Exception as e:
-        logger.error(f"Error in cleanup task: {str(e)}", exc_info=True)
-        raise
