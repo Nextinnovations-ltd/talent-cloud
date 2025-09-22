@@ -25,8 +25,10 @@ const ApplyJob = () => {
   // in ApplyJob.tsx
   const [fileData, setFileData] = useState<File>();
   const [radioValue, setRadioValue] = useState<"uploadCover" | "noCover">("noCover");
+  const [radioResumeValue, setResumeRadioValue] = useState<"upload" | "choose">("choose");
+
   const [coverError, setCoverError] = useState(false);
-  const [resumeUploadId,setResumeUploadId] = useState<string | undefined>(undefined);
+  const [resumeUploadId, setResumeUploadId] = useState<string | undefined>(undefined);
   const navigation = useNavigate();
 
 
@@ -67,8 +69,8 @@ const ApplyJob = () => {
         resume_upload_id: ""
       };
 
-      if(resumeUploadId){
-        payload.resume_upload_id = resumeUploadId 
+      if (resumeUploadId) {
+        payload.resume_upload_id = resumeUploadId
       }
 
       if (fileData) {
@@ -79,8 +81,8 @@ const ApplyJob = () => {
         });
         //@ts-ignore
         payload.cover_letter_upload_id = result;
-       
-       
+
+
       } else {
         payload.is_skipped = true;
       }
@@ -126,7 +128,12 @@ const ApplyJob = () => {
           <h3 className=" underline text-[#0481EF] text-[18px]">View Full Job Description </h3>
         </Link>
 
-        <ApplyJobResume setResumeUploadId={setResumeUploadId} resumeData={data?.data?.resume_url} />
+        <ApplyJobResume
+          setRadioValue={setResumeRadioValue}
+          radioValue={radioResumeValue}
+          setResumeUploadId={setResumeUploadId}
+          resumeData={data?.data?.resume_url} />
+
         <ApplyCoverLetter
           fileData={fileData}
           setFileData={setFileData}
@@ -135,7 +142,7 @@ const ApplyJob = () => {
           coverError={coverError}
         />
 
-        <Button onClick={handleApply}  className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
+        <Button onClick={handleApply} disabled={radioResumeValue === "upload" && !resumeUploadId} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
           JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>
