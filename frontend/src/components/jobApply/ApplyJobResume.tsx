@@ -3,15 +3,15 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 import { RadioGroupItem, RadioGroup } from "../ui/radio-group";
 import ApplyJobUploadResume from "./ApplyJobUploadResume";
-// import ApplyJobResumeItemContainer from "./ApplyJobResumeItemContainer";
+import ApplyJobResumeItemContainer from "./ApplyJobResumeItemContainer";
 
 
 type ApplyJobResumeProps = {
   resumeData: string | undefined,
-  setResumeUploadId :  (id:string | undefined)=> void ,
+  setResumeUploadId: (id: string | undefined) => void,
 }
 
-const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData,setResumeUploadId }) => {
+const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUploadId }) => {
 
 
   const [radioValue, setRadioValue] = useState("upload");
@@ -35,20 +35,22 @@ const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData,setResumeUpl
         {
           radioValue === "upload" &&
           <div className="mt-[20px]">
-            <ApplyJobUploadResume  setResumeUploadId={setResumeUploadId} type="resume" />
+            <ApplyJobUploadResume setResumeUploadId={setResumeUploadId} type="resume" />
           </div>
         }
-        {/* <div className="flex items-center cursor-pointer gap-3 mt-[40px]">
+        <div className="flex items-center cursor-pointer gap-3 mt-[40px]">
           <RadioGroupItem value="choose" id="r2" />
           <Label className="font-medium cursor-pointer" htmlFor="r2">
-            <h3 className="text-[16px]">Use Previous Resume</h3>
-            <p className="text-[12px] mt-[10px] font-light">Select from your uploaded resumes</p>
+            <h3 className="text-[16px]">Use Default Resume</h3>
+            <p className="text-[12px] mt-[10px] font-light">Select default your uploaded resumes</p>
           </Label>
-        </div> */}
+        </div>
       </RadioGroup>
-      {/* <div className="ml-8">
-        <ApplyJobResumeItemContainer />
-      </div> */}
+      {
+        radioValue === "choose" && <div className="ml-8">
+          <ApplyJobResumeItemContainer />
+        </div>
+      }
     </div>
   )
 }

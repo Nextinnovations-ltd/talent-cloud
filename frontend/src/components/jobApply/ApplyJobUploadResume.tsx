@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDropzone, FileRejection } from "react-dropzone";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Trash, Upload, CheckCircle } from "lucide-react";
+import { Trash, Upload } from "lucide-react";
 import UploadToS3 from "@/lib/UploadToS3/UploadToS3";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
@@ -33,7 +33,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
   const [rejections, setRejections] = useState<FileRejection[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState<number>(0);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [, setUploadSuccess] = useState(false);
   const [uploadData, setUploadData] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -152,15 +152,13 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
             {uploadData}
           </div>
 
-          {uploadSuccess && (
-            <CheckCircle className="text-green-500 w-5 h-5" />
-          )}
+         
 
           {previewUrl && (
             <Button
               type="button"
               onClick={() => window.open(previewUrl, "_blank")}
-              className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+              className="w-[40px] p-3 h-[40px] flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
             >
               <SvgEye />
             </Button>
@@ -173,7 +171,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
               setResumeUploadId?.(undefined);
               setUploadSuccess(false);
             }}
-            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+            className="w-[40px] h-[40px] p-3 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
           >
             <Trash size={18} />
           </Button>

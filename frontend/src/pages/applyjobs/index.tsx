@@ -135,8 +135,7 @@ const ApplyJob = () => {
           coverError={coverError}
         />
 
-
-        <Button onClick={handleApply} disabled={!resumeUploadId} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
+        <Button onClick={handleApply}  className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
           JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>
