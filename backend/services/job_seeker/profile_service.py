@@ -86,7 +86,8 @@ class ProfileService:
      def get_user_resume_list(user):
           try:
                resumes = Resume.objects.filter(
-                    job_seeker = user
+                    job_seeker = user,
+                    status=True
                ).order_by('-created_at')
                
                # Return resume data list
@@ -109,6 +110,22 @@ class ProfileService:
                return ResumeSerializer(resume).data
           except Resume.DoesNotExist:
                raise ValidationError("Failed to set resume as default.")
+     
+     @staticmethod
+     def delete_uploaded_resume(user, resume_id):
+          try:
+               resume = Resume.objects.get(
+                    job_seeker = user,
+                    id = resume_id
+               )
+               
+               resume.status = False
+               resume.save()
+               
+               # Return resume data 
+               return ResumeSerializer(resume).data
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to delete resume.")
 
 class ExperienceService:
      @staticmethod
