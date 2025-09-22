@@ -166,6 +166,13 @@ jobs:
                 sudo supervisorctl start talent-cloud-daphne
                 sudo supervisorctl start talent-cloud-flower
                 
+                echo "Entering into server directory..."
+                cd /home/ubuntu/talentcloud-networks/talent-cloud/backend
+                
+                echo "Syncing Celery Periodic Tasks"
+                python manage.py manage_periodic_tasks --sync --force
+                cd -
+
                 echo "🔧 Setting socket permissions..."
                 sudo chmod +x /home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock
                 
