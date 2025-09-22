@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
+import fileUploadTypes from '@/types/upload-s3-types';
 import { ComfirmUpload } from './ConfirmUpload';
 import { generatePresignedUrl } from './GeneratePresignedUrl';
 import { uploadToCloud } from './UploadData';
 
+
 type UploadToS3Props = {
     file:File,
-    type: "profile" | "resume" | "coverLetter" | "project",
+    type: fileUploadTypes,
     postId?: string
 }
 
@@ -19,13 +21,12 @@ export async function uploadToS3({ file,type,postId }: UploadToS3Props): Promise
 
         await uploadToCloud({file:file,uploadData:presignedUrlData?.data})
          
-         if (type === 'profile' || type === 'resume'){
+         if (type === 'profile' || type === 'resume' || type === 'defaultResume'){
             const response = await ComfirmUpload({
                 uploadId:presignedUrlData?.data?.upload_id,
                 fileSize:file.size,
                 type:type
             });
-
 
                 //@ts-ignore
             return response?.data?.data?.upload_id;
