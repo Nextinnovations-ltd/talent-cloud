@@ -8,6 +8,7 @@ import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import { useGetSpecializationsByIndustryIdQuery } from "@/services/slices/onBoardingSlice";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // ✅ get query params
 
 interface Specialization {
   id: number;
@@ -29,6 +30,11 @@ export const SpecializationSkillSet = ({
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { showNotification } = useToast();
 
+  // ✅ Read ?name from URL
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const specializationName = decodeURIComponent(queryParams.get("name") || "");
+
   const {
     data,
     isLoading: IndustriesLoading,
@@ -36,20 +42,17 @@ export const SpecializationSkillSet = ({
     refetch,
   } = useGetSpecializationsByIndustryIdQuery(id as number, { skip: id === null });
 
-
-
-
   useEffect(() => {
     if (id !== null) {
       refetch();
     }
   }, [id, refetch]);
 
-  useEffect(()=>{
-    if(value !== null){
+  useEffect(() => {
+    if (value !== null) {
       setIsButtonDisabled(false);
     }
-  },[value]);
+  }, [value]);
 
   const handleClick = async () => {
     if (value !== null && id !== null) {
@@ -57,17 +60,15 @@ export const SpecializationSkillSet = ({
       formData.append("specialization_id", `${id.toString()}`);
       formData.append("step", "2");
 
-  
-      const res = await executeApiCall(formData); // ✅ send formData directly
-  
+      const res = await executeApiCall(formData);
+
       if (res?.success) {
-        formData.append("role_id", `${value.toString()}` );
+        formData.append("role_id", `${value.toString()}`);
         formData.append("step", "3");
-        const res = await executeApiCall(formData); // ✅ send formData directly
-        if(res?.success){
+        const res = await executeApiCall(formData);
+        if (res?.success) {
           goToNextStep();
         }
-       
       } else {
         showNotification({
           message: res?.data?.message || "Submission failed. Try again.",
@@ -81,7 +82,6 @@ export const SpecializationSkillSet = ({
       });
     }
   };
-  
 
   if (id === null) {
     return (
@@ -99,12 +99,11 @@ export const SpecializationSkillSet = ({
     );
   }
 
-  // Filter specializations based on search input
-  const filteredSpecializations = data?.data?.filter(({ name }: Specialization) =>
-    name.toLowerCase().includes(search.toLowerCase())
-  ) ?? [];
+  const filteredSpecializations =
+    data?.data?.filter(({ name }: Specialization) =>
+      name.toLowerCase().includes(search.toLowerCase())
+    ) ?? [];
 
-  // Render the list of specializations
   const renderSpecializations = () => {
     if (IndustriesLoading) {
       return (
@@ -114,7 +113,14 @@ export const SpecializationSkillSet = ({
 
     return (
       <div className="relative mt-[10px]">
-        <div className={clsx(' py-[30px] h-[380px] overflow-scroll scroll gap-[25px] no-scrollbar',filteredSpecializations.length > 4 ?  'grid grid-cols-1 md:grid-cols-4' : 'flex  justify-center' )}>
+        <div
+          className={clsx(
+            "py-[30px] h-[380px] overflow-scroll scroll gap-[25px] no-scrollbar",
+            filteredSpecializations.length > 4
+              ? "grid grid-cols-1 md:grid-cols-4"
+              : "flex justify-center"
+          )}
+        >
           {filteredSpecializations.length > 0 ? (
             filteredSpecializations.map(({ id, name }: Specialization) => (
               <SubSepcializationCard
@@ -138,14 +144,12 @@ export const SpecializationSkillSet = ({
 
   return (
     <div className="flex flex-col pb-12 items-center justify-center">
-      <StepperTitle title="What is your specialization in Design & Creative?" />
+      {/* ✅ Inject the name from query param */}
+      <StepperTitle title={`What is your ${specializationName}?`} />
 
       <div className="container mx-auto mt-[40px] flex-col flex items-center justify-center">
-
         <SearchBar setValue={setSearch} value={search} width="lg" />
-
         {renderSpecializations()}
-
         <PrimaryButton
           handleClick={handleClick}
           width="w-[200px] mt-[50px]"

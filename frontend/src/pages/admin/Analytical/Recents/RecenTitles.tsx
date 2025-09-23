@@ -10,3 +10,5 @@ export const RecenTitles = ({title,handleAction,viewAll = true}:{title:string,ha
     </div>
   )
 }
+
+

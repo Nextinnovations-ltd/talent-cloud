@@ -31,7 +31,6 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   SHADOWLEFT,
   SHADOWRIGHT,
   BackGroundGrid,
-  ScrollVelocity,
 }) => {
 
 
@@ -95,6 +94,8 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
     { name: "Linkedin", key: "linkedin_url" },
     { name: "Behance", key: "behance_url" },
     { name: "Portfolio", key: "portfolio_url" },
+    { name: "GitHub", key: "github_url" },
+
   ];
 
   return (
@@ -148,8 +149,15 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
               else if (key === 'linkedin_url') url = userData.linkedin_url;
               else if (key === 'behance_url') url = userData.behance_url;
               else if (key === 'portfolio_url') url = userData.portfolio_url;
+              else if (key === 'github_url') url = userData.github_url;
+
             }
+            console.log("User Data")
+            console.log(name)
+            console.log("User Data")
+
             if (!url) return null;
+
             return (
               <a
                 href={url}
@@ -166,10 +174,10 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
         </ul>
       </motion.div>
 
-      <ScrollVelocity
+      {/* <ScrollVelocity
         texts={[userData?.name || '']}
         className="custom-scroll-text text-[#0389FF] mb-[100px] h-[110px] mt-[80px]  text-[190px]"
-      />
+      /> */}
     </>
   );
 };
