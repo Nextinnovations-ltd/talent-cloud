@@ -76,7 +76,7 @@ class Resume(TimeStampModel):
      job_seeker = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='resume_documents')
      title = models.CharField(max_length=255, help_text="Display name for this CV", null=True, blank=True)
      resume_path = models.URLField(max_length=2048, null=True, blank=True)
-     file_upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+     file_upload = models.ForeignKey(FileUpload, on_delete=models.SET_NULL, null=True, blank=True)
      is_default = models.BooleanField(default=False, help_text="Is this the default CV?")
      
      class Meta:
@@ -251,6 +251,7 @@ class JobSeekerProject(TimeStampModel):
      """
      Represents a project completed by a job seeker
      """
+     from apps.authentication.models import FileUpload
      user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='projects')
      title = models.CharField(max_length=255, help_text="Project title")
      description = models.TextField(help_text="Detailed description of the project")
@@ -271,6 +272,13 @@ class JobSeekerProject(TimeStampModel):
           blank=True, 
           help_text="URL to project screenshot or image"
      )
+     project_image_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='project_images'
+     )
      start_date = models.DateField(null=True, blank=True, help_text="Project start date")
      end_date = models.DateField(null=True, blank=True, help_text="Project completion date")
      is_ongoing = models.BooleanField(default=False, help_text="Is this project still ongoing")
@@ -287,6 +295,12 @@ class JobSeekerProject(TimeStampModel):
      
      def __str__(self):
           return f"{self.user.username} - {self.title}"
+     
+     @property
+     def project_image_url(self):
+          if not self.project_image_file:
+               return None
+          return self.project_image_file.public_url
 
 class JobSeekerSpecialization(TimeStampModel):
      id = models.CharField(

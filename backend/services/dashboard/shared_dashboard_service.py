@@ -147,7 +147,7 @@ class SharedDashboardService:
                'job_post__posted_by__company',
                'job_seeker__user__id',
                'job_seeker__user__name',
-               'job_seeker__user__profile_image_path',
+               'job_seeker__user__profile_image_file',
                'job_seeker__occupation__experience_years',
                'job_seeker__occupation__role__name'
           ).order_by('-created_at')

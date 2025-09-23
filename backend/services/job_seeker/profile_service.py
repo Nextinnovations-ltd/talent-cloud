@@ -29,7 +29,7 @@ class ProfileService:
                job_seeker = JobSeeker.objects.get(id=user.id)
                
                if file_upload.file_type == 'profile_image':
-                    job_seeker.profile_image_path = file_upload.file_path
+                    job_seeker.profile_image_file = file_upload
                     
                     logger.info(f"Updated profile image path for user {user.id}")
                

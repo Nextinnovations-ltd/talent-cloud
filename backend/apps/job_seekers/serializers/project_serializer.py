@@ -19,7 +19,8 @@ class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def get_project_image_url(self, obj: JobSeekerProject):
-        return S3Service.get_public_url(obj.project_image_url)
+        return obj.project_image_url
+        # return S3Service.get_public_url(obj.project_image_url)
 
 class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating projects"""

@@ -1,6 +1,5 @@
 from services.storage.s3_service import S3Service
 
-
 class FileUrlService:
      """Service specifically for handling file URL generation"""
      @staticmethod

@@ -35,6 +35,7 @@ class Company(TimeStampModel):
      Represents a company that posts jobs on the platform.
      Associated with Admin/Superadmin users.
      """
+     from apps.authentication.models import FileUpload
      name = models.CharField(
           max_length=255,
           null=False,
@@ -117,6 +118,20 @@ class Company(TimeStampModel):
           max_length=2048,
           help_text="URL to the company's Cover image."
      )
+     cover_image_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='company_cover_images'
+     )
+     image_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='company_images'
+     )
      company_image_urls = models.JSONField(
           default=list, blank=True
      )
@@ -181,6 +196,16 @@ class Company(TimeStampModel):
           ).exclude(
                models.Q(last_application_date__lt=date.today())
           )
+     
+     @property
+     def admins(self):
+          from apps.users.models import TalentCloudUser
+          admins = TalentCloudUser.objects.filter(company__id=self.pk)
+          
+          if not admins:
+               return None
+          
+          return admins
 
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)

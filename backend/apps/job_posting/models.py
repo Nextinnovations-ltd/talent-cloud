@@ -235,6 +235,8 @@ class JobApplication(TimeStampModel):
      """
      Represents a job seeker's application to a specific job post.
      """
+     from apps.authentication.models import FileUpload
+     
      job_post = models.ForeignKey(
           JobPost,
           on_delete=models.CASCADE,
@@ -259,11 +261,25 @@ class JobApplication(TimeStampModel):
           blank=True,
           help_text="URL of the cover letter submitted for this specific application."
      )
+     cover_letter_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='application_cover_letters'
+     )
      resume_url = models.URLField(
           max_length=2048,
           null=True,
           blank=True,
           help_text="URL of the job seeker resume."
+     )
+     resume_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='application_resumes'
      )
 
      class Meta:

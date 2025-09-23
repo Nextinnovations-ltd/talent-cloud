@@ -172,6 +172,7 @@ class Address(models.Model):
     
 class TalentCloudUser(TimeStampModel, AbstractUser):
     from apps.companies.models import Company
+    from apps.authentication.models import FileUpload
     
     first_name = None
     last_name = None
@@ -184,6 +185,13 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, related_name='users', null= True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     profile_image_path = models.URLField(null=True, blank=True, max_length=200)
+    profile_image_file = models.ForeignKey(
+        FileUpload,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='user_profile_images'
+    )
     address = models.OneToOneField(
         Address, 
         on_delete=models.CASCADE, 
@@ -274,7 +282,11 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
     @property
     def profile_image_url(self):
         """Get the profile image url"""
-        return FileUrlService.get_profile_image_public_url(self.profile_image_path)
+        if not self.profile_image_file:
+            return None
+        
+        return self.profile_image_file.public_url
+        # return FileUrlService.get_profile_image_public_url(self.profile_image_path)
 
     
 class Token(TimeStampModel):
