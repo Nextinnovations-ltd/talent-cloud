@@ -45,6 +45,7 @@ const ApplyJob = () => {
   const { showNotification } = useToast();
   const jobDetails = JOBDETAILDATA?.data;
 
+  console.log("hello")
 
   const handleApply = async () => {
     if (!numericJobId || isNaN(numericJobId)) {

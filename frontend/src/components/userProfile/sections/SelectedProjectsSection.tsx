@@ -52,7 +52,7 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
           {PROJECTS.map((project) => (
             <motion.div
               key={project.id}
-              className="w-full flex items-center justify-center"
+              className="w-full flex items-start justify-center"
               variants={itemVariants}
             >
                 <SelectedProjects

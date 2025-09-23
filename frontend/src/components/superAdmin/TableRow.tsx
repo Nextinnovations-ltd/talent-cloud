@@ -201,6 +201,12 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
   }
 
 
+  console.log("------")
+  console.log(data)
+  console.log("------")
+
+
+
 
 
   return (

@@ -13,6 +13,9 @@ const Certifications = () => {
   const {data,isLoading} = useGetJobSeekerDetailCertificationQuery(id?{id}: skipToken);
 
 
+  console.log(data);
+
+
 
   if(isLoading) {
     return (
@@ -52,7 +55,7 @@ type CertificateProps = {
   credential_id:number
 }
 
-const CertificateCard: React.FC<CertificateProps> = ({ duration, organization, title, url, credential_id }) => {
+const CertificateCard: React.FC<CertificateProps> = ({ duration, organization, title, url }) => {
   return (
     <div className="w-[490px]">
       {/* PDF Preview */}
@@ -63,9 +66,9 @@ const CertificateCard: React.FC<CertificateProps> = ({ duration, organization, t
           {title}
         </h3>
         <p className="text-[15px] mb-[12px]">{organization}</p>
-        <p className="mb-[12px] text-[14px] text-[#6B6B6B]">
+        {/* <p className="mb-[12px] text-[14px] text-[#6B6B6B]">
           Credential ID: {credential_id || 0}
-        </p>
+        </p> */}
         <p className="text-[#6B6B6B] text-[14px]">{duration}</p>
 
         {/* Conditionally render the button */}

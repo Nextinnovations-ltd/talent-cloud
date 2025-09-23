@@ -210,7 +210,7 @@ export const UserInfoSec = () => {
                         isVideoIntroductionEdit={isVideoIntroductionEdit}
                         setIsVideoIntroductionEdit={setIsVideoIntroductionEdit}
                     />
-                </div>
+                </div>/
 
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}

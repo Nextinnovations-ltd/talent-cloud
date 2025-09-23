@@ -90,9 +90,9 @@ const JobCard = ({
           <img src={Eye} alt="Views" />
           <p>Views : <span className="text-[#0481EF] text-[14px] ">{views}</span></p>
         </div>
-        <div className="flex items-center gap-[12px]">
+        <div  className="flex items-center gap-[12px]">
           <img src={UserIcon} alt="Applicants" />
-          <p className="text-[#0481EF]">Applicants : <span className="text-[14px]">{applicants}</span></p>
+          <p onClick={() => navigate(`/admin/dashboard/allJobs/details/applicants/${id}`)} className="text-[#0481EF] cursor-pointer">Applicants : <span className="text-[14px]">{applicants}</span></p>
         </div>
       </div>
 

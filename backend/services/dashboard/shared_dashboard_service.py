@@ -251,7 +251,7 @@ class SharedDashboardService:
      @staticmethod
      def remove_favourite_job_seeker(job_seeker_id, company, action_email):
           try:
-               favourite_job_seeker = FavouriteJobSeeker.objects.get(user_id = job_seeker_id, company = company)
+               favourite_job_seeker = FavouriteJobSeeker.objects.get(user_id = job_seeker_id, company = company, status=True)
           
                favourite_job_seeker.status = False
                favourite_job_seeker.updated_by = action_email

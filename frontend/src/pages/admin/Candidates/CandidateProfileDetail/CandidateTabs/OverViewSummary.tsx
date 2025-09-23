@@ -32,7 +32,7 @@ type OverViewSummaryProps = {
       { value: experienceYears, label: "Years of Experience" },
       { value: specializationName, label: "Specialization" },
       { value: expectedSalary, label: "Expected Salary" },
-      { value: age, label: "Age" },
+      { value: age, label: "Years Old" },
       { value: role, label: "Role" },
     ];
   

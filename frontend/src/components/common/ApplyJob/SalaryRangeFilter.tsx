@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { ChevronDown, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,6 +18,25 @@ export function SalaryRangeFilter({ title, onFilterChange }: SalaryRangeFilterPr
   const [minValue, setMinValue] = React.useState("")
   const [maxValue, setMaxValue] = React.useState("")
 
+  const formatNumber = (value: string) => {
+    if (!value) return ""
+    return new Intl.NumberFormat("en-US").format(Number(value))
+  }
+
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "") // remove commas
+    if (!raw || /^\d+$/.test(raw)) {
+      setMinValue(raw)
+    }
+  }
+
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/,/g, "")
+    if (!raw || /^\d+$/.test(raw)) {
+      setMaxValue(raw)
+    }
+  }
+
   const handleApply = () => {
     if (minValue && maxValue) {
       const rangeValue = `${minValue}-${maxValue}`
@@ -34,7 +51,10 @@ export function SalaryRangeFilter({ title, onFilterChange }: SalaryRangeFilterPr
     onFilterChange("")
   }
 
-  const displayValue = minValue && maxValue ? `${minValue}-${maxValue}` : title
+  const displayValue =
+    minValue && maxValue
+      ? `${formatNumber(minValue)} - ${formatNumber(maxValue)}`
+      : title
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -69,20 +89,20 @@ export function SalaryRangeFilter({ title, onFilterChange }: SalaryRangeFilterPr
           <div className="space-y-2">
             <label className="text-sm font-medium">Minimum Salary</label>
             <Input
-              type="number"
+              type="text"
               placeholder="Enter min salary"
-              value={minValue}
-              onChange={(e) => setMinValue(e.target.value)}
+              value={formatNumber(minValue)}
+              onChange={handleMinChange}
               className="h-9"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Maximum Salary</label>
             <Input
-              type="number"
+              type="text"
               placeholder="Enter max salary"
-              value={maxValue}
-              onChange={(e) => setMaxValue(e.target.value)}
+              value={formatNumber(maxValue)}
+              onChange={handleMaxChange}
               className="h-9"
             />
           </div>
@@ -106,4 +126,4 @@ export function SalaryRangeFilter({ title, onFilterChange }: SalaryRangeFilterPr
       </PopoverContent>
     </Popover>
   )
-} 
+}

@@ -15,6 +15,7 @@ import {
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import { useGetUserTalentsQuery } from "@/services/slices/onBoardingSlice";
+import { useNavigate, useLocation } from "react-router-dom"
 
 type Specialization = {
   id: number;
@@ -63,6 +64,9 @@ export const StepThree = ({
     useOnBoardingMutation
   );
 
+  const navigate = useNavigate()
+  const location = useLocation()
+
   // Combine specialization data with corresponding SVG image
   const combinedData: CombinedData[] | undefined = data?.data.map(
     (item: Specialization, index: number) => {
@@ -70,7 +74,7 @@ export const StepThree = ({
       return { ...item, SVGImg: image ? image.SVGImg : null };
     }
   );
-  
+
 
   const renderSkeletons = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 mt-10 gap-4">
@@ -86,9 +90,14 @@ export const StepThree = ({
         <SpecializationCard
           handleClick={() => {
 
-              setSpecializationId(id);
-              goToNextStep();
-            
+            setSpecializationId(id);
+            goToNextStep();
+
+            const params = new URLSearchParams(location.search)
+            params.set("name", name) // add/replace ?name
+
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true })
+
           }}
           key={id}
           title={name}
