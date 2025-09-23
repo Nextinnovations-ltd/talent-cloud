@@ -54,6 +54,8 @@ export const SpecializationSkillSet = ({
     }
   }, [value]);
 
+
+
   const handleClick = async () => {
     if (value !== null && id !== null) {
       const formData = new FormData();
