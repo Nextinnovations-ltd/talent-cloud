@@ -9,6 +9,7 @@ export const Login = () => {
   const dispatch = useDispatch();
   const { executeApiCall, isLoading } = useApiCaller(useLoginMutation);
 
+
   const onSubmitHandler = async (data: any) => {
     try {
       if (data?.rememberMe) {
@@ -25,7 +26,7 @@ export const Login = () => {
       if (res.success) {
         if (res.data.data.is_generated_username) {
           //window.location.href = "/verify";
-          window.location.href = "/";
+          window.location.href = "/verify";
         } else {
           window.location.href = "/";
         }
