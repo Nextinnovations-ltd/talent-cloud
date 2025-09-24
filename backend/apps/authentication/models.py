@@ -139,13 +139,14 @@ class UserInvitation(TimeStampModel):
      def get_registration_url(self, base_url=f"{settings.FRONTEND_BASE_URL}"):
           """Generate registration URL with token"""
           return f"{base_url}/register/admin?token={self.token}"
+     
 class FileUpload(models.Model):
-     from apps.users.models import TalentCloudUser
      FILE_TYPES = [
           ('resume', 'Resume'),
           ('profile_image', 'profile_image'),
           ('project_image', 'project_image'),
           ('cover_letter', 'Cover Letter'),
+          ('company_image', 'Company Image'),
           ('company_logo', 'Company Logo'),
           ('job_attachment', 'Job Attachment'),
           ('document', 'Document'),
@@ -163,7 +164,7 @@ class FileUpload(models.Model):
      ]
      
      id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE, related_name="uploaded_files")
+     user = models.ForeignKey('users.TalentCloudUser', on_delete=models.CASCADE, related_name="uploaded_files")
      file_type = models.CharField(max_length=20, choices=FILE_TYPES)
      original_filename = models.CharField(max_length=255)
      file_path = models.CharField(max_length=500)
@@ -177,7 +178,7 @@ class FileUpload(models.Model):
      is_protected = models.BooleanField(default=False, help_text="Protected files won't be auto-deleted")
      
      uploaded_at = models.DateTimeField(null=True, blank=True)
-     upload_url_expires_at = models.DateTimeField()
+     upload_url_expires_at = models.DateTimeField(null=True, blank=True)
      created_at = models.DateTimeField(auto_now_add=True)
      updated_at = models.DateTimeField(auto_now=True)
      marked_for_deletion_at = models.DateTimeField(null=True, blank=True)
@@ -235,3 +236,11 @@ class FileUpload(models.Model):
                upload_status='marked_for_deletion',
                marked_for_deletion_at__lt=cutoff_date
           )
+     
+     @property
+     def public_url(self):
+          """Get public URL for this file"""
+          if not self.file_path:
+               return None
+          from services.storage.s3_service import S3Service
+          return S3Service.get_public_url(self.file_path)

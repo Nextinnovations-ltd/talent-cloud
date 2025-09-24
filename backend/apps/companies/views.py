@@ -32,7 +32,7 @@ class IndustryListAPIView(views.APIView):
 
 class RelatedCompanyInfoAPIView(views.APIView):
      """
-     API view to create a new company.
+     API view to retrieve company information of authenticated user.
      Handles POST (create) request.
      """
      authentication_classes = [TokenAuthentication]

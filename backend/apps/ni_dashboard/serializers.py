@@ -96,10 +96,10 @@ class ApplicantDashboardSerializer(serializers.Serializer):
           return obj.job_seeker.profile_image_url
      
      def get_resume_url(self, obj: JobApplication):
-          return obj.resume_url_link
+          return obj.resume_url
      
      def get_cover_letter_url(self, obj: JobApplication):
-          return obj.cover_letter_url_link
+          return obj.cover_letter_url
 
 
 # Job Seeker Serializers
@@ -255,7 +255,7 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
           if not application:
                return obj.resume_url
           
-          return application.resume_url_link
+          return application.resume_url
 
      def get_cover_letter_url(self, obj: JobSeeker):
           application = self.get_application(obj)
@@ -263,7 +263,7 @@ class JobSeekerOverviewSerializer(serializers.ModelSerializer):
           if not application:
                return None
           
-          return application.cover_letter_url_link
+          return application.cover_letter_url
 
      def get_phone_number(self, obj:JobSeeker):
           return obj.get_phone_number
@@ -326,7 +326,8 @@ class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
           ]
 
      def get_project_image_url(self, obj: JobSeekerProject):
-          return S3Service.get_public_url(obj.project_image_url)
+          return obj.project_image_url
+          # return S3Service.get_public_url(obj.project_image_url)
 
      def get_duration(self, obj:JobSeekerProject):
           return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_ongoing)

@@ -152,7 +152,10 @@ jobs:
                 python manage.py import_initial_data
                 
                 echo "Creating Superuser..."
-                python manage.py create_superuser 
+                python manage.py create_superuser
+
+                echo "Creating Parent Company..."
+                python manage.py import_parent_company 
                 
                 echo "Collecting Staticfiles..."
                 python manage.py collectstatic --noinput --clear
