@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
+
+const friendlyAllowed = "PDF, DOC, DOCX, TXT";
 
 
   // File type configurations
@@ -42,6 +43,9 @@ const friendlyAllowed = "PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX";
       allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx', 'ppt', 'pptx']
     }
   };
+
+
+
 
     // Get correct MIME type based on file extension
     const getCorrectMimeType = (file: File): string => {
@@ -94,7 +98,7 @@ const validateFile = (file:File) => {
     return true;
   };
 
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 // Allowed MIME types + extensions
 const ACCEPTED_TYPES = {
@@ -102,10 +106,6 @@ const ACCEPTED_TYPES = {
     "application/msword": [".doc"],
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
     "text/plain": [".txt"],
-    "application/vnd.ms-excel": [".xls"],
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-    "application/vnd.ms-powerpoint": [".ppt"],
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
 } as const;
 
 

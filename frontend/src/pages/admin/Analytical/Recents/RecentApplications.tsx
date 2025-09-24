@@ -17,7 +17,7 @@ const RecentApplications = () => {
 
   return (
     <div className="w-1/2 flex flex-col gap-5">
-      <RecenTitles handleAction={handleAction} title="Recent Applicants" viewAll={true} />
+      <RecenTitles handleAction={handleAction} title="Recent Applicants" viewAll={false} />
       
       {isLoading ? (
         // Loading state (optional)
@@ -25,7 +25,7 @@ const RecentApplications = () => {
           <Skeleton key={`skeleton-${index}`} className="h-20 w-full" />
         ))
       ) : (
-        // Render actual applicantsျ
+        // Render actual applicants
          //@ts-expect-error
         recentApplicants?.slice(0, 4).map((applicant) => (
           <RecentApplicant key={applicant.applicant_id} data={applicant} />

@@ -8,7 +8,7 @@ export const EducationYupSchema = yup.object({
     .required("Start date is required")
     .test(
       "start-date-before-end-date",
-      "Start date must be before end date",
+      "Start Date must be later than End Date",
       function (value) {
         const { endDate } = this.parent;
         if (!value || !endDate) return true;
@@ -27,7 +27,7 @@ export const EducationYupSchema = yup.object({
     .required("End date is required")
     .test(
       "end-date-after-start-date",
-      "End date must be after start date",
+      "End Date must be after Start Date",
       function (value) {
         const { startDate } = this.parent;
         if (!startDate || !value) return true;

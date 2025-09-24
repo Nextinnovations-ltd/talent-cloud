@@ -28,7 +28,7 @@ const AllCandidateActionHeader: React.FC<AllCandidateActionProps> = ({
       {/* Search Bar */}
       <form
         onSubmit={handleSearch}
-        className="flex items-center bg-[#F3F4F6] rounded-[30px] h-[72px] px-4 py-2 w-full max-w-[382px] shadow-sm focus-within:ring-2 focus-within:ring-[#0481EF]"
+        className="flex items-center bg-[#F3F4F6] rounded-[35px] h-[62px] px-4 py-2 w-full max-w-[368px] shadow-sm focus-within:ring-2 focus-within:ring-[#0481EF]"
       >
         <input
           name="search"
@@ -50,7 +50,7 @@ const AllCandidateActionHeader: React.FC<AllCandidateActionProps> = ({
       <div className="flex items-center justify-center gap-2 md:gap-4 pr-4">
         <SortsButtons
           title="Year of experience"
-          field="experience _years"
+          field="experience_years"
           currentSort={sortBy}
           onToggle={setSortBy}
         />

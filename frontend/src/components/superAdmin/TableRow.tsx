@@ -144,6 +144,8 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       return;
     }
 
+    
+
     try {
       setIsDownloading(true);
       const response = await fetch(data.resume_url);
