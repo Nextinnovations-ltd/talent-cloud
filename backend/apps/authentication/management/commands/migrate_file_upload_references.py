@@ -11,10 +11,14 @@ from urllib.parse import urlparse
 import uuid
 import logging
 
+##### Migration #####
 # finished =>
 # talent_cloud_user, job_application, job_seeker_project
 
 # pending => company
+
+##### Field changes #####
+# finished => talent_cloud_user, job_seeker_project, 
 
 logger = logging.getLogger(__name__)
 

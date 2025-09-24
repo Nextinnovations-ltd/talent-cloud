@@ -43,8 +43,6 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     
     def validate_description(self, value):
         """Validate project description"""
-        # if not value or len(value.strip()) < 10:
-        #     raise serializers.ValidationError("Project description must be at least 10 characters long.")
         return value.strip()
     
     def validate_tags(self, value):
@@ -55,7 +53,6 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         if len(value) > 20:
             raise serializers.ValidationError("Maximum 10 tags allowed per project.")
         
-        # Clean and validate each tag
         cleaned_tags = []
         for tag in value:
             if not isinstance(tag, str):
@@ -68,7 +65,6 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
             if len(cleaned_tag) > 30:
                 raise serializers.ValidationError("Each tag must be less than 30 characters.")
             
-            # Avoid duplicates
             if cleaned_tag.lower() not in [t.lower() for t in cleaned_tags]:
                 cleaned_tags.append(cleaned_tag)
         
@@ -85,11 +81,11 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         if value and not value.startswith(('http://', 'https://')):
             raise serializers.ValidationError("Project image URL must start with http:// or https://")
         
-        # Optional: Check if URL points to an image
         if value:
             image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
+            
             if not any(value.lower().endswith(ext) for ext in image_extensions):
-                # Allow URLs without file extensions (for cloud storage services)
+                # Allow URLs without file extensions
                 pass
         
         return value
@@ -113,7 +109,7 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
             if start_date > end_date:
                 raise serializers.ValidationError("Start date cannot be after end date.")
             
-            # Check if dates are not in the future (unless ongoing)
+            # Check if dates are not in the future
             today = timezone.now().date()
             if end_date > today and not is_ongoing:
                 raise serializers.ValidationError("End date cannot be in the future for completed projects.")
@@ -121,7 +117,8 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         return attrs
     
     def get_project_image_url(self, obj: JobSeekerProject):
-        return S3Service.get_public_url(obj.project_image_url)
+        return obj.project_image_url
+        # return S3Service.get_public_url(obj.project_image_url)
     
     def create(self, validated_data):
         """Create a new project"""

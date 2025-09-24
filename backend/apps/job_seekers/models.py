@@ -131,7 +131,7 @@ class University(TimeStampModel):
           ('other', 'Other'),
      )
      id = models.CharField(
-          max_length=10,
+          max_length=20,
           primary_key=True,
           unique=True
      )

@@ -21,10 +21,11 @@ class ProjectService:
                     file_upload_path = None
                     
                     if upload_id:
-                         file_upload = S3Service.update_upload_status(user, upload_id)
+                         file_upload = UploadService.update_file_upload_status(user, upload_id)
+                         # file_upload = S3Service.update_upload_status(user, upload_id)
                          file_upload_path = file_upload.file_path
 
-                    return ProjectService.create_project(user.jobseeker, validated_data, file_upload_path)
+                    return ProjectService.create_project(user.jobseeker, validated_data, file_upload)
           except Exception as e:
                logger.error(f"Failed to create project: {str(e)}")
                raise ValidationError(f"Failed to create project: {str(e)}")
@@ -48,10 +49,10 @@ class ProjectService:
                # If upload_id is provided, handle image update
                if upload_id:
                     # Update upload status and get file info
-                    file_upload = S3Service.update_upload_status(user, upload_id)
+                    file_upload = UploadService.update_file_upload_status(user, upload_id)
                     
                     # Update the image URL
-                    validated_data['project_image_url'] = file_upload.file_path
+                    validated_data['project_image_file'] = file_upload
                     
                     logger.info(f"Updated project image for project {project.id}")
                
@@ -98,7 +99,8 @@ class ProjectService:
                          if is_deleted:
                               UploadService.soft_delete_upload_file(user, image_path)
                               
-                              project.project_image_url=None
+                              # project.project_image_url=None
+                              project.project_image_file = None
                               project.save()
                               
                               logger.info(f"Deleted project image: {image_path}")
@@ -115,10 +117,10 @@ class ProjectService:
                raise ValidationError(f"Failed to delete project image: {str(e)}")
                
      @staticmethod
-     def create_project(user, validated_data, file_path):
+     def create_project(user, validated_data, file_upload=None):
           project = JobSeekerProject.objects.create(
                user=user,
-               project_image_url = file_path,
+               project_image_file = file_upload,
                **validated_data
           )
 
