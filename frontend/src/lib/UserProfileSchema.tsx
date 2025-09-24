@@ -33,22 +33,28 @@ export const UserProfileSchema = yup.object({
     country_code: yup.string().required("Country code is required"),
 
     date_of_birth: yup
-        .date()
-        .required("Date of birth is required")
-        .test(
-            "is-18",
-            "You must be at least 18 years old",
-            function (value) {
-                if (!value) return false;
-                const today = new Date();
-                const minDate = new Date(
-                    today.getFullYear() - 18,
-                    today.getMonth(),
-                    today.getDate()
-                );
-                return value <= minDate;
-            }
-        ),
+    .date()
+    .nullable()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? null : value;
+    })
+    .notRequired()
+    .test(
+      "is-18",
+      "You must be at least 18 years old",
+      function (value) {
+        if (!value) return true; // ✅ skip if empty
+        const today = new Date();
+        const minDate = new Date(
+          today.getFullYear() - 18,
+          today.getMonth(),
+          today.getDate()
+        );
+        return value <= minDate;
+      }
+    ),
+  
+  
 
     address: yup.string().optional(),
     resume_url: yup.string().optional(),

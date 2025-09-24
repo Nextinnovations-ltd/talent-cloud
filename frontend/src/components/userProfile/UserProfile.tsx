@@ -255,7 +255,7 @@ export const UserProfile = () => {
               <h1 className='text-[18px] font-[500]'>
                 {userData?.role?.name || "--"}
               </h1>
-              <p className='text-[14px]'>Role Type</p>
+              <p className='text-[14px]'>Role</p>
             </StarBorder>
             <StarBorder as="button" color="#0389FF" speed="4s">
               <h1 className='text-[30px] font-[500]'>

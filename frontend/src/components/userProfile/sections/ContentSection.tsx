@@ -92,10 +92,9 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   const socialLinks = [
     { name: "Facebook", key: "facebook_url" },
     { name: "Linkedin", key: "linkedin_url" },
+    { name: "GitHub", key: "github_url" },
     { name: "Behance", key: "behance_url" },
     { name: "Portfolio", key: "portfolio_url" },
-    { name: "GitHub", key: "github_url" },
-
   ];
 
   return (
@@ -147,9 +146,10 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
             if (userData) {
               if (key === 'facebook_url') url = userData.facebook_url;
               else if (key === 'linkedin_url') url = userData.linkedin_url;
+              else if (key === 'github_url') url = userData.github_url;
               else if (key === 'behance_url') url = userData.behance_url;
               else if (key === 'portfolio_url') url = userData.portfolio_url;
-              else if (key === 'github_url') url = userData.github_url;
+              
 
             }
             console.log("User Data")

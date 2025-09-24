@@ -231,7 +231,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                   isError={!!form.formState.errors.workExperience}
                   required={true}
                   requiredLabel={true}
-                  maxLength={3}
+                  maxLength={2}
                   showLetterCount
                   type={'number'}
                   languageName={"stepTwo"}

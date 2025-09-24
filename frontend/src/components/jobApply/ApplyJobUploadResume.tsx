@@ -41,6 +41,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
   const { refetch : ResumeListRefetch } = useGetJobSeekerResumeListQuery();
   const { id } = useParams();
 
+
   const {
     acceptedFiles,
     fileRejections,
@@ -59,14 +60,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     },
     onDropRejected: (rej) => {
       setRejections(rej);
-      const first = rej[0]?.errors?.[0];
-      const msg =
-        first?.code === "file-too-large"
-          ? "File size must be less than 10MB."
-          : first?.code === "file-invalid-type"
-          ? `Unsupported file type. Allowed: ${filesTypes.friendlyAllowed}.`
-          : "File rejected. Please check the file type and size.";
-      setError(msg);
+
     },
   });
 
@@ -102,6 +96,8 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     }
 
     let cancelled = false;
+
+    
 
     const doUpload = async () => {
       setError("");
@@ -214,10 +210,12 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
             <p
               className={clsx(
                 "text-gray-600 mt-5",
-                bigSize ? "text-sm w-[198px] mx-auto" : "text-xs"
+                bigSize ? "text-sm w-[198px] mx-auto" : "text-xs",
+                "flex flex-col justify-center items-center"
               )}
             >
-              {filesTypes.friendlyAllowed} · Max 10MB
+              {filesTypes.friendlyAllowed} 
+            <span>  · Max 5MB</span>
             </p>
           </div>
 
