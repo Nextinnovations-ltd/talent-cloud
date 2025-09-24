@@ -310,11 +310,11 @@ class JobSeekerProject(TimeStampModel):
      def __str__(self):
           return f"{self.user.username} - {self.title}"
      
-     @property
-     def project_image_url(self):
-          if not self.project_image_file:
-               return None
-          return self.project_image_file.public_url
+     # @property
+     # def project_image_url(self):
+     #      if not self.project_image_file:
+     #           return None
+     #      return self.project_image_file.public_url
 
 class JobSeekerSpecialization(TimeStampModel):
      id = models.CharField(

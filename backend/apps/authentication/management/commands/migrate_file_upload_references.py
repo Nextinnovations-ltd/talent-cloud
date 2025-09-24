@@ -269,7 +269,8 @@ class Command(BaseCommand):
                     file_type=FILE_TYPES.APPLICATION_RESUME,
                     original_filename=self.extract_filename_from_url(application.resume_url, 'resume'),
                     created_at=application.created_at or timezone.now(),
-                    is_user_required = False # To provide backward compatibality
+                    is_user_required = True, # To provide backward compatibality
+                    is_file_type_required = False
                )
                
                if resume_file:
@@ -366,9 +367,11 @@ class Command(BaseCommand):
                cover_image_file = self.create_file_upload(
                     user=company_user,
                     file_path=company.cover_image_url,
-                    file_type='company_cover',
+                    file_type=FILE_TYPES.COMPANY_IMAGE,
                     original_filename=self.extract_filename_from_url(company.cover_image_url, 'company_cover'),
-                    created_at=company.created_at or timezone.now()
+                    created_at=company.created_at or timezone.now(),
+                    is_user_required=False,
+                    is_file_type_required=True
                )
                
                if cover_image_file:
@@ -381,9 +384,11 @@ class Command(BaseCommand):
                logo_file = self.create_file_upload(
                     user=company_user,
                     file_path=company.image_url,
-                    file_type='company_logo',
-                    original_filename=self.extract_filename_from_url(company.image_url, 'company_logo'),
-                    created_at=company.created_at or timezone.now()
+                    file_type=FILE_TYPES.COMPANY_IMAGE,
+                    original_filename=self.extract_filename_from_url(company.image_url, FILE_TYPES.COMPANY_IMAGE),
+                    created_at=company.created_at or timezone.now(),
+                    is_user_required=False,
+                    is_file_type_required=True
                )
                
                if logo_file:
@@ -479,16 +484,20 @@ class Command(BaseCommand):
           
           return False
 
-     def create_file_upload(self, user, file_path, file_type, original_filename, created_at, is_user_required=True):
+     def create_file_upload(self, user, file_path, file_type, original_filename, created_at, is_user_required=True, is_file_type_required=True):
           """Create a FileUpload record"""
           try:
                # Check if FileUpload already exists for this path
                existing = FileUpload.objects.filter(
-                    file_path=file_path,
-                    user=user
+                    file_path=file_path
                )
                
                if is_user_required:
+                    existing = existing.filter(
+                         user=user
+                    )
+               
+               if is_file_type_required:
                     existing = existing.filter(
                          file_type=file_type
                     )

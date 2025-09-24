@@ -305,22 +305,22 @@ class JobApplication(TimeStampModel):
           job_post.applicant_count = job_post.applications.count()
           job_post.save(update_fields=['applicant_count'])
      
-     @property
-     def cover_letter_url(self):
-          """Get the application cover letter url"""
-          if not self.cover_letter_file:
-               return None
+     # @property
+     # def cover_letter_url(self):
+     #      """Get the application cover letter url"""
+     #      if not self.cover_letter_file:
+     #           return None
           
-          return self.cover_letter_file.public_url
-          #     return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
+     #      return self.cover_letter_file.public_url
+     #      #     return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
      
-     @property
-     def resume_url(self):
-          """Get the application resume url"""
-          if not self.resume_file:
-               return None
+     # @property
+     # def resume_url(self):
+     #      """Get the application resume url"""
+     #      if not self.resume_file:
+     #           return None
           
-          return self.resume_file.public_url
+     #      return self.resume_file.public_url
      #     return FileUrlService.get_resume_public_url(self.resume_url)
     
 # End Job Application

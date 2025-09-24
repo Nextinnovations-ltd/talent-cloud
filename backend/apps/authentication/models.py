@@ -146,6 +146,7 @@ class FileUpload(models.Model):
           ('profile_image', 'profile_image'),
           ('project_image', 'project_image'),
           ('cover_letter', 'Cover Letter'),
+          ('company_image', 'Company Image'),
           ('company_logo', 'Company Logo'),
           ('job_attachment', 'Job Attachment'),
           ('document', 'Document'),
@@ -177,7 +178,7 @@ class FileUpload(models.Model):
      is_protected = models.BooleanField(default=False, help_text="Protected files won't be auto-deleted")
      
      uploaded_at = models.DateTimeField(null=True, blank=True)
-     upload_url_expires_at = models.DateTimeField()
+     upload_url_expires_at = models.DateTimeField(null=True, blank=True)
      created_at = models.DateTimeField(auto_now_add=True)
      updated_at = models.DateTimeField(auto_now=True)
      marked_for_deletion_at = models.DateTimeField(null=True, blank=True)

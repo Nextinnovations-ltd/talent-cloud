@@ -207,6 +207,20 @@ class Company(TimeStampModel):
           
           return admins
 
+     # @property
+     # def image_url(self):
+     #      if not self.image_file:
+     #           return None
+          
+     #      return self.image_file.public_url
+
+     # @property
+     # def cover_image_url(self):
+     #      if not self.cover_image_file:
+     #           return None
+          
+     #      return self.cover_image_file.public_url
+
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)
     token = models.CharField(max_length=255, unique=True)
