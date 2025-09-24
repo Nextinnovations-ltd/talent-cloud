@@ -146,8 +146,7 @@ class University(TimeStampModel):
      )
      id = models.CharField(
           max_length=20,
-          primary_key=True,
-          unique=True
+          primary_key=True
      )
      name = models.CharField(max_length=255, help_text="Full university name")
      short_name = models.CharField(max_length=100, null=True, blank=True, help_text="Abbreviated name")
