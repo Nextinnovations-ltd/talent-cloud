@@ -99,6 +99,8 @@ const validateFile = (file:File) => {
   };
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE_COVER = 3 * 1024 * 1024; // 5MB
+
 
 // Allowed MIME types + extensions
 const ACCEPTED_TYPES = {
@@ -109,7 +111,7 @@ const ACCEPTED_TYPES = {
 } as const;
 
 
-  export default {fileTypeConfig,getCorrectMimeType,validateFile,MAX_SIZE,ACCEPTED_TYPES,friendlyAllowed};
+  export default {fileTypeConfig,getCorrectMimeType,validateFile,MAX_SIZE,ACCEPTED_TYPES,friendlyAllowed,MAX_SIZE_COVER};
 
 
 

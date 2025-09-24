@@ -51,7 +51,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     isDragReject,
   } = useDropzone({
     accept: filesTypes.ACCEPTED_TYPES,
-    maxSize: filesTypes.MAX_SIZE,
+    maxSize: type === 'coverLetter' ? filesTypes.MAX_SIZE_COVER :  filesTypes.MAX_SIZE,
     multiple: false,
     disabled: isUploading,
     onDropAccepted: () => {
@@ -215,7 +215,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
               )}
             >
               {filesTypes.friendlyAllowed} 
-            <span>  · Max 5MB</span>
+            <span>  · {type === 'coverLetter' ? 'Max 3MB' : 'Max 5MB'}</span>
             </p>
           </div>
 
