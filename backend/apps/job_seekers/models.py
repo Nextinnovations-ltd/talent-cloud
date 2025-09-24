@@ -30,14 +30,24 @@ class JobSeeker(TalentCloudUser):
           return resume.file_upload.uploaded_at if resume.file_upload else None
 
      @property
-     def resume_url(self):
+     def resume_upload_file(self):
           """Get the resume url"""
-          resume = self.resume()
+          resume: Resume = self.resume()
           
-          if not resume or not resume.resume_path:
+          if not resume:
                return None
           
-          return FileUrlService.get_resume_public_url(resume.resume_path)
+          return resume.file_upload
+
+     @property
+     def resume_url(self):
+          """Get the resume url"""
+          resume: Resume = self.resume()
+          
+          if not resume:
+               return None
+          
+          return resume.resume_url
      
      @property
      def resume_path(self):
@@ -115,7 +125,11 @@ class Resume(TimeStampModel):
      @property
      def resume_url(self):
           """Get the resume url"""
-          return FileUrlService.get_resume_public_url(self.resume_path)
+          if not self.file_upload:
+               return None
+          
+          return self.file_upload.public_url
+          # return FileUrlService.get_resume_public_url(self.resume_path)
      
 class University(TimeStampModel):
      """

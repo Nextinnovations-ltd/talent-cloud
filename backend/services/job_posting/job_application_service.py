@@ -33,25 +33,25 @@ class JobApplicationService:
                JobApplicationService._validate_application_eligibility(job_post, job_seeker)
                
                with transaction.atomic():
-                    cover_letter_upload_path = None
-                    resume_upload_path = None
+                    cover_letter_upload = None
+                    resume_upload = None
                     
                     if resume_upload_id:
                          # Change upload status from pending_application to uploaded
-                         resume_upload = JobApplicationService.update_file_upload_status(user, resume_upload_id, old_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
-                         resume_upload_path = resume_upload.file_path
+                         resume_upload = UploadService.update_file_upload_status(user, resume_upload_id, old_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
+                         # resume_upload_path = resume_upload.file_path
                     
                     if not is_cover_letter_skipped:
                          # Update File Upload
-                         cover_letter_upload = JobApplicationService.update_file_upload_status(user, cover_letter_upload_id)
-                         cover_letter_upload_path = cover_letter_upload.file_path
+                         cover_letter_upload = UploadService.update_file_upload_status(user, cover_letter_upload_id)
+                         # cover_letter_upload_path = cover_letter_upload.file_path
                     
                     # Create application
                     application = JobApplicationService._create_application(
                          job_post,
                          job_seeker,
-                         cover_letter_file_path=cover_letter_upload_path,
-                         resume_file_path=resume_upload_path
+                         cover_letter=cover_letter_upload,
+                         resume_file=resume_upload
                     )
                     
                     # Send notification about the new application
@@ -68,18 +68,20 @@ class JobApplicationService:
                raise
 
      @staticmethod
-     def _create_application(job_post: JobPost, job_seeker: JobSeeker, cover_letter_file_path, resume_file_path=None):
+     def _create_application(job_post: JobPost, job_seeker: JobSeeker, cover_letter, resume_file=None):
           """Create the job application instance"""
           
-          if not resume_file_path:
-               resume_file_path = job_seeker.resume_path
+          if not resume_file: # Use default resume file if not uploaded resume exist
+               #need to add new action for creating the file upload record using job seeker default resume
+               # resume_file = None
+               resume_file = job_seeker.resume_upload_file
           
           application = JobApplication.objects.create(
                job_post=job_post,
                job_seeker=job_seeker,
                application_status=ApplicationStatus.APPLIED,
-               cover_letter_url = cover_letter_file_path,
-               resume_url=resume_file_path
+               cover_letter_file = cover_letter,
+               resume_file = resume_file
           )
           
           return application
@@ -106,7 +108,7 @@ class JobApplicationService:
      @staticmethod
      def confirm_job_application_resume_upload(user, upload_id):
           # Update upload record
-          file_upload = JobApplicationService.update_file_upload_status(user, upload_id, new_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
+          file_upload = UploadService.update_file_upload_status(user, upload_id, new_upload_status=UPLOAD_STATUS.PENDING_APPLICATION)
 
           response_data = {
                'upload_id': str(file_upload.id),

@@ -223,17 +223,13 @@ class JobApplicationSerializer(ModelSerializer):
           fields = ['id', 'job_post', 'job_seeker', 'application_status', 'cover_letter_url', 'resume_url', 'created_at']
           read_only_fields = ['id', 'job_post', 'job_seeker', 'application_status', 'created_at']
 
-     def get_resume_url(self, obj):
-        """Generate public URL for resume using S3Service"""
-        if obj.resume_url:
-            return S3Service.get_public_url(obj.resume_url)
-        return None
+     def get_resume_url(self, obj: JobApplication):
+          """Generate public URL for resume using S3Service"""
+          return obj.resume_url
     
-     def get_cover_letter_url(self, obj):
+     def get_cover_letter_url(self, obj: JobApplication):
           """Generate public URL for cover letter using S3Service"""
-          if obj.cover_letter_url:
-               return S3Service.get_public_url(obj.cover_letter_url)
-          return None
+          return obj.cover_letter_url
 
 class JobSeekerRecentApplicationSerializer(ModelSerializer):
      position = serializers.CharField(source='job_post.title')

@@ -18,7 +18,7 @@ import logging
 # pending => company
 
 ##### Field changes #####
-# finished => talent_cloud_user, job_seeker_project, 
+# finished => talent_cloud_user, job_seeker_project, job_application
 
 logger = logging.getLogger(__name__)
 

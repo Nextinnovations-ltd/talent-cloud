@@ -26,7 +26,6 @@ from core.middleware.permission import (
 )
 from apps.job_posting.serializers import (
     BookmarkedJobSerializer,
-    JobApplicationCreateSerializer,
     JobApplicationSerializer,
     JobApplicationStatusUpdateSerializer,
     JobPostDetailSerializer,
@@ -618,13 +617,7 @@ class JobApplicationCreateView(APIView):
      permission_classes = [TalentCloudUserPermission]
 
      @extend_schema(
-          description="Create a new job application",
-          request=JobApplicationCreateSerializer,
-          responses={
-               201: JobApplicationSerializer,
-               400: "Validation Error",
-               404: "Job Post Not Found"
-          }
+          description="Create a new job application"
      )
      def post(self, request, job_post_id):
           is_cv_skip = request.data.get('is_cv_skip', False)
