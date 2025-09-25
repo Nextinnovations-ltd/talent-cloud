@@ -9,6 +9,9 @@ class Command(BaseCommand):
         self.stdout.write("🚀 Starting JobSeeker data import...")
         self.stdout.write("=" * 50)
         
+        call_command('import_university')
+        self.stdout.write("-" * 30)
+        
         call_command('import_specialization')
         self.stdout.write("-" * 30)
         
