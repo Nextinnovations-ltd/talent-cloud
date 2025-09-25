@@ -258,7 +258,7 @@ export const UserProfileForm = ({
         />
 
         <div>
-          <p className="mb-[7px] font-semibold">Phone Number</p>
+          <p className="mb-[7px] font-semibold">Phone Number <span className="ms-1 text-red-500">*</span></p>
           <div className="flex items-center gap-[16px]">
             <PhoneNumberInput
               isError={form.formState.errors?.country_code}
