@@ -76,43 +76,29 @@ class ProfileResumeUploadAPIView(APIView):
                }
           }
      )
-     def post(self, request):  # Changed from GET to POST
+     def post(self, request):
           """
           Generate presigned URL when user confirms resume upload
           """
-          try:
-               filename = request.data.get('filename')  # Changed from query_params
-               file_size = request.data.get('file_size')
-               content_type = request.data.get('content_type')
-               
-               if not filename:
-                    raise ValidationError("filename is required")
-               if not file_size:
-                    raise ValidationError("file_size is required")
-               if len(filename.strip()) == 0:
-                    raise ValidationError("filename cannot be empty")
-               
-               response_data = ProfileService.generate_profile_resume_upload_url(request.user, filename, file_size, content_type)
-               
-               logger.info(f"Generated resume upload URL for user {request.user.id}, upload_id: {response_data['upload_id']}")
-               
-               return Response(
-                    CustomResponse.success("Resume upload URL generated", response_data),
-                    status=status.HTTP_200_OK
-               )
-               
-          except ValidationError as e:
-               logger.warning(f"Validation error in resume upload: {str(e)}")
-               return Response(
-                    CustomResponse.error(str(e)),
-                    status=status.HTTP_400_BAD_REQUEST
-               )
-          except Exception as e:
-               logger.error(f"Error generating resume upload URL: {str(e)}")
-               return Response(
-                    CustomResponse.error("Failed to generate upload URL"),
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-               )
+          filename = request.data.get('filename')
+          file_size = request.data.get('file_size')
+          content_type = request.data.get('content_type')
+          
+          if not filename:
+               raise ValidationError("filename is required")
+          if not file_size:
+               raise ValidationError("file_size is required")
+          if len(filename.strip()) == 0:
+               raise ValidationError("filename cannot be empty")
+          
+          response_data = ProfileService.generate_profile_resume_upload_url(request.user, filename, file_size, content_type)
+          
+          logger.info(f"Generated resume upload URL for user {request.user.id}, upload_id: {response_data['upload_id']}")
+          
+          return Response(
+               CustomResponse.success("Resume upload URL generated", response_data),
+               status=status.HTTP_200_OK
+          )
 
 @extend_schema(tags=["Profile Upload"])
 class ConfirmProfileUploadAPIView(APIView):
