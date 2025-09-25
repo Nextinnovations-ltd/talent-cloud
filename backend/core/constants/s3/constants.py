@@ -4,6 +4,7 @@ class FILE_TYPES:
      PROFILE_IMAGE = 'profile_image'
      COVER_LETTER = 'cover_letter'
      COMPANY_LOGO = 'company_logo'
+     COMPANY_IMAGE = 'company_image'
      COMPANY_ENVIRONMENT = 'company_environment'
      PROJECT_IMAGE = 'project_image'
      

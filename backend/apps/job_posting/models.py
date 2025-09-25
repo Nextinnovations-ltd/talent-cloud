@@ -235,6 +235,8 @@ class JobApplication(TimeStampModel):
      """
      Represents a job seeker's application to a specific job post.
      """
+     from apps.authentication.models import FileUpload
+     
      job_post = models.ForeignKey(
           JobPost,
           on_delete=models.CASCADE,
@@ -259,11 +261,25 @@ class JobApplication(TimeStampModel):
           blank=True,
           help_text="URL of the cover letter submitted for this specific application."
      )
+     cover_letter_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='application_cover_letters'
+     )
      resume_url = models.URLField(
           max_length=2048,
           null=True,
           blank=True,
           help_text="URL of the job seeker resume."
+     )
+     resume_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='application_resumes'
      )
 
      class Meta:
@@ -289,15 +305,23 @@ class JobApplication(TimeStampModel):
           job_post.applicant_count = job_post.applications.count()
           job_post.save(update_fields=['applicant_count'])
      
-     @property
-     def cover_letter_url_link(self):
-         """Get the application cover letter url"""
-         return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
+     # @property
+     # def cover_letter_url(self):
+     #      """Get the application cover letter url"""
+     #      if not self.cover_letter_file:
+     #           return None
+          
+     #      return self.cover_letter_file.public_url
+     #      #     return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
      
-     @property
-     def resume_url_link(self):
-         """Get the application resume url"""
-         return FileUrlService.get_resume_public_url(self.resume_url)
+     # @property
+     # def resume_url(self):
+     #      """Get the application resume url"""
+     #      if not self.resume_file:
+     #           return None
+          
+     #      return self.resume_file.public_url
+     #     return FileUrlService.get_resume_public_url(self.resume_url)
     
 # End Job Application
 

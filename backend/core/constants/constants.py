@@ -36,13 +36,13 @@ class PARENT_COMPANY:
     contact_phone = "09-451663606"
     founded_date = "2020-01-01"
     contact_email = "talentcloud-contact@next-innovations.ltd"
-    image_url = 'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/ni_logo.png'
-    cover_image_url = 'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/ni_cover_image.JPG'
+    image_url = 'NI_Company_Info/ni_logo.png'
+    cover_image_url = 'NI_Company_Info/ni_cover_image.JPG'
     company_image_urls = [
-        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_1.JPG',
-        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_1.JPG',
-        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_2.JPG',
-        'https://talentcloudjobportal.s3.ap-northeast-1.amazonaws.com/NI_Company_Info/company_image_2.JPG'
+        'NI_Company_Info/company_image_1.JPG',
+        'NI_Company_Info/company_image_1.JPG',
+        'NI_Company_Info/company_image_2.JPG',
+        'NI_Company_Info/company_image_2.JPG'
     ]
     website = "http://next-innovations.ltd"
     facebook_url = "https://www.facebook.com/profile.php?id=61578628769861"

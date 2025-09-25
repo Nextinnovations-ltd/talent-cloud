@@ -30,14 +30,24 @@ class JobSeeker(TalentCloudUser):
           return resume.file_upload.uploaded_at if resume.file_upload else None
 
      @property
-     def resume_url(self):
+     def resume_upload_file(self):
           """Get the resume url"""
-          resume = self.resume()
+          resume: Resume = self.resume()
           
-          if not resume or not resume.resume_path:
+          if not resume:
                return None
           
-          return FileUrlService.get_resume_public_url(resume.resume_path)
+          return resume.file_upload
+
+     @property
+     def resume_url(self):
+          """Get the resume url"""
+          resume: Resume = self.resume()
+          
+          if not resume:
+               return None
+          
+          return resume.resume_url
      
      @property
      def resume_path(self):
@@ -76,7 +86,7 @@ class Resume(TimeStampModel):
      job_seeker = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='resume_documents')
      title = models.CharField(max_length=255, help_text="Display name for this CV", null=True, blank=True)
      resume_path = models.URLField(max_length=2048, null=True, blank=True)
-     file_upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+     file_upload = models.ForeignKey(FileUpload, on_delete=models.SET_NULL, null=True, blank=True)
      is_default = models.BooleanField(default=False, help_text="Is this the default CV?")
      
      class Meta:
@@ -115,7 +125,11 @@ class Resume(TimeStampModel):
      @property
      def resume_url(self):
           """Get the resume url"""
-          return FileUrlService.get_resume_public_url(self.resume_path)
+          if not self.file_upload:
+               return None
+          
+          return self.file_upload.public_url
+          # return FileUrlService.get_resume_public_url(self.resume_path)
      
 class University(TimeStampModel):
      """
@@ -131,7 +145,7 @@ class University(TimeStampModel):
           ('other', 'Other'),
      )
      id = models.CharField(
-          max_length=10,
+          max_length=20,
           primary_key=True,
           unique=True
      )
@@ -251,6 +265,7 @@ class JobSeekerProject(TimeStampModel):
      """
      Represents a project completed by a job seeker
      """
+     from apps.authentication.models import FileUpload
      user = models.ForeignKey(JobSeeker, on_delete=models.CASCADE, related_name='projects')
      title = models.CharField(max_length=255, help_text="Project title")
      description = models.TextField(help_text="Detailed description of the project")
@@ -271,6 +286,13 @@ class JobSeekerProject(TimeStampModel):
           blank=True, 
           help_text="URL to project screenshot or image"
      )
+     project_image_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='project_images'
+     )
      start_date = models.DateField(null=True, blank=True, help_text="Project start date")
      end_date = models.DateField(null=True, blank=True, help_text="Project completion date")
      is_ongoing = models.BooleanField(default=False, help_text="Is this project still ongoing")
@@ -287,6 +309,12 @@ class JobSeekerProject(TimeStampModel):
      
      def __str__(self):
           return f"{self.user.username} - {self.title}"
+     
+     # @property
+     # def project_image_url(self):
+     #      if not self.project_image_file:
+     #           return None
+     #      return self.project_image_file.public_url
 
 class JobSeekerSpecialization(TimeStampModel):
      id = models.CharField(

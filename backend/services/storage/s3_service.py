@@ -199,6 +199,7 @@ class S3Service:
                'profile_image': f'{settings.ENVIRONMENT}/profiles/{file_name}.{extension}',
                'cover_letter': f'{settings.ENVIRONMENT}/cover-letters/{file_name}.{extension}',
                'project_image': f'{settings.ENVIRONMENT}/projects/{file_name}.{extension}',
+               'company_image': f'{settings.ENVIRONMENT}/companies/images/{file_name}.{extension}',
                'company_logo': f'{settings.ENVIRONMENT}/companies/logos/{file_name}.{extension}',
                'job_attachment': f'{settings.ENVIRONMENT}/jobs/attachments/{file_name}.{extension}',
                'document': f'{settings.ENVIRONMENT}/documents/{file_name}.{extension}'

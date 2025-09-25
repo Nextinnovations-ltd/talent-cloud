@@ -1,7 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from datetime import datetime, timedelta
 from apps.authentication.models import FileUpload
-from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS, OVERRIDE_FILE_TYPES
+from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from services.storage.s3_service import S3Service
 import logging
 
