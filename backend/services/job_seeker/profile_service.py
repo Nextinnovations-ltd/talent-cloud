@@ -16,6 +16,16 @@ class ProfileService:
      
      @staticmethod
      def generate_profile_resume_upload_url(user, filename, file_size, content_type=None):
+          job_seeker: JobSeeker = None
+          
+          if hasattr(user, 'jobseeker'):
+               job_seeker = user.jobseeker
+          
+          resume_file_list = job_seeker.resume_file_list
+          
+          if len(resume_file_list) >= 3:
+               raise ValidationError("You can't upload more than 3 resumes.")
+          
           return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.RESUME)
      
      @staticmethod
@@ -121,6 +131,9 @@ class ProfileService:
                
                resume.status = False
                resume.save()
+               
+               # Remainings
+               # S3 File Delete method
                
                # Return resume data 
                return ResumeSerializer(resume).data

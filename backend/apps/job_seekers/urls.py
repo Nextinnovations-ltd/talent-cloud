@@ -1,6 +1,6 @@
 from rest_framework.urls import path
 from rest_framework.routers import DefaultRouter
-from apps.job_seekers.views.profile_view import JobSeekerDefaultResumeAPIView, JobSeekerLanguageAPIView, JobSeekerResumeAPIView, JobSeekerResumeListAPIView, JobSeekerVideoAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, ProfileScoreAPIView
+from apps.job_seekers.views.profile_view import JobSeekerDefaultResumeAPIView, JobSeekerDeleteResumeAPIView, JobSeekerLanguageAPIView, JobSeekerResumeAPIView, JobSeekerResumeListAPIView, JobSeekerVideoAPIView, JobSeekerProfileAPIView, JobSeekerProfileSelectionOptionsAPIView, JobSeekerSettingAPIView, JobSeekerSkillAPIView, ProfileScoreAPIView
 from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDetailAPIView, JobSeekerSpecialSkillListAPIView
 from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView, ProjectImageDeleteAPIView, ProjectImageUploadUrlAPIView
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
@@ -67,6 +67,7 @@ urlpatterns = [
      path('jobseeker/profile/resume/', JobSeekerResumeAPIView.as_view(), name='profile-resume-info'),
      path('jobseeker/profile/resumes/list/', JobSeekerResumeListAPIView.as_view(), name='profile-resume-list'),
      path('jobseeker/profile/resumes/<int:resume_id>/set-default/', JobSeekerDefaultResumeAPIView.as_view(), name='set-resume-as-default'),
+     path('jobseeker/profile/resumes/<int:resume_id>/remove/', JobSeekerDeleteResumeAPIView.as_view(), name='remove-resume'),
      path('jobseeker/profile/upload/resume/', ProfileResumeUploadAPIView.as_view(), name='profile-resume-upload'),
      
      # Profile Image

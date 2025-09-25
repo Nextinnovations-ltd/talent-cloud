@@ -1,7 +1,6 @@
 from django.db import models
 from apps.users.models import TalentCloudUser
 from apps.authentication.models import FileUpload
-from services.storage.file_service import FileUrlService
 from services.models import TimeStampModel
 
 class JobSeeker(TalentCloudUser):
@@ -58,6 +57,11 @@ class JobSeeker(TalentCloudUser):
                return None
           
           return resume.resume_path
+
+     @property
+     def resume_file_list(self):
+          """Get all Resume list"""
+          return self.resume_documents.all()
 
      @property
      def recent_application(self):

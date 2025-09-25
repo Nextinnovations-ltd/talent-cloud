@@ -157,9 +157,6 @@ jobs:
                 echo "Creating Parent Company..."
                 python manage.py import_parent_company 
 
-                echo "Creating University..."
-                python manage.py import_university
-                
                 echo "Collecting Staticfiles..."
                 python manage.py collectstatic --noinput --clear
                 cd -
