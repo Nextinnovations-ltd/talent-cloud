@@ -20,7 +20,6 @@ class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
 
     def get_project_image_url(self, obj: JobSeekerProject):
         return obj.project_image_url
-        # return S3Service.get_public_url(obj.project_image_url)
 
 class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating projects"""
@@ -76,19 +75,19 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Project URL must start with http:// or https://")
         return value
     
-    def validate_project_image_url(self, value):
-        """Validate project image URL format"""
-        if value and not value.startswith(('http://', 'https://')):
-            raise serializers.ValidationError("Project image URL must start with http:// or https://")
+    # def validate_project_image_url(self, value):
+    #     """Validate project image URL format"""
+    #     if value and not value.startswith(('http://', 'https://')):
+    #         raise serializers.ValidationError("Project image URL must start with http:// or https://")
         
-        if value:
-            image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
+    #     if value:
+    #         image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
             
-            if not any(value.lower().endswith(ext) for ext in image_extensions):
-                # Allow URLs without file extensions
-                pass
+    #         if not any(value.lower().endswith(ext) for ext in image_extensions):
+    #             # Allow URLs without file extensions
+    #             pass
         
-        return value
+    #     return value
     
     def validate(self, attrs):
         """Validate the entire project data"""
@@ -118,7 +117,6 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     
     def get_project_image_url(self, obj: JobSeekerProject):
         return obj.project_image_url
-        # return S3Service.get_public_url(obj.project_image_url)
     
     def create(self, validated_data):
         """Create a new project"""

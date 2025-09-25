@@ -39,8 +39,8 @@ def get_or_create_parent_company(name):
                'contact_phone': PARENT_COMPANY.contact_phone,
                'founded_date': PARENT_COMPANY.founded_date,
                'is_verified': True,
-               'image_url': PARENT_COMPANY.image_url,
-               'cover_image_url': PARENT_COMPANY.cover_image_url,
+               # 'image_url': PARENT_COMPANY.image_url,
+               # 'cover_image_url': PARENT_COMPANY.cover_image_url,
                'company_image_urls': PARENT_COMPANY.company_image_urls,
                'website': PARENT_COMPANY.website,
                'facebook_url': PARENT_COMPANY.facebook_url,
@@ -53,34 +53,45 @@ def get_or_create_parent_company(name):
      return company
 
 def update_parent_company():
-     """
-     Update parent company with latest data from PARENT_COMPANY constants.
-     Finds the parent company automatically and updates it.
-     
-     Returns:
-          Updated Company instance
-          
-     Raises:
-          ValidationError: If parent company doesn't exist or update fails
-     """
+     """Update parent company with current constants"""
      from apps.companies.models import Company
+     from apps.companies.models import Industry
+     from core.constants.constants import PARENT_COMPANY
      
      try:
-          # Find parent company by name from constants
           company = Company.objects.get(name=PARENT_COMPANY.name)
           
-          logger.info(f"Found parent company '{PARENT_COMPANY.name}', starting update...")
+          # Update basic fields only (not image URLs - they're properties now)
+          company.description = PARENT_COMPANY.description
+          company.contact_email = PARENT_COMPANY.contact_email
+          company.website = getattr(PARENT_COMPANY, 'website', None)
+          company.is_verified = True
           
-          # Update the company
-          updated_company = _update_parent_company_internal(company)
+          # Update industry
+          if hasattr(PARENT_COMPANY, 'industry') and PARENT_COMPANY.industry:
+               industry, _ = Industry.objects.get_or_create(name=PARENT_COMPANY.industry)
+               company.industry = industry
           
-          return updated_company
+          # Update company_image_urls JSONField only
+          if hasattr(PARENT_COMPANY, 'company_image_urls'):
+               # Remove duplicates
+               unique_images = []
+               seen = set()
+               for url in PARENT_COMPANY.company_image_urls:
+                    if url not in seen:
+                         unique_images.append(url)
+                         seen.add(url)
+               company.company_image_urls = unique_images
+          
+          # DO NOT set image_url or cover_image_url directly - they're properties
+          # These will be handled via FileUpload foreign keys in the import script
+          
+          company.save()
+          return company
           
      except Company.DoesNotExist:
-          logger.error(f"Parent company '{PARENT_COMPANY.name}' not found. Cannot update.")
-          raise ValidationError(f"Parent company '{PARENT_COMPANY.name}' does not exist. Create it first.")
+          raise ValidationError("Parent company not found for update")
      except Exception as e:
-          logger.error(f"Failed to update parent company: {str(e)}")
           raise ValidationError(f"Failed to update parent company: {str(e)}")
 
 def _update_parent_company_internal(company):
@@ -153,8 +164,8 @@ def _update_parent_company_internal(company):
                     'contact_email': PARENT_COMPANY.contact_email,
                     'contact_phone': PARENT_COMPANY.contact_phone,
                     'founded_date': PARENT_COMPANY.founded_date,
-                    'image_url': PARENT_COMPANY.image_url,
-                    'cover_image_url': PARENT_COMPANY.cover_image_url,
+                    # 'image_url': PARENT_COMPANY.image_url,
+                    # 'cover_image_url': PARENT_COMPANY.cover_image_url,
                     'company_image_urls': PARENT_COMPANY.company_image_urls,
                     'website': PARENT_COMPANY.website,
                     'facebook_url': PARENT_COMPANY.facebook_url,

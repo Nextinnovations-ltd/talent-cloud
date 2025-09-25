@@ -36,7 +36,7 @@ class Command(BaseCommand):
           """
           Import parent company with smart logic:
           - Create if not exists
-          - Update if changes detected (including image URLs)
+          - Update if changes detected (including FileUploads)
           - Create FileUpload records for company images
           - Do nothing if up to date
           """
@@ -94,7 +94,7 @@ class Command(BaseCommand):
           if missing:
                raise ValidationError(f"Missing PARENT_COMPANY constants: {', '.join(missing)}")
           
-          # Validate new image URL fields
+          # Validate image URL fields for FileUpload creation
           image_fields = ['image_url', 'cover_image_url', 'company_image_urls']
           for field in image_fields:
                if hasattr(PARENT_COMPANY, field):
@@ -120,7 +120,7 @@ class Command(BaseCommand):
      
      def _import_parent_company(self, dry_run, force_file_upload):
           """
-          Core import logic with enhanced image URL checking
+          Core import logic with enhanced FileUpload checking
           
           Returns:
                dict: Result with action taken and company info
@@ -160,7 +160,7 @@ class Command(BaseCommand):
      
      def _needs_update(self, company):
           """
-          Check if company needs update including image URLs
+          Check if company needs update including FileUpload references
           """
           try:
                # Check basic fields
@@ -183,10 +183,10 @@ class Command(BaseCommand):
                          self.stdout.write("🔍 Verification status needs update")
                     return True
                
-               # Check image URLs (new logic)
-               if self._image_urls_need_update(company):
+               # Check FileUpload references instead of URL fields
+               if self._file_uploads_need_update(company):
                     if self.verbose:
-                         self.stdout.write("🔍 Image URLs need update")
+                         self.stdout.write("🔍 FileUpload references need update")
                     return True
                     
                return False
@@ -195,22 +195,21 @@ class Command(BaseCommand):
                logger.warning(f"Error checking update needs: {str(e)}")
                return True
      
-     def _image_urls_need_update(self, company):
-          """Check if image URLs need updating"""
-          expected_logo = getattr(PARENT_COMPANY, 'image_url', None)
+     def _file_uploads_need_update(self, company):
+          """Check if FileUpload references need updating"""
+          # Check if logo FileUpload needs to be created/updated
+          expected_logo_path = getattr(PARENT_COMPANY, 'image_url', None)
+          if expected_logo_path:
+               if not company.image_file or company.image_file.file_path != expected_logo_path:
+                    return True
           
-          if expected_logo and company.image_url != expected_logo:
-               return True
+          # Check if cover image FileUpload needs to be created/updated
+          expected_cover_path = getattr(PARENT_COMPANY, 'cover_image_url', None)
+          if expected_cover_path:
+               if not company.cover_image_file or company.cover_image_file.file_path != expected_cover_path:
+                    return True
           
-          # Check cover image URL
-          expected_cover = getattr(PARENT_COMPANY, 'cover_image_url', None)
-          if expected_cover and company.cover_image_url != expected_cover:
-               return True
-          
-          self.stdout.write(f"Expected {expected_logo} - {expected_cover}")
-          self.stdout.write(f"Current {company.image_url} - {company.cover_image_url}")
-          
-          # Check company image URLs
+          # Check company image URLs (stored in JSONField)
           expected_images = getattr(PARENT_COMPANY, 'company_image_urls', [])
           current_images = company.company_image_urls or []
           
@@ -238,14 +237,16 @@ class Command(BaseCommand):
           if company.contact_email != PARENT_COMPANY.contact_email:
                self.stdout.write(f"   Contact Email: '{company.contact_email}' → '{PARENT_COMPANY.contact_email}'")
           
-          # Image URLs
+          # FileUpload references
           expected_logo = getattr(PARENT_COMPANY, 'image_url', None)
-          if expected_logo and company.image_url != expected_logo:
-               self.stdout.write(f"   Logo URL: '{company.image_url}' → '{expected_logo}'")
+          current_logo_path = company.image_file.file_path if company.image_file else None
+          if expected_logo and current_logo_path != expected_logo:
+               self.stdout.write(f"   Logo FileUpload: '{current_logo_path}' → '{expected_logo}'")
           
           expected_cover = getattr(PARENT_COMPANY, 'cover_image_url', None)
-          if expected_cover and company.cover_image_url != expected_cover:
-               self.stdout.write(f"   Cover Image URL: '{company.cover_image_url}' → '{expected_cover}'")
+          current_cover_path = company.cover_image_file.file_path if company.cover_image_file else None
+          if expected_cover and current_cover_path != expected_cover:
+               self.stdout.write(f"   Cover Image FileUpload: '{current_cover_path}' → '{expected_cover}'")
           
           expected_images = getattr(PARENT_COMPANY, 'company_image_urls', [])
           current_images = company.company_image_urls or []
@@ -253,37 +254,29 @@ class Command(BaseCommand):
                self.stdout.write(f"   Company Images: {len(current_images)} → {len(expected_images)} images")
      
      def _create_parent_company_with_images(self):
-          """Create parent company with image URLs"""
+          """Create parent company with FileUpload references"""
           company = get_or_create_parent_company(PARENT_COMPANY.name)
           
-          # Update with image URLs
+          # Update with company image URLs JSONField
           return self._update_company_images(company)
      
      def _update_parent_company_with_images(self, company):
-          """Update existing parent company including images"""
+          """Update existing parent company including FileUpload references"""
           # Use existing service for basic updates
           updated_company = update_parent_company()
           
-          # Update image URLs
+          # Update company images JSONField
           return self._update_company_images(updated_company)
      
      def _update_company_images(self, company):
-          """Update company with image URLs from constants"""
+          """Update company with image URLs in JSONField (removed direct URL field updates)"""
           updated = False
           
-          # Update logo URL
-          if hasattr(PARENT_COMPANY, 'image_url'):
-               if company.image_url != PARENT_COMPANY.image_url:
-                    company.image_url = PARENT_COMPANY.image_url
-                    updated = True
+          # Note: We don't directly set image_url and cover_image_url anymore
+          # These are now properties that get values from FileUpload foreign keys
+          # We only update the company_image_urls JSONField
           
-          # Update cover image URL
-          if hasattr(PARENT_COMPANY, 'cover_image_url'):
-               if company.cover_image_url != PARENT_COMPANY.cover_image_url:
-                    company.cover_image_url = PARENT_COMPANY.cover_image_url
-                    updated = True
-          
-          # Update company image URLs (remove duplicates)
+          # Update company image URLs JSONField (remove duplicates)
           if hasattr(PARENT_COMPANY, 'company_image_urls'):
                unique_images = []
                seen = set()
@@ -299,7 +292,7 @@ class Command(BaseCommand):
           if updated:
                company.save()
                if self.verbose:
-                    self.stdout.write("🖼️  Updated company image URLs")
+                    self.stdout.write("🖼️  Updated company image URLs JSONField")
           
           return company
      
@@ -324,13 +317,14 @@ class Command(BaseCommand):
                )
                return results
           
-          # Process logo
-          if company.image_url:
+          # Process logo FileUpload (using constants, not company.image_url property)
+          expected_logo_path = getattr(PARENT_COMPANY, 'image_url', None)
+          if expected_logo_path:
                result = self._create_or_get_file_upload(
                     user=admin_user,
-                    file_path=company.image_url,
+                    file_path=expected_logo_path,
                     file_type=FILE_TYPES.COMPANY_IMAGE,
-                    original_filename=self._extract_filename(company.image_url, 'logo'),
+                    original_filename=self._extract_filename(expected_logo_path, 'logo'),
                     dry_run=dry_run,
                     force=force_file_upload
                )
@@ -342,16 +336,20 @@ class Command(BaseCommand):
                          company.image_file = result['file_upload']
                elif result['action'] == 'existing':
                     results['existing_count'] += 1
+                    # Ensure foreign key is set even if FileUpload exists
+                    if not dry_run and not company.image_file:
+                         company.image_file = result['file_upload']
                elif result['action'] == 'error':
                     results['errors'] += 1
           
-          # Process cover image
-          if company.cover_image_url:
+          # Process cover image FileUpload (using constants, not company.cover_image_url property)
+          expected_cover_path = getattr(PARENT_COMPANY, 'cover_image_url', None)
+          if expected_cover_path:
                result = self._create_or_get_file_upload(
                     user=admin_user,
-                    file_path=company.cover_image_url,
-                    file_type='company_cover',
-                    original_filename=self._extract_filename(company.cover_image_url, 'cover'),
+                    file_path=expected_cover_path,
+                    file_type=FILE_TYPES.COMPANY_IMAGE,
+                    original_filename=self._extract_filename(expected_cover_path, 'cover'),
                     dry_run=dry_run,
                     force=force_file_upload
                )
@@ -363,6 +361,9 @@ class Command(BaseCommand):
                          company.cover_image_file = result['file_upload']
                elif result['action'] == 'existing':
                     results['existing_count'] += 1
+                    # Ensure foreign key is set even if FileUpload exists
+                    if not dry_run and not company.cover_image_file:
+                         company.cover_image_file = result['file_upload']
                elif result['action'] == 'error':
                     results['errors'] += 1
           
@@ -372,7 +373,7 @@ class Command(BaseCommand):
                     result = self._create_or_get_file_upload(
                          user=admin_user,
                          file_path=image_url,
-                         file_type='company_image',
+                         file_type=FILE_TYPES.COMPANY_IMAGE,
                          original_filename=self._extract_filename(image_url, f'company_image_{i+1}'),
                          dry_run=dry_run,
                          force=force_file_upload
@@ -411,6 +412,12 @@ class Command(BaseCommand):
                     self.stdout.write(f"🔍 {action.replace('_', ' ').title()} FileUpload for: {file_path}")
                     return {'action': action, 'file_upload': None}
                
+               # Delete existing if force mode
+               if existing and force:
+                    existing.delete()
+                    if self.verbose:
+                         self.stdout.write(f"🗑️  Deleted existing FileUpload for: {file_path}")
+               
                # Create new FileUpload
                file_upload = FileUpload.objects.create(
                     id=uuid.uuid4(),
@@ -418,7 +425,7 @@ class Command(BaseCommand):
                     file_type=file_type,
                     original_filename=original_filename,
                     file_path=file_path,
-                    file_size=0,  # Unknown size for existing files
+                    file_size=0,
                     upload_status='uploaded',
                     uploaded_at=timezone.now(),
                     reference_count=1,
@@ -443,7 +450,7 @@ class Command(BaseCommand):
           try:
                # Get primary super admin user
                admin_user = TalentCloudUser.objects.filter(
-                    email = 'sa@tc.io'
+                    email='sa@tc.io'
                ).first()
                
                if not admin_user:
@@ -499,8 +506,12 @@ class Command(BaseCommand):
                self.stdout.write(f"   Name: {company.name} (ID: {company.id})")
                self.stdout.write(f"   Industry: {company.industry.name if company.industry else 'N/A'}")
                self.stdout.write(f"   Verified: {company.is_verified}")
-               self.stdout.write(f"   Logo URL: {company.image_url or 'N/A'}")
-               self.stdout.write(f"   Cover Image URL: {company.cover_image_url or 'N/A'}")
+               # Use properties to show URLs (these get values from FileUpload foreign keys)
+               self.stdout.write(f"   Logo URL (via property): {company.image_url or 'N/A'}")
+               self.stdout.write(f"   Cover Image URL (via property): {company.cover_image_url or 'N/A'}")
+               # Also show FileUpload paths for debugging
+               self.stdout.write(f"   Logo FileUpload: {company.image_file.file_path if company.image_file else 'N/A'}")
+               self.stdout.write(f"   Cover FileUpload: {company.cover_image_file.file_path if company.cover_image_file else 'N/A'}")
                self.stdout.write(f"   Company Images: {len(company.company_image_urls or [])}")
           
           if file_uploads:

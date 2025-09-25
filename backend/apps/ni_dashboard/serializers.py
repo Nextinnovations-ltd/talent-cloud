@@ -327,7 +327,6 @@ class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
 
      def get_project_image_url(self, obj: JobSeekerProject):
           return obj.project_image_url
-          # return S3Service.get_public_url(obj.project_image_url)
 
      def get_duration(self, obj:JobSeekerProject):
           return get_formatted_date_range(obj.start_date, obj.end_date, obj.is_ongoing)

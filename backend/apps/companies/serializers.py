@@ -72,6 +72,8 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
      """
      Serializer for the Company Detailmodel.
      """
+     company_image_urls = serializers.SerializerMethodField()
+     
      class Meta:
           model = Company
           fields = [
@@ -85,6 +87,10 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
                'cover_image_url', 'facebook_url', 'linkedin_url', 'instagram_url',
           ]
      
+     def get_company_image_urls(self, obj: Company):
+          """Retrieves Company Image URLS"""
+          return obj.company_image_urls_list
+     
 class CompanyApproveSerializer(serializers.ModelSerializer):
      class Meta:
           model=Company
@@ -96,7 +102,8 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
      """
      job_posts = serializers.SerializerMethodField()
      industry = serializers.SerializerMethodField()
-
+     company_image_urls = serializers.SerializerMethodField()
+     
      class Meta:
           model = Company
           fields = [
@@ -129,6 +136,9 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
           """Retrieves Industry Name"""
           return obj.industry.name if hasattr(obj, 'industry') else None
 
+     def get_company_image_urls(self, obj: Company):
+          """Retrieves Company Image URLS"""
+          return obj.company_image_urls_list
 class IndustrySerializer(serializers.ModelSerializer):
      class Meta:
           model=Industry

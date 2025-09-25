@@ -44,7 +44,7 @@ class ProjectService:
                Updated project data
           """
           try:
-               old_image_path = project.project_image_url
+               old_image_path = project.project_image_file
                
                # If upload_id is provided, handle image update
                if upload_id:
@@ -62,13 +62,13 @@ class ProjectService:
                
                project.save()
                
-               # Clean up old image if a new one was uploaded
-               if upload_id and old_image_path and old_image_path != validated_data.get('project_image_url'):
-                    try:
-                         S3Service.delete_file(old_image_path)
-                         logger.info(f"Deleted old project image: {old_image_path}")
-                    except Exception as e:
-                         logger.warning(f"Failed to delete old project image {old_image_path}: {str(e)}")
+               # # Clean up old image if a new one was uploaded
+               # if upload_id and old_image_path and old_image_path != validated_data.get('project_image_url'):
+               #      try:
+               #           S3Service.delete_file(old_image_path)
+               #           logger.info(f"Deleted old project image: {old_image_path}")
+               #      except Exception as e:
+               #           logger.warning(f"Failed to delete old project image {old_image_path}: {str(e)}")
                
                # Return serialized data
                serializer = JobSeekerProjectCreateUpdateSerializer(project)
