@@ -280,12 +280,12 @@ class JobSeekerProject(TimeStampModel):
           blank=True, 
           help_text="URL to live project or demo"
      )
-     project_image_url = models.URLField(
-          max_length=2048, 
-          null=True, 
-          blank=True, 
-          help_text="URL to project screenshot or image"
-     )
+     # project_image_url = models.URLField(
+     #      max_length=2048, 
+     #      null=True, 
+     #      blank=True, 
+     #      help_text="URL to project screenshot or image"
+     # )
      project_image_file = models.ForeignKey(
           FileUpload,
           on_delete=models.SET_NULL,
@@ -310,11 +310,11 @@ class JobSeekerProject(TimeStampModel):
      def __str__(self):
           return f"{self.user.username} - {self.title}"
      
-     # @property
-     # def project_image_url(self):
-     #      if not self.project_image_file:
-     #           return None
-     #      return self.project_image_file.public_url
+     @property
+     def project_image_url(self):
+          if not self.project_image_file:
+               return None
+          return self.project_image_file.public_url
 
 class JobSeekerSpecialization(TimeStampModel):
      id = models.CharField(

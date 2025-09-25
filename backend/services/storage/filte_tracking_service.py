@@ -1,7 +1,4 @@
-# services/storage/file_tracking_service.py
-from typing import List, Dict, Any
-from django.db.models import Q
-from django.utils import timezone
+from typing import Dict, Any
 from apps.authentication.models import FileUpload
 from apps.job_seekers.models import Resume
 import logging

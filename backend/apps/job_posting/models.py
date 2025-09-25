@@ -255,24 +255,12 @@ class JobApplication(TimeStampModel):
           default=ApplicationStatus.APPLIED,
           help_text="The current status of the application."
      )
-     cover_letter_url = models.URLField(
-          max_length=2048,
-          null=True,
-          blank=True,
-          help_text="URL of the cover letter submitted for this specific application."
-     )
      cover_letter_file = models.ForeignKey(
           FileUpload,
           on_delete=models.SET_NULL,
           null=True,
           blank=True,
           related_name='application_cover_letters'
-     )
-     resume_url = models.URLField(
-          max_length=2048,
-          null=True,
-          blank=True,
-          help_text="URL of the job seeker resume."
      )
      resume_file = models.ForeignKey(
           FileUpload,
@@ -281,6 +269,18 @@ class JobApplication(TimeStampModel):
           blank=True,
           related_name='application_resumes'
      )
+     # cover_letter_url = models.URLField(
+     #      max_length=2048,
+     #      null=True,
+     #      blank=True,
+     #      help_text="URL of the cover letter submitted for this specific application."
+     # )
+     # resume_url = models.URLField(
+     #      max_length=2048,
+     #      null=True,
+     #      blank=True,
+     #      help_text="URL of the job seeker resume."
+     # )
 
      class Meta:
           verbose_name = "Job Application"
@@ -305,23 +305,21 @@ class JobApplication(TimeStampModel):
           job_post.applicant_count = job_post.applications.count()
           job_post.save(update_fields=['applicant_count'])
      
-     # @property
-     # def cover_letter_url(self):
-     #      """Get the application cover letter url"""
-     #      if not self.cover_letter_file:
-     #           return None
+     @property
+     def cover_letter_url(self):
+          """Get the application cover letter url"""
+          if not self.cover_letter_file:
+               return None
           
-     #      return self.cover_letter_file.public_url
-     #      #     return FileUrlService.get_cover_letter_public_url(self.cover_letter_url)
+          return self.cover_letter_file.public_url
      
-     # @property
-     # def resume_url(self):
-     #      """Get the application resume url"""
-     #      if not self.resume_file:
-     #           return None
+     @property
+     def resume_url(self):
+          """Get the application resume url"""
+          if not self.resume_file:
+               return None
           
-     #      return self.resume_file.public_url
-     #     return FileUrlService.get_resume_public_url(self.resume_url)
+          return self.resume_file.public_url
     
 # End Job Application
 

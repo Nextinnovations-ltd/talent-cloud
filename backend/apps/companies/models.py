@@ -1,5 +1,6 @@
 from datetime import date
 from django.db import models
+from services.storage.file_service import FileUrlService
 from services.models import TimeStampModel
 from django.utils.text import slugify
 
@@ -106,18 +107,18 @@ class Company(TimeStampModel):
           default=False,
           help_text="Whether the company profile has been verified by the platform."
      )
-     image_url = models.URLField(
-          null=True,
-          blank=True,
-          max_length=2048,
-          help_text="URL to the company's logo."
-     )
-     cover_image_url = models.URLField(
-          null=True,
-          blank=True,
-          max_length=2048,
-          help_text="URL to the company's Cover image."
-     )
+     # image_url = models.URLField(
+     #      null=True,
+     #      blank=True,
+     #      max_length=2048,
+     #      help_text="URL to the company's logo."
+     # )
+     # cover_image_url = models.URLField(
+     #      null=True,
+     #      blank=True,
+     #      max_length=2048,
+     #      help_text="URL to the company's Cover image."
+     # )
      cover_image_file = models.ForeignKey(
           FileUpload,
           on_delete=models.SET_NULL,
@@ -207,19 +208,25 @@ class Company(TimeStampModel):
           
           return admins
 
-     # @property
-     # def image_url(self):
-     #      if not self.image_file:
-     #           return None
+     @property
+     def image_url(self):
+          if not self.image_file:
+               return None
           
-     #      return self.image_file.public_url
+          return self.image_file.public_url
 
-     # @property
-     # def cover_image_url(self):
-     #      if not self.cover_image_file:
-     #           return None
+     @property
+     def cover_image_url(self):
+          if not self.cover_image_file:
+               return None
           
-     #      return self.cover_image_file.public_url
+          return self.cover_image_file.public_url
+     
+     @property
+     def company_image_urls_list(self):
+          if not self.company_image_urls:
+               return []
+          return FileUrlService.get_public_url_in_bulks(self.company_image_urls)
 
 class VerifyRegisteredCompany(TimeStampModel):
     email = models.CharField(max_length=255)

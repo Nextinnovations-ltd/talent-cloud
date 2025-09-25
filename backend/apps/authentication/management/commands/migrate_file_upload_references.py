@@ -368,7 +368,7 @@ class Command(BaseCommand):
                     user=company_user,
                     file_path=company.cover_image_url,
                     file_type=FILE_TYPES.COMPANY_IMAGE,
-                    original_filename=self.extract_filename_from_url(company.cover_image_url, 'company_cover'),
+                    original_filename=self.extract_filename_from_url(company.cover_image_url, FILE_TYPES.COMPANY_IMAGE),
                     created_at=company.created_at or timezone.now(),
                     is_user_required=False,
                     is_file_type_required=True
