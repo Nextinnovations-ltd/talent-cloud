@@ -18,8 +18,12 @@ def update_expired_jobs(self):
     """
     try:
         logger.info("Starting Job Expiration Status Validation Task.")
-        today = date.today()
-        execution_time = datetime.now()
+        today = timezone.localdate()
+        execution_time = timezone.now()
+        
+        logger.info(f"Python datetime.now(): {datetime.now()}")
+        logger.info(f"Django timezone.now(): {timezone.now()}")
+        logger.info(f"Django timezone.localdate(): {timezone.localdate()}")
         
         # Find jobs that should be expired but aren't marked as expired yet
         expired_jobs = JobPost.objects.filter(

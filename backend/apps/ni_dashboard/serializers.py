@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from apps.job_posting.models import JobSeeker, JobApplication, JobPost
+from apps.job_posting.models import ApplicationStatus, JobSeeker, JobApplication, JobPost
 from apps.job_seekers.models import JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, JobSeekerProject
 from apps.ni_dashboard.models import FavouriteJobSeeker
 from services.job_seeker.job_seeker_service import JobSeekerService
-from services.storage.s3_service import S3Service
 from utils.datetime.format_helpers import get_formatted_date_range, format_date_for_display, calculate_age
 
 class JobPostDashboardSerializer(serializers.ModelSerializer):
@@ -50,6 +49,7 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      profile_image_url = serializers.SerializerMethodField()
      resume_url = serializers.SerializerMethodField()
      cover_letter_url = serializers.SerializerMethodField()
+     is_shortlisted = serializers.SerializerMethodField()
      
      class Meta:
           model = JobApplication
@@ -68,7 +68,8 @@ class ApplicantDashboardSerializer(serializers.Serializer):
                'applied_date',
                'profile_image_url',
                'resume_url',
-               'cover_letter_url'
+               'cover_letter_url',
+               'is_shortlisted'
           ]
      
      def get_phone_number(self, obj: JobApplication):
@@ -101,6 +102,8 @@ class ApplicantDashboardSerializer(serializers.Serializer):
      def get_cover_letter_url(self, obj: JobApplication):
           return obj.cover_letter_url
 
+     def get_is_shortlisted(self, obj: JobApplication):
+          return True if obj.application_status == ApplicationStatus.SHORTLISTED else False
 
 # Job Seeker Serializers
 
