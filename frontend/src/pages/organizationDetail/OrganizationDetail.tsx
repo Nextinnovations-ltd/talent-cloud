@@ -22,10 +22,6 @@ const OrganizationDetail = () => {
   const { data: organization, isLoading, isError } = useGetOrganizationDetailQuery('next-innovations');
 
 
-  console.log(organization)
-
-
-
 
   const jobs = organization?.job_posts ?? [];
 
@@ -100,6 +96,8 @@ const OrganizationDetail = () => {
     return <div className="container mx-auto mt-20 text-center text-red-500">Failed to load organization details.</div>;
   }
 
+
+
   return (
     <>
       <div
@@ -114,14 +112,14 @@ const OrganizationDetail = () => {
                 <img src={LINKEDIN} width={32}/>
                 <p className="text-[12px] mt-[5px]">LinkedIn</p>
               </Link>
-              <div className="text-center flex flex-col items-center justify-center">
+              <Link to={organization?.instagram_url} className="text-center flex flex-col items-center justify-center">
                 <img src={INSTAGRAM} width={32}/>
                 <p className="text-[12px] mt-[5px]">Instagram</p>
-              </div>
-              <div className="text-center flex flex-col items-center justify-center">
+              </Link>
+              <Link to={organization?.facebook_url} className="text-center flex flex-col items-center justify-center">
                 <img src={FACEBOOK} width={32}/>
                 <p className="text-[12px] mt-[5px]">Facebook</p>
-              </div>
+              </Link>
             </div>
             <div className="flex gap-[5px] mt-[30px]">
               <img width={24} src={WORLD}/>

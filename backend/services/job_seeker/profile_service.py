@@ -4,6 +4,7 @@ from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
 from services.storage.s3_service import S3Service
+from django.db import transaction
 from django.utils import timezone
 import logging
 
@@ -16,6 +17,16 @@ class ProfileService:
      
      @staticmethod
      def generate_profile_resume_upload_url(user, filename, file_size, content_type=None):
+          job_seeker: JobSeeker = None
+          
+          if hasattr(user, 'jobseeker'):
+               job_seeker = user.jobseeker
+          
+          resume_file_list = job_seeker.resume_file_list
+          
+          if len(resume_file_list) >= 3:
+               raise ValidationError("You can't upload more than 3 resumes.")
+          
           return UploadService.generate_file_upload_url(user, filename, file_size, content_type, file_type = FILE_TYPES.RESUME)
      
      @staticmethod
@@ -114,16 +125,31 @@ class ProfileService:
      @staticmethod
      def delete_uploaded_resume(user, resume_id):
           try:
-               resume = Resume.objects.get(
-                    job_seeker = user,
-                    id = resume_id
-               )
-               
-               resume.status = False
-               resume.save()
-               
-               # Return resume data 
-               return ResumeSerializer(resume).data
+               with transaction.atomic():
+                    job_seeker:JobSeeker = user.jobseeker # Job Seeker User
+                    
+                    resume = Resume.objects.get(
+                         job_seeker = job_seeker,
+                         id = resume_id
+                    )
+                    
+                    if resume.is_default:
+                         most_recent_resume = job_seeker.resume_documents.filter(is_default=False).order_by('-created_at').first()
+
+                         if most_recent_resume:
+                              most_recent_resume.is_default = True
+                              most_recent_resume.save()
+                         
+                         resume.is_default = False # Remove default resume 
+                         
+                    resume.status = False
+                    resume.save()
+                    
+                    # Remainings
+                    # S3 File Delete method
+                    
+                    # Return resume data 
+                    return ResumeSerializer(resume).data
           except Resume.DoesNotExist:
                raise ValidationError("Failed to delete resume.")
 

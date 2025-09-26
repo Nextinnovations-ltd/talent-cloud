@@ -36,6 +36,8 @@ const AllApplicantsView: React.FC<AllApplicantsViewProps> = ({
         </div>;
     }
 
+
+
     return (
         <>
             <table className="w-full table-fixed text-left border-collapse">

@@ -82,6 +82,7 @@ export interface Applicant {
   email: string;
   role: string | null;
   is_open_to_work: boolean;
+  is_shortlisted: boolean;
   address: string | null;
   profile_image_url: string | null;
   job_post_id: string | null;

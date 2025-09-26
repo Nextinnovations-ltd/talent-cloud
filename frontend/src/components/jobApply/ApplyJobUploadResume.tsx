@@ -20,6 +20,8 @@ type ApplyJobUploadResumeProps = {
   coverError?: boolean;
   setResumeUploadId?: (id: string | undefined) => void;
   bigSize?: boolean;
+  /** ✅ Optional disable prop (default = false) */
+  disabled?: boolean;
 };
 
 const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
@@ -28,6 +30,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
   coverError,
   setResumeUploadId,
   bigSize,
+  disabled = false, // default value
 }) => {
   const [error, setError] = useState<string>("");
   const [rejections, setRejections] = useState<FileRejection[]>([]);
@@ -38,9 +41,8 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { refetch } = useGetJobSeekerResumeQuery();
-  const { refetch : ResumeListRefetch } = useGetJobSeekerResumeListQuery();
+  const { refetch: ResumeListRefetch } = useGetJobSeekerResumeListQuery();
   const { id } = useParams();
-
 
   const {
     acceptedFiles,
@@ -51,16 +53,16 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     isDragReject,
   } = useDropzone({
     accept: filesTypes.ACCEPTED_TYPES,
-    maxSize: type === 'coverLetter' ? filesTypes.MAX_SIZE_COVER :  filesTypes.MAX_SIZE,
+    maxSize:
+      type === "coverLetter" ? filesTypes.MAX_SIZE_COVER : filesTypes.MAX_SIZE,
     multiple: false,
-    disabled: isUploading,
+    disabled: disabled || isUploading, // ✅ external + internal control
     onDropAccepted: () => {
       setError("");
       setRejections([]);
     },
     onDropRejected: (rej) => {
       setRejections(rej);
-
     },
   });
 
@@ -76,7 +78,7 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     setPreviewUrl(null);
   }, [file]);
 
-  // Fake progress handler (replace with real progress if UploadToS3 supports it)
+  // Fake progress handler
   const simulateProgress = () => {
     let value = 0;
     const interval = setInterval(() => {
@@ -96,8 +98,6 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     }
 
     let cancelled = false;
-
-    
 
     const doUpload = async () => {
       setError("");
@@ -139,6 +139,12 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
     };
   }, [file]);
 
+  const formatSize = (bytes: number) => {
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+  };
+  
+  
+
   return (
     <div className="ml-8 mt-5">
       {/* ✅ Uploaded file view */}
@@ -147,8 +153,6 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
           <div className="px-4 py-2 rounded border bg-slate-100 text-sm truncate max-w-[250px]">
             {uploadData}
           </div>
-
-         
 
           {previewUrl && (
             <Button
@@ -179,18 +183,18 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
             {...getRootProps()}
             className={clsx(
               "border-2 border-dashed rounded p-6 text-center cursor-pointer w-[250px] transition-colors duration-200",
-              isUploading && "opacity-50 pointer-events-none",
+              (isUploading || disabled) && "opacity-50 pointer-events-none", // ✅ UI disable
               coverError
                 ? "border-red-500 bg-red-50"
                 : isDragReject
-                ? "border-red-500 bg-red-50"
-                : isDragActive
-                ? "border-blue-500 bg-blue-100"
-                : "border-blue-200 bg-blue-50",
+                  ? "border-red-500 bg-red-50"
+                  : isDragActive
+                    ? "border-blue-500 bg-blue-100"
+                    : "border-blue-200 bg-blue-50",
               bigSize && "w-[437px] h-[176px]"
             )}
           >
-            <input {...getInputProps({ disabled: isUploading })} />
+            <input {...getInputProps({ disabled: disabled || isUploading })} />
             {isUploading ? (
               <div className="flex flex-col items-center">
                 <LoadingSpinner className="w-5 h-5 mb-2" />
@@ -203,39 +207,50 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center gap-2 text-sm font-medium">
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium">
                 <Upload size={16} /> Upload Resume
               </div>
             )}
             <p
               className={clsx(
-                "text-gray-600 mt-5",
-                bigSize ? "text-sm w-[198px] mx-auto" : "text-xs",
+                "text-gray-600 mt-7 ",
+                bigSize ? "text-sm  w-[198px] mx-auto" : "text-xs",
                 "flex flex-col justify-center items-center"
               )}
             >
-              {filesTypes.friendlyAllowed} 
-            <span>  · {type === 'coverLetter' ? 'Max 3MB' : 'Max 5MB'}</span>
+              {filesTypes.friendlyAllowed}
+              <span>
+                {type === "coverLetter" ? "Max 3MB" : "Max 5MB"}
+              </span>
             </p>
           </div>
 
+ 
           {!!(rejections.length || fileRejections.length) && (
             <aside className="mt-3">
-              <h4 className="text-sm font-medium text-red-600 mb-1">
-                Rejected
-              </h4>
+              <h4 className="text-sm font-medium text-red-600 mb-1">Rejected</h4>
               <ul className="list-disc ml-5 text-sm text-red-600">
                 {(rejections.length ? rejections : fileRejections).map(
                   ({ file, errors }) => (
                     <li key={file.name}>
                       {file.name} —{" "}
-                      {errors.map((e) => e.message).join(", ")}
+                      {errors.map((e) => {
+                        if (e.code === "file-too-large") {
+                          // Extract limit from dropzone options
+                          const limit = type === "coverLetter"
+                            ? filesTypes.MAX_SIZE_COVER
+                            : filesTypes.MAX_SIZE;
+                          return `File is larger than ${formatSize(limit)}`;
+                        }
+                        return e.message;
+                      }).join(", ")}
                     </li>
                   )
                 )}
               </ul>
             </aside>
           )}
+
         </section>
       )}
 

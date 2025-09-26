@@ -10,6 +10,9 @@ app = Celery('tc')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+app.conf.timezone = "Asia/Yangon"
+app.conf.enable_utc = False
+
 app.conf.beat_schedule = {
     # Test
     'add-every-30-seconds': {
