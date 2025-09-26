@@ -127,6 +127,11 @@ class Resume(TimeStampModel):
           return self.file_upload.file_path if self.file_upload else None
      
      @property
+     def file_name(self):
+          """Get the file URL from the associated FileUpload"""
+          return self.file_upload.original_filename if self.file_upload else None
+     
+     @property
      def resume_url(self):
           """Get the resume url"""
           if not self.file_upload:
