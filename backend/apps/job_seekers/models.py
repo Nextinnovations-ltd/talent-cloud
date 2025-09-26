@@ -60,8 +60,8 @@ class JobSeeker(TalentCloudUser):
 
      @property
      def resume_file_list(self):
-          """Get all Resume list"""
-          return self.resume_documents.all()
+          """Get all uploaded resume list except soft-deleted ones"""
+          return self.resume_documents.filter(status=True).all()
 
      @property
      def recent_application(self):
