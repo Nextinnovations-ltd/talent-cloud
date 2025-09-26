@@ -103,7 +103,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type="button"
               variant={"ghost"}
               onClick={handleTogglePassword}
-              className="flex items-center absolute right-0 top-[10px] justify-center"
+              className="flex items-center absolute right-0 top-[7px] justify-center"
             >
               {isPasswordVisible ? hidePasswordIcon : showPasswordIcon}
             </Button>

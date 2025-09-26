@@ -4,86 +4,97 @@ import Filesvg from "@/assets/filesvg";
 import Marksvg from "@/assets/marksvg";
 import MenuDot from "@/assets/menuDot";
 import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatDate } from "@/lib/utils";
-import { useDefaultJobSeekerResumeMutation, useGetJobSeekerResumeListQuery } from "@/services/slices/adminSlice";
+import { useDefaultJobSeekerResumeMutation, useGetJobSeekerResumeListQuery, useJobSeekerResumeDeleteMutation } from "@/services/slices/adminSlice";
 import { ResumeTypeItem } from "@/types/admin-auth-slice";
 import { TooltipContent } from "@radix-ui/react-tooltip";
 import { useState } from "react";
 import useToast from '@/hooks/use-toast';
 import { useGetJobSeekerResumeQuery } from "@/services/slices/jobSeekerSlice";
+import { DialogBox } from "@/components/common/DialogBox";
 
 type ResumeItemProps = {
-    item: ResumeTypeItem
+  item: ResumeTypeItem
 }
 
 const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
-    const resume_url = item?.resume_url;
-    const [isDownloading, setIsDownloading] = useState(false);
-    const [makeDeafult] = useDefaultJobSeekerResumeMutation();
-    const {refetch:ResumeRefetch} =  useGetJobSeekerResumeQuery()
-    const { refetch } = useGetJobSeekerResumeListQuery();
-    const { showNotification } = useToast();
-    const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
+  const resume_url = item?.resume_url;
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [makeDeafult] = useDefaultJobSeekerResumeMutation();
+  const [makeResumeDelete] = useJobSeekerResumeDeleteMutation();
+  const { refetch: ResumeRefetch } = useGetJobSeekerResumeQuery()
+  const { refetch } = useGetJobSeekerResumeListQuery();
+  const { showNotification } = useToast();
+  const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
 
-    const handleDefault = async (id: string | number) => {
-        await makeDeafult({ id });
-        refetch();
-        ResumeRefetch();
-    };
+  const handleDefault = async (id: string | number) => {
+    await makeDeafult({ id });
+    refetch();
+    ResumeRefetch();
+  };
 
-    const handleDownloadCV = async () => {
-        if (!resume_url) {
-            showNotification({
-                message: "No resume available for this applicant",
-                type: "danger",
-            });
-            return;
-        }
+  const handleDelete = async (id: string | number) => {
+    await makeResumeDelete({ id });
+    refetch();
+    ResumeRefetch();
 
-        try {
-            setIsDownloading(true);
-            const response = await fetch(resume_url);
-            const blob = await response.blob();
+    setIsOpen(false);
+  }
 
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `${fileName || "resume"}.pdf`);
-            document.body.appendChild(link);
-            link.click();
+  const handleDownloadCV = async () => {
+    if (!resume_url) {
+      showNotification({
+        message: "No resume available for this applicant",
+        type: "danger",
+      });
+      return;
+    }
 
-            // Cleanup
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
+    try {
+      setIsDownloading(true);
+      const response = await fetch(resume_url);
+      const blob = await response.blob();
 
-            showNotification({
-                message: "Download started",
-                type: "success",
-            });
-        } catch {
-            showNotification({
-                message: "Failed to download CV",
-                type: "danger",
-            });
-        } finally {
-            setIsDownloading(false);
-        }
-    };
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${fileName || "resume"}.pdf`);
+      document.body.appendChild(link);
+      link.click();
 
-    return (
-        <div className="w-[667px] flex items-start relative justify-between gap-4 rounded-[12px] border border-[#CBD5E1] p-[15px] h-[120px]">
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showNotification({
+        message: "Download started",
+        type: "success",
+      });
+    } catch {
+      showNotification({
+        message: "Failed to download CV",
+        type: "danger",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="w-[667px] flex items-start relative justify-between gap-4 rounded-[12px] border border-[#CBD5E1] p-[15px] h-[120px]">
         <div className="flex gap-4">
           <div className="mt-3 ">
             <Filesvg />
-           
+
           </div>
-      
           <div>
             <TooltipProvider>
               <Tooltip>
@@ -102,19 +113,19 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-      
+
             <p className="text-[#575757] mt-[10px]">
               Resume last uploaded on {formatDate(item?.uploaded_at)}
             </p>
           </div>
-      
+
           {item?.is_default && (
             <div className="mt-3 bg-[#D7EAFF] h-[25px] flex items-center justify-center px-2 rounded-md text-[12px]">
               Default
             </div>
           )}
         </div>
-      
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="mt-3 cursor-pointer w-[50px] flex items-center justify-center"><MenuDot /></div>
@@ -126,7 +137,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
             >
               <Marksvg /> Default
             </DropdownMenuItem>
-      
+
             <DropdownMenuItem
               onClick={handleDownloadCV}
               className="cursor-pointer focus:bg-gray-100 flex items-center gap-2"
@@ -139,8 +150,9 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
                 "Download"
               )}
             </DropdownMenuItem>
-      
+
             <DropdownMenuItem
+              onClick={() => setIsOpen(true)}
               className="cursor-pointer text-[#E50914] focus:bg-gray-100"
             >
               <Deletesvg /> Delete
@@ -148,13 +160,22 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
           </DropdownMenuContent>
         </DropdownMenu>
         {isDownloading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
-                <span className="animate-spin border-2 border-gray-300 border-t-gray-500 rounded-full w-5 h-5"></span>
-              </div>
-            )}
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
+            <span className="animate-spin border-2 border-gray-300 border-t-gray-500 rounded-full w-5 h-5"></span>
+          </div>
+        )}
+        <DialogBox
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          negative={""}
+          action={'Confirm'}
+          title={"Delete Resume?"}
+          description={"Are you sure to delete resume."}
+          handleAction={() => handleDelete(item?.id)} />
       </div>
-      
-    )
+    </>
+
+  )
 }
 
 export default ResumeItem;

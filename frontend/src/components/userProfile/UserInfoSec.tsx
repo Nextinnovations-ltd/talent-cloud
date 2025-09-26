@@ -215,8 +215,6 @@ export const UserInfoSec = () => {
                 {/* Continue with the same pattern for other sections */}
                 {/* Work Experience */}
 
-             
-x
 
                 <div id="work-experience-section">
                     <WorkExperienceSection

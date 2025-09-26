@@ -203,13 +203,6 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
   }
 
 
-  console.log("------")
-  console.log(data)
-  console.log("------")
-
-
-
-
 
   return (
     <>
@@ -293,6 +286,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
               {
                 !isShortList && <DropdownMenuItem
                   onSelect={() => setIsDialogOpen(true)}
+                  disabled={data?.is_shortlisted}
                   className="cursor-pointer focus:bg-gray-100"
                 >
                   Add to shortlist

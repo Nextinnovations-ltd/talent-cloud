@@ -30,7 +30,7 @@ const JobSeekerResume = () => {
         <BackButton handleBack={() => navigate(-1)} /><h3 className="text-[40px] font-semibold">Upload Resume</h3>
       </div>
       <div className=" px-[100px] mt-[82px]">
-        <ApplyJobUploadResume bigSize type={"defaultResume"} />
+        <ApplyJobUploadResume disabled={LISTDATA?.length === 3} bigSize type={"defaultResume"} />
         <div className="mt-[52px]">
           <h3 className="text-[32px] font-medium">Manage Your Resume</h3>
           <p className="text-[#575757] mt-[11px]">You can keep a maximum of 3 resumes in your profile.</p>

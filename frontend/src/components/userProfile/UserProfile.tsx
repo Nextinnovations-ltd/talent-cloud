@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { BackGroundGrid } from '@/constants/svgs';
 import { AvatarProfile } from '../common/Avatar';
 import SHADOWLEFT from '@/assets/Login/ShadowLeft.svg';
 import SHADOWRIGHT from '@/assets/Login/ShadowRight.svg';
@@ -8,6 +7,7 @@ import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice';
 import StarBorder from '../common/StarBorder';
+import GRID from '@/assets/Login/Grid.png'
 
 // Animation variants
 const containerVariants = {
@@ -89,7 +89,7 @@ export const UserProfile = () => {
           //@ts-expect-error
           variants={fadeIn}
         >
-          <BackGroundGrid />
+        <img src={GRID} className='opacity-90'/>
         </motion.div>
 
         {/* Main content with staggered animations */}

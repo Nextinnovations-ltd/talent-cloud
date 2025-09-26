@@ -46,7 +46,7 @@ export const DialogBox = ({
                 {negative}
               </Button>
             </DialogClose>
-
+            
             <PrimaryButton
               handleClick={handleAction}
               width={"w-[115px]"}
