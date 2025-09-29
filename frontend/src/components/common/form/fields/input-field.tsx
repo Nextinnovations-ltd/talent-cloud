@@ -27,6 +27,7 @@ type DatePickerFieldProps = {
   hidePasswordIcon?: ReactNode;
   showLetterCount?: boolean; // New prop to show/hide letter count
   maxLength?: number;
+  maxDigits?: number; // When formatting thousands, cap raw digits
   description?: boolean;
   descriptionText?: string;
   startIcon?: ReactNode;
@@ -51,6 +52,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
   hidePasswordIcon,
   showLetterCount, // New prop to show/hide letter count
   maxLength,
+  maxDigits,
   description,
   descriptionText,
   startIcon,
@@ -80,7 +82,20 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       onChange('');
       return;
     }
-    const formatted = new Intl.NumberFormat('en-US').format(Number(digitsOnly));
+    // First, cap by maxDigits if provided
+    let limitedDigits = typeof maxDigits === 'number'
+      ? digitsOnly.slice(0, maxDigits)
+      : digitsOnly;
+
+    // Then, format and optionally enforce visible maxLength (including commas)
+    let formatted = new Intl.NumberFormat('en-US').format(Number(limitedDigits));
+    if (typeof maxLength === 'number') {
+      // Reduce digits until the visible string length is within maxLength
+      while (formatted.length > maxLength && limitedDigits.length > 0) {
+        limitedDigits = limitedDigits.slice(0, -1);
+        formatted = limitedDigits ? new Intl.NumberFormat('en-US').format(Number(limitedDigits)) : '';
+      }
+    }
     onChange(formatted);
   };
 
@@ -116,7 +131,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
                 hidePasswordIcon={hidePasswordIcon}
                 placeholder={placeholder}
                 showLetterCount={showLetterCount}
-                maxLength={maxLength}
+                {...(formatThousands ? { enforceNativeMaxLength: false, displayMaxLength: maxLength } : { maxLength })}
                 // Only add onInput if type is number
                 {...(!formatThousands && type === 'number' ? { onInput: handleNumberInput } : {})}
                 // For thousands formatting, override onChange

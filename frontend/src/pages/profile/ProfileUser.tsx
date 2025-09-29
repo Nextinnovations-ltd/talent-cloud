@@ -52,7 +52,8 @@ export const ProfileUser = () => {
       bio: profileData?.data?.bio || "",
       email: profileData?.data?.email || "",
       phone_number: profileData?.data?.phone_number || "",
-      country_code: profileData?.data?.country_code || "",
+      // Default to a sensible country code if none from API
+      country_code: profileData?.data?.country_code || "+95",
       date_of_birth: profileData?.data?.date_of_birth || "",
       resume_url: profileData?.data?.resume_url || "",
       is_open_to_work: profileData?.data?.is_open_to_work || false,
@@ -83,7 +84,7 @@ export const ProfileUser = () => {
         bio: profileData.data?.bio || "",
         email: profileData.data?.email || "",
         phone_number: profileData.data?.phone_number || "",
-        country_code: profileData.data?.country_code || "",
+        country_code: profileData.data?.country_code || "+95",
         date_of_birth: profileData.data?.date_of_birth || "",
         resume_url: profileData.data?.resume_url || "",
         is_open_to_work: profileData?.data?.is_open_to_work || false,
@@ -116,6 +117,8 @@ export const ProfileUser = () => {
 
       const formattedValues = {
         ...rest,
+        // Ensure country_code is present with fallback
+        country_code: values.country_code || "+95",
         date_of_birth: values.date_of_birth
           ? 
           formatLocalDate(new Date(values.date_of_birth))
@@ -147,7 +150,7 @@ export const ProfileUser = () => {
           bio: profileUser?.bio || "",
           email: profileUser?.email || "",
           phone_number: profileUser?.phone_number || "",
-          country_code: profileUser?.country_code || "",
+          country_code: profileUser?.country_code || "+95",
           date_of_birth: profileUser?.date_of_birth || "",
           resume_url: profileUser?.resume_url || "",
           is_open_to_work: profileUser?.is_open_to_work || false,
