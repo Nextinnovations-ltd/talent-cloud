@@ -126,9 +126,9 @@ class JobPost(TimeStampModel):
      salary_mode = models.CharField(max_length=10, choices=SalaryModeType.choices, default=SalaryModeType.Fixed, blank=True)
      salary_type = models.CharField(max_length=10, choices=PerSalaryType.choices, default=PerSalaryType.MONTHLY, blank=True)
      
-     salary_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-     salary_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-     salary_fixed = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+     salary_min = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+     salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+     salary_fixed = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
      is_salary_negotiable = models.BooleanField(default=False)
      
      project_duration = models.CharField(max_length=50, choices=ProjectDurationType.choices, null=True, blank=True)

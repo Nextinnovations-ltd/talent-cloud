@@ -251,6 +251,9 @@ class JobSeekerExperience(TimeStampModel):
      description = models.TextField(null=True, blank=True)
      is_present_work = models.BooleanField(default=False)
 
+     class Meta:
+          ordering = ['-start_date', '-created_at']
+
      def __str__(self):
           return f"{self.title} - {self.organization}"
 
@@ -289,12 +292,6 @@ class JobSeekerProject(TimeStampModel):
           blank=True, 
           help_text="URL to live project or demo"
      )
-     # project_image_url = models.URLField(
-     #      max_length=2048, 
-     #      null=True, 
-     #      blank=True, 
-     #      help_text="URL to project screenshot or image"
-     # )
      project_image_file = models.ForeignKey(
           FileUpload,
           on_delete=models.SET_NULL,
