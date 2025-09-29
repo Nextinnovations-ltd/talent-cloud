@@ -80,7 +80,7 @@ class EmailService:
             enhanced_context = {
                 'platform_name': getattr(settings, 'PLATFORM_NAME', 'Talent Cloud'),
                 'frontend_url': getattr(settings, 'FRONTEND_URL', ''),
-                'support_email': getattr(settings, 'SUPPORT_EMAIL', 'support@talentcloud.com'),
+                'support_email': getattr(settings, 'SUPPORT_EMAIL', 'talentcloud-support@next-innovations.ltd'),
                 'contact_url': f"{getattr(settings, 'FRONTEND_URL', '')}/contact",
                 'unsubscribe_url': f"{getattr(settings, 'FRONTEND_URL', '')}/unsubscribe",
                 'is_urgent': is_urgent,

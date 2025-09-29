@@ -64,13 +64,29 @@ def update_parent_company():
           # Update basic fields only (not image URLs - they're properties now)
           company.description = PARENT_COMPANY.description
           company.contact_email = PARENT_COMPANY.contact_email
+          company.contact_phone = PARENT_COMPANY.contact_phone
           company.website = getattr(PARENT_COMPANY, 'website', None)
+          company.founded_date = getattr(PARENT_COMPANY, 'founded_date', None)
           company.is_verified = True
           
           # Update industry
           if hasattr(PARENT_COMPANY, 'industry') and PARENT_COMPANY.industry:
                industry, _ = Industry.objects.get_or_create(name=PARENT_COMPANY.industry)
                company.industry = industry
+          
+          if hasattr(company, 'address') and company.address and hasattr(PARENT_COMPANY, 'address'):
+               if company.address.address != PARENT_COMPANY.address:
+                    company.address.address = PARENT_COMPANY.address
+                    company.address.save()
+          elif hasattr(PARENT_COMPANY, 'address') and not company.address:
+               from apps.users.models import Address
+               address = Address.objects.create(
+                    country_id=getattr(PARENT_COMPANY, 'country', None),
+                    city_id=getattr(PARENT_COMPANY, 'city', None),
+                    address=PARENT_COMPANY.address
+               )
+               company.address = address
+          
           
           # Update company_image_urls JSONField only
           if hasattr(PARENT_COMPANY, 'company_image_urls'):
