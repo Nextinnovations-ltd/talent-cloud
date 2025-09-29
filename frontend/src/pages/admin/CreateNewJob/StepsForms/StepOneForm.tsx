@@ -168,7 +168,8 @@ const StepOneForm = ({ formMethods }: StepOneFormProps) => {
 
           <TextAreaFieldEditor
             name="description"
-            lableName="Describe description about this job"
+            place="Describe description about this job"
+            lableName="Description"
             maxLength={800}
             isError={!!formMethods.formState.errors.description}
           />

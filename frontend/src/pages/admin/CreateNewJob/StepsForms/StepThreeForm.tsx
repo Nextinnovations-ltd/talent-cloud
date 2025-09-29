@@ -149,7 +149,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                     required={true}
                                     placeholder="0000 MMK"
                                     maxDigits={10}
-                                    showLetterCount={true}
+                                    showLetterCount={false}
                                     maxLength={13}
 
                                 />
@@ -166,7 +166,7 @@ const StepThreeForm = ({ formMethods }: StepThreeFormProps) => {
                                         lableName="Maximum Salary"
                                         required={true}
                                         placeholder="0000 MMK"
-                                        showLetterCount
+                                        showLetterCount={false}
                                         maxDigits={10}
                                         maxLength={13}
                                     />

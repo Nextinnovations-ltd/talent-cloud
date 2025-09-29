@@ -15,7 +15,8 @@ interface TextAreaFieldEditorProps {
   initialValue?: string;
   maxLength?: number;
   isError?: boolean;
-  lableName?:string
+  lableName?:string;
+  place?:string
 }
 
 const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
@@ -24,7 +25,8 @@ const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
   initialValue = "",
   maxLength = 800,
   isError = false,
-  lableName
+  lableName,
+  place="Describe the role, responsibilities and what make this opportunity exciting..."
 }) => {
   const quillRef = useRef<ReactQuill | null>(null);
   const [formats, setFormats] = useState<FormatType>({});
@@ -159,7 +161,7 @@ const TextAreaFieldEditor: React.FC<TextAreaFieldEditorProps> = ({
                 onBlur={() => field.onBlur()} // triggers validation on blur
                 modules={modules}
                 formats={formatsWhitelist}
-                placeholder="Describe the role, responsibilities and what make this opportunity exciting..."
+                placeholder={place}
               />
               <span
                 className={`absolute right-3 bottom-2 text-sm ${
