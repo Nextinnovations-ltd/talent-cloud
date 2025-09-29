@@ -18,12 +18,10 @@ class ProjectService:
      def performed_project_creation(user, validated_data, upload_id=None):
           try:
                with transaction.atomic():
-                    file_upload_path = None
+                    file_upload = None
                     
                     if upload_id:
                          file_upload = UploadService.update_file_upload_status(user, upload_id)
-                         # file_upload = S3Service.update_upload_status(user, upload_id)
-                         file_upload_path = file_upload.file_path
 
                     return ProjectService.create_project(user.jobseeker, validated_data, file_upload)
           except Exception as e:
@@ -128,4 +126,4 @@ class ProjectService:
      
      @staticmethod
      def get_projects(user_id):
-          return JobSeekerProject.objects.filter(user__id=user_id).order_by('-start_date')
+          return JobSeekerProject.objects.filter(user__id=user_id)

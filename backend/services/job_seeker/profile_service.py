@@ -156,17 +156,17 @@ class ProfileService:
 class ExperienceService:
      @staticmethod
      def get_experiences(user_id):
-          return JobSeekerExperience.objects.filter(user__id=user_id).order_by('-start_date')
+          return JobSeekerExperience.objects.filter(user__id=user_id)
 
 class EducationService:
      @staticmethod
      def get_educations(user_id):
-          return JobSeekerEducation.objects.filter(user__id=user_id).order_by('-start_date')
+          return JobSeekerEducation.objects.filter(user__id=user_id)
 
 class CertificationService:
      @staticmethod
      def get_certifications(user_id):
-          return JobSeekerCertification.objects.filter(user__id=user_id).order_by('-issued_date')
+          return JobSeekerCertification.objects.filter(user__id=user_id)
      
      @staticmethod
      def validate_date_range(issued_date, expiration_date, has_expiration):
