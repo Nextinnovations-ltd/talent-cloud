@@ -102,6 +102,7 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
      """
      job_posts = serializers.SerializerMethodField()
      industry = serializers.SerializerMethodField()
+     address = serializers.SerializerMethodField()
      company_image_urls = serializers.SerializerMethodField()
      
      class Meta:
@@ -139,6 +140,29 @@ class CompanyWithJobsSerializer(serializers.ModelSerializer):
      def get_company_image_urls(self, obj: Company):
           """Retrieves Company Image URLS"""
           return obj.company_image_urls_list
+     
+     def get_address(self, obj:Company):          
+          if not hasattr(obj, 'address') or not obj.address:
+               return None
+          
+          address = obj.address
+          
+          
+          formatted_address = []
+          
+          if hasattr(address, 'address') and address.address:
+               formatted_address.append(address.address.strip())
+          
+          if hasattr(address, 'city') and address.city and hasattr(address.city, 'name'):
+               formatted_address.append(address.city.name.strip())
+          
+          if hasattr(address, 'country') and address.country and hasattr(address.country, 'name'):
+               formatted_address.append(address.country.name.strip())
+          
+          formatted_address = ', '.join(formatted_address) if formatted_address else ''
+                    
+          return formatted_address
+          
 class IndustrySerializer(serializers.ModelSerializer):
      class Meta:
           model=Industry

@@ -46,12 +46,10 @@ class JobPostCreateAPIView(APIView):
 
      def post(self, request):
           try:
-               # The business logic for creating a job post is moved to JobService
                job_post, serializer = JobService.create_job(request.data, request.user)
                return Response(CustomResponse.success("Successfully created the job post.", serializer.data), status=status.HTTP_201_CREATED)
           except ValidationError as e:
-               # The service layer raises ValidationError on invalid data
-               return Response(CustomResponse.error("Error creating the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
+               return Response(CustomResponse.error("Fail to create the job post.", e.detail), status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(tags=["Job Post"])
 class JobPostEditDetailAPIView(APIView):

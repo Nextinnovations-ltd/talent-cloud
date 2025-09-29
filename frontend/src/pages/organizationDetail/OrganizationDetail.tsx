@@ -22,6 +22,9 @@ const OrganizationDetail = () => {
   const { data: organization, isLoading, isError } = useGetOrganizationDetailQuery('next-innovations');
 
 
+  console.log(organization)
+
+
 
   const jobs = organization?.job_posts ?? [];
 

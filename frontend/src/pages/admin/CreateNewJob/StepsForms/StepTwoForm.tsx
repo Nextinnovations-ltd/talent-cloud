@@ -16,7 +16,8 @@ const StepTwoForm = ({ formMethods }: StepTwoFormProps) => {
         <form>
           <TextAreaFieldEditor
             name="responsibilities"
-            lableName="Describe responsibilities about this job"
+            place="Describe responsibilities about this job"
+            lableName="Responsibilities"
             maxLength={800}
             isError={!!formMethods.formState.errors.responsibilities}
           />
@@ -37,7 +38,8 @@ const StepTwoForm = ({ formMethods }: StepTwoFormProps) => {
           /> */}
           <TextAreaFieldEditor
             name="requirements"
-            lableName="Describe requirements about this job"
+            place="Describe requirements about this job"
+            lableName="Requirements"
             maxLength={800}
             isError={!!formMethods.formState.errors.requirements}
           />
@@ -58,7 +60,8 @@ const StepTwoForm = ({ formMethods }: StepTwoFormProps) => {
           /> */}
            <TextAreaFieldEditor
             name="offered_benefits"
-            lableName="Describe the matters that we offer about this job"
+            place="Describe the matters that we offer about this job"
+            lableName="Offers"
             maxLength={800}
             isError={!!formMethods.formState.errors.offered_benefits}
           />
