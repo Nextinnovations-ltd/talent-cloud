@@ -11,7 +11,9 @@ export interface InputProps
   startIcon?: React.ReactNode;
   isError?: boolean;
   showLetterCount?: boolean; // New prop to show/hide letter count
-  maxLength?: number; // Max length for input
+  maxLength?: number; // Max length for input (native enforcement)
+  displayMaxLength?: number; // Max length for counter display only
+  enforceNativeMaxLength?: boolean; // If false, do not set native maxLength
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -25,6 +27,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       hidePasswordIcon,
       showLetterCount,
       maxLength,
+      displayMaxLength,
+      enforceNativeMaxLength = true,
       startIcon,
       ...props
     },
@@ -85,17 +89,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className
             )}
             onChange={handleInputChange}
-            maxLength={maxLength}
+            maxLength={enforceNativeMaxLength ? maxLength : undefined}
             {...props}
           />
-          {showLetterCount && maxLength && inputRef.current && (
+          {showLetterCount && (displayMaxLength || maxLength) && inputRef.current && (
             <span className="flex text-[#B9BABC] items-center absolute top-[14px] right-3 justify-center">
-              {inputRef.current.value.length}/{maxLength}
+              {inputRef.current.value.length}/{displayMaxLength ?? maxLength}
             </span>
           )}
-          {showLetterCount && maxLength && !inputRef.current && (
+          {showLetterCount && (displayMaxLength || maxLength) && !inputRef.current && (
             <span className="flex text-[#B9BABC] items-center absolute top-[14px] right-3 justify-center">
-              0/{maxLength}
+              0/{displayMaxLength ?? maxLength}
             </span>
           )}
           {(endIcon || showPasswordIcon || hidePasswordIcon) && (

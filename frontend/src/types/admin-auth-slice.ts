@@ -267,7 +267,8 @@ export type ResumeTypeItem = {
   id:number,
   is_default:boolean,
   resume_url:string,
-  uploaded_at:string
+  uploaded_at:string,
+  original_file_name:string
 }
 
 export type ResumeListResponse = ResponseData<ResumeTypeItem[]>;

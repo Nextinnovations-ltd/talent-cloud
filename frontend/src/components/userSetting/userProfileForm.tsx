@@ -263,7 +263,13 @@ export const UserProfileForm = ({
             <PhoneNumberInput
               isError={form.formState.errors?.country_code}
               value={form.getValues("country_code")}
-              setValue={(e: any) => form.setValue("country_code", e)}
+              setValue={(e: any) => {
+                // Ensure the field is registered and validated when updated
+                if (!form.getFieldState("country_code").isDirty && !form.getValues("country_code")) {
+                  try { form.register("country_code"); } catch { /* empty */ }
+                }
+                form.setValue("country_code", e, { shouldDirty: true, shouldValidate: true });
+              }}
             />
             <InputField
               fieldName={'phone_number'}

@@ -32,7 +32,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
   const { refetch: ResumeRefetch } = useGetJobSeekerResumeQuery()
   const { refetch } = useGetJobSeekerResumeListQuery();
   const { showNotification } = useToast();
-  const fileName = resume_url ? resume_url.split("/").pop() || "resume.pdf" : "resume.pdf";
+
 
   const handleDefault = async (id: string | number) => {
     await makeDeafult({ id });
@@ -65,7 +65,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${fileName || "resume"}.pdf`);
+      link.setAttribute("download", `${item?.original_file_name || "resume"}.pdf`);
       document.body.appendChild(link);
       link.click();
 
@@ -99,7 +99,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <h3 className="text-[24px] font-medium w-[200px] truncate">{fileName}</h3>
+                  <h3 className="text-[24px] font-medium w-[200px] truncate">{item?.original_file_name}</h3>
                 </TooltipTrigger>
                 <TooltipContent
                   side="top"
@@ -109,7 +109,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
                   data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
                   transition-all duration-200"
                 >
-                  <h3>{fileName}</h3>
+                  <h3>{item?.original_file_name}</h3>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -13,6 +13,9 @@ const JobSeekerResume = () => {
 
   const LISTDATA = data?.data;
 
+
+  console.log(LISTDATA)
+
   const navigate = useNavigate();
 
   if (isError) {
