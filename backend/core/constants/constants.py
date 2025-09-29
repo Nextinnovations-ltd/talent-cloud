@@ -32,9 +32,9 @@ class PARENT_COMPANY:
     tagline = "Innovate. Create. Lead."
     city = "389453"
     country = "1034"
-    address = 'Mayangone, Yangon, Myanmar'
+    address = "Mayangone, Yangon"
     contact_phone = "09-451663606"
-    founded_date = "2020-01-01"
+    founded_date = "2020-05-05"
     contact_email = "talentcloud-contact@next-innovations.ltd"
     image_url = 'NI_Company_Info/ni_logo.png'
     cover_image_url = 'NI_Company_Info/ni_cover_image.JPG'

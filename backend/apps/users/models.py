@@ -155,12 +155,12 @@ class Address(models.Model):
         return f"{self.address or 'No Address'}, {self.city.name}, {self.country.name}"
 
     def clean(self):
-        if self.country is None:
+        if not hasattr(self, 'country') or self.country is None:
             raise ValidationError("Country must not be empty.")
         
         # Use country code instead of hardcoded ID
-        if self.country.code2 == 'MM' and self.city is None:
-            raise ValidationError("You need to select residing city if your country location is Myanmar.")
+        # if self.country.code2 == 'MM' and self.city is None:
+        #     raise ValidationError("You need to select residing city if your country location is Myanmar.")
         
         if self.city is not None:
             if self.city.country != self.country:

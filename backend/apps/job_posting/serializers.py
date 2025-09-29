@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType
 from apps.companies.serializers import CompanyDetailSerializer
-from services.storage.s3_service import S3Service
 from utils.job_posting.job_posting_utils import format_salary
 
 class JobPostDisplayMixin:
@@ -73,11 +72,186 @@ class JobPostDisplayMixin:
           return obj.get_effective_status()
           
 class JobPostSerializer(ModelSerializer):
+     salary_min = serializers.DecimalField(
+          max_digits=None,
+          decimal_places=2,
+          required=False,
+          allow_null=True
+     )
+     salary_max = serializers.DecimalField(
+          max_digits=None,
+          decimal_places=2,
+          required=False,
+          allow_null=True
+     )
+     salary_fixed = serializers.DecimalField(
+          max_digits=None,
+          decimal_places=2,
+          required=False,
+          allow_null=True
+     )
+
      class Meta:
           model=JobPost
           fields= '__all__'
           read_only_fields = ['posted_by', 'view_count', 'applicant_count', 'bookmark_count']
+     
+     def get_digit_count(self, amount):
+          str_val = format(amount, 'f')
+          int_part, _, decimal_part = str_val.partition(".")
+          
+          return len(int_part)
+     
+     def validate_decimal_format(self, value, field_name):
+          """
+          Custom validation for decimal format:
+          - Maximum 10 digits before decimal point
+          - Exactly 2 digits after decimal point
+          """
+          if value is None:
+               return value
+               
+          # Convert to string
+          str_value = str(value)
+          
+          # Handle negative values
+          is_negative = str_value.startswith('-')
+          
+          if is_negative:
+               raise serializers.ValidationError(f'{field_name.replace("_", " ").title()} cannot be negative.')
+          
+          if '.' in str_value:
+               integer_part, decimal_part = str_value.split('.')
+          else:
+               integer_part = str_value
+               decimal_part = '00'
+          
+          if len(integer_part) > 10:
+               raise serializers.ValidationError(f'{field_name.replace("_", " ").title()} cannot have more than 10 digits before the decimal point.')
+          
+          if len(decimal_part) != 2:
+               raise serializers.ValidationError(f'{field_name.replace("_", " ").title()} must have exactly 2 digits after the decimal point.')
+          
+          return value
+     
+     def validate_salary_min(self, value):
+          """Validate minimum salary format and business rules"""
+          if value is not None:
+               salary_mode = self.initial_data.get('salary_mode')
 
+               if salary_mode == SalaryModeType.Fixed:
+                    return value
+               
+               if not salary_mode and self.instance:
+                    salary_mode = self.instance.salary_mode
+                    
+                    if salary_mode == SalaryModeType.Fixed:
+                         return value
+               
+               self.validate_decimal_format(value, 'salary_min')
+               
+               if value < 0:
+                    raise serializers.ValidationError("Minimum salary cannot be negative.")
+               
+               if self.get_digit_count(value) < 3:
+                    raise serializers.ValidationError("Minimum salary should have at least 3 digits.")
+          
+          return value
+
+     def validate_salary_max(self, value):
+          """Validate maximum salary format and business rules"""
+          if value is not None:
+               salary_mode = self.initial_data.get('salary_mode')
+        
+               if salary_mode == SalaryModeType.Fixed:
+                    return value
+                    
+               if not salary_mode and self.instance:
+                    salary_mode = self.instance.salary_mode
+                    if salary_mode == SalaryModeType.Fixed:
+                         return value
+                    
+               self.validate_decimal_format(value, 'salary_max')
+               
+               if value < 0:
+                    raise serializers.ValidationError("Maximum salary cannot be negative.")
+               
+               if self.get_digit_count(value) < 3:
+                    raise serializers.ValidationError("Maximum salary should have at least 3 digits.")
+          
+          return value
+
+     def validate_salary_fixed(self, value):
+          """Validate fixed salary format and business rules"""
+          if value is not None:
+               salary_mode = self.initial_data.get('salary_mode')
+        
+               if salary_mode == SalaryModeType.Range:
+                    return value
+
+               if not salary_mode and self.instance:
+                    salary_mode = self.instance.salary_mode
+                    if salary_mode == SalaryModeType.Range:
+                         return value
+               
+               self.validate_decimal_format(value, 'salary_fixed')
+               
+               if value < 0:
+                    raise serializers.ValidationError("Fixed salary cannot be negative.")
+               
+               if self.get_digit_count(value) < 3:
+                    raise serializers.ValidationError("Fixed salary should have at least 3 digits.")
+          
+          return value
+     
+     def validate(self, attrs):
+          salary_mode = attrs.get('salary_mode')
+          salary_min = attrs.get('salary_min')
+          salary_max = attrs.get('salary_max')
+          salary_fixed = attrs.get('salary_fixed')
+          last_application_date = attrs.get('last_application_date')
+          
+          # Job Post Update
+          if self.instance:
+               salary_mode = salary_mode or self.instance.salary_mode
+               salary_min = salary_min if salary_min is not None else self.instance.salary_min
+               salary_max = salary_max if salary_max is not None else self.instance.salary_max
+               salary_fixed = salary_fixed if salary_fixed is not None else self.instance.salary_fixed
+               last_application_date = last_application_date if last_application_date is not None else self.instance.last_application_date
+
+          if last_application_date is not None:
+               from datetime import date
+               today_date = date.today()
+               
+               if last_application_date < today_date:
+                    raise serializers.ValidationError({
+                         'last_application_date': 'Application deadline cannot be in the past.'
+                    })
+
+          if salary_mode == SalaryModeType.Fixed:
+               attrs['salary_max'] = None
+               attrs['salary_min'] = None
+               
+               if not salary_fixed:
+                    raise serializers.ValidationError({
+                         'salary_fixed': 'Fixed salary is required when salary mode is Fixed.'
+                    })
+               
+          elif salary_mode == SalaryModeType.Range:
+               attrs['salary_fixed'] = None
+               
+               if not salary_min or not salary_max:
+                    raise serializers.ValidationError({
+                         'salary_mode': 'Both minimum and maximum salary are required for Range mode.'
+                    })
+                    
+               if salary_min >= salary_max:
+                    raise serializers.ValidationError({
+                         'salary_max': 'Maximum salary must be greater than minimum salary.'
+                    })
+
+          return attrs
+     
      def update(self, instance, validated_data):
           salary_mode = validated_data.get("salary_mode", instance.salary_mode)
 
@@ -88,7 +262,6 @@ class JobPostSerializer(ModelSerializer):
                validated_data["salary_fixed"] = None
 
           return super().update(instance, validated_data)
-
 class JobPostListSerializer(serializers.ModelSerializer):
      experience_level = serializers.StringRelatedField()
      skills = serializers.StringRelatedField(many=True)

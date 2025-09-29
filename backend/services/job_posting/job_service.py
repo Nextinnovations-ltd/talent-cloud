@@ -1,9 +1,9 @@
 from datetime import date
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from apps.job_posting.serializers import JobPostSerializer
 from apps.job_posting.models import JobPost, JobPostView, StatusChoices
 from apps.job_seekers.models import JobSeeker, JobSeekerOccupation
-from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from services.job_seeker.profile_score_service import ProfileScoreService
 from services.notification.notification_service import NotificationHelpers
 import logging
@@ -26,7 +26,6 @@ class JobService():
                logger.info(f"Job posting notifications sent for job: {job_post.title}")
           except Exception as e:
                logger.error(f"Failed to send job posting notifications: {str(e)}")
-               # Don't fail the job creation if notifications fail
           
           return job_post, serializer
 
