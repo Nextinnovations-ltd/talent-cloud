@@ -107,18 +107,6 @@ class Company(TimeStampModel):
           default=False,
           help_text="Whether the company profile has been verified by the platform."
      )
-     # image_url = models.URLField(
-     #      null=True,
-     #      blank=True,
-     #      max_length=2048,
-     #      help_text="URL to the company's logo."
-     # )
-     # cover_image_url = models.URLField(
-     #      null=True,
-     #      blank=True,
-     #      max_length=2048,
-     #      help_text="URL to the company's Cover image."
-     # )
      cover_image_file = models.ForeignKey(
           FileUpload,
           on_delete=models.SET_NULL,

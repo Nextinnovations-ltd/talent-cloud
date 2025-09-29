@@ -171,6 +171,12 @@ class Command(BaseCommand):
                          self.stdout.write("🔍 Basic fields need update")
                     return True
                
+               # Check Address
+               if not company.address or company.address.address != PARENT_COMPANY.address:
+                    if self.verbose:
+                         self.stdout.write("🔍 Address needs update")
+                    return True
+               
                # Check industry
                if not company.industry or company.industry.name != PARENT_COMPANY.industry:
                     if self.verbose:
