@@ -1,5 +1,7 @@
+from datetime import timedelta
 import json
 from django.db import transaction
+from django.utils import timezone
 from django.core import exceptions as django_exceptions
 from rest_framework.exceptions import ValidationError
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerLanguageProficiency, JobSeekerOccupation, JobSeekerRole, JobSeekerSkill, JobSeekerSocialLink
@@ -14,6 +16,18 @@ class OnboardingConstants:
     DEFAULT_PROFILE_IMAGE = "https://images.unsplash.com/5/unsplash-kitsune-4.jpg"
 
 class JobSeekerService:
+     @staticmethod
+     def can_change_username(user: TalentCloudUser) -> bool:
+          """Check if user is allowed to change username."""
+          if not user.last_username_changed_at:
+               return True
+          
+          lt = user.last_username_changed_at + timedelta(days=7)
+          print('lt', lt)
+          nw = timezone.now().date()
+          print('nw', nw)
+          return nw >= lt
+     
      @staticmethod
      def get_job_seeker_user(user):
           """
@@ -104,9 +118,19 @@ class JobSeekerService:
                job_seeker = JobSeekerService.get_job_seeker_user(user)
                
                if job_seeker:
-                    if JobSeeker.objects.filter(username=username).exists():
+                    # Check username on all users
+                    if TalentCloudUser.objects.filter(username=username).exists():
                          raise ValidationError("Username already exists.")
                     
+                    if not JobSeekerService.can_change_username(user):
+                         raise ValidationError("You can only change your username once every 7 days.")
+                    
+                    if job_seeker.username == username:
+                         raise ValidationError("You can't change to the same username.")
+                    
+                    
+                    job_seeker.old_username = job_seeker.username
+                    job_seeker.last_username_changed_at = timezone.now().date()
                     job_seeker.username = username
                     job_seeker.save()
                     
@@ -330,10 +354,20 @@ class JobSeekerService:
           job_seeker: JobSeeker = JobSeekerService.get_job_seeker_user(user)
 
           with transaction.atomic():
-               # Extract and update JobSeeker profile fields
+               username = data.get("username", None)
+               
+               if username is not None and job_seeker.username != username:
+                    if TalentCloudUser.objects.filter(username=username).exists():
+                         raise ValidationError("Username already exists.")
+                    
+                    if not JobSeekerService.can_change_username(user):
+                         raise ValidationError("You can only change your username once every 7 days.")
+                    
+                    job_seeker.old_username = job_seeker.username
+                    job_seeker.last_username_changed_at = timezone.now().date()
+                    job_seeker.username = username
+                    
                job_seeker.name = data.get("name", job_seeker.name)
-               job_seeker.username = data.get("username", job_seeker.username)
-               # job_seeker.email = data.get("email", job_seeker.email)
                job_seeker.is_open_to_work = data.get("is_open_to_work", job_seeker.is_open_to_work)
                job_seeker.expected_salary = data.get("expected_salary", job_seeker.expected_salary)
                job_seeker.country_code = data.get("country_code", job_seeker.country_code)

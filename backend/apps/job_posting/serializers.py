@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType
+from apps.job_posting.models import ApplicationStatus, BookmarkedJob, JobApplication, JobPost, JobPostMetric, JobPostView, SalaryModeType, StatusChoices
 from apps.companies.serializers import CompanyDetailSerializer
 from utils.job_posting.job_posting_utils import format_salary
 
@@ -227,6 +227,9 @@ class JobPostSerializer(ModelSerializer):
                     raise serializers.ValidationError({
                          'last_application_date': 'Application deadline cannot be in the past.'
                     })
+               
+               if self.instance.job_post_status == StatusChoices.EXPIRED:
+                    attrs['job_post_status'] = StatusChoices.ACTIVE
 
           if salary_mode == SalaryModeType.Fixed:
                attrs['salary_max'] = None

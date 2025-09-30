@@ -72,6 +72,7 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
      """
      Serializer for the Company Detailmodel.
      """
+     industry = serializers.SerializerMethodField()
      company_image_urls = serializers.SerializerMethodField()
      
      class Meta:
@@ -90,6 +91,10 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
      def get_company_image_urls(self, obj: Company):
           """Retrieves Company Image URLS"""
           return obj.company_image_urls_list
+     
+     def get_industry(self, obj: Company):
+          """Retrieves Industry Name"""
+          return obj.industry.name if hasattr(obj, 'industry') else None
      
 class CompanyApproveSerializer(serializers.ModelSerializer):
      class Meta:
