@@ -11,6 +11,13 @@ interface CompanyInfoGridProps {
   }
   
 export const CompanyInfoGrid: React.FC<CompanyInfoGridProps> = ({ job }) => {
+
+
+  console.log("kdkdkdkd")
+  console.log(job)
+  console.log("kdkdkdkd")
+
+
   return (
    <div className='flex gap-[32px]'>
    <div className='grid gap-[5px] mt-[16px] grid-cols-2'>
@@ -40,9 +47,9 @@ export const CompanyInfoGrid: React.FC<CompanyInfoGridProps> = ({ job }) => {
 
     </div>
      <div className='grid gap-[14px] w-full mt-[16px] grid-cols-2'>
-    <InfoItem icon={BUILDING} text={job.company?.founded_date || 'N/A'} alt="Time" />
+    <InfoItem icon={BUILDING} text={job.company?.industry || 'N/A'} alt="Time" />
     <InfoItem icon={EMPLOYEE} text={job.company?.size || 'N/A'} alt="size" />
-    <InfoItem icon={CALENDAR} text={job.company?.industry || 'N/A'} alt="Schedule" />
+    <InfoItem icon={CALENDAR} text={job.company?.founded_date || 'N/A'} alt="Schedule" />
     <InfoItem icon={SHIELD} text={job.company?.is_verified ? "Verified" : "Not Verified"} alt="Job Type" />
   </div>
    </div>

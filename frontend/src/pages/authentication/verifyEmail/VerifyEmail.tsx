@@ -39,7 +39,7 @@ const STORAGE_KEYS = {
 export const VerifyEmail = () => {
   const { t } = useTranslation("verifyEmail");
   const [end, setEnd] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(RESEND_COOLDOWN);
+  const [, setTimeRemaining] = useState(RESEND_COOLDOWN);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -220,17 +220,17 @@ export const VerifyEmail = () => {
                 )}
               />
 
-              {end ? (
-                <div>
+
+                <button type="button"   onClick={handleResendToken}>
                   <h3
                     title="Resend code"
-                    onClick={handleResendToken}
+                   
                     className="text-sm text-text-lightblue cursor-pointer"
                   >
                     Resend code
                   </h3>
-                </div>
-              ) : (
+                </button>
+              {/* ) : (
                 <h3 className="text-[#686C73] flex items-center justify-end">
                   Resent code in:&nbsp;
                   <div className="w-[40px] text-center">
@@ -238,11 +238,11 @@ export const VerifyEmail = () => {
                   </div>
                   &nbsp;sec
                 </h3>
-              )}
+              )} */}
 
               <PrimaryButton
                 title="Verify"
-                loading={formDisabled}
+                loading={registerLoading}
                 isButtonDisabled={formDisabled}
               />
             </form>
