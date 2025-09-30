@@ -25,7 +25,7 @@ const ApplyJob = () => {
   // in ApplyJob.tsx
   const [fileData, setFileData] = useState<File>();
   const [radioValue, setRadioValue] = useState<"uploadCover" | "noCover">("noCover");
-  const [radioResumeValue, setResumeRadioValue] = useState<"upload" | "choose">("choose");
+  const [radioResumeValue, setResumeRadioValue] = useState<"upload" | "choose">("upload");
 
   const [coverError, setCoverError] = useState(false);
   const [resumeUploadId, setResumeUploadId] = useState<string | undefined>(undefined);
@@ -45,7 +45,6 @@ const ApplyJob = () => {
   const { showNotification } = useToast();
   const jobDetails = JOBDETAILDATA?.data;
 
-  console.log("hello")
 
   const handleApply = async () => {
     if (!numericJobId || isNaN(numericJobId)) {

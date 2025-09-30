@@ -12,11 +12,15 @@ type ApplyJobResumeProps = {
   setRadioValue: (value: "upload" | "choose") => void;
 }
 
-const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUploadId,setRadioValue,radioValue }) => {
+const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({  setResumeUploadId,setRadioValue,radioValue }) => {
 
 
 
 
+  
+  console.log("hello this is console")
+  console.log(radioValue)
+  console.log("hello this is console")
 
 
 
@@ -25,7 +29,7 @@ const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({ resumeData, setResumeUp
     <div className="mt-[20px]">
       <h3 className="text-[22px]">Resume</h3>
       <p className="text-[14px] my-[10px]">Choose how you'd like to submit your resume</p>
-      <RadioGroup onValueChange={(e) => setRadioValue(e as "upload"  | "choose")} className="mt-[40px]" defaultValue={resumeData ? 'choose' : 'upload'}>
+      <RadioGroup onValueChange={(e) => setRadioValue(e as "upload"  | "choose")} className="mt-[40px]" defaultValue={radioValue}>
         <div className="flex items-center cursor-pointer gap-3">
           <RadioGroupItem value="upload" id="r1" />
           <Label className="font-medium cursor-pointer" htmlFor="r1">
