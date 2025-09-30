@@ -1,11 +1,10 @@
 from django.db import models, transaction
-from django.contrib.auth.models import AbstractUser, BaseUserManager
 from rest_framework.exceptions import ValidationError
-from services.storage.file_service import FileUrlService
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from core.constants.constants import PARENT_COMPANY, ROLES, ROLE_LIST
 from services.company.company_service import get_or_create_parent_company
-from services.models import TimeStampModel
 from utils.user.user import generate_unique_username
+from services.models import TimeStampModel
 
 class CustomQuerySet(models.QuerySet):
     def active(self):
@@ -208,6 +207,9 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
         null=True,
         blank=True
     )
+    
+    old_username = models.CharField(max_length=100, null=True, blank=True)
+    last_username_changed_at = models.DateField(null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -249,7 +251,7 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
             if self.company != parent_company:
                 self.company = parent_company
 
-        # Call the original save method to persist the changes
+        # Call original save method to persist changes
         super().save(*args, **kwargs)
     
     @property
@@ -286,8 +288,6 @@ class TalentCloudUser(TimeStampModel, AbstractUser):
             return None
         
         return self.profile_image_file.public_url
-        # return FileUrlService.get_profile_image_public_url(self.profile_image_path)
-
     
 class Token(TimeStampModel):
     user = models.ForeignKey(TalentCloudUser, on_delete=models.CASCADE) 

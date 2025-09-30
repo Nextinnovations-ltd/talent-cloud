@@ -36,12 +36,12 @@ class PARENT_COMPANY:
     founded_date = "2020-05-05"
     contact_email = "talentcloud-contact@next-innovations.ltd"
     image_url = 'NI_Company_Info/ni_logo.png'
-    cover_image_url = 'NI_Company_Info/ni_cover_image.JPG'
+    cover_image_url = 'NI_Company_Info/ni_cover_image.jpeg'
     company_image_urls = [
-        'NI_Company_Info/company_image_1.JPG',
-        'NI_Company_Info/company_image_1.JPG',
-        'NI_Company_Info/company_image_2.JPG',
-        'NI_Company_Info/company_image_2.JPG'
+        'NI_Company_Info/company_image_1.jpeg',
+        'NI_Company_Info/company_image_1.jpeg',
+        'NI_Company_Info/company_image_2.jpeg',
+        'NI_Company_Info/company_image_2.jpeg'
     ]
     website = "http://next-innovations.ltd"
     facebook_url = "https://www.facebook.com/profile.php?id=61578628769861"
