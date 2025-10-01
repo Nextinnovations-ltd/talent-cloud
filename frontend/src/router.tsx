@@ -34,7 +34,6 @@ import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
 import AppliedJobs from "./pages/appliedJobs";
 import SavedJobs from "./pages/savedJobs";
-import Index from "./components/superAdmin";
 import ExpiredJobsDetail from "./pages/expiredJobsDetail/expiredJobsDetail";
 import adminRoutesMap from "./constants/adminRoutesMap";
 import AdminLogin from "./pages/authentication/adminAuthentication/login/Login";
@@ -66,10 +65,6 @@ export const router = createBrowserRouter([
     element: <Navigate to="/employee/lp" replace />,
   },
   {
-    path: "/test-design",
-    element: <Index/>
-  },
-  {
    path:"/emp/lp",
    element:<EmployeePage/>
   },
@@ -90,9 +85,6 @@ export const router = createBrowserRouter([
     path:"/terms-conditions",
     element:<TermsConditions/>
   },
-
-   
-   
   {
    path: "/",
    element:<MainLayout />  ,

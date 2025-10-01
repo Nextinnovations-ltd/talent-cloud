@@ -67,6 +67,47 @@ const CreateNewJob = () => {
     // State to track if there are unsaved changes
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+    // Ensure clean slate when entering Create New Job page to avoid data bleed from Edit page
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        // Reset global store
+        resetForm();
+
+        // Reset local RHF forms to empty values
+        stepOneForm.reset({
+            title: '',
+            specialization: '',
+            role: '',
+            job_type: '',
+            location: '',
+            work_type: '',
+            description: ''
+        });
+
+        stepTwoForm.reset({
+            responsibilities: '',
+            requirements: '',
+            offered_benefits: ''
+        });
+
+        stepThreeForm.reset({
+            salary_mode: '',
+            salary_type: '',
+            salary_min: '',
+            salary_max: '',
+            is_salary_negotiable: false,
+            project_duration: '',
+            skills: [],
+            experience_level: '',
+            experience_years: 1,
+            salary_fixed: '',
+            number_of_positions: 1,
+            last_application_date: ''
+        });
+
+        setHasUnsavedChanges(false);
+    }, []);
+
     // Function to check for unsaved changes
     const checkUnsavedChanges = useCallback(() => {
         const stepOneValues = stepOneForm.getValues();
