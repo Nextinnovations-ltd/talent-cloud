@@ -29,6 +29,7 @@ ENVIRONMENT='development'
 
 ALLOWED_HOSTS = ['*']
 
+BACKEND_BASE_URL = config('BACKEND_BASE_URL', default=f'http://localhost:8000')
 FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'http://localhost:5173')
 
 DATABASES = {

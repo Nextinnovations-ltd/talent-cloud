@@ -228,7 +228,7 @@ class JobPostSerializer(ModelSerializer):
                          'last_application_date': 'Application deadline cannot be in the past.'
                     })
                
-               if self.instance.job_post_status == StatusChoices.EXPIRED:
+               if self.instance and self.instance.job_post_status == StatusChoices.EXPIRED:
                     attrs['job_post_status'] = StatusChoices.ACTIVE
 
           if salary_mode == SalaryModeType.Fixed:

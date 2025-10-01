@@ -434,6 +434,7 @@ class NotificationService:
             'user_name': user.name or user.email,
             'user_email': user.email,
             'platform_name': 'Talent Cloud',
+            'base_url': settings.BACKEND_BASE_URL,
             **context
         }
         
@@ -594,8 +595,9 @@ class NotificationHelpers:
             'job_created_at': job.created_at,
             'company_name': company.name,
             'posted_by_name': user.name or user.email,
-            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={job.id}",
+            'job_url': f"{settings.FRONTEND_BASE_URL}/admin/dashboard/allJobs/{job.id}",
             'job_description': getattr(job, 'description', ''),
+            'base_url': settings.BACKEND_BASE_URL
         }
         
         return NotificationService.send_notification_with_template(
@@ -617,6 +619,7 @@ class NotificationHelpers:
             'applied_date': application.created_at,
             'application_id': application.id,
             'company_name': company.name,
+            'application_url': f"{settings.FRONTEND_BASE_URL}/admin/dashboard/candidates/profile/{applicant.id}?application_id={application.id}",
         }
         
         return NotificationService.send_notification_with_template(
