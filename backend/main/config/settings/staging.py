@@ -67,6 +67,7 @@ CSRF_TRUSTED_ORIGINS = [
      "http://localhost:8000",
 ]
 
+BACKEND_BASE_URL = config('BACKEND_BASE_URL', default=f'https://staging.talent-cloud.asia')
 FRONTEND_BASE_URL = config('FRONTEND_BASE_URL', default=f'https://staging.talent-cloud.asia')
 
 DATABASES = {
