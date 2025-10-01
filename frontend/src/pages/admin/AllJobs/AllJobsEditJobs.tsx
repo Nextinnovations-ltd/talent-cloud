@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import JobCandidatesInfoHeader from "@/components/common/Admin/JobCandidatesInfoHeader";
 import { StepOneFormYupSchema, StepThreeFormYupSchema, StepTwoFormYupSchema } from "@/lib/admin/uploadJob/StepFormSchema";
@@ -180,6 +181,17 @@ const AllJobsEditJobs = () => {
     },
   });
 
+  // Clear global form store on unmount to prevent data bleeding into Create page
+  useEffect(() => {
+    return () => {
+      resetForm();
+      // Clear snapshots as well
+      initialStepOneRef.current = null;
+      initialStepTwoRef.current = null;
+      initialStepThreeRef.current = null;
+    };
+  }, [resetForm]);
+
 
   const handleNext = async () => {
     let isValid = false;
@@ -265,9 +277,18 @@ const AllJobsEditJobs = () => {
 
     try {
 
-      const response = await updateJob({ id: id || '', credentials: payload })
+      const response = await updateJob({ id: id || '', credentials: payload }).unwrap();
+
+      if (!response?.status) {
+        showNotification({
+          message: response?.message || "Failed to update job.",
+          type: "danger",
+        });
+        return;
+      }
+
       showNotification({
-        message: response.data?.message,
+        message: response?.message || "Job updated successfully",
         type: "success",
       });
 
@@ -323,11 +344,15 @@ const AllJobsEditJobs = () => {
       }
 
 
-    } catch (error) {
-      console.error("Error updating job", error)
-      // Best-effort bypass if needed
-      setHasUnsavedChanges(false);
-      navigateBypassingGuard('/admin/dashboard/allJobs');
+    } catch (error: any) {
+      console.error("Error updating job", error);
+      const apiMessage = error?.data?.message || error?.error || "Error updating job post.";
+      showNotification({
+        message: apiMessage,
+        type: "danger",
+      });
+      // Best-effort: keep user on the page to correct validation errors
+      setHasUnsavedChanges(true);
     }
 
 

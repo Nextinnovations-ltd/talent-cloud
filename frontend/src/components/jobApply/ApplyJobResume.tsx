@@ -18,9 +18,6 @@ const ApplyJobResume: React.FC<ApplyJobResumeProps> = ({  setResumeUploadId,setR
 
 
   
-  console.log("hello this is console")
-  console.log(radioValue)
-  console.log("hello this is console")
 
 
 

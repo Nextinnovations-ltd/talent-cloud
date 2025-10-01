@@ -27,6 +27,9 @@ const ApplyJob = () => {
   const [radioValue, setRadioValue] = useState<"uploadCover" | "noCover">("noCover");
   const [radioResumeValue, setResumeRadioValue] = useState<"upload" | "choose">("upload");
 
+  const { data:DefaultData } = useGetJobSeekerResumeQuery();
+  const resumeData = DefaultData?.data?.resume_url;
+
   const [coverError, setCoverError] = useState(false);
   const [resumeUploadId, setResumeUploadId] = useState<string | undefined>(undefined);
   const navigation = useNavigate();
@@ -44,6 +47,12 @@ const ApplyJob = () => {
 
   const { showNotification } = useToast();
   const jobDetails = JOBDETAILDATA?.data;
+
+
+const DisableSubmit =
+(radioResumeValue === "choose" && !resumeData) ||
+(radioResumeValue === "upload" && !resumeUploadId);
+
 
 
   const handleApply = async () => {
@@ -142,7 +151,7 @@ const ApplyJob = () => {
           coverError={coverError}
         />
 
-        <Button onClick={handleApply} disabled={radioResumeValue === "upload" && !resumeUploadId} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
+        <Button onClick={handleApply} disabled={DisableSubmit || JOBBOOKLOADING || loading} className="mt-[30px] w-[150px] text-white disabled:cursor-none border border-slate-300 bg-[#0481EF] ">{
           JOBBOOKLOADING || loading ? <LoadingSpinner /> : 'Submit'}</Button>
 
       </div>

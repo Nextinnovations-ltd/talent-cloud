@@ -208,7 +208,9 @@ const ApplyJobUploadResume: React.FC<ApplyJobUploadResumeProps> = ({
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2 mt-4 text-sm font-medium">
-                <Upload size={16} /> Upload Resume
+                <Upload size={16} /> Upload {
+                  type === 'coverLetter' ? "Cover Letter": "Resume"
+                }
               </div>
             )}
             <p
