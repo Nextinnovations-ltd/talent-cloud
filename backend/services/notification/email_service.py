@@ -22,7 +22,7 @@ class EmailService:
     # Email template mappings for different notification types
     TEMPLATE_MAPPING = {
         NotificationType.GENERIC: 'emails/generic_notification.html',
-        NotificationType.JOB_POSTED: 'emails/job_posted.html',
+        NotificationType.JOB_POSTED: 'emails/jobs/job_posted.html',
         NotificationType.JOB_APPLIED: 'emails/job_application_received.html',
         NotificationType.APPLICATION_STATUS_UPDATE: 'emails/application_status_update.html',
         NotificationType.APPLICATION_STATUS_CHANGED: 'emails/application_status_update.html',
@@ -30,7 +30,7 @@ class EmailService:
         NotificationType.COMPANY_REJECTED: 'emails/company_rejection.html',
         NotificationType.ADMIN_COMPANY_REGISTRATION: 'emails/company_registration_to_admin.html',
         NotificationType.ADMIN_USER_REGISTRATION: 'emails/generic_notification.html',  # Fallback
-        NotificationType.ADMIN_JOB_POSTING: 'emails/job_posted.html',  # Reuse job posted template
+        NotificationType.ADMIN_JOB_POSTING: 'emails/jobs/job_posted.html',  # Reuse job posted template
         NotificationType.ADMIN_SYSTEM_ALERT: 'emails/generic_notification.html',  # Fallback
         NotificationType.ADMIN_PLATFORM_ACTIVITY: 'emails/generic_notification.html',  # Fallback
         NotificationType.ADMIN_REPORT_GENERATED: 'emails/generic_notification.html',  # Fallback
@@ -40,14 +40,14 @@ class EmailService:
         NotificationType.ADMIN_MAINTENANCE: 'emails/system_maintenance.html',
         
         # Application Email Templates
-        NotificationType.APPLICATION_SUBMITTED: 'emails/application_status/submitted.html',
+        NotificationType.APPLICATION_SUBMITTED: 'emails/application/application_submitted.html',
         NotificationType.APPLICATION_PENDING: 'emails/application_status/pending.html',
         NotificationType.APPLICATION_UNDER_REVIEW: 'emails/application_status/under_review.html',
-        NotificationType.APPLICATION_SHORTLISTED: 'emails/application_status/shortlisted.html',
+        NotificationType.APPLICATION_SHORTLISTED: 'emails/application/shortlisted.html',
         NotificationType.APPLICATION_INTERVIEW_SCHEDULED: 'emails/application_status/interview_scheduled.html',
         NotificationType.APPLICATION_ACCEPTED: 'emails/application_status/accepted.html',
         NotificationType.APPLICATION_OFFER_EXTENDED: 'emails/application_status/offer_extended.html',
-        NotificationType.APPLICATION_REJECTED: 'emails/application_status/rejected.html',
+        NotificationType.APPLICATION_REJECTED: 'emails/application/rejected.html',
     }
 
     @staticmethod

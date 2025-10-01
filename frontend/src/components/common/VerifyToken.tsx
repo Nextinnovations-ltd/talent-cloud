@@ -18,6 +18,10 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     refetch,
   } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
 
+  //1,2,3,4,5
+  //25 * 5 125
+  
+
   useEffect(() => {
     if (!hasToken && isTokenVerifying) {
       navigate(`/emp/lp`, {

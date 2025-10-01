@@ -30,7 +30,7 @@ class Command(BaseCommand):
             NotificationType.JOB_POSTED: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'New Job Posted: {job_title}',
-                    'email_template_name': 'emails/job_posted.html',
+                    'email_template_name': 'emails/jobs/job_posted.html',
                     'title_template': 'New Job Posted',
                     'message_template': 'A new job {job_title} has been posted by {company_name}.',
                     'destination_url_template': '/jobs/{job_id}',
@@ -45,22 +45,22 @@ class Command(BaseCommand):
             NotificationType.ADMIN_JOB_POSTING: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'New Job Posted: {job_title}',
-                    'email_template_name': 'emails/job_posted.html',
+                    'email_template_name': 'emails/jobs/job_posted.html',
                     'title_template': 'New Job Posted',
                     'message_template': 'A new job {job_title} has been posted by {company_name}.',
-                    'destination_url_template': '/jobs/{job_id}',
+                    'destination_url_template': '/alljobs/{job_id}',
                 },
                 NotificationChannel.WEBSOCKET: {
                     'title_template': 'New Job Posted',
                     'message_template': 'A new job {job_title} has been posted by {company_name}.',
-                    'destination_url_template': '/jobs/{job_id}',
+                    'destination_url_template': '/alljobs/{job_id}',
                 }
             },
             
             NotificationType.JOB_APPLIED: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'New Application for {job_title}',
-                    'email_template_name': 'emails/job_application_received.html',
+                    'email_template_name': 'emails/application/application_received.html',
                     'title_template': 'New Job Application',
                     'message_template': '{applicant_name} has applied for the position: {job_title}.',
                     'destination_url_template': '/company/applications/{job_id}',
@@ -105,7 +105,7 @@ class Command(BaseCommand):
             NotificationType.APPLICATION_SUBMITTED: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'Application Update for {job_title} Position',
-                    'email_template_name': 'emails/application_status/submitted.html',
+                    'email_template_name': 'emails/application/application_submitted.html',
                     'title_template': 'Application Submitted',
                     'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
                     'destination_url_template': '/my-applications/{application_id}',
@@ -120,7 +120,7 @@ class Command(BaseCommand):
             NotificationType.APPLICATION_SHORTLISTED: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'Application Update for {job_title} Position',
-                    'email_template_name': 'emails/application_status/shortlisted.html',
+                    'email_template_name': 'emails/application/shortlisted.html',
                     'title_template': 'Application Update',
                     'message_template': 'Your application for {job_title} at {company_name} has been shortlisted.',
                     'destination_url_template': '/my-applications/{application_id}',
@@ -135,7 +135,7 @@ class Command(BaseCommand):
             NotificationType.APPLICATION_REJECTED: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'Application Update for {job_title} Position',
-                    'email_template_name': 'emails/application_status/rejected.html',
+                    'email_template_name': 'emails/application/rejected.html',
                     'title_template': 'Application Update',
                     'message_template': 'Your application for {job_title} at {company_name} has been rejected.',
                     'destination_url_template': '/my-applications/{application_id}',
