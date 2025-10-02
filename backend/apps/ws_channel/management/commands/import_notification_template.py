@@ -195,7 +195,7 @@ class Command(BaseCommand):
             NotificationType.ADMIN_MAINTENANCE: {
                 NotificationChannel.EMAIL: {
                     'subject_template': 'System Maintenance Notification',
-                    'email_template_name': 'emails/system_maintenance.html',
+                    'email_template_name': 'emails/system/maintenance.html',
                     'title_template': 'System Maintenance',
                     'message_template': 'Scheduled system maintenance: {maintenance_info}',
                     'is_urgent_by_default': True,

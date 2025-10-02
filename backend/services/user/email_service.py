@@ -64,7 +64,7 @@ class AuthEmailService:
                }
                
                # Render email templates
-               html_message = render_to_string('emails/reset-password.html', context)
+               html_message = render_to_string('emails/user/reset_password.html', context)
                # text_message = render_to_string('emails/invitation.txt', context)
                
                # Send email
@@ -95,7 +95,7 @@ class AuthEmailService:
                }
                
                # Render email templates
-               html_message = render_to_string('emails/verify-registration.html', context)
+               html_message = render_to_string('emails/user/verify_registration.html', context)
                # text_message = render_to_string('emails/invitation.txt', context)
                
                # Send email
