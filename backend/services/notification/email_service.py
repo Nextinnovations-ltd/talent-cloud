@@ -23,7 +23,7 @@ class EmailService:
     TEMPLATE_MAPPING = {
         NotificationType.GENERIC: 'emails/generic_notification.html',
         NotificationType.JOB_POSTED: 'emails/jobs/job_posted.html',
-        NotificationType.JOB_APPLIED: 'emails/job_application_received.html',
+        NotificationType.JOB_APPLIED: 'emails/application/application_received.html',
         NotificationType.APPLICATION_STATUS_UPDATE: 'emails/application_status_update.html',
         NotificationType.APPLICATION_STATUS_CHANGED: 'emails/application_status_update.html',
         NotificationType.COMPANY_APPROVED: 'emails/company_approval.html',
@@ -37,7 +37,7 @@ class EmailService:
         NotificationType.ADMIN_COMPANY_VERIFICATION: 'emails/generic_notification.html',  # Fallback
         NotificationType.ADMIN_CONTENT_MODERATION: 'emails/generic_notification.html',  # Fallback
         NotificationType.ADMIN_VIOLATION_REPORT: 'emails/generic_notification.html',  # Fallback
-        NotificationType.ADMIN_MAINTENANCE: 'emails/system_maintenance.html',
+        NotificationType.ADMIN_MAINTENANCE: 'emails/system/maintenance.html',
         
         # Application Email Templates
         NotificationType.APPLICATION_SUBMITTED: 'emails/application/application_submitted.html',
