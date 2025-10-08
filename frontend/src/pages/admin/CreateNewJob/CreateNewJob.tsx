@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Stepper } from "@/components/ui/stepper";
 import { useState, useEffect, useCallback } from "react";
@@ -11,7 +12,6 @@ import { StepOneFormYupSchema, StepThreeFormYupSchema, StepTwoFormYupSchema } fr
 import StepTwoForm from "./StepsForms/StepTwoForm";
 import StepThreeForm from "./StepsForms/StepThreeForm";
 import PreviewForm from "./StepsForms/PreviewForm";
-import { useApiCaller } from "@/hooks/useApicaller";
 import { useCreateJobMutation } from "@/services/slices/adminSlice";
 import { useJobFormStore } from "@/state/zustand/create-job-store";
 
@@ -40,7 +40,7 @@ const CreateNewJob = () => {
         setStepThreeData,
         resetForm
     } = useJobFormStore();
-    const { executeApiCall, isLoading } = useApiCaller(useCreateJobMutation);
+    const [executeApiCall, { isLoading }] = useCreateJobMutation();
 
     // Step One Form 
     const stepOneForm = useForm({
@@ -153,14 +153,14 @@ const CreateNewJob = () => {
 
         const hasChanges = hasStepOneData || hasStepTwoData || hasStepThreeData;
         setHasUnsavedChanges(hasChanges);
-        console.log('Form changes detected:', { 
-            stepOneValues, 
-            stepTwoValues, 
+        console.log('Form changes detected:', {
+            stepOneValues,
+            stepTwoValues,
             stepThreeValues,
-            hasStepOneData, 
-            hasStepTwoData, 
-            hasStepThreeData, 
-            hasChanges 
+            hasStepOneData,
+            hasStepTwoData,
+            hasStepThreeData,
+            hasChanges
         });
         return hasChanges;
     }, [stepOneForm, stepTwoForm, stepThreeForm]);
@@ -285,7 +285,7 @@ const CreateNewJob = () => {
             } else if (!isStepThreeValid) {
                 setCurrentStep(2);
             }
-            
+
             showNotification({
                 message: "Please fix all validation errors before publishing",
                 type: "danger",
@@ -316,15 +316,15 @@ const CreateNewJob = () => {
             }
         }
 
-       
+
         function sanitizeNumberPayload(value: string | undefined) {
             if (!value) return null;
             return Number(
-              String(value).replace(/[^0-9.-]+/g, "") // remove $, commas, etc.
+                String(value).replace(/[^0-9.-]+/g, "") // remove $, commas, etc.
             );
-          }
-      
-    
+        }
+
+
         const payload = {
             title: stepOneData.title,
             description: stepOneData.description,
@@ -350,10 +350,23 @@ const CreateNewJob = () => {
             last_application_date: formattedDate
         };
 
-     
+
 
         try {
-            await executeApiCall(payload);
+            const response:any = await executeApiCall(payload);
+
+            if (!response?.status) {
+                showNotification({
+                  message: response?.message || "Failed to update job.",
+                  type: "danger",
+                });
+                return;
+              }
+        
+              showNotification({
+                message: response?.message || "Job updated successfully",
+                type: "success",
+              });
 
             // Enhanced reset sequence
             resetForm(); // Reset Zustand store

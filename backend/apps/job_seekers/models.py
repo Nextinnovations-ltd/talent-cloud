@@ -16,7 +16,7 @@ class JobSeeker(TalentCloudUser):
      
      def resume(self):
           """Get the default Resume"""
-          return self.resume_documents.filter(is_default=True).first()
+          return self.resume_documents.filter(is_default=True, status=True).first()
 
      @property
      def resume_upload_time(self):
@@ -116,7 +116,11 @@ class Resume(TimeStampModel):
                ).exclude(pk=self.pk).update(is_default=False)
           
           # Make default
-          elif not Resume.objects.filter(job_seeker=self.job_seeker).exists():
+          elif not Resume.objects.filter(job_seeker=self.job_seeker, status=True).exists():
+               inactive_resume_q = Resume.objects.filter(job_seeker=self.job_seeker, status=False, is_default=True)
+               if inactive_resume_q.exists():
+                    inactive_resumes = inactive_resume_q.update(is_default=False)
+
                self.is_default = True
                
           super().save(*args, **kwargs)

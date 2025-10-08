@@ -234,7 +234,8 @@ CELERY_AUTODISCOVER_TASKS = True
 
 CELERY_IMPORTS = (
     'celery_app.tasks.sample_tasks',
-    'celery_app.tasks.job_tasks'
+    'celery_app.tasks.job_tasks',
+    'celery_app.tasks.upload_tasks'
 )
 
 # Beat Scheduler

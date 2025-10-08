@@ -104,7 +104,7 @@ class Command(BaseCommand):
             
             NotificationType.APPLICATION_SUBMITTED: {
                 NotificationChannel.EMAIL: {
-                    'subject_template': 'Application Update for {job_title} Position',
+                    'subject_template': 'Application Submitted Successfully',
                     'email_template_name': 'emails/application/application_submitted.html',
                     'title_template': 'Application Submitted',
                     'message_template': 'Your application for {job_title} at {company_name} has been submitted.',
@@ -119,7 +119,7 @@ class Command(BaseCommand):
             
             NotificationType.APPLICATION_SHORTLISTED: {
                 NotificationChannel.EMAIL: {
-                    'subject_template': 'Application Update for {job_title} Position',
+                    'subject_template': 'You Have Been Shortlisted',
                     'email_template_name': 'emails/application/shortlisted.html',
                     'title_template': 'Application Update',
                     'message_template': 'Your application for {job_title} at {company_name} has been shortlisted.',
