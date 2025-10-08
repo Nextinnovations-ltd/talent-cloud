@@ -42,10 +42,9 @@ export const StepThreeFormYupSchema = yup.object({
     then: (schema) =>
       schema
         .required("Minimum Salary is required.")
-        // allow comma-formatted numbers by stripping commas for validation
-        .test('is-integer', 'Minimum Salary must be an integer.', (value) => {
+        .test("is-integer", "Minimum Salary must be an integer.", (value) => {
           if (!value) return false;
-          const cleaned = String(value).replace(/,/g, '');
+          const cleaned = String(value).replace(/,/g, "");
           return /^\d+$/.test(cleaned);
         })
         .test(
@@ -54,24 +53,35 @@ export const StepThreeFormYupSchema = yup.object({
           function (value) {
             const { salary_max, salary_mode } = this.parent;
             if (salary_mode !== "range" || !value || !salary_max) return true;
-            const minVal = Number(String(value).replace(/,/g, ''));
-            const maxVal = Number(String(salary_max).replace(/,/g, ''));
+            const minVal = Number(String(value).replace(/,/g, ""));
+            const maxVal = Number(String(salary_max).replace(/,/g, ""));
             return minVal <= maxVal;
+          }
+        )
+        .test(
+          "min-not-equal-max",
+          "Minimum salary cannot be equal to maximum salary",
+          function (value) {
+            const { salary_max, salary_mode } = this.parent;
+            if (salary_mode !== "range" || !value || !salary_max) return true;
+            const minVal = Number(String(value).replace(/,/g, ""));
+            const maxVal = Number(String(salary_max).replace(/,/g, ""));
+            return minVal !== maxVal;
           }
         ),
     otherwise: (schema) => schema.optional(),
   }),
 
-  salary_max: yup
+salary_max: yup
   .string()
   .when("salary_mode", {
     is: "range",
     then: (schema) =>
       schema
         .required("Maximum Salary is required.")
-        .test('is-integer', 'Maximum Salary must be an integer.', (value) => {
+        .test("is-integer", "Maximum Salary must be an integer.", (value) => {
           if (!value) return false;
-          const cleaned = String(value).replace(/,/g, '');
+          const cleaned = String(value).replace(/,/g, "");
           return /^\d+$/.test(cleaned);
         })
         .test(
@@ -80,9 +90,20 @@ export const StepThreeFormYupSchema = yup.object({
           function (value) {
             const { salary_min, salary_mode } = this.parent;
             if (salary_mode !== "range" || !value || !salary_min) return true;
-            const maxVal = Number(String(value).replace(/,/g, ''));
-            const minVal = Number(String(salary_min).replace(/,/g, ''));
+            const maxVal = Number(String(value).replace(/,/g, ""));
+            const minVal = Number(String(salary_min).replace(/,/g, ""));
             return maxVal >= minVal;
+          }
+        )
+        .test(
+          "max-not-equal-min",
+          "Maximum salary cannot be equal to minimum salary",
+          function (value) {
+            const { salary_min, salary_mode } = this.parent;
+            if (salary_mode !== "range" || !value || !salary_min) return true;
+            const maxVal = Number(String(value).replace(/,/g, ""));
+            const minVal = Number(String(salary_min).replace(/,/g, ""));
+            return maxVal !== minVal;
           }
         ),
     otherwise: (schema) => schema.optional(),
@@ -127,7 +148,6 @@ export const StepThreeFormYupSchema = yup.object({
     .required('Number of position is required')
     .min(1, "Number of positions must be greater than 0")
     ,
-
   last_application_date: yup
     .string()
     .required("Last applications date is required"),
