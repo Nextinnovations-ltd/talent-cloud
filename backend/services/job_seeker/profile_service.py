@@ -130,17 +130,20 @@ class ProfileService:
                     
                     resume = Resume.objects.get(
                          job_seeker = job_seeker,
-                         id = resume_id
+                         id = resume_id,
+                         status=True
                     )
                     
                     if resume.is_default:
-                         most_recent_resume = job_seeker.resume_documents.filter(is_default=False).order_by('-created_at').first()
+                         resume.is_default = False # Remove default resume 
+                         
+                         # Set active most recent resume as default if exists
+                         most_recent_resume = job_seeker.resume_documents.filter(is_default=False, status=True).order_by('-created_at').first()
 
                          if most_recent_resume:
                               most_recent_resume.is_default = True
                               most_recent_resume.save()
                          
-                         resume.is_default = False # Remove default resume 
                          
                     resume.status = False
                     resume.save()
