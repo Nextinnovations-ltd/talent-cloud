@@ -154,11 +154,11 @@ class FileUpload(models.Model):
      
      UPLOAD_STATUS = [
           ('pending', 'Pending'),
-          ('pending_application', 'Pending job application'), # use for uploaded job application resume while waiting job application submission
+          ('pending_application', 'Pending job application'),
           ('uploaded', 'Uploaded'),
           ('failed', 'Failed'),
-          ('orphaned', 'Orphaned (Not Referenced)'), # to track file that are not reference by any models
-          ('marked_for_deletion', 'Marked for Deletion'), # to delete file after specific time of unused
+          ('orphaned', 'Orphaned (Not Referenced)'),
+          ('marked_for_deletion', 'Marked for Deletion'),
           ('deleted', 'Deleted'),
           ('deletion_failed', 'Deletion failed'),
      ]
