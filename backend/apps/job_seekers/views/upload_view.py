@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework import status
 from services.job_seeker.profile_service import ProfileService
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudUserPermission
-from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
+from utils.response import CustomResponse
+from rest_framework import status
 import logging
 
 logger = logging.getLogger(__name__)

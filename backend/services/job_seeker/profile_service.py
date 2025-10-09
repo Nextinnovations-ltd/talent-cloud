@@ -1,5 +1,6 @@
 from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, Resume
 from apps.job_seekers.serializers.profile_serializer import ResumeSerializer
+from celery_app.tasks.upload_tasks import delete_resume_from_s3
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
@@ -126,29 +127,46 @@ class ProfileService:
      def delete_uploaded_resume(user, resume_id):
           try:
                with transaction.atomic():
-                    job_seeker:JobSeeker = user.jobseeker # Job Seeker User
+                    job_seeker:JobSeeker = user.jobseeker
                     
-                    resume = Resume.objects.get(
+                    resume: Resume = Resume.objects.get(
                          job_seeker = job_seeker,
-                         id = resume_id
+                         id = resume_id,
+                         status=True
                     )
                     
+                    file_path_to_delete = None
+                    file_upload_id = None
+                    
+                    if resume.file_upload and resume.file_upload.file_path:
+                         file_path_to_delete = resume.file_upload.file_path
+                         file_upload_id = resume.file_upload.id
+                    
                     if resume.is_default:
-                         most_recent_resume = job_seeker.resume_documents.filter(is_default=False).order_by('-created_at').first()
+                         resume.is_default = False # Remove default resume 
+                         
+                         # Set active most recent resume as default if exists
+                         most_recent_resume: Resume = job_seeker.resume_documents.filter(is_default=False, status=True).order_by('-created_at').first()
 
                          if most_recent_resume:
                               most_recent_resume.is_default = True
                               most_recent_resume.save()
-                         
-                         resume.is_default = False # Remove default resume 
-                         
+
                     resume.status = False
                     resume.save()
                     
-                    # Remainings
-                    # S3 File Delete method
-                    
-                    # Return resume data 
+                    if file_path_to_delete:
+                         try:
+                              # Try immediate deletion
+                              delete_resume_from_s3.delay(
+                                   resume_id=resume.id,
+                                   file_path=file_path_to_delete,
+                                   file_upload_id=file_upload_id
+                              )
+                              logger.info(f"Scheduled immediate S3 deletion for resume {resume_id}: {file_path_to_delete}")
+                         except Exception as e:
+                              logger.error(f"Failed to schedule S3 deletion for resume {resume_id}: {str(e)}")
+                              
                     return ResumeSerializer(resume).data
           except Resume.DoesNotExist:
                raise ValidationError("Failed to delete resume.")

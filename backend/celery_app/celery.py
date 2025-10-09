@@ -27,6 +27,10 @@ app.conf.beat_schedule = {
             'expires': 3600,
         }
     },
+    'weekly-resumes-cleanup': {
+        'task': 'upload_tasks.weekly_resumes_cleanup',
+        'schedule': crontab(hour=0, minute=0, day_of_week=0),  # Sunday 12:00 AM
+    },
 }
 
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

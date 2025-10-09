@@ -708,7 +708,7 @@ class NotificationHelpers:
             'job_title': application.job_post.title,
             'company_name': application.job_post.get_company_name,
             'status_changed_date': timezone.now(),
-            'job_url': f"{settings.FRONTEND_BASE_URL}?jobId={application.job_post.id}",
+            'job_url': f"{settings.FRONTEND_BASE_URL}",
             'application_id': application.id,
         }
         

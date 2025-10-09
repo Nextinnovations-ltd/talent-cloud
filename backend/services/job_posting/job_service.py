@@ -48,10 +48,11 @@ class JobService():
      def get_matched_jobs_queryset(occupation: JobSeekerOccupation):
           """Get jobs matching user's occupation"""
           queryset = JobPost.objects.active().filter(
-               is_accepting_applications=True,
                job_post_status=StatusChoices.ACTIVE,
                number_of_positions__gt=0
           )
+          
+          # is_accepting_applications=True,
 
           today = date.today()
           queryset = queryset.filter(
