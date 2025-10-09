@@ -31,6 +31,7 @@ type RoutesMap = {
   savedJobs:Route;
   expiredJobDetails:Route;
   resume:Route;
+  project:Route
 };
 
 export default RoutesMap;

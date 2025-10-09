@@ -55,6 +55,8 @@ import TermsConditions from "./pages/LandingPages/TermsConditions/TermsCondition
 import PushNotification from "./pages/admin/PushNotification/PushNotification";
 import CandidateProfileDetail from "./pages/admin/Candidates/CandidateProfileDetail/CandidateProfileDetail";
 import JobSeekerResume from "./pages/jobSeekerresume/Resume";
+import Resume from "./pages/profile/subPages/Resume";
+import Projects from "./pages/profile/subPages/Projects";
 
 
 
@@ -144,6 +146,14 @@ export const router = createBrowserRouter([
               {
                 path: routesMap.profile.path,
                 element: <ProfileUser />,
+              },
+              {
+                path: routesMap.resume.path,
+                element: <Resume />,
+              },
+              {
+                path: routesMap.project.path,
+                element: <Projects />,
               },
               {
                 path: routesMap.workExperience.path,
