@@ -355,7 +355,8 @@ const CreateNewJob = () => {
         try {
             const response:any = await executeApiCall(payload);
 
-            if (!response?.status) {
+
+            if (!response?.data.status) {
                 showNotification({
                   message: response?.message || "Failed to update job.",
                   type: "danger",
