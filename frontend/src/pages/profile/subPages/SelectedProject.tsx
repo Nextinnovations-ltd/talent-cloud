@@ -184,8 +184,7 @@ const SelectedProject = () => {
   if (isFetching) return <div><p>Loading...</p></div>
 
   return (
-    <div className=" mb-[120px]">
-      <ProfileTitle title="Selected Project" />
+    <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 space-y-[30px]  max-w-[672px] ">
@@ -310,7 +309,7 @@ const SelectedProject = () => {
               disabled={loading}
             />
           </div>
-          <div className="max-w-[672px]  flex items-center justify-end">
+          {/* <div className="max-w-[672px]    flex items-center justify-end">
             <button
               type="submit"
               className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
@@ -325,7 +324,7 @@ const SelectedProject = () => {
               )}
               {(loading) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
             </button>
-          </div>
+          </div> */}
         </form>
       </Form>
     </div>
