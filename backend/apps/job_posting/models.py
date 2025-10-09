@@ -1,7 +1,6 @@
 from django.db import models
 from apps.job_seekers.models import JobSeeker, JobSeekerExperienceLevel, JobSeekerRole, JobSeekerSkill, JobSeekerSpecialization
 from apps.users.models import TalentCloudUser
-from services.storage.file_service import FileUrlService
 from utils.job_posting.job_posting_utils import format_salary
 from services.models import TimeStampModel
 
@@ -11,7 +10,7 @@ class JobType(models.TextChoices):
 
 class WorkType(models.TextChoices):
      ONSITE = 'onsite', 'Onsite'
-     WFH = 'work_from_home', 'Work From Home'
+     REMOTE = 'remote', 'Remote'
      HYBRID = 'hybrid', 'Hybrid'
 
 class SalaryModeType(models.TextChoices):

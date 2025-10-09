@@ -20,8 +20,8 @@ const JOBTYPEDATA = [
       label: "Onsite",
     },
     {
-      value: "work_from_home",
-      label: "Work From Home",
+      value: "remote",
+      label: "Remote",
     },
     {
         value: "hybrid",

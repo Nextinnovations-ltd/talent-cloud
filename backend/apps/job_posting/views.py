@@ -260,7 +260,7 @@ class JobDiscoveryAPIView(CustomListAPIView):
      serializer_class = JobPostListSerializer
      filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
      filterset_class = JobPostFilter
-     search_fields = ['title', 'description', 'location']
+     search_fields = ['title', 'description', 'location', 'skills__title', 'work_type', 'job_type']
      ordering_fields = [ 'created_at', 'experience_years' ]
      ordering = ['-created_at']
      
