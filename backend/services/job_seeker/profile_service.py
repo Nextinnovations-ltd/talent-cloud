@@ -1,6 +1,6 @@
 from apps.job_seekers.models import JobSeeker, JobSeekerCertification, JobSeekerEducation, JobSeekerExperience, Resume
 from apps.job_seekers.serializers.profile_serializer import ResumeSerializer
-from celery_app.tasks.upload_tasks import delete_resume_from_s3
+from celery_app.tasks.upload_tasks import delete_file_from_s3, delete_resume_from_s3
 from core.constants.s3.constants import FILE_TYPES, UPLOAD_STATUS
 from rest_framework.exceptions import ValidationError
 from services.storage.upload_service import UploadService
@@ -32,22 +32,21 @@ class ProfileService:
      
      @staticmethod
      def confirm_profile_upload(user, upload_id):
-          # Update upload record
           file_upload = UploadService.update_file_upload_status(user, upload_id)
           
-          # Update TalentCloudUser profile based on file type
           try:
                from apps.job_seekers.models import TalentCloudUser
                job_seeker = JobSeeker.objects.get(id=user.id)
                
                if file_upload.file_type == 'profile_image':
+                    if job_seeker.profile_image_file:
+                         ProfileService.delete_profile_image(job_seeker.profile_image_file.id)
+                    
                     job_seeker.profile_image_file = file_upload
                     
                     logger.info(f"Updated profile image path for user {user.id}")
                
-               # Need to fix due to latest multiple resume change
                elif file_upload.file_type == 'resume':
-                    # job_seeker.resume_url = file_upload.file_path
                     ProfileService._upload_resume(job_seeker, file_upload)
                     
                     logger.info(f"Updated resume for user {user.id}")
@@ -58,13 +57,6 @@ class ProfileService:
           except TalentCloudUser.DoesNotExist:
                logger.warning(f"TalentCloudUser not found for user {user.id}")
                profile_updated = False
-          
-          # if file_upload.file_type in OVERRIDE_FILE_TYPES:
-          # delete_previous_files_task.delay(
-          #      user_id=request.user.id,
-          #      file_type=file_upload.file_type,
-          #      exclude_upload_id=file_upload.id
-          # )
 
           # Generate download URL for response
           public_url = S3Service.get_public_url(
@@ -170,6 +162,24 @@ class ProfileService:
                     return ResumeSerializer(resume).data
           except Resume.DoesNotExist:
                raise ValidationError("Failed to delete resume.")
+     
+     @staticmethod
+     def delete_profile_image(upload_id):
+          try:
+               with transaction.atomic():                                      
+                    if upload_id:
+                         try:
+                              delete_file_from_s3.delay(
+                                   deletion_reason="user-profile-image-removal",
+                                   file_upload_id=upload_id
+                              )
+                              logger.info(f"Scheduled immediate S3 deletion for profile image {upload_id}")
+                         except Exception as e:
+                              logger.error(f"Failed to schedule S3 deletion for profile image {upload_id}: {str(e)}")
+                              
+                    return False
+          except Resume.DoesNotExist:
+               raise ValidationError("Failed to delete profile image.")
 
 class ExperienceService:
      @staticmethod
