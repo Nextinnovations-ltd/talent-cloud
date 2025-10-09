@@ -5,7 +5,7 @@ export const JOB_TYPE_DATA = [
 
 export const WORK_TYPE_DATA = [
   { value: "onsite", label: "Onsite" },
-  { value: "work_from_home", label: "Remote" },
+  { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" }
 ];
 
