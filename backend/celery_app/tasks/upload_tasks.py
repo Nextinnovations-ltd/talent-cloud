@@ -1,5 +1,5 @@
-from datetime import timedelta
 from celery import shared_task
+from django.db import transaction
 from apps.authentication.models import FileUpload
 from apps.job_seekers.models import Resume
 from core.constants.s3.constants import UPLOAD_STATUS
@@ -15,11 +15,9 @@ def delete_resume_from_s3(self, resume_id, file_path, file_upload_id=None):
      Immediate S3 deletion when user removes resume
      """
      try:
-          # Delete from S3
           S3Service.delete_file(file_path)
           logger.info(f"Successfully deleted resume file from S3: {file_path}")
           
-          # Update file upload status
           if file_upload_id:
                try:
                     file_upload = FileUpload.objects.get(id=file_upload_id, file_path=file_path)
@@ -42,7 +40,6 @@ def delete_resume_from_s3(self, resume_id, file_path, file_upload_id=None):
           if self.request.retries < self.max_retries:
                raise self.retry(exc=e)
           else:
-               # Mark for bulk cleanup if immediate deletion fails
                logger.warning(f"Marking resume {resume_id} for bulk cleanup")
                return {'success': False, 'marked_for_cleanup': True}
      
@@ -80,12 +77,10 @@ def weekly_resumes_cleanup():
                file_upload = resume.file_upload
                
                try:
-                    # Check if file upload is already deleted
                     if file_upload.upload_status == UPLOAD_STATUS.DELETED:
                          cleanup_results['already_deleted'] += 1
                          continue
                     
-                    # Delete from S3 if file path exists
                     if file_upload.file_path:
                          try:
                               S3Service.delete_file(file_upload.file_path)
@@ -102,7 +97,6 @@ def weekly_resumes_cleanup():
                               logger.error(error_msg)
                               continue
                     
-                    # Update FileUpload status (soft delete)
                     file_upload.upload_status = UPLOAD_STATUS.DELETED
                     file_upload.marked_for_deletion_at = timezone.now()
                     file_upload.deletion_reason = "weekly_cleanup_unused_files"
@@ -167,3 +161,42 @@ def generate_cleanup_report():
      except Exception as e:
           logger.error(f"Failed to generate cleanup report: {str(e)}")
           return {'error': str(e)}
+     
+@shared_task(bind=True, max_retries=2, default_retry_delay=30)
+def delete_file_from_s3(self, deletion_reason = "removed_by_user", file_upload_id = None):
+     """
+     Immediate S3 deletion when user removes file
+     """
+     file_upload = None
+     
+     if not file_upload_id:
+          logger.error("Called delete_file_from_s3 without file_upload_id.")
+          return {'success': False, 'message': 'File ID is required.'}
+     try:
+          try:
+               file_upload = FileUpload.objects.get(id=file_upload_id)
+          except FileUpload.DoesNotExist:
+               logger.warning(f"FileUpload {file_upload_id} not found")
+
+          S3Service.delete_file(file_upload.file_path)
+          logger.info(f"Successfully deleted file from S3: {file_upload.file_path}")
+          
+          with transaction.atomic():
+               file_upload.upload_status = UPLOAD_STATUS.DELETED
+               file_upload.marked_for_deletion_at = timezone.now()
+               file_upload.deletion_reason = deletion_reason
+               file_upload.deleted_at = timezone.now()
+               file_upload.save(update_fields=['upload_status', 'marked_for_deletion_at', 'deletion_reason', 'deleted_at'])
+               
+               return {
+                    'success': True,
+                    'message': 'File deleted immediately.',
+                    'file_upload_id': file_upload.id
+               }
+     except Exception as e:
+          logger.error(f"Failed immediate S3 deletion for file {file_upload_id}: {str(e)}")
+          if self.request.retries < self.max_retries:
+               raise self.retry(exc=e)
+          else:
+               logger.warning(f"Max retries reached for file {file_upload_id}. Marking for bulk cleanup.")
+               return {'success': False, 'marked_for_cleanup': True, 'file_upload_id': file_upload_id}
