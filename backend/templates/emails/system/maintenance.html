@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
      <head>
@@ -80,6 +81,37 @@
                     }
                     .details-table td.value {
                          padding-bottom: 16px !important;
+                    }
+               }
+
+               /* --- Dark Mode Override Styles --- */
+               @media (prefers-color-scheme: dark) {
+                    body, .container-table, .content-padding {
+                         background: #FFFFFF !important;
+                    }
+                    .main-heading {
+                         color: #0389FF !important;
+                    }
+                    .body-text, .body-text span {
+                         color: #575757 !important;
+                    }
+                    .body-text[style*="#1F2937"] {
+                         color: #1F2937 !important;
+                    }
+                     .body-text[style*="#000000"] {
+                         color: #000000 !important;
+                    }
+                    div[style*="#F2F9FE"] {
+                         background-color: #F2F9FE !important;
+                    }
+                    .details-heading {
+                         color: #000000 !important;
+                    }
+                    .details-table .label {
+                         color: #575757 !important;
+                    }
+                    .details-table .value {
+                         color: #000000 !important;
                     }
                }
           </style>
