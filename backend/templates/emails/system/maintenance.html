@@ -175,30 +175,30 @@
 
                                    <!-- Maintenance Details Block -->
                                    <div style="background-color: #F2F9FE; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
-                                        <h2 class="details-heading" style="font-size: 18px; font-weight: 600; color: #1F2937; margin-top: 0; margin-bottom: 16px;">Maintenance Details</h2>
+                                        <h2 class="details-heading" style="font-size: 18px; font-weight: 600; color: #000000; margin-top: 0; margin-bottom: 16px;">Maintenance Details</h2>
                                         <table class="details-table" border="0" cellpadding="0" cellspacing="0" style="font-size: 15px; width: 100%;">
                                              
                                              <!-- Start Time -->
                                              {% if start_time %} 
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Start Time</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ start_time|date:"F d, Y \\a\\t g:i A" }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Start Time</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ start_time|date:"F d, Y \\a\\t g:i A" }}</td>
                                              </tr>
                                              {% endif %}
 
                                              <!-- End Time -->
                                              {% if end_time %} 
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">End Time</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ end_time|date:"F d, Y \\a\\t g:i A" }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">End Time</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ end_time|date:"F d, Y \\a\\t g:i A" }}</td>
                                              </tr>
                                              {% endif %}
 
                                              <!-- Duration -->
                                              {% if duration %}
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">Duration</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ duration }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">Duration</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ duration }}</td>
                                              </tr>
                                              {% endif %}
                                         </table>
