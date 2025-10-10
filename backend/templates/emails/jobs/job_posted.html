@@ -191,39 +191,39 @@
                                    </p>
 
                                    <!-- Job Details Block -->
-                                   <div style="background-color: #F3F4F6; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
-                                        <h2 class="job-details-heading" style="font-size: 18px; font-weight: 600; color: #1F2937; margin-top: 0; margin-bottom: 16px;">Job Details</h2>
+                                   <div style="background-color: #F2F9FE; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                                        <h2 class="job-details-heading" style="font-size: 18px; font-weight: 600; color: #000000; margin-top: 0; margin-bottom: 16px;">Job Details</h2>
                                         <table class="job-details-table" border="0" cellpadding="0" cellspacing="0" style="font-size: 15px; width: 100%;">
                                              
                                              <!-- Position -->
                                              {% if job_title %} 
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Position</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_title }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Position</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_title }}</td>
                                              </tr>
                                              {% endif %}
 
                                              <!-- Location -->
                                              {% if job_location %}
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Location</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_location }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Location</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_location }}</td>
                                              </tr>
                                              {% endif %}
 
                                              <!-- Salary -->
                                              {% if job_salary_min and job_salary_max %}
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Salary</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">${{ job_salary_min }} - ${{ job_salary_max }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Salary</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">${{ job_salary_min }} - ${{ job_salary_max }}</td>
                                              </tr>
                                              {% endif %}
 
                                              <!-- Posted by -->
                                              {% if posted_by_name %}
                                              <tr>
-                                                  <td class="label" width="120" style="color: #6c757d; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Posted by</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ posted_by_name }}</td>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Posted by</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ posted_by_name }}</td>
                                              </tr>
                                              {% endif %}
 
@@ -231,7 +231,7 @@
                                              {% if job_created_at %}
                                              <tr>
                                                   <td class="label" width="120" style="color: #6c757d; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">Time on</td>
-                                                  <td class="value" style="color: #212529; font-weight: bold; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_created_at|date:"F d, Y \a\t g:i A" }}</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 0; vertical-align: top; font-family: 'Poppins', sans-serif;">{{ job_created_at|date:"F d, Y \a\t g:i A" }}</td>
                                              </tr>
                                              {% endif %}
                                         </table>
