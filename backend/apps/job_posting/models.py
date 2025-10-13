@@ -404,6 +404,7 @@ class JobPostView(TimeStampModel):
 
 class SearchTerm(models.Model):
      keyword = models.CharField(max_length=255, unique=True, db_index=True)
+     canonical_keyword = models.CharField(max_length=255, unique=True, db_index=True, null=True, blank=True) 
      search_count = models.PositiveIntegerField(default=1, db_index=True)
      first_searched = models.DateTimeField(auto_now_add=True)
      last_searched = models.DateTimeField(auto_now=True)
