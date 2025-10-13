@@ -1,11 +1,12 @@
 from celery import shared_task
+from django.db.models import F
 from django.utils import timezone
 from django.db import transaction
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from datetime import date, datetime
-from apps.job_posting.models import JobPost, StatusChoices
+from apps.job_posting.models import JobPost, SearchTerm, StatusChoices
 import logging
 
 logger = logging.getLogger(__name__)
@@ -208,3 +209,30 @@ def send_job_expiration_error_notification(error_message, execution_time):
         
     except Exception as e:
         logger.error(f"Failed to send error notification: {str(e)}", exc_info=True)
+
+@shared_task(name='job_tasks.save_or_update_search_term_task')
+def save_or_update_search_term_task(keyword):
+    """
+    Update the search count for a given keyword.
+    """
+    cleaned_keyword = keyword.strip().lower()
+
+    if not cleaned_keyword:
+        return
+
+    try:
+        with transaction.atomic():
+            term, created = SearchTerm.objects.get_or_create(
+                keyword=cleaned_keyword,
+                defaults={'search_count': 1}
+            )
+            
+            if not created:
+                term.search_count += 1
+                term.save(update_fields=['search_count', 'last_searched'])
+            
+            action = "Created" if created else "Updated"
+            logger.info(f"Success: Search term '{cleaned_keyword}' {action}. New count: {term.search_count}")
+            
+    except Exception as e:
+        logger.error(f"Celery Error saving search term '{cleaned_keyword}': {e}")
