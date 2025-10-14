@@ -60,8 +60,11 @@ const routesMap: RoutesMap = {
   selectedProjects:{
     path:"selectedProjects",
     name:'selectedProjects'
-  }
-  ,
+  },
+  project:{
+    path:"project",
+    name:'project'
+  },
   education: {
     path: "education",
     name: "education",

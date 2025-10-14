@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { Portal } from "@radix-ui/react-portal";
 
 interface SelectFieldProps {
   name: string;
@@ -30,7 +31,7 @@ interface SelectFieldProps {
   data?: { value: string | number; label: string }[]; // Explicitly defining data type
   labelName?: string;
   description?: string;
-  labelStyle?:string;
+  labelStyle?: string;
 }
 
 export const SelectField: React.FC<SelectFieldProps> = ({
@@ -59,7 +60,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
-              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelStyle)}>
+              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]', labelStyle)}>
                 {labelName}
                 {isRequired && <span className="ms-1 text-red-500">*</span>}
               </FormLabel>
@@ -74,22 +75,25 @@ export const SelectField: React.FC<SelectFieldProps> = ({
                   <SelectTrigger
                     {...field}
                     className={cn(
-                     
+
                       field.value === "" || field.value === undefined ?
-                      "text-slate-300" : "text-black",
+                        "text-slate-300" : "text-black",
                       error &&
                       "outline-bg-error  focus:ring-2 ring-bg-error focus:ring-bg-error focus-visible:border-bg-error",
                       'border-[#CBD5E1]',
                       height,
                     )}
                   >
-                 <SelectValue  placeholder={placeholder} />
+                    <SelectValue placeholder={placeholder} />
                   </SelectTrigger>
-                  <SelectContent className="h-[200px] w-[95%] p-2">
-                    {data.map((item) => (
-                      <SelectItem value={item.value?.toString()}>{item.label}</SelectItem>
-                    ))}
-                  </SelectContent>
+                  <Portal>
+                    <SelectContent className="h-[200px] w-[95%] p-2">
+                      {data.map((item) => (
+                        <SelectItem value={item.value?.toString()}>{item.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Portal>
+
                 </Select>
                 {description && (
                   <h3 className="text-[#686C73] text-[14px] mt-[8px]">
