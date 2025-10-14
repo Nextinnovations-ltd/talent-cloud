@@ -3,9 +3,9 @@ from django.core.management.base import BaseCommand
 from nltk.downloader import Downloader
 
 REQUIRED_NLTK_PACKAGES = [
-    'punkt', # For tokenization
+    'punkt_tab',
     'wordnet', # For lemmatization data
-    'averaged_perceptron_tagger', # For POS tagging in lemmatization
+    'averaged_perceptron_tagger_eng'
 ]
 
 class Command(BaseCommand):

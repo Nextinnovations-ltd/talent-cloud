@@ -6,6 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from datetime import date, datetime
+from utils.nlp.utils import get_canonical_keyword
 from apps.job_posting.models import JobPost, SearchTerm, StatusChoices
 import logging
 
@@ -215,24 +216,31 @@ def save_or_update_search_term_task(keyword):
     """
     Update the search count for a given keyword.
     """
+    canonical_form = get_canonical_keyword(keyword)
     cleaned_keyword = keyword.strip().lower()
-
-    if not cleaned_keyword:
+    
+    if not canonical_form:
         return
-
+    
     try:
         with transaction.atomic():
             term, created = SearchTerm.objects.get_or_create(
-                keyword=cleaned_keyword,
-                defaults={'search_count': 1}
+                canonical_keyword=canonical_form,
+                defaults={
+                    'search_count': 1,
+                    'daily_count': 1,
+                    'weighted_score': 1.0,
+                    'keyword': keyword
+                }
             )
             
             if not created:
-                term.search_count += 1
-                term.save(update_fields=['search_count', 'last_searched'])
+                term.search_count = F('search_count') + 1
+                term.daily_count = F('daily_count') + 1
+                term.save(update_fields=['search_count', 'daily_count', 'last_searched'])
             
             action = "Created" if created else "Updated"
-            logger.info(f"Success: Search term '{cleaned_keyword}' {action}. New count: {term.search_count}")
+            logger.info(f"Search term canonicalized to: '{canonical_form}'. Success: Search term '{cleaned_keyword}' {action} updated.")
             
     except Exception as e:
         logger.error(f"Celery Error saving search term '{cleaned_keyword}': {e}")

@@ -31,6 +31,11 @@ app.conf.beat_schedule = {
         'task': 'upload_tasks.weekly_resumes_cleanup',
         'schedule': crontab(hour=0, minute=0, day_of_week=0),  # Sunday 12:00 AM
     },
+    'calculate-trending-scores-daily': {
+        'task': 'nlp_tasks.calculate_trending_scores_task',
+        'schedule': crontab(hour=0, minute=0), # Daily 12:00 AM
+        'args': (),
+    },
 }
 
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
