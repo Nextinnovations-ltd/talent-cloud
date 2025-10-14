@@ -1,21 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import InputField from "@/components/common/form/fields/input-field";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { ProfileTitle } from "@/components/common/ProfileTitle";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import useToast from "@/hooks/use-toast";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
 import { UserWorkExperienceSchema } from "@/lib/UserWorkExperience";
 import { useAddExperienceProfileMutation, useGetExperienceByIdQuery, useUpdateExperienceProfileMutation } from "@/services/slices/jobSeekerSlice";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
+import { useEffect, forwardRef, useImperativeHandle } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import {  useSearchParams } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
 
 
 type JobExperience = {
@@ -30,7 +25,6 @@ type JobExperience = {
 };
 
 
-
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
   return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
     const year = (startYear + index).toString();
@@ -40,17 +34,20 @@ const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) 
 
 const staticYearData = generateYearData();
 
-export const WorkExperience = () => {
+type WorkExperienceProps = {
+  workExperienceId?: number | null;
+  setShowDialog: (val: boolean) => void
+}
+
+
+
+export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperienceId, setShowDialog }, ref) => {
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddExperienceProfileMutation);
   const [updateExperienceProfile, { isLoading: isUpdating }] = useUpdateExperienceProfileMutation();
-  const { showNotification } = useToast();
   // Get id from URL
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const id = searchParams.get("id");
 
   // Fetch experience data if id exists
-  const { data: ExperienceData,isLoading } = useGetExperienceByIdQuery(id, { skip: !id });
+  const { data: ExperienceData, isLoading } = useGetExperienceByIdQuery(workExperienceId, { skip: !workExperienceId });
 
   const form = useForm<JobExperience>({
     resolver: yupResolver(UserWorkExperienceSchema),
@@ -72,25 +69,25 @@ export const WorkExperience = () => {
     defaultValue: false,
   });
 
-  
+
   // Prefill form when ExperienceData is loaded
   useEffect(() => {
-      form.reset({
-        organization: ExperienceData?.organization || "",
-        title: ExperienceData?.title || "",
-        startDateYear: ExperienceData?.start_date?.split("-")[0] || "",
-        startDateMonth: ExperienceData?.start_date?.split("-")[1] || "",
-        endDateYear: ExperienceData?.is_present_work ? "" : ExperienceData?.end_date?.split("-")[0] || "",
-        endDateMonth: ExperienceData?.is_present_work ? "" : ExperienceData?.end_date?.split("-")[1] || "",
-        is_present_work: ExperienceData?.is_present_work || false,
-        description: ExperienceData?.description || "",
-      });
+    form.reset({
+      organization: ExperienceData?.organization || "",
+      title: ExperienceData?.title || "",
+      startDateYear: ExperienceData?.start_date?.split("-")[0] || "",
+      startDateMonth: ExperienceData?.start_date?.split("-")[1] || "",
+      endDateYear: ExperienceData?.is_present_work ? "" : ExperienceData?.end_date?.split("-")[0] || "",
+      endDateMonth: ExperienceData?.is_present_work ? "" : ExperienceData?.end_date?.split("-")[1] || "",
+      is_present_work: ExperienceData?.is_present_work || false,
+      description: ExperienceData?.description || "",
+    });
 
   }, [ExperienceData, form]);
 
   const onSubmit = async (data: JobExperience) => {
     const startDate = new Date(`${data.startDateYear}-${data.startDateMonth}-01`);
-    const endDate =  data.endDateYear && data.endDateMonth ? new Date(`${data.endDateYear}-${data.endDateMonth}-01`) : null;
+    const endDate = data.endDateYear && data.endDateMonth ? new Date(`${data.endDateYear}-${data.endDateMonth}-01`) : null;
 
     if (endDate && endDate < startDate) {
       form.setError('endDateYear', {
@@ -132,14 +129,12 @@ export const WorkExperience = () => {
 
     try {
       let response;
-      if (id) {
+      if (workExperienceId) {
         // Edit mode: update
-        response = await updateExperienceProfile({ jobId: Number(id), credentials: payload });
-        navigate('/user/mainProfile')
+        response = await updateExperienceProfile({ jobId: Number(workExperienceId), credentials: payload });
       } else {
         // Create mode: add
         response = await executeApiCall(payload);
-        navigate('/user/mainProfile')
       }
       if (response?.data?.data) {
         form.reset({
@@ -153,7 +148,9 @@ export const WorkExperience = () => {
           description: response?.data?.data?.description || "",
         });
 
-        showNotification({message:response?.data?.message,type:"success"})
+
+        // showNotification({message:response?.data?.data?.message,type:"success"})
+        setShowDialog(false);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -166,13 +163,22 @@ export const WorkExperience = () => {
       form.setValue('endDateMonth', undefined);
       form.setValue('endDateYear', undefined);
     }
-  }, [noCurrently]);
+  }, [form, noCurrently]);
 
-  if(isLoading) return <p>Loading...</p>
+
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      form.handleSubmit(onSubmit)();
+    },
+  }));
+
+  const LOADING = isUpdating || isSubmitting;
+
+  if (isLoading) return <p>Loading...</p>
 
   return (
-    <div className="mb-[120px]">
-      <ProfileTitle title="Work Experience" />
+    <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 space-y-[30px]">
@@ -184,6 +190,7 @@ export const WorkExperience = () => {
               required={true}
               placeholder="Company"
               maxLength={50}
+              disabled={LOADING}
               showLetterCount
             />
             <InputField
@@ -194,6 +201,7 @@ export const WorkExperience = () => {
               required={true}
               placeholder="Position"
               maxLength={50}
+              disabled={LOADING}
               showLetterCount
             />
             <div className="flex max-w-[672px] gap-4">
@@ -242,7 +250,7 @@ export const WorkExperience = () => {
             )}
             {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
               <div className="text-red-500 text-sm mt-1">
-               - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
+                - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
               </div>
             )}
             <CustomCheckbox
@@ -252,7 +260,6 @@ export const WorkExperience = () => {
               typeStyle="mono"
             />
             <TextAreaField
-              disabled={false}
               fieldName={'description'}
               placeholder={'A brief introduction about yourself'}
               isError={!!form.formState.errors.description}
@@ -262,10 +269,11 @@ export const WorkExperience = () => {
               fieldHeight={"h-[128px]"}
               showLetterCount={true}
               maxLength={250}
+              disabled={LOADING}
             />
           </div>
 
-          <div className="max-w-[672px] flex items-center justify-end">
+          {/* <div className="max-w-[672px] flex items-center justify-end">
             <Button
               type="submit"
               title={id ? "Update Experience" : "Save Experience"}
@@ -274,9 +282,9 @@ export const WorkExperience = () => {
             >
               {(isSubmitting || isUpdating) ? <LoadingSpinner /> : id ? "Update Experience" : "Save Experience"}
             </Button>
-          </div>
+          </div> */}
         </form>
       </Form>
     </div>
-  );
-};
+  )
+});

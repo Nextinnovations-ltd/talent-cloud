@@ -14,7 +14,7 @@ from django.db import transaction
 from apps.users.models import TalentCloudUser
 from apps.ws_channel.models import Notification
 from apps.ws_channel.serializers import NotificationListSerializer
-from apps.job_posting.models import JobApplication, JobPost
+from apps.job_posting.models import JobApplication, JobPost, SalaryModeType
 from apps.job_seekers.models import JobSeeker
 from utils.notification.types import NotificationType, NotificationChannel
 from core.constants.constants import ROLES
@@ -586,12 +586,15 @@ class NotificationHelpers:
         if not company:
             raise NotFound("Company associated to user not found.")
         
+        is_salary_mode_range = job.salary_mode == SalaryModeType.Range
+        
         context = {
             'job_title': job.title,
             'job_id': job.id,
             'job_location': job.location, 
-            'job_salary_min': job.salary_min, 
-            'job_salary_max': job.salary_max, 
+            'job_salary_min': job.salary_min if is_salary_mode_range else None, 
+            'job_salary_max': job.salary_max if is_salary_mode_range else None,
+            'job_salary_fixed': job.salary_fixed if not is_salary_mode_range else None,
             'job_created_at': job.created_at,
             'company_name': company.name,
             'posted_by_name': user.name or user.email,

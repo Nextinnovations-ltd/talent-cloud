@@ -400,6 +400,28 @@ class JobPostView(TimeStampModel):
 
 # endregion Job Post View
 
+# Job Search Suggestions
+
+class SearchTerm(models.Model):
+     keyword = models.CharField(max_length=255, unique=True, db_index=True)
+     canonical_keyword = models.CharField(max_length=255, unique=True, db_index=True, null=True, blank=True) 
+     weighted_score = models.FloatField(default=0.0, db_index=True)
+     daily_count = models.PositiveIntegerField(default=0, null=True, blank=True) 
+     search_count = models.PositiveIntegerField(default=1, db_index=True)
+     first_searched = models.DateTimeField(auto_now_add=True)
+     last_searched = models.DateTimeField(auto_now=True)
+
+     def __str__(self):
+          return f"{self.keyword} ({self.search_count})"
+
+     class Meta:
+          ordering = ['-search_count']
+          verbose_name = "Search Term"
+          
+          constraints = [
+               models.UniqueConstraint(fields=['keyword'], name='unique_keyword_entry')
+          ]
+
 class JobPostMetric(models.Model):
      class EventType(models.TextChoices):
           VIEW = 'view', 'View'

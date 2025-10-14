@@ -157,6 +157,9 @@ jobs:
                 echo "Creating Parent Company..."
                 python manage.py import_parent_company 
 
+                echo "Importing NTLK Data..."
+                python manage.py download_ntlk_data 
+
                 echo "Collecting Staticfiles..."
                 python manage.py collectstatic --noinput --clear
                 cd -

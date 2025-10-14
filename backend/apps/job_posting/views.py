@@ -11,6 +11,7 @@ from apps.job_posting.filters import JobPostFilter
 from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.job_seekers.models import JobSeeker
+from celery_app.tasks.job_tasks import save_or_update_search_term_task
 from services.job_posting.job_application_service import JobApplicationService
 from services.job_posting.job_service import JobService
 from rest_framework.exceptions import ValidationError
@@ -315,6 +316,8 @@ class JobDiscoveryAPIView(CustomListAPIView):
      
      def list(self, request, *args, **kwargs):
           """Override list to add metadata about job discovery"""
+          search_query = request.query_params.get('search')
+          
           response = super().list(request, *args, **kwargs)
          
           original_data = response.data.get('data', {})
@@ -344,6 +347,12 @@ class JobDiscoveryAPIView(CustomListAPIView):
           else:
                # Non-paginated response
                enhanced_data['results'] = original_data
+          
+          job_results = enhanced_data.get('results', [])
+          has_results = bool(job_results)
+          
+          if search_query and has_results:
+               save_or_update_search_term_task.delay(search_query)
           
           # Return new response with enhanced data
           return Response(

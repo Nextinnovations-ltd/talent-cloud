@@ -62,9 +62,8 @@ const ExpiredJobsDetail = () => {
     }
 
     return (
-        <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded sticky top-[190px] h-[100svh] self-start">
+        <div className="mt-10 lg:mt-0 lg:w-[60%] mx-auto rounded  top-[190px] h-[100svh] self-start">
             <div className="mb-6 flex items-center fixed left-[100px] top-[130px] gap-[48px]"><BackButton handleBack={() => navigate('/')} /></div>
-            <ScrollArea className="p-[30px] relative">
 
                 <h3 className="text-[24px] mb-[15px] font-semibold">{jobDetails?.title || ""}</h3>
                 <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 rounded px-4 py-2 mb-6">
@@ -81,7 +80,6 @@ const ExpiredJobsDetail = () => {
                     jobDetails?.company?.id && <CompanyAbout job={jobDetails} />
                 }
                 <AboutJob jobTitle={jobDetails?.title || ''} responsibilities={jobDetails?.responsibilities || ''} requirements={jobDetails?.requirements || ''} offer={jobDetails?.offered_benefits || ''} />
-            </ScrollArea>
         </div>
     )
 }

@@ -49,10 +49,12 @@ const TagInputField: React.FC<TagInputFieldProps> = ({
     onChange(value.filter((t: string) => t !== tag));
   };
 
+ 
+
   return (
     <div>
       {lableName && (
-        <label className="block mb-1 font-medium">
+        <label className="font-semibold text-[16px] text-[#05060F]">
           {lableName} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -62,15 +64,15 @@ const TagInputField: React.FC<TagInputFieldProps> = ({
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleInputKeyDown}
         placeholder={placeholder}
-        className="border  rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border border-[#CBD5E1]  rounded-md px-3  py-2 mt-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-[#D9D9D9]"
         maxLength={maxLength}
         disabled={value.length >= maxTags}
       />
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="flex flex-wrap gap-2 mt-3">
         {value.map((tag: string, idx: number) => (
           <span
             key={idx}
-            className="inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+            className="px-4 py-1.5 border border-[#CBD5E1] rounded-full text-[12px] text-gray-700 bg-white  active:scale-95 transition"
           >
             {tag}
             <button

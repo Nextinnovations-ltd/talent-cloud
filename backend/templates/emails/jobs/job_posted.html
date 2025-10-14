@@ -219,6 +219,13 @@
                                              </tr>
                                              {% endif %}
 
+                                             {% if job_salary_fixed %}
+                                             <tr>
+                                                  <td class="label" width="120" style="color: #575757; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">Salary</td>
+                                                  <td class="value" style="color: #000000; font-weight: bold; padding-bottom: 15px; vertical-align: top; font-family: 'Poppins', sans-serif;">${{ job_salary_fixed }}</td>
+                                             </tr>
+                                             {% endif %}
+
                                              <!-- Posted by -->
                                              {% if posted_by_name %}
                                              <tr>

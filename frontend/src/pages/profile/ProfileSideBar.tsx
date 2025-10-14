@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   Sidebar,
   SidebarContent,
@@ -19,11 +18,14 @@ import {
   SKILLFILL,
   CERTIFICATIONSOUTLINE,
   CERTIFICATIONSFILL,
-  LANGUAGEFILL,
-  SOCIALLINK,
+  RESUME,
+  RESUMEFILL,
+  PROJECTS,
+  PROJECTSFILL
 } from "@/constants/svgs";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import clsx from "clsx";
 
 // Sidebar items data
 const items = [
@@ -34,10 +36,22 @@ const items = [
     hoverIcon: PROFILEFILL, // Filled icon
   },
   {
+    title: "Resume",
+    url: "/user/edit/resume",
+    icon: RESUME, // Outline icon
+    hoverIcon: RESUMEFILL, // Filled icon
+  },
+  {
     title: "Skills",
     url: "/user/edit/skills",
     icon: SKILLOUTLINE, // Outline icon
     hoverIcon: SKILLFILL, // Filled icon
+  },
+  {
+    title: "Project",
+    url: "/user/edit/project",
+    icon: PROJECTS, // Outline icon
+    hoverIcon: PROJECTSFILL, // Filled icon
   },
   {
     title: "Work Experience",
@@ -57,18 +71,18 @@ const items = [
     icon: CERTIFICATIONSOUTLINE, // Outline icon
     hoverIcon: CERTIFICATIONSFILL, // Filled icon
   },
-  {
-    title: "Languages",
-    url: "/user/edit/languages",
-    icon: LANGUAGEFILL, // Outline icon
-    hoverIcon: LANGUAGEFILL, // Filled icon
-  },
-  {
-    title: "Social Links",
-    url: "/user/edit/sockial-links",
-    icon: SOCIALLINK, // Outline icon
-    hoverIcon: SOCIALLINK, // Filled icon
-  },
+  // {
+  //   title: "Languages",
+  //   url: "/user/edit/languages",
+  //   icon: LANGUAGEFILL, // Outline icon
+  //   hoverIcon: LANGUAGEFILL, // Filled icon
+  // },
+  // {
+  //   title: "Social Links",
+  //   url: "/user/edit/sockial-links",
+  //   icon: SOCIALLINK, // Outline icon
+  //   hoverIcon: SOCIALLINK, // Filled icon
+  // },
 ];
 
 export const ProfileSideBar = () => {
@@ -76,19 +90,14 @@ export const ProfileSideBar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
-    <Sidebar className=" fixed top-[90px] left-[100px] max-h-[600px]  p-3  border-none rounded-lg w-[250px]">
-      <SidebarContent className="bg-white ">
+    <Sidebar className=" fixed top-[90px] left-[55px] max-h-[600px]  p-3  border-none  rounded-lg w-[285px]">
+      <SidebarContent className="bg-white min-h-[80svh]  pr-[22px] ">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
-                  <motion.div
-                    key={item.title}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
                     <SidebarMenuItem
                       onMouseEnter={() => setHoveredItem(item.title)}
                       onMouseLeave={() => setHoveredItem(null)}
@@ -97,23 +106,15 @@ export const ProfileSideBar = () => {
                       }`}
                     >
                       <SidebarMenuButton
-                        className="h-[56px] flex items-center gap-[14px] duration-300 font-bold"
+                        className="h-[56px] flex items-center gap-[14px] duration-300 font-semibold"
                         asChild
                       >
                         <Link
                           to={item.url}
-                          className="flex items-center gap-[14px]"
+                          className="flex text-[#575757] items-center gap-[14px]"
                         >
-                          <motion.div
+                          <div
                             className="w-6 h-6"
-                            initial={false}
-                            animate={{
-                              scale:
-                                isActive || hoveredItem === item.title
-                                  ? 1.1
-                                  : 1,
-                            }}
-                            transition={{ type: "spring", stiffness: 300 }}
                           >
                             {isActive ? (
                               <item.hoverIcon /> // Filled icon when active
@@ -122,12 +123,11 @@ export const ProfileSideBar = () => {
                             ) : (
                               <item.icon /> // Outline icon by default
                             )}
-                          </motion.div>
-                          <span>{item.title}</span>
+                          </div>
+                          <span className={clsx(isActive && "text-[#0C0C12] font-semibold")} >{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  </motion.div>
                 );
               })}
             </SidebarMenu>

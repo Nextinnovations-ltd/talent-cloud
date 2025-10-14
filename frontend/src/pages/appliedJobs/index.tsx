@@ -22,14 +22,14 @@ export const AppliedJobs = () => {
 
   }
 
-  const handleAction = ()=>{
+  const handleAction = () => {
     navigate(`/?`);
   }
 
   if (isLoading) {
     return (
       <div className="container mx-auto  h-[80svh] py-[50px] flex justify-center items-center">
-       <LoadingSpinner/>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -44,19 +44,19 @@ export const AppliedJobs = () => {
 
   return (
     <div className="container  mx-auto 2xl:px-[100px]  py-[50px] ">
-      <div className={clsx('flex items-center  gap-[48px]',jobs.length === 0 ? 'mb-[40px]' : 'mb-[100px]')}>
-      <BackButton handleBack={handleAction}/><h3 className="text-[24px] font-semibold">Applied Jobs</h3>
+      <div className={clsx('flex items-center  gap-[48px]', jobs.length === 0 ? 'mb-[40px]' : 'mb-[100px]')}>
+        <BackButton handleBack={handleAction} /><h3 className="text-[24px] font-semibold">Applied Jobs</h3>
       </div>
-     {
-      (jobs.length === 0) ? <CommonError image={EMPTY} title="No applied Jobs" description="Start browsing to find your next opportunity." action handleAction={handleAction} actionText="Apply jobs" /> :  <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-      >
-        <JobCardGrid jobs={jobs} onJobClick={handleJobClick} />
-      </motion.div>
-     }
-     
+      {
+        (jobs.length === 0) ?<div className="min-h-[calc(100svh-350px)]"> <CommonError image={EMPTY} title="No applied Jobs" description="Start browsing to find your next opportunity." action handleAction={handleAction} actionText="Apply jobs" /> </div>: <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <JobCardGrid jobs={jobs} onJobClick={handleJobClick} />
+        </motion.div>
+      }
+
     </div>
   )
 }

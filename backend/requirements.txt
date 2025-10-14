@@ -37,3 +37,6 @@ gunicorn==23.0.0
 flower==2.0.1
 django-ratelimit==4.1.0
 django_celery_results==2.6.0
+
+# Natural Language Processing
+nltk==3.9.2
