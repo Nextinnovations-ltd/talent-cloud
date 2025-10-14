@@ -21,6 +21,7 @@ from .views import (
     CompanyApplicationDetailView,
     BookmarkJobView,
     JobSeekerBookmarkedJobListView,
+    PopularSuggestionAPIView,
     RecentJobPostListAPIView,
 )
 
@@ -34,6 +35,8 @@ urlpatterns = [
     
     # Recent Jobs
     path('job-posts/recent/', RecentJobPostListAPIView.as_view(), name='recent-jobpost-list'),
+    
+    path('search/suggestions/popular/', PopularSuggestionAPIView.as_view(), name='popular-suggestion-keywords'),
     
     # Jobs Search
     path('job-posts/discover/', JobDiscoveryAPIView.as_view(), name='discover-jobpost-list'),

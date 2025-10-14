@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.cache import cache
 from django.db.models import Q
 from datetime import date
 from django.shortcuts import get_object_or_404
@@ -8,7 +9,7 @@ from rest_framework.exceptions import NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.job_posting.filters import JobPostFilter
-from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, StatusChoices
+from apps.job_posting.models import BookmarkedJob, JobApplication, JobPost, SearchTerm, StatusChoices
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from apps.job_seekers.models import JobSeeker
 from celery_app.tasks.job_tasks import save_or_update_search_term_task
@@ -118,6 +119,39 @@ class JobPostActionAPIView(APIView):
 # region Job Post List Views
 
 # Listing Jobs
+
+class PopularSuggestionAPIView(APIView):
+     """
+     Returns the popular/trending keywords.
+     This runs when the search bar is focused but empty.
+     """
+     permission_classes = []
+     
+     CACHE_KEY = 'global_static_suggestions'
+     CACHE_TIMEOUT = 3600 # Saved for 1 hour
+     
+     def get(self, request, *args, **kwargs):
+          
+          cached_data = cache.get(self.CACHE_KEY)
+          
+          if cached_data:
+               return Response(cached_data, status=status.HTTP_200_OK)
+
+          suggestions = SearchTerm.objects.all().order_by('-weighted_score')[:10] 
+
+          data = [
+               {'keyword': term.keyword} 
+               for term in suggestions
+          ]
+          
+          cache.set(self.CACHE_KEY, data, self.CACHE_TIMEOUT)
+          
+          return Response(
+               CustomResponse.success(
+                    message="Successfully retrieved popular search keywords",
+                    data=data
+               ),status=status.HTTP_200_OK)
+
 class RecentJobPostListAPIView(CustomListAPIView):
      queryset = JobPost.objects.all().select_related('role', 'experience_level', 'posted_by')
      serializer_class = JobPostListSerializer
@@ -253,6 +287,8 @@ class CompanyJobListView(CustomListAPIView):
           return JobPost.objects.filter(posted_by=self.request.user)
 
 # Search Jobs
+
+
 @extend_schema(tags=["Job Post"])
 class JobDiscoveryAPIView(CustomListAPIView):
      """Smart job discovery that adapts to user profile completeness"""
