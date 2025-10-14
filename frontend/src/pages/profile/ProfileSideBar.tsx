@@ -90,8 +90,8 @@ export const ProfileSideBar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
-    <Sidebar className=" fixed top-[90px] left-[55px] max-h-[600px]  p-3  border-none   rounded-lg w-[225px]">
-      <SidebarContent className="bg-white min-h-[100svh]  pr-[22px] ">
+    <Sidebar className=" fixed top-[90px] left-[55px] max-h-[600px]  p-3  border-none  rounded-lg w-[285px]">
+      <SidebarContent className="bg-white min-h-[80svh]  pr-[22px] ">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>

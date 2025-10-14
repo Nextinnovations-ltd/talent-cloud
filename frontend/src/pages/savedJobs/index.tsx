@@ -47,7 +47,9 @@ export const SavedJobs = () => {
       <BackButton handleBack={handleAction}/><h3 className="text-[24px] font-semibold">Saved Jobs</h3>
       </div>
       {
-      (jobs.length === 0) ? <CommonError image={EMPTY} title="No Saved Jobs" description="Browse and save the ones you like." action handleAction={handleAction} actionText="Saved jobs" /> :  <motion.div
+      (jobs.length === 0) ? <div className="min-h-[calc(100svh-350px)]">
+        <CommonError image={EMPTY} title="No Saved Jobs" description="Browse and save the ones you like." action handleAction={handleAction} actionText="Saved jobs" />
+      </div> :  <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}

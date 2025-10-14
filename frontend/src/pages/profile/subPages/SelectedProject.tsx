@@ -1,27 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ProfileTitle } from "@/components/common/ProfileTitle";
 import SelectedProjectSchema from "@/lib/SelectedProjectSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import InputField from "@/components/common/form/fields/input-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
-import { useWatch } from "react-hook-form";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
-import ImagePicker from "@/components/common/ImagePicker";
-import { useState } from "react";
-import { useAddSelectedProjectsMutation, useUpdateSelectedProjectsMutation, useGetSelectedProjectsByIdQuery } from "@/services/slices/jobSeekerSlice";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { forwardRef, useImperativeHandle, useState, useEffect } from "react";
+import {
+  useAddSelectedProjectsMutation,
+  useUpdateSelectedProjectsMutation,
+  useGetSelectedProjectsByIdQuery,
+} from "@/services/slices/jobSeekerSlice";
 import useToast from "@/hooks/use-toast";
-import { useEffect } from "react";
 import TagInputField from "@/components/common/form/fields/tag-input-field";
-import type { ProjdctsWithIdResponse } from '@/services/slices/jobSeekerSlice';
+import type { ProjdctsWithIdResponse } from "@/services/slices/jobSeekerSlice";
 import uploadToS3 from "@/lib/UploadToS3/UploadToS3";
-
-
+import ModalImagePicker from "@/components/common/ModalImagePicker";
 
 const generateYearData = (startYear = 2000, endYear = new Date().getFullYear()) => {
   return Array.from({ length: endYear - startYear + 1 }, (_, index) => {
@@ -33,7 +32,7 @@ const staticYearData = generateYearData();
 
 type SelectedProjectForm = {
   title: string;
-  description: string; // <-- make required
+  description: string;
   tags?: string[];
   project_url: string;
   project_image_url?: string;
@@ -45,56 +44,86 @@ type SelectedProjectForm = {
   team_size?: number;
 };
 
-const SelectedProject = () => {
+type SelectedProjectProps = {
+  projectId?: number | null;
+  setShowDialog: (val: boolean) => void;
+};
 
+const SelectedProject = forwardRef<any, SelectedProjectProps>(({ projectId, setShowDialog }, ref) => {
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [formVersion, setFormVersion] = useState(0); // bump to force remount of textarea
   const [addSelectedProject, { isLoading: isAdding }] = useAddSelectedProjectsMutation();
   const [updateSelectedProject, { isLoading: isUpdating }] = useUpdateSelectedProjectsMutation();
-  const [isLoading,setIsLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const { showNotification } = useToast();
-  const id = searchParams.get("id");
-  const { data: projectData, isLoading: isFetching } = useGetSelectedProjectsByIdQuery(id, { skip: !id });
 
-
+  const { data: projectData, isLoading: isFetching } = useGetSelectedProjectsByIdQuery(
+    projectId as number | string | null,
+    {
+      skip: !projectId,
+    }
+  );
 
   const form = useForm<SelectedProjectForm>({
     resolver: yupResolver(SelectedProjectSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       tags: [],
-      project_url: '',
-      project_image_url: '',
-      startDateYear: '',
-      startDateMonth: '',
-      endDateYear: '',
-      endDateMonth: '',
+      project_url: "",
+      project_image_url: "",
+      startDateYear: "",
+      startDateMonth: "",
+      endDateYear: "",
+      endDateMonth: "",
       is_ongoing: false,
-      team_size: undefined
-    }
+      team_size: undefined,
+    },
   });
 
-
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      form.handleSubmit(onSubmit)();
+    },
+  }));
 
   useEffect(() => {
-    form.reset({
-      title: projectData?.data.title || '',
-      description: projectData?.data.description || '',
-      tags: projectData?.data.tags || [],
-      project_url: projectData?.data.project_url || '',
-      project_image_url: projectData?.data.project_image_url || '',
-      startDateYear: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[0] : '',
-      startDateMonth: projectData?.data.start_date ? String(projectData?.data.start_date).split("-")[1] : '',
-      endDateYear: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[0] : ''),
-      endDateMonth: projectData?.data.is_ongoing ? '' : (projectData?.data.end_date ? String(projectData?.data.end_date).split("-")[1] : ''),
-      is_ongoing: projectData?.data.is_ongoing || false,
-      team_size: projectData?.data.team_size || undefined,
-    });
+    if (projectData?.data) {
+      form.reset({
+        title: projectData.data.title || "",
+        description: projectData.data.description || "",
+        tags: projectData.data.tags || [],
+        project_url: projectData.data.project_url || "",
+        project_image_url: projectData.data.project_image_url || "",
+        startDateYear: projectData.data.start_date
+          ? String(projectData.data.start_date).split("-")[0]
+          : "",
+        startDateMonth: projectData.data.start_date
+          ? String(projectData.data.start_date).split("-")[1]
+          : "",
+        endDateYear: projectData.data.is_ongoing
+          ? ""
+          : projectData.data.end_date
+            ? String(projectData.data.end_date).split("-")[0]
+            : "",
+        endDateMonth: projectData.data.is_ongoing
+          ? ""
+          : projectData.data.end_date
+            ? String(projectData.data.end_date).split("-")[1]
+            : "",
+        is_ongoing: projectData.data.is_ongoing || false,
+        team_size: projectData.data.team_size || undefined,
+      });
 
-    setPreview(projectData?.data.project_image_url! || null);
+      setPreview(projectData.data.project_image_url || null);
 
+      // Force re-validation / re-render of those fields so the letter counts update
+      // and bump formVersion so TextAreaField remounts (initializes internal count)
+      setTimeout(() => {
+        form.trigger(["title", "project_url", "description"]);
+        setFormVersion((v) => v + 1);
+      }, 0);
+    }
   }, [projectData, form]);
 
   const isOngoing = useWatch({
@@ -104,19 +133,21 @@ const SelectedProject = () => {
   });
 
 
+
   const onSubmit = async (data: SelectedProjectForm) => {
+
 
     setIsLoading(true);
 
-
-
     const start_date = `${data.startDateYear}-${data.startDateMonth}-01`;
-    const end_date = (!data.is_ongoing && data.endDateYear && data.endDateMonth)
-      ? `${data.endDateYear}-${data.endDateMonth}-01`
-      : undefined;
-    const payload = {
+    const end_date =
+      !data.is_ongoing && data.endDateYear && data.endDateMonth
+        ? `${data.endDateYear}-${data.endDateMonth}-01`
+        : undefined;
+
+    const payload: any = {
       title: data.title,
-      description: data.description || '',
+      description: data.description || "",
       tags: data.tags || [],
       project_url: data.project_url,
       start_date,
@@ -124,84 +155,104 @@ const SelectedProject = () => {
       is_ongoing: data.is_ongoing,
       team_size: data.team_size ? Number(data.team_size) : 0,
     };
+
     try {
-      let response;
-      if (id) {
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
+      const uploadResult = await uploadToS3({
+        file: form.getValues("project_image_url") as unknown as File,
+        type: "project",
+      });
 
 
-        if(result){
-          //@ts-ignore
-          payload.project_image_upload_id = result;
-        }
-
-        response = await updateSelectedProject({ id, credentials: payload });
-      } else {
-        
-        const result = await uploadToS3({file:form.getValues('project_image_url') as unknown as File,type:'project'});
 
 
-        if(result){
-            //@ts-ignore
-          payload.project_image_upload_id = result;
-        }
-
-        response = await addSelectedProject(payload);
+      if (uploadResult) {
+        payload.project_image_upload_id = uploadResult;
       }
-      // Type assertion for response
+
+      const response = projectId
+        ? await updateSelectedProject({ id: projectId, credentials: payload })
+        : await addSelectedProject(payload);
+
       const res = response as { data?: ProjdctsWithIdResponse };
+
       if (res && res.data?.status === true) {
         const project = res.data.data;
         form.reset({
-          title: project?.title || '',
-          description: project?.description || '',
+          title: project?.title || "",
+          description: project?.description || "",
           tags: project?.tags || [],
-          project_url: project?.project_url || '',
-          project_image_url: project?.project_image_url || '',
-          startDateYear: project?.start_date ? String(project?.start_date).split("-")[0] : '',
-          startDateMonth: project?.start_date ? String(project?.start_date).split("-")[1] : '',
-          endDateYear: project?.is_ongoing ? '' : (project?.end_date ? String(project?.end_date).split("-")[0] : ''),
-          endDateMonth: project?.is_ongoing ? '' : (project?.end_date ? String(project?.end_date).split("-")[1] : ''),
+          project_url: project?.project_url || "",
+          project_image_url: project?.project_image_url || "",
+          startDateYear: project?.start_date ? String(project?.start_date).split("-")[0] : "",
+          startDateMonth: project?.start_date ? String(project?.start_date).split("-")[1] : "",
+          endDateYear: project?.is_ongoing
+            ? ""
+            : project?.end_date
+              ? String(project?.end_date).split("-")[0]
+              : "",
+          endDateMonth: project?.is_ongoing
+            ? ""
+            : project?.end_date
+              ? String(project?.end_date).split("-")[1]
+              : "",
           is_ongoing: project?.is_ongoing || false,
           team_size: project?.team_size || undefined,
         });
-        showNotification({ message: id ? "Project updated successfully" : "Project added successfully", type: "success" });
-        navigate('/user/mainProfile');
-        setIsLoading(false);
+
+        // After save, re-trigger and bump the formVersion so textarea updates
+        setTimeout(() => {
+          form.trigger(["title", "project_url", "description"]);
+          setFormVersion((v) => v + 1);
+        }, 0);
+
+        showNotification({
+          message: projectId ? "Project updated successfully" : "Project added successfully",
+          type: "success",
+        });
+        setShowDialog(false);
       } else {
-        showNotification({ message: 'Failed to save project', type: "danger" });
-        setIsLoading(false);
+        showNotification({ message: "Failed to save project", type: "danger" });
       }
     } catch (error) {
-      showNotification({ message: 'Failed to save project', type: "danger" });
+      showNotification({ message: "Failed to save project", type: "danger" });
+      console.error("Failed to save project:", error);
+    } finally {
       setIsLoading(false);
-      console.error('Failed to save project:', error);
     }
-  }
+  };
 
-  const loading = isAdding || isUpdating || isFetching || isLoading
 
-  if (isFetching) return <div><p>Loading...</p></div>
+
+  const loading = isAdding || isUpdating || isFetching || isLoading;
+
+  if (isFetching) return <div><p>Loading...</p></div>;
 
   return (
     <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-4 space-y-[30px]  max-w-[672px] ">
-            <ImagePicker
-              setIsOpen={() => { }}
+          <div className="mb-4 space-y-[30px] max-w-[672px] ">
+            {/* <ImagePicker
+              setIsOpen={() => {}}
               preview={preview}
               //@ts-ignore
               form={form}
               type="square"
               imageUploadType="project"
-              setPreview={setPreview} />
+              setPreview={setPreview}
+            /> */}
+            <ModalImagePicker
+              preview={preview}
+              setPreview={setPreview}
+              //@ts-ignore
+              form={form}
+              imageUploadType="project" />
             <InputField
               fieldName={`title`}
               languageName=""
               isError={!!form.formState.errors?.title}
               lableName="Project Name"
-              required={true}
+              required
               placeholder="Type here"
               maxLength={60}
               showLetterCount
@@ -212,7 +263,7 @@ const SelectedProject = () => {
               languageName=""
               isError={!!form.formState.errors?.project_url}
               lableName="Project Url"
-              required={true}
+              required
               placeholder="Type here"
               maxLength={120}
               showLetterCount
@@ -226,18 +277,21 @@ const SelectedProject = () => {
               maxLength={20}
               placeholder="Type here"
             />
-            <p className="text-sm text-gray-500 mt-1 mb-2">Type a tag and press Enter or comma to add. Click × to remove a tag. Max 20 tags, 20 characters each.</p>
+            <p className="text-sm text-gray-500 mt-1 mb-2">
+              Type a tag and press Enter or comma to add. Click × to remove a tag. Max 20 tags, 20
+              characters each.
+            </p>
             <InputField
               fieldName={`team_size`}
               languageName=""
               isError={!!form.formState.errors?.team_size}
               lableName="Team Size"
-              type={'number'}
-              required={false}
+              type="number"
               placeholder="Type here"
-              maxLength={60}
+              maxLength={3}
               showLetterCount
               disabled={loading}
+              required={false}
             />
             <div className="flex max-w-[672px] gap-4">
               <SelectField
@@ -256,10 +310,11 @@ const SelectedProject = () => {
                 error={!!form.formState.errors?.startDateMonth}
                 showRequiredLabel
                 labelName=""
-                data={MONTHDATA.map(m => ({ ...m, value: m.value }))}
+                data={MONTHDATA.map((m) => ({ ...m, value: m.value }))}
                 width="w-[50%] mt-6"
               />
             </div>
+
             {!isOngoing && (
               <div className="flex max-w-[672px] gap-4">
                 <SelectField
@@ -278,57 +333,38 @@ const SelectedProject = () => {
                   error={!!form.formState.errors?.endDateMonth}
                   showRequiredLabel
                   labelName=""
-                  data={MONTHDATA.map(m => ({ ...m, value: m.value }))}
+                  data={MONTHDATA.map((m) => ({ ...m, value: m.value }))}
                   width="w-[50%] mt-6"
                 />
               </div>
             )}
 
-            {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
-              <div className="text-red-500 text-sm mt-1">
-                - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
-              </div>
-            )}
             <CustomCheckbox
               form={form}
               fieldName={`is_ongoing`}
               text={"This project is ongoing"}
               typeStyle="mono"
             />
+
+            {/* TEXTAREA: key includes formVersion so it remounts after reset and re-initializes internal count */}
             <TextAreaField
-              key={`description`}
+              key={`description-${formVersion}`}
               lableName={"Description"}
               isError={!!form.formState.errors?.description}
               fieldName={`description`}
               languageName={""}
               placeholder="Please describe your learning experience."
-              required={true}
+              required
               fieldHeight={"h-[128px]"}
               maxLength={1000}
               showLetterCount
               disabled={loading}
             />
           </div>
-          {/* <div className="max-w-[672px]    flex items-center justify-end">
-            <button
-              type="submit"
-              className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-              disabled={isAdding || isUpdating || isFetching}
-              aria-busy={(isAdding || isUpdating || isFetching || isLoading) ? true : undefined}
-            >
-              {(loading) && (
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              )}
-              {(loading) ? (id ? "Updating..." : "Saving...") : id ? "Update Project" : "Add Selected Project"}
-            </button>
-          </div> */}
         </form>
       </Form>
     </div>
-  )
-}
+  );
+});
 
 export default SelectedProject;

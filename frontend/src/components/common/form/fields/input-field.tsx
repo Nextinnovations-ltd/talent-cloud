@@ -106,7 +106,7 @@ const  InputField: React.FC<DatePickerFieldProps> = ({
       render={({ field }) => (
         <FormItem className={clsx(fieldWidth,'translate-y-[-4px]')}>
           {requiredLabel && (
-            <FormLabel className={clsx('font-[500]  text-[14px]  text-[#05060F] ',labelSize)}>
+              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]',labelSize)}>
               {lableName && t(lableName)}
               {!lableName && t(fieldName)}
               {required && <span className="ms-1 text-red-500">*</span>}

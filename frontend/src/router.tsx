@@ -14,7 +14,6 @@ import { CreateUsername } from "./pages/createUsername/CreateUsername";
 import { Userwelcome } from "./pages/userwelcome/Userwelcome";
 import { ProfileNavSideBar } from "./pages/profile/Profile";
 import { ProfileUser } from "./pages/profile/ProfileUser";
-import { WorkExperience } from "./pages/profile/subPages/WorkExperience";
 import { Education } from "./pages/profile/subPages/Education";
 import { Skills } from "./pages/profile/subPages/Skills";
 import { Certification } from "./pages/profile/subPages/Certification";
@@ -29,7 +28,6 @@ import ApplyJob from "./pages/applyjobs";
 import OrganizationDetail from "./pages/organizationDetail/OrganizationDetail";
 import JobSeekerLandingPage from "./pages/LandingPages/JobSeekerLandingPage";
 
-import SelectedProject from "./pages/profile/subPages/SelectedProject";
 import VideoIntroduction from "./pages/profile/subPages/VideoIntroduction";
 import SpecailSkills from "./pages/profile/subPages/SpecailSkills";
 import AppliedJobs from "./pages/appliedJobs";
@@ -57,6 +55,7 @@ import CandidateProfileDetail from "./pages/admin/Candidates/CandidateProfileDet
 import JobSeekerResume from "./pages/jobSeekerresume/Resume";
 import Resume from "./pages/profile/subPages/Resume";
 import Projects from "./pages/profile/subPages/Projects";
+import WorkExperiencePage from "./pages/profile/subPages/WorkExperiencePage";
 
 
 
@@ -157,7 +156,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: routesMap.workExperience.path,
-                element: <WorkExperience />,
+                element: <WorkExperiencePage />,
               },
               {
                 path: routesMap.education.path,
@@ -180,10 +179,10 @@ export const router = createBrowserRouter([
                 path: routesMap.languages.path,
                 element: <Language />,
               },
-              {
-                path:routesMap.selectedProjects.path,
-                element:<SelectedProject/>
-              },
+              // {
+              //   path:routesMap.selectedProjects.path,
+              //   element:<SelectedProject/>
+              // },
               {
                 path:routesMap.videoIntroduction.path,
                 element:<VideoIntroduction/>
