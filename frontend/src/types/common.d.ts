@@ -41,4 +41,5 @@ type SocialLinkFieldType = {
   startIcon: any;
   height?: string;
   languageName: string;
+  placeholder:string
 };
