@@ -343,7 +343,7 @@ export const UserProfileForm = ({
             startIcon={field.startIcon}
             languageName={"userProfile"}
             required={false}
-            placeholder=""
+            placeholder={field?.placeholder}
           />
         ))}
       </div>
