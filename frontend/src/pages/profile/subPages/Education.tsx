@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ProfileTitle } from "@/components/common/ProfileTitle";
 import { Form } from "@/components/ui/form";
 import { EducationYupSchema } from "@/lib/EducationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,8 +9,7 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useAddEducationsMutation, useGetEducationByIdQuery, useUpdateEducationMutation } from "@/services/slices/jobSeekerSlice";
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect } from "react";
+import { useEffect,forwardRef, useImperativeHandle } from "react";
 import useToast from "@/hooks/use-toast";
 
 
@@ -33,13 +32,15 @@ const generateYearData = (
   });
 };
 
-export const Education = () => {
+type EducationProps = {
+  eductionId?: number | null;
+  setShowDialog: (val: boolean) => void;
+};
+
+export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowDialog }, ref) => {
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddEducationsMutation);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const id = searchParams.get("id");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: educationData = {} as any, isLoading } = useGetEducationByIdQuery(id ?? '', { skip: !id });
+  const { data: educationData = {} as any, isLoading } = useGetEducationByIdQuery(eductionId ?? '', { skip: !eductionId });
   const [updateEducation, { isLoading: isUpdating }] = useUpdateEducationMutation();
   const { showNotification } = useToast()
 
@@ -71,10 +72,10 @@ export const Education = () => {
   const onSubmit = async (data: EducationFrom) => {
     try {
       let response;
-      if (id) {
+      if (eductionId) {
         // Edit mode: update
         const updatePayload = {
-          id: Number(id),
+          id: Number(eductionId),
           institution: data.institution,
           degree: data.degree,
           start_date: data.startDate ? `${data.startDate}-01-01` : "",
@@ -82,7 +83,7 @@ export const Education = () => {
           description: data.description,
           is_currently_attending: data.is_currently_attending ?? false,
         };
-        response = await updateEducation({ id: Number(id), credentials: updatePayload });
+        response = await updateEducation({ id: Number(eductionId), credentials: updatePayload });
         //@ts-ignore
         showNotification({ message: response?.data?.message, type: "success" })
       } else {
@@ -98,20 +99,26 @@ export const Education = () => {
         response = await executeApiCall(addPayload);
       }
       if (response) {
-
-        navigate('/user/mainProfile');
+        setShowDialog(false);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+       //@ts-ignore
+      form.handleSubmit(onSubmit)();
+    },
+  }));
+
+  const LOADING =  isSubmitting || isUpdating;
 
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className=" mb-[120px]">
-      <ProfileTitle title="Education" />
+    <div className="mt-[20px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 space-y-[30px]  max-w-[672px] ">
@@ -124,6 +131,7 @@ export const Education = () => {
               placeholder="School"
               maxLength={60}
               showLetterCount
+              disabled={LOADING}
             />
             <InputField
               fieldName={`degree`}
@@ -134,6 +142,7 @@ export const Education = () => {
               placeholder="Degree"
               maxLength={60}
               showLetterCount
+              disabled={LOADING}
             />
             <div className="flex max-w-[672px] gap-4 ">
               <SelectField
@@ -169,19 +178,11 @@ export const Education = () => {
               fieldHeight={"h-[128px]"}
               maxLength={250}
               showLetterCount
+              disabled={LOADING}
             />
-          </div>
-          <div className="max-w-[672px]  flex items-center justify-end">
-            <button
-              type="submit"
-              className="mt-4  h-[48px] rounded-[26px] bg-blue-500  text-white px-4 py-2 "
-              disabled={isSubmitting || isUpdating}
-            >
-              {(isSubmitting || isUpdating) ? "Saving..." : id ? "Update Education" : "Save Profile"}
-            </button>
           </div>
         </form>
       </Form>
     </div>
   );
-};
+});

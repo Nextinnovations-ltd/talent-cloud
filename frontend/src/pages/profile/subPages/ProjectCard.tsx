@@ -79,7 +79,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   const durationText = calculateDuration(start_date, end_date, is_ongoing);
 
 
-
   return (
     <>
       <div className="border border-[#CFD1D4] p-5 mt-5 rounded-[12px] relative bg-white transition-all duration-200">
