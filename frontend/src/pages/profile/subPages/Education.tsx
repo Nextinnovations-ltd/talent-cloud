@@ -9,7 +9,7 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useAddEducationsMutation, useGetEducationByIdQuery, useUpdateEducationMutation } from "@/services/slices/jobSeekerSlice";
-import { useEffect,forwardRef, useImperativeHandle } from "react";
+import { useEffect,forwardRef, useImperativeHandle, useState } from "react";
 import useToast from "@/hooks/use-toast";
 
 
@@ -43,6 +43,7 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
   const { data: educationData = {} as any, isLoading } = useGetEducationByIdQuery(eductionId ?? '', { skip: !eductionId });
   const [updateEducation, { isLoading: isUpdating }] = useUpdateEducationMutation();
   const { showNotification } = useToast()
+  const [formVersion, setFormVersion] = useState(0); // bump to force remount of textarea
 
 
   const form = useForm<EducationFrom>({
@@ -66,6 +67,11 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
         description: educationData.description || "",
         is_currently_attending: educationData.is_currently_attending ?? false,
       });
+
+      setTimeout(() => {
+        form.trigger([ "description"]);
+        setFormVersion((v) => v + 1);
+      }, 0);
     }
   }, [educationData, form]);
 
@@ -168,7 +174,7 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
               </div>
             </div>
             <TextAreaField
-              key={`description`}
+              key={`description-${formVersion}`}
               lableName={"Description"}
               isError={!!form.formState.errors?.description}
               fieldName={`description`}

@@ -9,7 +9,7 @@ import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
 import { UserWorkExperienceSchema } from "@/lib/UserWorkExperience";
 import { useAddExperienceProfileMutation, useGetExperienceByIdQuery, useUpdateExperienceProfileMutation } from "@/services/slices/jobSeekerSlice";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, forwardRef, useImperativeHandle } from "react";
+import { useEffect, forwardRef, useImperativeHandle, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 
@@ -45,7 +45,7 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddExperienceProfileMutation);
   const [updateExperienceProfile, { isLoading: isUpdating }] = useUpdateExperienceProfileMutation();
   // Get id from URL
-
+  const [formVersion, setFormVersion] = useState(0); // bump to force remount of textarea
   // Fetch experience data if id exists
   const { data: ExperienceData, isLoading } = useGetExperienceByIdQuery(workExperienceId, { skip: !workExperienceId });
 
@@ -82,6 +82,13 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
       is_present_work: ExperienceData?.is_present_work || false,
       description: ExperienceData?.description || "",
     });
+
+    // Force re-validation / re-render of those fields so the letter counts update
+      // and bump formVersion so TextAreaField remounts (initializes internal count)
+      setTimeout(() => {
+        form.trigger(["description"]);
+        setFormVersion((v) => v + 1);
+      }, 0);
 
   }, [ExperienceData, form]);
 
@@ -260,6 +267,7 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
               typeStyle="mono"
             />
             <TextAreaField
+              key={`description-${formVersion}`}
               fieldName={'description'}
               placeholder={'A brief introduction about yourself'}
               isError={!!form.formState.errors.description}
