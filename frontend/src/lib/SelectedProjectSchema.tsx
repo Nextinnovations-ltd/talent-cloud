@@ -8,7 +8,7 @@ const SelectedProjectSchema = yup
       .string()
       .matches(/^https?:\/\//, "Project url must start with http:// or https://")
       .required("Project url is required"),
-    project_image_url: yup.string(),
+    project_image_url: yup.string().required("Project image is required"),
     startDateYear: yup.string().required("Project start year is required"),
     startDateMonth: yup.string().required("Project start month is required"),
     endDateYear: yup.string().when(["is_ongoing"], ([is_ongoing], schema) =>

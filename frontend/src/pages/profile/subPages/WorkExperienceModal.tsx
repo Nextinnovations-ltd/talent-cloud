@@ -30,7 +30,11 @@ const WorkExperienceModal: React.FC<WorkExperienceModalProps> = ({
       <DialogContent className="w-[550px] max-w-[90vw] flex flex-col max-h-[90vh] p-0">
         {/* Header */}
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="mb-[21px]">Add Work Experience</DialogTitle>
+          <DialogTitle className="mb-[21px]">
+            {
+              workExperienceId ? "Update Work Experience" : "   Add Work Experience"
+            }
+          </DialogTitle>
           <Separator className="mb-[21px]" />
         </DialogHeader>
 

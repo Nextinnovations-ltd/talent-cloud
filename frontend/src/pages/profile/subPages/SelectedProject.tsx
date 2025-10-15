@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import SelectedProjectSchema from "@/lib/SelectedProjectSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -65,7 +64,9 @@ const SelectedProject = forwardRef<any, SelectedProjectProps>(({ projectId, setS
   );
 
   const form = useForm<SelectedProjectForm>({
+     //@ts-ignore
     resolver: yupResolver(SelectedProjectSchema),
+
     defaultValues: {
       title: "",
       description: "",
@@ -83,6 +84,7 @@ const SelectedProject = forwardRef<any, SelectedProjectProps>(({ projectId, setS
 
   useImperativeHandle(ref, () => ({
     submitForm: () => {
+       //@ts-ignore
       form.handleSubmit(onSubmit)();
     },
   }));
@@ -230,7 +232,10 @@ const SelectedProject = forwardRef<any, SelectedProjectProps>(({ projectId, setS
   return (
     <div className="">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+       
+        <form 
+         //@ts-ignore
+        onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4 space-y-[30px] max-w-[672px] ">
             {/* <ImagePicker
               setIsOpen={() => {}}

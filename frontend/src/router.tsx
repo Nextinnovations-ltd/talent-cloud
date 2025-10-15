@@ -56,6 +56,8 @@ import JobSeekerResume from "./pages/jobSeekerresume/Resume";
 import Resume from "./pages/profile/subPages/Resume";
 import Projects from "./pages/profile/subPages/Projects";
 import WorkExperiencePage from "./pages/profile/subPages/WorkExperiencePage";
+import EducationPage from "./pages/profile/subPages/EducationPage";
+import CertificationPage from "./pages/profile/subPages/CertificationPage";
 
 
 
@@ -160,7 +162,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: routesMap.education.path,
-                element: <Education />,
+                element: <EducationPage />,
               },
               {
                 path: routesMap.socialLinks.path,
@@ -173,7 +175,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: routesMap.certification.path,
-                element: <Certification />,
+                element: <CertificationPage />,
               },
               {
                 path: routesMap.languages.path,

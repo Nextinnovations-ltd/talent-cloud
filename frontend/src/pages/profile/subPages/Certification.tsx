@@ -1,4 +1,5 @@
-import { ProfileTitle } from "@/components/common/ProfileTitle";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form } from "@/components/ui/form";
 import { useForm, useWatch } from "react-hook-form";
 import InputField from "@/components/common/form/fields/input-field";
@@ -8,11 +9,7 @@ import { SelectField } from "@/components/common/form/fields/select-field";
 import CustomCheckbox from "@/components/common/form/fields/checkBox-field";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
 import { useAddCertificationMutation, useGetCerificationByIdQuery, useUpdateCertificationMutation,} from "@/services/slices/jobSeekerSlice";
-import { useSearchParams } from "react-router-dom";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from "react";
-import clsx from "clsx";
+import { useEffect,forwardRef, useImperativeHandle } from "react";
 import useToast from "@/hooks/use-toast";
 
 
@@ -38,16 +35,17 @@ const generateYearData = (
   });
 };
 
-export const Certification = () => {
+type CertificateProps = {
+  certificateId?:number | null;
+  setShowDialog: (val:boolean)=> void
+}
+
+export const Certification = forwardRef<any, CertificateProps>(({ certificateId, setShowDialog }, ref) => {
 
 
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const {showNotification} = useToast();
-  const id = searchParams.get("id");
-
   const [addCertification, { isLoading }] = useAddCertificationMutation();
-  const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(id, { skip: !id });
+  const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(certificateId, { skip: !certificateId });
   const [updateCertification,{isLoading:isUpading}]  = useUpdateCertificationMutation();
 
  // const CertificationData = {
@@ -76,7 +74,7 @@ export const Certification = () => {
   });
 
   useEffect(() => {
-    if (id && CertificationData) {
+    if (certificateId && CertificationData) {
       form.reset({
         certificationName: CertificationData.title || "",
         organizationIssue: CertificationData.organization || "",
@@ -92,7 +90,7 @@ export const Certification = () => {
         credentialURL: CertificationData.url || "",
       });
     }
-  }, [id, CertificationData, form]);
+  }, [certificateId, CertificationData, form]);
 
   const onSubmit = async (data: CertificationFormType) => {
     try {
@@ -107,9 +105,9 @@ export const Certification = () => {
       };
 
       let response;
-      if (id) {
+      if (certificateId) {
         // Update mode
-        response = await updateCertification({ id, credentials: payload }).unwrap();
+        response = await updateCertification({ id: certificateId, credentials: payload }).unwrap();
       } else {
         // Add mode
         response = await addCertification(payload).unwrap();
@@ -118,8 +116,8 @@ export const Certification = () => {
       // Reset form with new data if needed
       if (response) {
        
-        showNotification({ message: id ? "Certification updated successfully" : "Certification added successfully", type: "success" });
-        navigate('/user/mainProfile');
+        showNotification({ message: certificateId ? "Certification updated successfully" : "Certification added successfully", type: "success" });
+        setShowDialog(false);
       }
     } catch (error) {
       showNotification({ message: 'Failed to save certification', type: "danger" });
@@ -134,11 +132,20 @@ export const Certification = () => {
     defaultValue: false,
   });
 
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+       //@ts-ignore
+      form.handleSubmit(onSubmit)();
+    },
+  }));
+
+  const LOADING =  isLoading || isUpading;
+
   if(getLoadiing) return <p>Loading...</p>
 
   return (
-    <div className="mb-[120px]">
-      <ProfileTitle title="Certification" />
+    <div className="mt-[20px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* <motion.div
@@ -158,6 +165,7 @@ export const Certification = () => {
               placeholder="Name"
               maxLength={60}
               showLetterCount
+              disabled={LOADING}
             />
             <InputField
               fieldName={`organizationIssue`}
@@ -168,6 +176,7 @@ export const Certification = () => {
               placeholder="Organization"
               maxLength={60}
               showLetterCount
+              disabled={LOADING}
             />
             <div className="flex max-w-[672px] gap-4">
               <SelectField
@@ -243,20 +252,12 @@ export const Certification = () => {
               lableName="Credential URL"
               required={false}
               placeholder="URL"
+              disabled={LOADING}
             />
-            <div className="max-w-[672px] flex items-center justify-end">
-              <button
-                type="submit"
-                disabled={isLoading || isUpading}
-                className={clsx("mt-4  h-[48px] rounded-[26px] bg-blue-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed justify-center items-center", id ? 'w-[200px]' : 'w-[200px]')}
-              >
-                {(isLoading || isUpading) ? <LoadingSpinner /> : id ? "Update Certification" : "Save Certification"}
-              </button>
-            </div>
           </div>
           {/* </motion.div> */}
         </form>
       </Form>
     </div>
   );
-};
+});

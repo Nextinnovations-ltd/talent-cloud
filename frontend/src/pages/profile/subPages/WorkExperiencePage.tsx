@@ -61,7 +61,7 @@ const WorkExperiencePage = () => {
                     onClick={handleAddProject}
                 >
                     <SvgAdd color={isHover ? "#ffffff" : "#0481EF"} />
-                    Add Work Experience
+                 Add Work Experience
                 </Button>
 
                 <div>
