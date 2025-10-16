@@ -52,6 +52,13 @@ const CertificationModal:React.FC<CertificationModalProps> = ({
 
         {/* Footer (optional) */}
         <DialogFooter className="p-6 pt-0">
+        <Button
+            onClick={() => setShowDialog(false)}
+            type="button"
+            className="bg-white border border-gray-200 text-black font-[400] h-[42px] rounded-2xl py-[20px] text-[14px] shadow-none"
+          >
+            Cancel
+          </Button>
             <Button onClick={() => certificationRef.current?.submitForm()} type="submit" className="bg-[#0389FF] font-[400] h-[42px] text-white rounded-2xl py-[20px] text-[14px]">
                 {
                     certificationId ? "Update Certificate" : "Add Certificate"

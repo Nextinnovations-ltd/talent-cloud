@@ -21,6 +21,7 @@ type CertificateCardProps = {
     handleDelete: any;
     organization: string;
     expirationDate: string;
+    modalTitle:string;
 }
 
 const CertificateCard: React.FC<CertificateCardProps> = ({
@@ -30,6 +31,7 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
     title,
     organization,
     expirationDate,
+    modalTitle
 }) => {
     const [open, setOpen] = useState(false);
 
@@ -75,38 +77,38 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
                         <SvgEdit size={16} color="#6B6B6B" /> Edit
                     </button>
 
-                    {/* Delete Button with Dialog */}
-                    <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogTrigger asChild>
-                            <button className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
-                                <SvgDelete size={16} color="#6B6B6B" /> Delete
-                            </button>
-                        </DialogTrigger>
+                     {/* Delete Button with Dialog */}
+            <Dialog open={open} onOpenChange={setOpen}  >
+              <DialogTrigger asChild>
+                <button className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
+                  <SvgDelete size={16} color="#6B6B6B" /> Delete
+                </button>
+              </DialogTrigger>
 
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Delete Project</DialogTitle>
-                                <DialogDescription>
-                                    Are you sure you want to delete <b>{title}</b>? This action cannot be undone.
-                                </DialogDescription>
-                            </DialogHeader>
+              <DialogContent className="h-[220px] p-[34px]">
+                <DialogHeader>
+                  <DialogTitle className="text-[20px] font-normal text-[#E50914]">{modalTitle || "Delete"}</DialogTitle>
+                  <DialogDescription className="pt-[5px] text-[#484747]">
+                    Are you sure you want to delete <b>{title}</b>? This action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
 
-                            <DialogFooter className="flex justify-end gap-2">
-                                <button
-                                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    className="px-4 py-2 border rounded-lg hover:bg-gray-100 text-red-500"
-                                    onClick={() => handleDelete(id)}
-                                >
-                                    Yes, Delete
-                                </button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                <DialogFooter className="flex  justify-end gap-2">
+                  <button
+                    className="px-4 py-2 border h-[50px] w-full rounded-lg hover:bg-gray-100 bg-[#0481EF17]"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 border rounded-lg w-full h-[50px] hover:bg-[#DB2323]/80 bg-[#DB2323] text-white"
+                    onClick={()=>handleDelete(id)}
+                  >
+                    Delete
+                  </button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
                 </div>
             </div>
         </div>
