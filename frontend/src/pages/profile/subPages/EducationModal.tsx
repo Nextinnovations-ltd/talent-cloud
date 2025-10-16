@@ -27,7 +27,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
 
     const educationRef = useRef<{ submitForm: () => void } | null>(null);
 
-    
+
 
     return (
 
@@ -36,23 +36,30 @@ const EducationModal: React.FC<EducationModalProps> = ({
                 {/* Header */}
                 <DialogHeader className="p-6 pb-0">
                     <DialogTitle className="mb-[21px]"> {
-                            eductionId ? "Update Education" : "Add Education"
-                        }</DialogTitle>
+                        eductionId ? "Update Education" : "Add Education"
+                    }</DialogTitle>
                     <Separator className="mb-[21px]" />
                 </DialogHeader>
 
                 {/* Scrollable content */}
                 <ScrollArea className="flex-1 max-h-[60vh] overflow-y-auto px-6">
                     <div className="pb-6 px-2">
-                        <Education 
-                        ref={educationRef} 
-                        eductionId={eductionId} 
-                        setShowDialog={setShowDialog} />
+                        <Education
+                            ref={educationRef}
+                            eductionId={eductionId}
+                            setShowDialog={setShowDialog} />
                     </div>
                 </ScrollArea>
 
                 {/* Footer (optional) */}
                 <DialogFooter className="p-6 pt-0">
+                    <Button
+                        onClick={() => setShowDialog(false)}
+                        type="button"
+                        className="bg-white border border-gray-200 text-black font-[400] h-[42px] rounded-2xl py-[20px] text-[14px] shadow-none"
+                    >
+                        Cancel
+                    </Button>
                     <Button onClick={() => educationRef.current?.submitForm()} type="submit" className="bg-[#0389FF] font-[400] h-[42px] text-white rounded-2xl py-[20px] text-[14px]">
                         {
                             eductionId ? "Update Education" : "Add Education"

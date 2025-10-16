@@ -4,6 +4,7 @@ import InputField from "@/components/common/form/fields/input-field";
 import { SelectField } from "@/components/common/form/fields/select-field";
 import TextAreaField from "@/components/common/form/fields/text-area-field";
 import { Form } from "@/components/ui/form";
+import useToast from "@/hooks/use-toast";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { MONTHDATA } from "@/lib/formData.tsx/CommonData";
 import { UserWorkExperienceSchema } from "@/lib/UserWorkExperience";
@@ -48,7 +49,7 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
   const [formVersion, setFormVersion] = useState(0); // bump to force remount of textarea
   // Fetch experience data if id exists
   const { data: ExperienceData, isLoading } = useGetExperienceByIdQuery(workExperienceId, { skip: !workExperienceId });
-
+  const { showNotification } = useToast()
   const form = useForm<JobExperience>({
     resolver: yupResolver(UserWorkExperienceSchema),
     defaultValues: {
@@ -154,6 +155,8 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
           is_present_work: response?.data?.data?.is_present_work || false,
           description: response?.data?.data?.description || "",
         });
+
+        showNotification({ message: response?.data?.message, type: "success" })
 
 
         // showNotification({message:response?.data?.data?.message,type:"success"})

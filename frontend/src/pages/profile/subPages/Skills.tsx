@@ -50,7 +50,7 @@ export const Skills = () => {
       await executeApiCall(data);
       refetch();
       USERREFETCH();
-      navigate("/user/mainProfile");
+      //navigate("/user/mainProfile");
     } catch (error) {
       console.error("Error submitting form:", error);
     }
