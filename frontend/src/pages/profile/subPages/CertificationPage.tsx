@@ -63,7 +63,9 @@ const CertificationPage = () => {
                             organization={certificate?.organization}
                             expirationDate={certificate?.expiration_date}
                             handleEdit={handleEdit}
-                            handleDelete={handleDelete} />
+                            handleDelete={handleDelete}
+                            modalTitle="Delete this certificate?"
+                            />
                     ))
                 }
             </div>
