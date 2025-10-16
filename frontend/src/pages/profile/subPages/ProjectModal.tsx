@@ -17,12 +17,11 @@ type ProjectModalProps = {
   projectId: number | null;
 };
 
-
-
 const ProjectModal: React.FC<ProjectModalProps> = ({
-  openModal, setShowDialog, projectId
+  openModal,
+  setShowDialog,
+  projectId,
 }) => {
-
   const projectRef = useRef<{ submitForm: () => void } | null>(null);
 
   return (
@@ -37,16 +36,29 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
         {/* Scrollable content */}
         <ScrollArea className="flex-1 max-h-[60vh] overflow-y-auto px-6">
           <div className="pb-6 px-2">
-            <SelectedProject projectId={projectId} setShowDialog={setShowDialog} ref={projectRef} />
+            <SelectedProject
+              projectId={projectId}
+              setShowDialog={setShowDialog}
+              ref={projectRef}
+            />
           </div>
         </ScrollArea>
 
-        {/* Footer (optional) */}
-        <DialogFooter className="p-6 pt-0">
-          <Button onClick={() => projectRef.current?.submitForm()} type="submit" className="bg-[#0389FF] font-[400] h-[42px] text-white rounded-2xl py-[20px] text-[14px]">
-            {
-              projectId ? "Update Project" : "Add Project"
-            }
+        {/* Footer */}
+        <DialogFooter className="p-6 pt-0 flex justify-end space-x-2">
+          <Button
+            onClick={() => setShowDialog(false)}
+            type="button"
+            className="bg-white border border-gray-200 text-black font-[400] h-[42px] rounded-2xl py-[20px] text-[14px] shadow-none"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => projectRef.current?.submitForm()}
+            type="submit"
+            className="bg-[#0389FF] font-[400] h-[42px] text-white rounded-2xl py-[20px] text-[14px]"
+          >
+            {projectId ? "Update Project" : "Add Project"}
           </Button>
         </DialogFooter>
       </DialogContent>

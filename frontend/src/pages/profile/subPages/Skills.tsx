@@ -11,7 +11,6 @@ import { useApiCaller } from "@/hooks/useApicaller";
 import { useAddJobSeekerSkillsMutation } from "@/services/slices/jobSeekerSlice";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useNavigate } from "react-router-dom";
 
 type SkillForm = {
   skill_list: string[];
@@ -21,7 +20,6 @@ export const Skills = () => {
   const { data: FORMATTEDDATA, isLoading, refetch } = useFormattedSkills();
   const { data: FORMATTEDUSER, isLoading: USERLOADING, refetch: USERREFETCH } = useFormattedUserSkills();
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddJobSeekerSkillsMutation);
-  const navigate = useNavigate();
 
   const form = useForm<SkillForm>({
     resolver: yupResolver(SkillYupSchema),
@@ -50,7 +48,7 @@ export const Skills = () => {
       await executeApiCall(data);
       refetch();
       USERREFETCH();
-      navigate("/user/mainProfile");
+      //navigate("/user/mainProfile");
     } catch (error) {
       console.error("Error submitting form:", error);
     }

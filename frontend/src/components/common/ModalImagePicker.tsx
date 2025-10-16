@@ -24,9 +24,12 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
   setPreview
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+      setIsDragActive(false);
+
       if (fileRejections.length > 0) {
         const firstError = fileRejections[0].errors[0];
         if (firstError.code === "file-too-large") {
@@ -43,7 +46,6 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
 
       const file = acceptedFiles[0];
 
-      // Final size check
       if (file.size > 2 * 1024 * 1024) {
         setErrorMessage("File too large. Maximum size is 2MB.");
         return;
@@ -51,14 +53,10 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
 
       setErrorMessage(null);
 
-      // Read image preview
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
+      reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      // Update form field
       form?.setValue(`project_image_url`, file);
       form?.clearErrors(`project_image_url`);
       form?.trigger?.("project_image_url");
@@ -71,25 +69,28 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
     maxFiles: 1,
     maxSize: 2 * 1024 * 1024,
     accept: { "image/png": [], "image/jpeg": [], "image/jpg": [] },
-    noClick: true,
-    noDrag: true,
+    noClick: true, // still prevent auto-click
+    onDragEnter: () => setIsDragActive(true),
+    onDragLeave: () => setIsDragActive(false),
   });
 
-  // ✅ Grab validation error message from form
   const fieldError = form?.formState?.errors?.project_image_url?.message;
-
-  
 
   return (
     <div className="w-full">
       <div
         {...getRootProps()}
         className={clsx(
-          "relative h-[305px] flex flex-col items-center justify-center rounded-2xl text-center overflow-hidden transition-all",
-          preview ? "border border-gray-300 bg-white" : "border-2 border-dashed border-[#0481EF] bg-[#E7F4FF]",
+          "relative h-[305px] flex flex-col items-center justify-center rounded-2xl text-center overflow-hidden transition-all cursor-pointer",
+          preview
+            ? "border border-gray-300 bg-white"
+            : "border-2 border-dashed border-[#0481EF] bg-[#E7F4FF]",
+          isDragActive && "border-[#036fd4] bg-[#d6ebff]",
           (fieldError || errorMessage) && "border-red-500 bg-red-500/10"
         )}
       >
+        <input {...getInputProps()} />
+
         {preview ? (
           <div className="relative w-full h-full flex items-center justify-center">
             <img
@@ -112,8 +113,14 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
         ) : (
           <>
             <SvgModalImagePicker />
-            <h3 className="mt-2 font-medium">Upload your project preview photo</h3>
-            <p className="text-[#0481EF] mb-2">Drop your image here or browse</p>
+            <h3 className="mt-2 font-medium">
+              {isDragActive
+                ? "Drop your image here..."
+                : "Upload your project preview photo"}
+            </h3>
+            <p className="text-[#0481EF] mb-2">
+              {isDragActive ? "" : "Drag & drop your image here or browse"}
+            </p>
 
             <button
               type="button"
@@ -122,13 +129,10 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
             >
               Browse
             </button>
-
-            <input {...getInputProps()} className="hidden" />
           </>
         )}
       </div>
 
-      {/* ✅ Show validation or file error */}
       {(fieldError || errorMessage) && (
         <p className="text-red-500 text-sm mt-2">
           {fieldError || errorMessage}

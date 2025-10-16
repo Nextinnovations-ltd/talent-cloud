@@ -78,6 +78,7 @@ const EducationPage = () => {
               project_url={undefined}
               handleEdit={handleEditFunction}
               handleDelete={handleDelete}
+              modalTitle="Delete this education?"
             />
           ))}
             </div>

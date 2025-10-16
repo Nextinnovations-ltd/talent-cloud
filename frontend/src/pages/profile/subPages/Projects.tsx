@@ -76,6 +76,8 @@ const Projects = () => {
               project_url={project.project_url}
               handleEdit={handleEditFunction}
               handleDelete={handleDelete}
+              modalTitle="Delete this project?"
+              isTeamSize
             />
           ))}
         </div>

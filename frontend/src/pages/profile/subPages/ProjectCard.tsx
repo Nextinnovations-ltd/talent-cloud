@@ -32,7 +32,9 @@ type ProjectCardProps = {
   project_url: string | undefined;
   handleEdit: any;
   handleDelete:any;
-  organization:string | undefined
+  organization:string | undefined;
+  modalTitle:string ;
+  isTeamSize?:boolean;
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -48,7 +50,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   project_url,
   handleEdit,
   handleDelete,
-  organization
+  organization,
+  modalTitle,
+  isTeamSize = false
 }) => {
 
 
@@ -61,20 +65,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   ) => {
     if (ongoing) return "Ongoing";
     if (!start || !end) return "N/A";
-
+  
     const startDate = new Date(start);
     const endDate = new Date(end);
-
+  
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return "N/A";
-
+  
+    // Calculate total months
     const diffInMonths =
       (endDate.getFullYear() - startDate.getFullYear()) * 12 +
       (endDate.getMonth() - startDate.getMonth());
-
-    if (diffInMonths <= 0) return "Less than a month";
-    if (diffInMonths === 1) return "1 month";
-    return `${diffInMonths} months`;
+  
+    if (diffInMonths < 0) return "N/A";
+    if (diffInMonths === 0) return "Less than a month";
+  
+    // Convert to years + months
+    const years = Math.floor(diffInMonths / 12);
+    const months = diffInMonths % 12;
+  
+    const yearText =
+      years > 0 ? `${years} year${years > 1 ? "s" : ""}` : "";
+    const monthText =
+      months > 0 ? `${months} month${months > 1 ? "s" : ""}` : "";
+  
+    // Combine cleanly
+    return [yearText, monthText].filter(Boolean).join(" ");
   };
+  
 
   const durationText = calculateDuration(start_date, end_date, is_ongoing);
 
@@ -105,7 +122,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
               <ul className="flex items-center gap-[40px] mt-[18px] text-[#6B6B6B] text-[12px]">
                 {
-                  team_size && <li className="flex items-center gap-[8px]">
+                  isTeamSize && <li className="flex items-center gap-[8px]">
                     <SvgGroups /> {team_size || 0}
                   </li>
                 }
@@ -114,9 +131,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   durationText && <li className="flex items-center gap-[8px]">
                     <SvgClock /> {durationText || 0}
                   </li>
-                }
-
-
+              }
 
               {
                 organization &&   <li className="flex items-center gap-[8px]">
@@ -152,33 +167,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
 
             {/* Delete Button with Dialog */}
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={setOpen}  >
               <DialogTrigger asChild>
                 <button className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
                   <SvgDelete size={16} color="#6B6B6B" /> Delete
                 </button>
               </DialogTrigger>
 
-              <DialogContent>
+              <DialogContent className="h-[220px] p-[34px]">
                 <DialogHeader>
-                  <DialogTitle>Delete Project</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-[20px] font-normal text-[#E50914]">{modalTitle || "Delete"}</DialogTitle>
+                  <DialogDescription className="pt-[5px] text-[#484747]">
                     Are you sure you want to delete <b>{title}</b>? This action cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
 
-                <DialogFooter className="flex justify-end gap-2">
+                <DialogFooter className="flex  justify-end gap-2">
                   <button
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                    className="px-4 py-2 border h-[50px] w-full rounded-lg hover:bg-gray-100 bg-[#0481EF17]"
                     onClick={() => setOpen(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-100 text-red-500"
+                    className="px-4 py-2 border rounded-lg w-full h-[50px] hover:bg-[#DB2323]/80 bg-[#DB2323] text-white"
                     onClick={()=>handleDelete(id)}
                   >
-                    Yes, Delete
+                    Delete
                   </button>
                 </DialogFooter>
               </DialogContent>

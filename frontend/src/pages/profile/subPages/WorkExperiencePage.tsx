@@ -82,6 +82,7 @@ const WorkExperiencePage = () => {
                                 tags={[]}
                                 project_url={undefined}
                                 handleDelete={handleDelete}
+                                modalTitle="Delete this experience?"
                             />
                         ))
                     }
