@@ -16,14 +16,16 @@ import { UserProfile } from "@/types/job-seeker-types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
-
-
+import { useNavigationGuard } from "@/hooks/useNavigationGuard";
+import { NavigationConfirmModal } from "@/components/common/NavigationConfirmModal";
+import useToast from "@/hooks/use-toast";
 
 export const ProfileUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-  const navigate = useNavigate();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(
     useAddJobSeekerProfileMutation
   );
@@ -33,8 +35,6 @@ export const ProfileUser = () => {
     isLoading: isProfileLoading,
     refetch,
   } = useGetJobSeekerProfileQuery();
-
-
 
   const form = useForm<UserProfile>({
     //@ts-ignore
@@ -52,7 +52,6 @@ export const ProfileUser = () => {
       bio: profileData?.data?.bio || "",
       email: profileData?.data?.email || "",
       phone_number: profileData?.data?.phone_number || "",
-      // Default to a sensible country code if none from API
       country_code: profileData?.data?.country_code || "+95",
       date_of_birth: profileData?.data?.date_of_birth || "",
       resume_url: profileData?.data?.resume_url || "",
@@ -62,13 +61,13 @@ export const ProfileUser = () => {
       behance_url: profileData?.data?.behance_url || "",
       portfolio_url: profileData?.data?.portfolio_url || "",
       github_url: profileData?.data?.github_url || "",
-      country: profileData?.data?.address?.country?.id?.toString() ?? '',
-      city: profileData?.data?.address?.city?.id?.toString() ?? '',
+      country: profileData?.data?.address?.country?.id?.toString() ?? "",
+      city: profileData?.data?.address?.city?.id?.toString() ?? "",
       address: profileData?.data?.address?.address || "",
     },
   });
 
-
+  // Reset form when profile data loads
   useEffect(() => {
     if (profileData) {
       form.reset({
@@ -93,19 +92,84 @@ export const ProfileUser = () => {
         portfolio_url: profileData?.data?.portfolio_url || "",
         facebook_url: profileData?.data?.facebook_url || "",
         github_url: profileData?.data?.github_url || "",
-        country: profileData?.data?.address?.country?.id?.toString() ?? '',
-        city: profileData?.data?.address?.city?.id?.toString() ?? '',
+        country: profileData?.data?.address?.country?.id?.toString() ?? "",
+        city: profileData?.data?.address?.city?.id?.toString() ?? "",
         address: profileData?.data?.address?.address || "",
       });
     }
-    setPreview(profileData?.data?.profile_image_url || "")
+    setPreview(profileData?.data?.profile_image_url || "");
   }, [profileData, isProfileLoading, form]);
 
+  // 🔹 Detect unsaved changes
+  useEffect(() => {
+    if (!profileData?.data) return;
 
+    const defaultValues = {
+      profile_image_url: profileData.data?.profile_image_url || "",
+      name: profileData.data?.name || "",
+      username: profileData.data?.username || "",
+      tagline: profileData.data?.tagline || "",
+      role: profileData.data?.role?.id || 0,
+      specializations: profileData.data?.specialization?.id || 0,
+      experience_level: profileData.data?.experience_level?.id || 0,
+      experience_years: profileData.data?.experience_years || 0,
+      bio: profileData.data?.bio || "",
+      email: profileData.data?.email || "",
+      phone_number: profileData.data?.phone_number || "",
+      country_code: profileData.data?.country_code || "+95",
+      date_of_birth: profileData.data?.date_of_birth || "",
+      resume_url: profileData.data?.resume_url || "",
+      is_open_to_work: profileData.data?.is_open_to_work || false,
+      facebook_url: profileData.data?.facebook_url || "",
+      linkedin_url: profileData.data?.linkedin_url || "",
+      behance_url: profileData.data?.behance_url || "",
+      portfolio_url: profileData.data?.portfolio_url || "",
+      github_url: profileData.data?.github_url || "",
+      country: profileData.data?.address?.country?.id?.toString() ?? "",
+      city: profileData.data?.address?.city?.id?.toString() ?? "",
+      address: profileData.data?.address?.address || "",
+    };
+
+    const subscription = form.watch((currentValues) => {
+      const hasChanges =
+        JSON.stringify(currentValues) !== JSON.stringify(defaultValues);
+      setHasUnsavedChanges(hasChanges);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, profileData]);
+
+  // 🔹 Navigation guard integration
+  const { showNotification } = useToast();
+  const {
+    showConfirmModal,
+    confirmNavigation,
+    cancelNavigation,
+    navigateBypassingGuard,
+  } = useNavigationGuard({
+    hasUnsavedChanges,
+    onConfirmNavigation: () => {
+      showNotification({
+        message: "Profile changes were discarded.",
+        type: "success",
+      });
+      //@ts-ignore
+      form.reset(profileData?.data);
+    },
+  });
+
+  // 🔹 Handle form submission
   const onSubmitHandler = async (values: UserProfile) => {
     try {
-      // Destructure to remove flat address fields
-      const { country, city, address, role, specializations, experience_level, ...rest } = values;
+      const {
+        country,
+        city,
+        address,
+        role,
+        specializations,
+        experience_level,
+        ...rest
+      } = values;
 
       const formatLocalDate = (date: Date) => {
         const tzOffset = date.getTimezoneOffset() * 60000; // in ms
@@ -113,15 +177,11 @@ export const ProfileUser = () => {
         return localISO.split("T")[0];
       };
 
-      // Convert date_of_birth to YYYY-MM-DD format if it exists
-
       const formattedValues = {
         ...rest,
-        // Ensure country_code is present with fallback
         country_code: values.country_code || "+95",
         date_of_birth: values.date_of_birth
-          ? 
-          formatLocalDate(new Date(values.date_of_birth))
+          ? formatLocalDate(new Date(values.date_of_birth))
           : null,
         address: {
           country_id: country,
@@ -130,11 +190,10 @@ export const ProfileUser = () => {
         },
         role_id: role,
         specialization_id: specializations,
-        experience_level_id: experience_level
+        experience_level_id: experience_level,
       };
 
       const response = await executeApiCall(formattedValues);
-
 
       if (response?.data?.data) {
         const profileUser = response.data.data?.data;
@@ -159,12 +218,12 @@ export const ProfileUser = () => {
           behance_url: profileUser?.behance_url || "",
           portfolio_url: profileUser?.portfolio_url || "",
           github_url: profileUser?.github_url || "",
-          country: profileUser?.address?.country?.id || 0,
-          city: profileUser?.address?.city?.id || 0,
+          country: profileUser?.address?.country?.id?.toString() ?? "",
+          city: profileUser?.address?.city?.id?.toString() ?? "",
           address: profileUser?.address?.address || "",
         });
         refetch();
-        navigate('/user/mainProfile');
+        navigateBypassingGuard("/user/mainProfile");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -172,9 +231,7 @@ export const ProfileUser = () => {
   };
 
   if (isProfileLoading) {
-    return (
-      <PageInitialLoading />
-    );
+    return <PageInitialLoading />;
   }
 
   return (
@@ -183,7 +240,7 @@ export const ProfileUser = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmitHandler as any)}
-          className="space-y-[30px]  my-4"
+          className="space-y-[30px] my-4"
         >
           <UserProfileForm
             form={form}
@@ -194,6 +251,7 @@ export const ProfileUser = () => {
           />
         </form>
       </Form>
+
       <DialogBox
         title={MODALDATAS[0].PROFILEREMOVE.title}
         description={MODALDATAS[0].PROFILEREMOVE.description}
@@ -205,6 +263,15 @@ export const ProfileUser = () => {
           setPreview("");
           setIsOpen(false);
         }}
+      />
+
+      {/* 🔹 Unsaved changes modal */}
+      <NavigationConfirmModal
+        isOpen={showConfirmModal}
+        onConfirm={confirmNavigation}
+        onCancel={cancelNavigation}
+        title="Unsaved Changes"
+        description="You have unsaved changes in your profile. Are you sure you want to leave without saving?"
       />
     </div>
   );
