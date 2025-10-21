@@ -190,28 +190,3 @@ class EducationService:
      @staticmethod
      def get_educations(user_id):
           return JobSeekerEducation.objects.filter(user__id=user_id)
-
-class CertificationService:
-     @staticmethod
-     def get_certifications(user_id):
-          return JobSeekerCertification.objects.filter(user__id=user_id)
-     
-     @staticmethod
-     def validate_date_range(issued_date, expiration_date, has_expiration):
-          if not issued_date:
-               raise ValidationError("Issued date is required.")
-          
-          today = timezone.now().date()
-          
-          # Check if dates are not in the future
-          if issued_date and issued_date > today:
-               raise ValidationError("Issued date cannot be in the future.")
-          
-          if has_expiration and not expiration_date:
-               raise ValidationError('Expiration date is required.')
-          
-          if not has_expiration and expiration_date:
-               raise ValidationError("Cannot set expiration date for non-expiring certification.")
-          
-          if issued_date and expiration_date and issued_date >= expiration_date:
-                    raise ValidationError("Issued date must be before expiration date.")
