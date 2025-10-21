@@ -169,7 +169,7 @@ class AuthenticationService:
                     
                     print("Password reset successful.")
 
-                    AuthEmailService.send_password_reset_success_email(email)
+                    AuthEmailService.send_password_reset_success_email(email, user)
                     
                     # soft delete the password reset request
                     reset_request.status = False

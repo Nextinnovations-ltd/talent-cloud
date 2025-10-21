@@ -59,7 +59,7 @@ class AuthEmailService:
                subject = f"Password Reset Request"
                
                context = {
-                    'name': user.username,
+                    'user_name': user.name or user.username,
                     'reset_link': f"{settings.FRONTEND_BASE_URL}/auth/reset-password?token={reset_token}"
                }
                
@@ -115,9 +115,33 @@ class AuthEmailService:
                raise
 
      @staticmethod
-     def send_password_reset_success_email(email):
-          from utils.user.custom_mail_types import send_password_reset_success_email
-          send_password_reset_success_email(email)
+     def send_password_reset_success_email(email, user):
+          try:
+               subject = "Your Password Has Been Reset Successfully"
+               
+               context = {
+                    'user_name': user.name or user.username
+               }
+               
+               # Render email templates
+               html_message = render_to_string('emails/user/password_reset_success.html', context)
+               # text_message = render_to_string('emails/invitation.txt', context)
+               
+               # Send email
+               send_mail(
+                    subject=subject,
+                    message="",
+                    html_message=html_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False
+               )
+               
+               logger.info(f"Password reset success email sent to {email}")
+               
+          except Exception as e:
+               logger.error(f"Failed to send password reset succeess email to {email}: {str(e)}")
+               raise
      
      @staticmethod
      def verify_company_registration(email):
