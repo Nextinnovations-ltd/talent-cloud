@@ -19,7 +19,7 @@ export const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({
         // Close the modal
         onClose();
         // Navigate to profile editing page
-        navigate('/user/mainProfile');
+        navigate('/user/profile');
     };
 
     if (!isOpen) return null;

@@ -5,7 +5,7 @@ const adminRoutesMap = {
         path:'login',
         name:"Login"
     },
-    candiates:{
+    candidates:{
         path:'candidates',
         name:'Candidates'
     },
@@ -18,7 +18,7 @@ const adminRoutesMap = {
         name:'AllJobs'
     },
     candidateProfile: {
-        path:'candiates/profile/:id',
+        path:'candidates/profile/:id',
         name:'candidatesProfile'
     },
     allJobsDetails:{

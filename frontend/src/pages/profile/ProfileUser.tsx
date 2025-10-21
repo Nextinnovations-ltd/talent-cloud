@@ -223,7 +223,7 @@ export const ProfileUser = () => {
           address: profileUser?.address?.address || "",
         });
         refetch();
-        navigateBypassingGuard("/user/mainProfile");
+        navigateBypassingGuard("/user/profile");
       }
     } catch (error) {
       console.error("Error submitting form:", error);

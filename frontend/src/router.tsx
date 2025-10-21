@@ -102,7 +102,7 @@ export const router = createBrowserRouter([
             path: "/user",
             children: [
               {
-                path: routesMap.mainProfile.path,
+                path: routesMap.profile.path,
                 element: <MainUserProfile />
               },
               {
@@ -266,7 +266,7 @@ export const router = createBrowserRouter([
             element:<AnalyticalPage/>
           },
           {
-            path:adminRoutesMap?.candiates.path,
+            path:adminRoutesMap?.candidates.path,
             element:<Candidates/>
           },
           {
