@@ -2,7 +2,10 @@ import * as yup from "yup";
 
 const SelectedProjectSchema = yup
   .object({
-    title: yup.string().required("Title is required").min(3,"Title must be at least 3 characters"),
+    title: yup
+      .string()
+      .required("Title is required")
+      .min(3, "Title must be at least 3 characters"),
     description: yup.string().required("Description is required"),
     project_url: yup
       .string()
@@ -24,6 +27,7 @@ const SelectedProjectSchema = yup
     is_ongoing: yup.boolean().required("Project ongoing is required"),
     team_size: yup.number(),
   })
+
   // ✅ End date must be after start date
   .test(
     "end-date-after-start-date",
@@ -40,6 +44,29 @@ const SelectedProjectSchema = yup
       return end >= start || this.createError({ path: "endDateYear" });
     }
   )
+
+  // ✅ End date cannot be the same as start date
+  .test(
+    "end-date-not-same-as-start",
+    "Start and end date can’t be same.",
+    function (value) {
+      const { is_ongoing, startDateYear, startDateMonth, endDateYear, endDateMonth } =
+        value || {};
+      if (is_ongoing) return true;
+      if (!startDateYear || !startDateMonth || !endDateYear || !endDateMonth) return true;
+
+      const start = new Date(Number(startDateYear), Number(startDateMonth) - 1);
+      const end = new Date(Number(endDateYear), Number(endDateMonth) - 1);
+
+      // ❌ Reject if same year and month
+      const same =
+        start.getFullYear() === end.getFullYear() &&
+        start.getMonth() === end.getMonth();
+
+      return !same || this.createError({ path: "endDateYear" });
+    }
+  )
+
   // ✅ End date cannot be in the future
   .test(
     "end-date-not-in-future",
@@ -55,11 +82,10 @@ const SelectedProjectSchema = yup
       const endComparable = new Date(end.getFullYear(), end.getMonth(), 1);
       const nowComparable = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      return (
-        endComparable <= nowComparable || this.createError({ path: "endDateYear" })
-      );
+      return endComparable <= nowComparable || this.createError({ path: "endDateYear" });
     }
   )
+
   // ✅ Start date cannot be in the future
   .test(
     "start-date-not-in-future",
@@ -74,9 +100,7 @@ const SelectedProjectSchema = yup
       const startComparable = new Date(start.getFullYear(), start.getMonth(), 1);
       const nowComparable = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      return (
-        startComparable <= nowComparable || this.createError({ path: "startDateYear" })
-      );
+      return startComparable <= nowComparable || this.createError({ path: "startDateYear" });
     }
   );
 

@@ -78,6 +78,10 @@ const ModalImagePicker: React.FC<ModalImagePickerProps> = ({
 
   return (
     <div className="w-full">
+      <h3 className={clsx('font-semibold text-[16px] text-[#05060F] mb-5')}>
+      Project Photo
+        <span className="ms-1 text-red-500">*</span>
+      </h3>
       <div
         {...getRootProps()}
         className={clsx(
