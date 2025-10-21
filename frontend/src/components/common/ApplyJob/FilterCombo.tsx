@@ -9,7 +9,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
@@ -57,9 +56,9 @@ export function FilterCombo({ title, data, onFilterChange, }: FilterComboProps) 
           <ChevronDown size={18} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[257px] z-[999] p-0">
+      <PopoverContent className="w-[257px] z-[999] p-3">
         <Command>
-          <CommandInput placeholder="Search..." className="h-9" />
+          {/* <CommandInput placeholder="Search..." className="h-9" /> */}
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             <CommandGroup>

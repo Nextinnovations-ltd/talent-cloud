@@ -85,22 +85,3 @@ def send_password_reset_email(email, reset_url):
           message,
           [email]
      )
-
-def send_password_reset_success_email(email):
-     subject = "Your Password Has Been Reset Successfully"
-     message = f"""
-     Hello,
-
-     This is a confirmation that your password has been successfully reset.
-
-     If you did not perform this action, please contact our support team immediately.
-
-     Best regards,  
-     Talent Cloud Team
-     """
-     
-     MailService._send_mail(
-          subject,
-          message,
-          [email],
-     )
