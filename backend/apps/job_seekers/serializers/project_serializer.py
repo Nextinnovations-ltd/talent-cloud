@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from apps.job_seekers.models import JobSeekerProject
-from services.storage.s3_service import S3Service
 from django.utils import timezone
-
 
 class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
     """Serializer for displaying project details"""
@@ -74,20 +72,6 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         if value and not value.startswith(('http://', 'https://')):
             raise serializers.ValidationError("Project URL must start with http:// or https://")
         return value
-    
-    # def validate_project_image_url(self, value):
-    #     """Validate project image URL format"""
-    #     if value and not value.startswith(('http://', 'https://')):
-    #         raise serializers.ValidationError("Project image URL must start with http:// or https://")
-        
-    #     if value:
-    #         image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
-            
-    #         if not any(value.lower().endswith(ext) for ext in image_extensions):
-    #             # Allow URLs without file extensions
-    #             pass
-        
-    #     return value
     
     def validate(self, attrs):
         """Validate the entire project data"""

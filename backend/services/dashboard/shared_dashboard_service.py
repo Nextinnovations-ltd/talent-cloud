@@ -1,7 +1,8 @@
 from apps.job_posting.models import ApplicationStatus, JobApplication, JobPost, StatusChoices
 from apps.ni_dashboard.serializers import DashboardJobSeekerCertificationSerializer, DashboardJobSeekerEducationSerializer, DashboardJobSeekerExperienceSerializer, DashboardJobSeekerProjectSerializer, JobSeekerOverviewSerializer
 from apps.ni_dashboard.models import FavouriteJobSeeker
-from services.job_seeker.profile_service import EducationService, ExperienceService, CertificationService
+from services.job_seeker.certification_service import CertificationService
+from services.job_seeker.profile_service import EducationService, ExperienceService
 from services.job_seeker.project_service import ProjectService
 from services.notification.notification_service import NotificationHelpers
 from rest_framework.exceptions import NotFound, ValidationError

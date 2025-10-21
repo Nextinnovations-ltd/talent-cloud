@@ -270,12 +270,26 @@ class JobSeekerCertification(TimeStampModel):
      has_expiration_date = models.BooleanField(default=False)
      url = models.URLField(max_length=2048, null=True, blank=True)
      credential_id = models.PositiveIntegerField(null=True, blank=True)
+     certification_image_file = models.ForeignKey(
+          FileUpload,
+          on_delete=models.SET_NULL,
+          null=True,
+          blank=True,
+          related_name='certification_images'
+     )
 
      class Meta:
           ordering = ['-issued_date', '-created_at']
 
      def __str__(self):
           return f'{self.title} from {self.organization}'
+     
+     @property
+     def certification_image_url(self):
+          if not self.certification_image_file:
+               return None
+          return self.certification_image_file.public_url
+
 
 class JobSeekerProject(TimeStampModel):
      """
