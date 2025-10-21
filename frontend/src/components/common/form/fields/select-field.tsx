@@ -60,7 +60,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         return (
           <FormItem className={cn(width, "")}>
             {showRequiredLabel && (
-              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F]', labelStyle)}>
+              <FormLabel className={clsx('font-semibold text-[16px] text-[#05060F] ', labelStyle)}>
                 {labelName}
                 {isRequired && <span className="ms-1 text-red-500">*</span>}
               </FormLabel>
