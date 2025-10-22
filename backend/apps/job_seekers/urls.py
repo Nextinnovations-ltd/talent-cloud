@@ -13,8 +13,6 @@ from .views.onboarding_view import OnboardingAPIView, ModifyUsernameAPIView, S3U
 
 router = DefaultRouter()
 
-# router.register(r'certifications', CertificationViewSet, basename='certifications')
-# router.register(r'educations', EducationViewSet, basename='educations')
 router.register(r'experiences', ExperienceViewSet, basename='experiences'),
 router.register(r'specializations', JobSeekerSpecializationViewSet, basename='specializations')
 router.register(r'roles', JobSeekerRoleViewSet, basename='roles')
