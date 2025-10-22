@@ -1,7 +1,8 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
+from apps.job_seekers.mixins.custom_response_mixins import CustomResponseMixin
 from utils.response import CustomResponse
 from rest_framework import status
 from core.middleware.authentication import TokenAuthentication
@@ -21,54 +22,66 @@ class UniversityAPIView(APIView):
           return Response(CustomResponse.success("Successfully fetched university list.", serializer.data), status=status.HTTP_200_OK)
 
 @extend_schema(tags=["Job Seeker"])
-class EducationViewSet(ModelViewSet):
+class EducationListCreateAPIView(CustomResponseMixin, ListCreateAPIView):
+     """
+     Handles GET (list) and POST (create) for Job Seeker Education.
+     """
      authentication_classes = [TokenAuthentication]
      permission_classes = [IsJobSeekerAndOwnerPermission]
      serializer_class = EducationSerializer
-     queryset = JobSeekerEducation.objects.all()
-     
-     def get_jobseeker_user(self, request):
-          """Helper method to fetch the jobseeker associated with the current user."""
-          return request.user.jobseeker
+     pagination_class = None
 
-     def list(self, request, *args, **kwargs):
-          """Job Seeker related education list"""
-          jobseeker_user = self.get_jobseeker_user(request)
-          
-          queryset = self.get_queryset().filter(user=jobseeker_user)
+     def get_jobseeker_from_request(self):
+          """Helper method to fetch the jobseeker"""
+          if hasattr(self.request.user, 'jobseeker'):
+               return self.request.user.jobseeker
+          return None
 
-          serializer = self.get_serializer(queryset, many=True)
-
-          return Response(CustomResponse.success("Successfully fetch all education list", serializer.data), status=status.HTTP_200_OK)
+     def get_queryset(self):
+          """
+          This view should only return objects for the currently
+          authenticated jobseeker.
+          """
+          jobseeker_user = self.get_jobseeker_from_request()
+          if not jobseeker_user:
+               return JobSeekerEducation.objects.none()
+          return JobSeekerEducation.objects.filter(user=jobseeker_user)
 
      def perform_create(self, serializer):
           """Ensure the created object is associated with the current jobseeker."""
-          jobseeker_user = self.get_jobseeker_user(self.request)
-          
+          jobseeker_user = self.get_jobseeker_from_request()
           serializer.save(user=jobseeker_user)
 
-     def create(self, request, *args, **kwargs):
-          serializer = self.get_serializer(data=request.data)
-          
-          serializer.is_valid(raise_exception=True)
-          
-          self.perform_create(serializer)
-          
-          return Response(CustomResponse.success("Successfully created", serializer.data), status=status.HTTP_200_OK)
-
-     def update(self, request, *args, **kwargs):
-          kwargs['partial'] = True
-          response = super().update(request, *args, **kwargs)
-          
+     def list(self, request, *args, **kwargs):
+          response = super(ListCreateAPIView, self).list(request, *args, **kwargs)
           return Response(
-               CustomResponse.success("Successfully updated.", response.data),
-               status=status.HTTP_200_OK
+               CustomResponse.success("Successfully fetch all education list", response.data),
+               status=response.status_code
           )
+
+@extend_schema(tags=["Job Seeker"])
+class EducationRetrieveUpdateDestroyAPIView(CustomResponseMixin, RetrieveUpdateDestroyAPIView):
+     """
+     Handles GET (retrieve), PATCH (update), and DELETE (destroy) 
+     for a single Job Seeker Education item.
+     """
+     authentication_classes = [TokenAuthentication]
+     permission_classes = [IsJobSeekerAndOwnerPermission]
+     serializer_class = EducationSerializer
+     pagination_class = None
      
-     def destroy(self, request, *args, **kwargs):
-          super().destroy(request, *args, **kwargs)
-
-          return Response(
-               CustomResponse.success("Successfully deleted."),
-               status=status.HTTP_200_OK
-          )
+     def get_jobseeker_from_request(self):
+          """Helper method to fetch the jobseeker"""
+          if hasattr(self.request.user, 'jobseeker'):
+               return self.request.user.jobseeker
+          return None
+     
+     def get_queryset(self):
+          """
+          This view should only allow modification/retrieval of objects
+          for the currently authenticated jobseeker.
+          """
+          jobseeker_user = self.get_jobseeker_from_request()
+          if not jobseeker_user:
+               return JobSeekerEducation.objects.none()
+          return JobSeekerEducation.objects.filter(user=jobseeker_user)

@@ -6,7 +6,7 @@ from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, Jo
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
 from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
 from .views.certification_view import CertificationImageDeleteAPIView, CertificationImageUploadUrlAPIView, JobSeekerCertificationDetailAPIView, JobSeekerCertificationListAPIView
-from .views.education_view import EducationViewSet, UniversityAPIView
+from .views.education_view import EducationListCreateAPIView, EducationRetrieveUpdateDestroyAPIView, UniversityAPIView
 from .views.experience_view import ExperienceViewSet
 from .views.occupation_view import JobSeekerLanguageOptionViewSet, JobSeekerSpecializationViewSet, JobSeekerRoleViewSet, JobSeekerSkillViewSet, JobSeekerExperienceLevelViewSet, JobSeekerOccupationViewSet
 from .views.onboarding_view import OnboardingAPIView, ModifyUsernameAPIView, S3UploadAPIView
@@ -14,7 +14,7 @@ from .views.onboarding_view import OnboardingAPIView, ModifyUsernameAPIView, S3U
 router = DefaultRouter()
 
 # router.register(r'certifications', CertificationViewSet, basename='certifications')
-router.register(r'educations', EducationViewSet, basename='educations')
+# router.register(r'educations', EducationViewSet, basename='educations')
 router.register(r'experiences', ExperienceViewSet, basename='experiences'),
 router.register(r'specializations', JobSeekerSpecializationViewSet, basename='specializations')
 router.register(r'roles', JobSeekerRoleViewSet, basename='roles')
@@ -50,6 +50,9 @@ urlpatterns = [
      path('certifications/', JobSeekerCertificationListAPIView.as_view(), name='certification-list-create'),
      path('certifications/<int:certification_id>/', JobSeekerCertificationDetailAPIView.as_view(), name='certification-detail'),
      
+     # Education
+     path('educations/', EducationListCreateAPIView.as_view(), name='education-list-create'),
+     path('educations/<int:pk>/', EducationRetrieveUpdateDestroyAPIView.as_view(), name='education-detail'),
      
      # Profile
      path('jobseeker/profile/', JobSeekerProfileAPIView.as_view(), name='jobseeker-profile'),
