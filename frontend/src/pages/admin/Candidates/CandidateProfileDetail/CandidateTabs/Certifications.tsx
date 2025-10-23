@@ -13,7 +13,6 @@ const Certifications = () => {
   const {data,isLoading} = useGetJobSeekerDetailCertificationQuery(id?{id}: skipToken);
 
 
-  console.log(data);
 
 
 
