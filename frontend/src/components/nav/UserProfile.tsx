@@ -46,7 +46,7 @@ export const UserProfile = () => {
   };
 
   return (
-    <div className='relative flex items-center gap-2' ref={dropdownRef}>
+    <div className='relative flex items-center gap-2 ' ref={dropdownRef}>
       <Link className='flex  items-center gap-3' to={`user/${routesMap?.profile?.path}`}>
         <AvatarProfile src={userData?.profile_image_url} />
       </Link>
