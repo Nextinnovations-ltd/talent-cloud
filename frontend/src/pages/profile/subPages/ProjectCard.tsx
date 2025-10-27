@@ -160,7 +160,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           <div className="flex gap-3">
             <button
               onClick={() => handleEdit(id)}
-              className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[73px] h-[35px] rounded-xl hover:bg-gray-100 transition"
+              className="flex items-center justify-center  gap-[7px] border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[73px] h-[35px] rounded-xl hover:bg-gray-100 transition"
             >
               <SvgEdit size={16} color="#6B6B6B" /> Edit
             </button>
@@ -169,7 +169,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             {/* Delete Button with Dialog */}
             <Dialog open={open} onOpenChange={setOpen}  >
               <DialogTrigger asChild>
-                <button className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
+                <button className="flex items-center justify-center  border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
                   <SvgDelete size={16} color="#6B6B6B" /> Delete
                 </button>
               </DialogTrigger>
