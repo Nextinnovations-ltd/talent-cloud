@@ -46,6 +46,10 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
   const [formVersion, setFormVersion] = useState(0); // bump to force remount of textarea
 
 
+  const EDUCATIONDATA = educationData?.data;
+  
+
+
   const form = useForm<EducationFrom>({
     resolver: yupResolver(EducationYupSchema),
     defaultValues: {
@@ -58,14 +62,16 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
   });
 
   useEffect(() => {
-    if (educationData && Object.keys(educationData).length > 0) {
+    console.log(EDUCATIONDATA)
+    if (EDUCATIONDATA && Object.keys(EDUCATIONDATA).length > 0) {
+  
       form.reset({
-        institution: educationData.institution || "",
-        degree: educationData.degree || "",
-        startDate: educationData.start_date ? educationData.start_date.split("-")[0] : "",
-        endDate: educationData.end_date ? educationData.end_date.split("-")[0] : "",
-        description: educationData.description || "",
-        is_currently_attending: educationData.is_currently_attending ?? false,
+        institution: EDUCATIONDATA.institution || "",
+        degree: EDUCATIONDATA.degree || "",
+        startDate: EDUCATIONDATA.start_date ? EDUCATIONDATA.start_date.split("-")[0] : "",
+        endDate: EDUCATIONDATA.end_date ? EDUCATIONDATA.end_date.split("-")[0] : "",
+        description: EDUCATIONDATA.description || "",
+        is_currently_attending: EDUCATIONDATA.is_currently_attending ?? false,
       });
 
       setTimeout(() => {
@@ -73,7 +79,7 @@ export const Education = forwardRef<any, EducationProps>(({ eductionId, setShowD
         setFormVersion((v) => v + 1);
       }, 0);
     }
-  }, [educationData, form]);
+  }, [EDUCATIONDATA, form]);
 
   const onSubmit = async (data: EducationFrom) => {
     try {
