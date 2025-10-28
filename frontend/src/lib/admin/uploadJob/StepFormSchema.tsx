@@ -86,7 +86,7 @@ export const StepThreeFormYupSchema = yup.object({
           })
           .test(
             "max-gte-min",
-            "Maximum salary must be greater than or equal to minimum salary",
+            "Maximum salary must be greater than to minimum salary",
             function (value) {
               const { salary_min, salary_mode } = this.parent;
               if (salary_mode !== "range" || !value || !salary_min) return true;
