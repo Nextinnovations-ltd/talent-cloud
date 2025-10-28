@@ -32,7 +32,7 @@ const Projects = () => {
   const handleDelete = async (id:number)=> {
     try {
       await deleteSelectedProject(id);
-      showNotification({ message: "Work experience deleted successfully", type: "success" });
+      showNotification({ message: "Project deleted successfully", type: "success" });
       setOpenModal(false);
   } catch {
       showNotification({ message: "Failed to delete experience", type: "danger" });
