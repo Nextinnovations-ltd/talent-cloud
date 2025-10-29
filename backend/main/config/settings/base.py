@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.job_seekers',
     'apps.job_posting',
     'apps.audit_log',
+    'apps.dify_integration',
     'apps.test_app'
 ]
 

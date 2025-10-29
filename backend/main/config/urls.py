@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/v1/', include('apps.job_posting.urls')),
     path('api/v1/', include('apps.ws_channel.urls')),
     path('api/v1/', include('apps.audit_log.urls')),
+    path('api/v1/', include('apps.dify_integration.urls')),
     path('api/v1/', include('apps.test_app.urls')),
     path('admin/', admin.site.urls),
 ]
