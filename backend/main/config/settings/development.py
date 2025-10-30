@@ -86,6 +86,17 @@ CHANNEL_LAYERS = {
     },
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 # S3 Configuration
 AWS_ACCESS_KEY = config('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = config('AWS_SECRET_KEY')

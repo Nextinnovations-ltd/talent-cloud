@@ -7,6 +7,7 @@ from rest_framework import status
 from core.middleware.authentication import TokenAuthentication
 from core.middleware.permission import TalentCloudAllPermission
 from .serializers import DifyGenerationSerializer
+from rest_framework.throttling import ScopedRateThrottle
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,10 @@ class GenerateDifyOutlineView(APIView):
      """
      authentication_classes = [TokenAuthentication] 
      permission_classes = [TalentCloudAllPermission]
+
+     # Throttling
+     throttle_classes = [ScopedRateThrottle]
+     throttle_scope = 'ai_generation'
 
      def post(self, request, *args, **kwargs):
           """
