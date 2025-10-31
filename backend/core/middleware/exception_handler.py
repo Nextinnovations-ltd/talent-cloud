@@ -121,18 +121,18 @@ def _handle_drf_exceptions(exc, response, error_context):
                     errors=exc.detail
                 )
         else:
-            # Complex validation errors with field-specific errors
             response.data = CustomResponse.error(
                 message="Validation failed. Please check your input data.",
                 errors=_format_validation_errors(response.data)
             )
     elif isinstance(exc, Throttled):
         _log_throttled_request(exc, error_context)
-        # Add retry-after information for throttled requests
         retry_after = getattr(exc, 'wait', None)
+        retry_after = round(retry_after / 3600)
+
         error_data = {'retry_after': retry_after} if retry_after else None
         response.data = CustomResponse.error(
-            message=f"Too many requests. Please try again in {retry_after} seconds." if retry_after else message,
+            message=f"You have exceeded your daily limit for AI generations. Please try again after {retry_after} hour.",
             data=error_data
         )
     elif isinstance(exc, (NotFound, PermissionDenied)):
@@ -142,7 +142,6 @@ def _handle_drf_exceptions(exc, response, error_context):
         _log_auth_error(exc, error_context)
         response.data = CustomResponse.error(message=str(exc.detail))
     else:
-        # Generic DRF exception
         _log_generic_error(exc, error_context, response.status_code)
         response.data = CustomResponse.error(
             message=message,
@@ -216,7 +215,6 @@ def _handle_non_drf_exceptions(exc, error_context):
     # Unhandled exceptions
     _log_server_error(exc, error_context)
     
-    # Don't expose sensitive information in production
     if settings.DEBUG:
         error_message = f"Unhandled error: {str(exc)}"
         error_data = {
@@ -253,7 +251,6 @@ def _format_django_validation_errors(exc):
     else:
         return {'detail': str(exc)}
 
-# Logging functions for different error types
 def _log_validation_error(exc, context):
     """Log validation errors"""
     logger.warning(f"Validation Error: {exc} | Context: {context}")
@@ -289,7 +286,6 @@ def _log_server_error(exc, context):
     """Log unhandled server errors"""
     logger.error(f"Unhandled Server Error: {exc} | Context: {context}", exc_info=True)
     
-    # Optional: Send critical error notifications
     if hasattr(settings, 'SEND_ERROR_NOTIFICATIONS') and settings.SEND_ERROR_NOTIFICATIONS:
         _send_critical_error_notification(exc, context)
 

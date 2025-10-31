@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'apps.job_seekers',
     'apps.job_posting',
     'apps.audit_log',
+    'apps.dify_integration',
     'apps.test_app'
 ]
 
@@ -59,6 +59,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'PAGE_SIZE': 15,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle', 
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',
+        'ai_generation': '15/day', 
+    }
 }
 
 ROOT_URLCONF = 'main.config.urls'
@@ -166,16 +173,16 @@ SPECTACULAR_SETTINGS = {
 }
 
 # Cache Configuration
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'oauth-rate-limiting',
-        'OPTIONS': {
-            'MAX_ENTRIES': 10000,
-            'CULL_FREQUENCY': 3,
-        }
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#         'LOCATION': 'oauth-rate-limiting',
+#         'OPTIONS': {
+#             'MAX_ENTRIES': 10000,
+#             'CULL_FREQUENCY': 3,
+#         }
+#     }
+# }
 
 # Static Configuration
 STATIC_URL = '/static/'
