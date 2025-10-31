@@ -30,7 +30,7 @@ channels==4.2.2
 channels_redis==4.2.1
 
 # Caching
-django-redis=6.0.0
+django-redis==6.0.0
 
 # asgi server
 daphne==4.2.0
