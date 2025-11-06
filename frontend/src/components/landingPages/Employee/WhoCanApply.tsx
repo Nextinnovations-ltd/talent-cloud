@@ -29,7 +29,7 @@ const WhoCanApply = () => {
       viewport={{ once: true }}
     >
       <img src={designerImg} alt="" className="mx-auto max-w-[200px]" />
-      <p className="text-[16px] md:text-[24px] text-center font-[500]">
+      <p className="text-[16px] md:text-[20px] text-center font-[500]">
         UI/UX Designer
       </p>
     </motion.div>
@@ -46,7 +46,7 @@ const WhoCanApply = () => {
         alt=""
         className="mx-auto max-w-[200px]"
       />
-      <p className="text-[16px] md:text-[24px] text-center font-[500]">
+      <p className="text-[16px] md:text-[20px] text-center font-[500]">
         Frontend Developer
       </p>
     </motion.div>
@@ -63,7 +63,7 @@ const WhoCanApply = () => {
         alt=""
         className="mx-auto max-w-[200px]"
       />
-      <p className="text-[16px] md:text-[24px] text-center font-[500]">
+      <p className="text-[16px] md:text-[20px] text-center font-[500]">
         Backend Developer
       </p>
     </motion.div>
@@ -76,7 +76,7 @@ const WhoCanApply = () => {
       viewport={{ once: true }}
     >
       <img src={QAImg} alt="" className="mx-auto max-w-[200px]" />
-      <p className="text-[16px] md:text-[24px] text-center font-[500]">
+      <p className="text-[16px] md:text-[20px] text-center font-[500]">
         QA Engineer
       </p>
     </motion.div>

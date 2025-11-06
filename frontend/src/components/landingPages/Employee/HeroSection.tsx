@@ -222,7 +222,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
+            <h1 className="text-[16px] md:text-[20px] font-[600] leading-[32px] md:leading-[28px]">
               Talent Cloud, powered by Next Innovations Ltd.
             </h1>
             <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">
@@ -237,7 +237,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
+            <h1 className="text-[16px] md:text-[20px] font-[600] leading-[32px] md:leading-[28px]">
               Built for Myanmar Professionals
             </h1>
             <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">
@@ -253,7 +253,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
             viewport={{ once: true }}
           >
-            <h1 className="text-[16px] md:text-[24px] font-[600] leading-[25px] md:leading-[28px]">
+            <h1 className="text-[16px] md:text-[20px] font-[600] leading-[32px] md:leading-[28px]">
               Work Globally, Supported Locally
             </h1>
             <p className="text-[#484747] text-[12px] md:text-[16px] font-[500] leading-[19px] md:leading-[15x]">

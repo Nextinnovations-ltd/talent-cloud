@@ -17,7 +17,7 @@ const JoinBanner = () => {
   >
     {/* Heading */}
     <motion.h1
-      className="text-black text-[18px] md:text-[40px] font-[600] text-center leading-[34.2px] md:leading-[76px] uppercase"
+      className="text-black text-[20px] md:text-[36px] font-[500] text-center leading-[34.2px] md:leading-[68px] uppercase"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}

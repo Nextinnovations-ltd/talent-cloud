@@ -13,8 +13,9 @@ const UpdatedFooter = () => {
 
   const isEmpLp =
   location.pathname === "/emp/lp" || 
-  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp")  ;
-
+  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp")  ||
+  (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp") || 
+  (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp") 
 
 
   // Parse query string
