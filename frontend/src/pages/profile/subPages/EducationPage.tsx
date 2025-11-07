@@ -33,7 +33,7 @@ const EducationPage = () => {
       const handleDelete = async (id:number)=> {
         try {
           await deleteEducationByIdMutation(id);
-          showNotification({ message: "Work experience deleted successfully", type: "success" });
+          showNotification({ message: "Education deleted successfully", type: "success" });
           setOpenModal(false);
       } catch {
           showNotification({ message: "Failed to delete experience", type: "danger" });
@@ -62,7 +62,7 @@ const EducationPage = () => {
 
                 <div>
 
-                {EDUCATIONS?.map((education) => (
+            {EDUCATIONS?.map((education) => (
             <ProjectCard
               key={education.id}
               id={education.id}

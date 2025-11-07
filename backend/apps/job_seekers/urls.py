@@ -5,16 +5,14 @@ from apps.job_seekers.views.special_skills_views import JobSeekerSpecialSkillDet
 from apps.job_seekers.views.project_views import JobSeekerProjectListAPIView, JobSeekerProjectDetailAPIView, ProjectImageDeleteAPIView, ProjectImageUploadUrlAPIView
 from apps.job_seekers.views.address_view import CityAPIView, CountryAPIView
 from apps.job_seekers.views.upload_view import ConfirmProfileUploadAPIView, ProfileImageUploadAPIView, ProfileResumeUploadAPIView
-from .views.certification_view import CertificationViewSet
-from .views.education_view import EducationViewSet, UniversityAPIView
+from .views.certification_view import CertificationImageDeleteAPIView, CertificationImageUploadUrlAPIView, JobSeekerCertificationDetailAPIView, JobSeekerCertificationListAPIView
+from .views.education_view import EducationListCreateAPIView, EducationRetrieveUpdateDestroyAPIView, UniversityAPIView
 from .views.experience_view import ExperienceViewSet
 from .views.occupation_view import JobSeekerLanguageOptionViewSet, JobSeekerSpecializationViewSet, JobSeekerRoleViewSet, JobSeekerSkillViewSet, JobSeekerExperienceLevelViewSet, JobSeekerOccupationViewSet
 from .views.onboarding_view import OnboardingAPIView, ModifyUsernameAPIView, S3UploadAPIView
 
 router = DefaultRouter()
 
-router.register(r'certifications', CertificationViewSet, basename='certifications')
-router.register(r'educations', EducationViewSet, basename='educations')
 router.register(r'experiences', ExperienceViewSet, basename='experiences'),
 router.register(r'specializations', JobSeekerSpecializationViewSet, basename='specializations')
 router.register(r'roles', JobSeekerRoleViewSet, basename='roles')
@@ -43,6 +41,16 @@ urlpatterns = [
      path('jobseeker/projects/<int:project_id>/images/delete/', ProjectImageDeleteAPIView.as_view(), name='get-project-image-upload-url'),
      path('jobseeker/projects/', JobSeekerProjectListAPIView.as_view(), name='projects-list-create'),
      path('jobseeker/projects/<int:project_id>/', JobSeekerProjectDetailAPIView.as_view(), name='projects-detail'),
+     
+     # Certification
+     path('certifications/upload/certification-image/', CertificationImageUploadUrlAPIView.as_view(), name='get-certification-image-upload-url'),
+     path('certifications/<int:certification_id>/images/delete/', CertificationImageDeleteAPIView.as_view(), name='get-certification-image-upload-url'),
+     path('certifications/', JobSeekerCertificationListAPIView.as_view(), name='certification-list-create'),
+     path('certifications/<int:certification_id>/', JobSeekerCertificationDetailAPIView.as_view(), name='certification-detail'),
+     
+     # Education
+     path('educations/', EducationListCreateAPIView.as_view(), name='education-list-create'),
+     path('educations/<int:pk>/', EducationRetrieveUpdateDestroyAPIView.as_view(), name='education-detail'),
      
      # Profile
      path('jobseeker/profile/', JobSeekerProfileAPIView.as_view(), name='jobseeker-profile'),

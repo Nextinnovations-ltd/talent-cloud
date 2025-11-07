@@ -86,6 +86,17 @@ CHANNEL_LAYERS = {
     },
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 # S3 Configuration
 AWS_ACCESS_KEY = config('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = config('AWS_SECRET_KEY')
@@ -110,3 +121,6 @@ GITHUB_REDIRECT_URI = config('GITHUB_REDIRECT_URI', default="http://localhost:80
 LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/linkedin")
 FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
 FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')
+
+DIFY_API_URL= config('DIFY_API_URL', default='https://api.dify.ai/v1/workflows/run')
+DIFY_API_KEY= config('DIFY_API_KEY', default='app-cgtngfiCzymjd46gM1oValin')

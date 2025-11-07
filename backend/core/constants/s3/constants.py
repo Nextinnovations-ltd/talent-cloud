@@ -7,6 +7,7 @@ class FILE_TYPES:
      COMPANY_IMAGE = 'company_image'
      COMPANY_ENVIRONMENT = 'company_environment'
      PROJECT_IMAGE = 'project_image'
+     CERTIFICATION_IMAGE = 'certification_image'
      
 class ALLOWED_CONTENT_TYPES:
      DOCUMENT = [
@@ -42,6 +43,7 @@ class FILE_SIZE_LIMITS:
     # Sizes in bytes (1 MB = 1024 * 1024)
     PROFILE_IMAGE = 3 * 1024 * 1024     # 3 MB
     PROJECT_IMAGE = 3 * 1024 * 1024     # 3 MB
+    CERTIFICATION_IMAGE = 3 * 1024 * 1024     # 3 MB
     COVER_LETTER = 3 * 1024 * 1024      # 3 MB
     RESUME = 5 * 1024 * 1024            # 5 MB
 
@@ -66,6 +68,10 @@ class UPLOAD_MAPPER:
           FILE_TYPES.PROJECT_IMAGE: {
                'content_types': ALLOWED_CONTENT_TYPES.IMAGE,
                'max_size': FILE_SIZE_LIMITS.PROJECT_IMAGE
+          },
+          FILE_TYPES.CERTIFICATION_IMAGE: {
+               'content_types': ALLOWED_CONTENT_TYPES.IMAGE,
+               'max_size': FILE_SIZE_LIMITS.CERTIFICATION_IMAGE
           },
      }
 

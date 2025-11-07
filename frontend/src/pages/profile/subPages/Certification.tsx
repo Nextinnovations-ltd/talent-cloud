@@ -48,6 +48,9 @@ export const Certification = forwardRef<any, CertificateProps>(({ certificateId,
   const { data: CertificationData, isLoading: getLoadiing } = useGetCerificationByIdQuery(certificateId, { skip: !certificateId });
   const [updateCertification,{isLoading:isUpading}]  = useUpdateCertificationMutation();
 
+  //@ts-ignore
+  const CERTIFICATIONDATA = CertificationData?.data;
+
  // const CertificationData = {
  //   "id": 1,
   //  "title": "Test",
@@ -74,23 +77,23 @@ export const Certification = forwardRef<any, CertificateProps>(({ certificateId,
   });
 
   useEffect(() => {
-    if (certificateId && CertificationData) {
+    if (certificateId && CERTIFICATIONDATA) {
       form.reset({
-        certificationName: CertificationData.title || "",
-        organizationIssue: CertificationData.organization || "",
-        issueYear: CertificationData.issued_date ? CertificationData.issued_date.split("-")[0] : "",
-        issueMonth: CertificationData.issued_date ? CertificationData.issued_date.split("-")[1] : "",
-        expirationYear: CertificationData.has_expiration_date && CertificationData.expiration_date
-          ? CertificationData.expiration_date.split("-")[0]
+        certificationName: CERTIFICATIONDATA.title || "",
+        organizationIssue: CERTIFICATIONDATA.organization || "",
+        issueYear: CERTIFICATIONDATA.issued_date ? CERTIFICATIONDATA.issued_date.split("-")[0] : "",
+        issueMonth: CERTIFICATIONDATA.issued_date ? CERTIFICATIONDATA.issued_date.split("-")[1] : "",
+        expirationYear: CERTIFICATIONDATA.has_expiration_date && CERTIFICATIONDATA.expiration_date
+          ? CERTIFICATIONDATA.expiration_date.split("-")[0]
           : "",
-        expirationMonth: CertificationData.has_expiration_date && CertificationData.expiration_date
-          ? CertificationData.expiration_date.split("-")[1]
+        expirationMonth: CERTIFICATIONDATA.has_expiration_date && CERTIFICATIONDATA.expiration_date
+          ? CERTIFICATIONDATA.expiration_date.split("-")[1]
           : "",
-        noExpired: !CertificationData.has_expiration_date,
-        credentialURL: CertificationData.url || "",
+        noExpired: !CERTIFICATIONDATA.has_expiration_date,
+        credentialURL: CERTIFICATIONDATA.url || "",
       });
     }
-  }, [certificateId, CertificationData, form]);
+  }, [certificateId, CERTIFICATIONDATA, form]);
 
   const onSubmit = async (data: CertificationFormType) => {
     try {
@@ -233,8 +236,8 @@ export const Certification = forwardRef<any, CertificateProps>(({ certificateId,
               // </motion.div>
             )}
              {form.formState.errors && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""] && (form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.type === "end-date-after-start-date" && (
-              <div className="text-red-500 text-sm mt-1">
-               - {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
+              <div className="text-red-500 font-medium text-[0.8rem] mt-1">
+               {(form.formState.errors as Record<string, { message?: string; type?: string }>)[""]?.message}
               </div>
             )}
             {/* </AnimatePresence> */}

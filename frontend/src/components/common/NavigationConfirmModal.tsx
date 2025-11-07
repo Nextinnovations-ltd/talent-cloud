@@ -1,13 +1,12 @@
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface NavigationConfirmModalProps {
   isOpen: boolean;
@@ -22,31 +21,31 @@ export const NavigationConfirmModal = ({
   onConfirm,
   onCancel,
   title = "Unsaved Changes",
-  description = "You have unsaved changes. Are you sure you want to leave? Your progress will be lost."
+  description = "You have unsaved changes. Are you sure you want to leave? Your progress will be lost.",
 }: NavigationConfirmModalProps) => {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onCancel}>
-      <AlertDialogContent className="sm:max-w-md">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-lg font-semibold">
+    <Dialog open={isOpen} onOpenChange={onCancel}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold">
             {title}
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-sm text-muted-foreground">
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
             {description}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter className="gap-2">
-          <AlertDialogCancel onClick={onCancel}>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={onCancel}>
             Stay on Page
-          </AlertDialogCancel>
-          <AlertDialogAction 
+          </Button>
+          <Button
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
             Leave Page
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

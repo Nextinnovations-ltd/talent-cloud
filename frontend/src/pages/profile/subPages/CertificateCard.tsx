@@ -11,7 +11,7 @@ import {
     DialogTrigger,
     DialogDescription,
 } from "@/components/ui/dialog";
-import { useState } from 'react';
+
 
 
 type CertificateCardProps = {
@@ -22,6 +22,8 @@ type CertificateCardProps = {
     organization: string;
     expirationDate: string;
     modalTitle:string;
+    setDeleteModal:any;
+    deleteModal:any
 }
 
 const CertificateCard: React.FC<CertificateCardProps> = ({
@@ -31,9 +33,10 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
     title,
     organization,
     expirationDate,
-    modalTitle
+    modalTitle,
+    setDeleteModal,
+    deleteModal
 }) => {
-    const [open, setOpen] = useState(false);
 
     // ✅ Format expiration date like "Dec 2026"
     const formatExpirationDate = (dateString: string) => {
@@ -72,15 +75,15 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
                 <div className="flex gap-3">
                     <button
                         onClick={() => handleEdit(id)}
-                        className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[73px] h-[35px] rounded-xl hover:bg-gray-100 transition"
+                        className="flex items-center justify-center gap-[7px] border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[73px] h-[35px] rounded-xl hover:bg-gray-100 transition"
                     >
                         <SvgEdit size={16} color="#6B6B6B" /> Edit
                     </button>
 
                      {/* Delete Button with Dialog */}
-            <Dialog open={open} onOpenChange={setOpen}  >
+            <Dialog open={deleteModal} onOpenChange={setDeleteModal}  >
               <DialogTrigger asChild>
-                <button className="flex items-center justify-center gap-2 border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
+                <button className="flex items-center justify-center  border border-[#D0D0D0] text-[12px] text-[#6B6B6B] w-[85px] h-[35px] rounded-xl hover:bg-gray-100 transition">
                   <SvgDelete size={16} color="#6B6B6B" /> Delete
                 </button>
               </DialogTrigger>
@@ -96,7 +99,7 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
                 <DialogFooter className="flex  justify-end gap-2">
                   <button
                     className="px-4 py-2 border h-[50px] w-full rounded-lg hover:bg-gray-100 bg-[#0481EF17]"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setDeleteModal(false)}
                   >
                     Cancel
                   </button>

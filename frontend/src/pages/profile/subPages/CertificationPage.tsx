@@ -14,6 +14,7 @@ const CertificationPage = () => {
     const { data } = useGetCertificationsQuery();
     const [deleteEducationByIdMutation] = useDeleteCertificationByIdMutation();
     const { showNotification } = useToast();
+    const [deleteModal,setDeleteModal] = useState(false);
 
     const handleAddProject = () => {
         setCertificationId(null); // no id means new project
@@ -28,8 +29,9 @@ const CertificationPage = () => {
     const handleDelete = async (id: number) => {
         try {
             await deleteEducationByIdMutation(id);
-            showNotification({ message: "Work experience deleted successfully", type: "success" });
+            showNotification({ message: "Certificate deleted successfully", type: "success" });
             setOpenModal(false);
+            setDeleteModal(false)
         } catch {
             showNotification({ message: "Failed to delete experience", type: "danger" });
         }
@@ -64,6 +66,8 @@ const CertificationPage = () => {
                             expirationDate={certificate?.expiration_date}
                             handleEdit={handleEdit}
                             handleDelete={handleDelete}
+                            deleteModal={deleteModal}
+                            setDeleteModal={setDeleteModal}
                             modalTitle="Delete this certificate?"
                             />
                     ))

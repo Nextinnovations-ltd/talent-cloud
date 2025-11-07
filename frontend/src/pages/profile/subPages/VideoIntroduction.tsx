@@ -84,7 +84,7 @@ const VideoIntroduction = () => {
          await executeApiCall(payload);
       }
 
-      navigate('/user/mainProfile')
+      navigate('/user/profile')
      
     } catch (error) {
       showNotification({ message: 'Failed to save video introduction', type: "danger" });

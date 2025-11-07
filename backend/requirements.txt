@@ -29,6 +29,9 @@ pytest-django==4.10.0
 channels==4.2.2
 channels_redis==4.2.1
 
+# Caching
+django-redis==6.0.0
+
 # asgi server
 daphne==4.2.0
 pipdeptree==2.24.0

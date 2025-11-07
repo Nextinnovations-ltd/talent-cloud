@@ -67,7 +67,7 @@ const SelectedProjectsSection:React.FC<SelectedProjectsSectionPropps> = ({
                   is_ongoing={project.is_ongoing}
                   team_size={project.team_size}
                   isEdit={isSelectedProjectsEdit}
-                  onEdit={() => navigate(`/user/edit/SelectedProjects?id=${project.id}`)}
+                  onEdit={() => navigate(`/user/edit/project`)}
                 />
 
             </motion.div>
