@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 const UpdatedFooter = () => {
-  const location = useLocation();
+  const location = useLocation(); 
 
   const isEmpLp =
   location.pathname === "/emp/lp" || 
