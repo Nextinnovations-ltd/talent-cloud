@@ -10,6 +10,7 @@ const Projects = () => {
   const { data, isLoading } = useGetJobSeekersProjectsQuery(id ? { id } : skipToken);
 
 
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[300px]">
@@ -29,6 +30,12 @@ const Projects = () => {
       </div>
     );
   }
+
+
+  console.log("kdkdkdk")
+  console.log(data?.data);
+  console.log("kdkdkdk")
+
 
 
   return (
@@ -56,6 +63,20 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ projectImageUrl, title, description }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const tags = [
+    "React",
+    "Python",
+    "MongoDB",
+    "Node.js",
+    "Express",
+    "TypeScript",
+    "Next.js",
+    "TailwindCSS",
+    "GraphQL",
+    "Django",
+  ];
+
+
   return (
     <div className="w-full">
       <div className="w-full h-[293px] relative">
@@ -75,6 +96,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ projectImageUrl, title, descr
         <h3 className="text-[24px] font-semibold mt-[26px] mb-[12px]">{title}</h3>
         <p className="text-[#6B6B6B]">{description}</p>
       </div>
+
+      <div className="flex gap-3 mt-5 overflow-x-auto scrollbar-hide scroll-smooth py-1">
+  {tags.map((tag, index) => (
+    <button
+      key={index}
+      className="px-4 py-1.5 border border-[#CBD5E1] rounded-full text-[12px] text-gray-700 bg-white hover:bg-gray-100 active:scale-95 transition"
+    >
+      {tag}
+    </button>
+  ))}
+</div>
+
     </div>
   );
 };
