@@ -325,7 +325,7 @@ class DashboardJobSeekerProjectSerializer(serializers.ModelSerializer):
      class Meta:
           model = JobSeekerProject
           fields = [
-               'id', 'title', 'description', 'project_image_url', 'duration'
+               'id', 'title', 'description', 'project_image_url', 'duration', 'tags'
           ]
 
      def get_project_image_url(self, obj: JobSeekerProject):
