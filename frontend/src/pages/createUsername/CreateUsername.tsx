@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import InputField from "@/components/common/form/fields/input-field";
 import { NavLink } from "@/components/common/NavLink";
-import PortalCopyRight from "@/components/common/PortalCopyRight";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import {
   Card,
@@ -60,7 +59,7 @@ export const CreateUsername = () => {
   };
 
   return (
-    <div className="px-[10px] md:px-0  md:mx-0 h-[100svh] flex items-center justify-center bg-slate-100 ">
+    <div className="px-[10px] md:px-0   md:mx-0 h-[100svh] flex flex-col items-center justify-center bg-slate-100 ">
       <Card className="w-[506px]">
         <CardHeader className="text-center">
           <CardTitle className=" text-xl ">
@@ -100,7 +99,7 @@ export const CreateUsername = () => {
           <NavLink to={`/auth/${routesMap.login.path}`} title="Back to Login" />
         </CardFooter>
       </Card>
-      <PortalCopyRight boarding/>
+
     </div>
   );
 };

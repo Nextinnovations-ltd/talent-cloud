@@ -9,12 +9,13 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 const UpdatedFooter = () => {
-  const location = useLocation();
+  const location = useLocation(); 
 
   const isEmpLp =
   location.pathname === "/emp/lp" || 
-  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp")  ;
-
+  (location.pathname === "/contact-us" && new URLSearchParams(location.search).get("path") === "emp")  ||
+  (location.pathname === "/privacy-policy" && new URLSearchParams(location.search).get("path") === "emp") || 
+  (location.pathname === "/terms-conditions" && new URLSearchParams(location.search).get("path") === "emp") 
 
 
   // Parse query string

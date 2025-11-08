@@ -20,6 +20,8 @@ type AuthFormFrameType = {
   type: "login" | "signup";
 };
 
+
+
 export const AuthFormFrame: React.FC<AuthFormFrameType> = ({ form, type }) => {
   const { t } = useTranslation("auth");
   const [loading,setLoading] = useState(false);
