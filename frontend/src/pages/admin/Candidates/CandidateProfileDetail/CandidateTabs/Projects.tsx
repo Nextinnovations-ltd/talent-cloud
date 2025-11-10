@@ -9,8 +9,6 @@ const Projects = () => {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useGetJobSeekersProjectsQuery(id ? { id } : skipToken);
 
-
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[300px]">
@@ -32,11 +30,6 @@ const Projects = () => {
   }
 
 
-  console.log("kdkdkdk")
-  console.log(data?.data);
-  console.log("kdkdkdk")
-
-
 
   return (
     <div className="grid grid-cols-2 gap-[35px] mt-[72px]">
@@ -44,7 +37,9 @@ const Projects = () => {
         data?.data.map((e) => <ProjectCard
           projectImageUrl={e.project_image_url}
           title={e.title}
-          description={e.description} />)
+          description={e.description}
+          tags={e.tags}
+          />)
       }
 
     </div>
@@ -58,24 +53,13 @@ interface ProjectCardProps {
   projectImageUrl: string;
   title: string;
   description: string;
+  tags:string[]
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ projectImageUrl, title, description }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ projectImageUrl, title, description,tags }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const tags = [
-    "React",
-    "Python",
-    "MongoDB",
-    "Node.js",
-    "Express",
-    "TypeScript",
-    "Next.js",
-    "TailwindCSS",
-    "GraphQL",
-    "Django",
-  ];
-
+  
 
   return (
     <div className="w-full">
