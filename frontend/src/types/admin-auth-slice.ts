@@ -180,6 +180,7 @@ type Project = {
   title: string;
   description: string;
   project_image_url: string;
+  tags:string[]
 };
 
 export type JobSeekerProjectListResponse = {
