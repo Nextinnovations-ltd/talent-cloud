@@ -98,7 +98,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <>
-      <div className="border border-[#CFD1D4] p-5 mt-5 rounded-[12px] relative bg-white transition-all duration-200">
+      <div className="border border-[#CFD1D4] p-5 mt-5 rounded-[12px] relative bg-white transition-all  duration-200">
         <div className="flex items-start justify-between">
           {/* Project Info */}
           <div className="flex gap-5 items-start">
@@ -201,7 +201,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
         </div>
 
-        {/* Scrollable Tags */}
+       {
+        tags?.length > 0 &&  
         <div className="flex gap-3 mt-5 overflow-x-auto scrollbar-hide scroll-smooth py-1">
           {tags?.map((tag, index) => (
             <button
@@ -212,6 +213,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </button>
           ))}
         </div>
+       }
       </div>
     </>
   );
