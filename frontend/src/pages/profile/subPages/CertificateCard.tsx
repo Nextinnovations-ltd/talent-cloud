@@ -47,7 +47,7 @@ const CertificateCard: React.FC<CertificateCardProps> = ({
     };
 
     return (
-        <div className="border border-[#CFD1D4] p-5 mt-5 rounded-[12px] relative bg-white transition-all duration-200">
+        <div className="border border-[#CFD1D4] p-5 mt-5 rounded-[12px] relative bg-white transition-all duration-200 ">
             <div className="flex items-start justify-between">
                 {/* Project Info */}
                 <div className="flex gap-5 items-start">

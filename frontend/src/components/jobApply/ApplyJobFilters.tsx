@@ -50,7 +50,7 @@ const JOBTYPEDATA = [
         label: "1 to 3 months",
       },
       {
-        value: "1_to_6_months",
+        value: "3_to_6_months",
         label: "3 to 6 months",
       },
       {
