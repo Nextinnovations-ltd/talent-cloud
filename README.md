@@ -1,11 +1,30 @@
 # TalentCloud
 
-TalentCloud is a Django-based application that uses PostgreSQL, Celery, Daphne, and Pytest to support development, testing, and production environments with ease.
+TalentCloud is a platform for connecting job seekers with employers in the public service sector. It provides a user-friendly interface for job seekers to search and apply for jobs, and for employers to post job openings and manage applications.
 
-## 🚀 Quick Start
+### Setup and Installation (Backend)
+```
+cd backend && python -m venv .venv
+source .venv/bin/activate
+uv add -r requirements-dev.txt
 
-Clone the project:
+./scripts/decrypt_env.sh # To decrypt the .env files
 
-```bash
-git clone https://github.com/your-username/talentcloud.git
-cd talentcloud
+python manage.py import_initial_data
+python manage.py create_superuser
+python manage.py runserver
+```
+
+### Setup and Installation (Frontend)
+```
+cd frontend && npm ci
+npm run dev
+```
+
+### Running Tests
+```
+# Backend tests
+uv run pytest --cov=talentcloud --cov-report=html
+# Frontend tests
+npm run test
+```
