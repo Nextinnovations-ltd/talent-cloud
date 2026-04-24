@@ -20,7 +20,7 @@ const TalentCloudDone = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] md:gap-[13px] justify-center items-start">
           {/* Project 1 */}
           <MotionLink
-            to='http://staging.locaboo.jp/'
+            to='https://staging.talent-cloud.asia/'
             target="_blank"
             className="img-container w-full"
             initial={{ opacity: 0, y: 50 }}

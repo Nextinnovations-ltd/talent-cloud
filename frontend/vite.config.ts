@@ -12,19 +12,19 @@ export default defineConfig(({mode})=>{
   let facebookCallBackUrl;
 
   if (mode === "staging"){
-    apiBaseUrl = "http://staging.talent-cloud.asia/api/v1/";
-    wsBaseUrl = "ws://staging.talent-cloud.asia/ws/notifications/"
+    apiBaseUrl = "https://staging.talent-cloud.asia/api/v1/";
+    wsBaseUrl = "wss://staging.talent-cloud.asia/ws/notifications/"
 
-    googleCallBackUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile";
-    linkedInCallBackUrl = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
-    facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
-  }else {
+    googleCallBackUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile";
+    linkedInCallBackUrl = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
+    facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
+  } else {
     apiBaseUrl = "http://localhost:8000/api/v1/";
     wsBaseUrl = "ws://localhost:8000/ws/notifications/"
 
     googleCallBackUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://localhost:8000/api/v1/auth/accounts/google&response_type=code&scope=email profile";
     linkedInCallBackUrl = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://localhost:8000/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
-    facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=http://staging.talent-cloud.asia/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
+    facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=http://localhost:8000/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
   }
 
 

@@ -40,31 +40,12 @@ CORS_ALLOW_CREDENTIALS = True
 
 # CORS Settings for staging
 CORS_ALLOWED_ORIGINS = [
-     "http://staging.talent-cloud.asia",
      "https://staging.talent-cloud.asia",
-     
-     # IP-based origins for staging server
-     f"https://{STAGING_SERVER_IP}",
-     f"http://{STAGING_SERVER_IP}",
-     f"https://{STAGING_SERVER_IP}:8000",
-     f"http://{STAGING_SERVER_IP}:8000",
-     f"https://{STAGING_SERVER_IP}:5173",
-     f"http://{STAGING_SERVER_IP}:5173",
-    
-     "http://localhost:5173",
-     "http://localhost:8000",
 ]
 
 # CSRF settings for IP access
 CSRF_TRUSTED_ORIGINS = [
      "https://staging.talent-cloud.asia",
-     "http://staging.talent-cloud.asia",
-     
-     f"https://{STAGING_SERVER_IP}",
-     f"http://{STAGING_SERVER_IP}",
-    
-     "http://localhost:5173",
-     "http://localhost:8000",
 ]
 
 BACKEND_BASE_URL = config('BACKEND_BASE_URL', default=f'https://staging.talent-cloud.asia')
@@ -136,9 +117,9 @@ LINKEDIN_CLIENT_SECRET = config('LINKEDIN_CLIENT_SECRET', default='')
 FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
 FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
-OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="http://staging.talent-cloud.asia/oauth/callback")
-GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="http://staging.talent-cloud.asia/api/v1/auth/accounts/google")
-GITHUB_REDIRECT_URI = config('GITHUB_REDIRECT_URI', default="http://staging.talent-cloud.asia/api/v1/auth/accounts/github")
-LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin")
-FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://staging.talent-cloud.asia/api/v1/auth/accounts/facebook")
+OAUTH_REDIRECT_URL = config('OAUTH_REDIRECT_URL', default="https://staging.talent-cloud.asia/oauth/callback")
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/google")
+GITHUB_REDIRECT_URI = config('GITHUB_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/github")
+LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin")
+FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/facebook")
 FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')

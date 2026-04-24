@@ -39,3 +39,5 @@ Thumbs.db
 # General logs
 *.log
 logs/
+pg_data/*
+*.env
