@@ -8,7 +8,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine as final
 # https://github.com/docker/buildx/issues/415
 
 RUN rm /etc/nginx/conf.d/default.conf
