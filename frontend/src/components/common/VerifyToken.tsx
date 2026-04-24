@@ -7,7 +7,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import ROLES from "@/constants/authorizations";
 
 export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
-  const { hasToken, isTokenVerifying } = useVerifyToken(shouldSkip);
+  const { hasToken, isTokenVerifying, isSucceedTokenVerifying } = useVerifyToken(shouldSkip);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,15 +15,16 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     data: userInfo,
     isLoading: isLoadingUserInfo,
     isSuccess,
-    refetch,
-  } = useGetUserInfoQuery(undefined, { refetchOnMountOrArgChange: true });
+  } = useGetUserInfoQuery(undefined, {
+    skip: !hasToken || isTokenVerifying || !isSucceedTokenVerifying,
+  });
 
   //1,2,3,4,5
   //25 * 5 125
-  
+
 
   useEffect(() => {
-    if (!hasToken && isTokenVerifying) {
+    if (!hasToken && !isTokenVerifying) {
       navigate(`/emp/lp`, {
         state: { from: location.pathname },
         replace: true,
@@ -59,9 +60,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
         navigate("/");
       }
     }
-
-    refetch();
-  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, refetch, userInfo?.data]);
+  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, userInfo?.data]);
 
   if (shouldSkip) {
     return <Outlet />;
@@ -76,8 +75,18 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
     );
   }
 
-  // Render nested routes
-  return <Outlet />;
+  // Render nested routes only when authenticated and user info loaded
+  if (hasToken && isSuccess) {
+    return <Outlet />;
+  }
+
+  // Fallback spinner while redirect fires
+  return (
+    <div className="flex items-center flex-col justify-center h-[100svh] bg-slate-100">
+      <LoadingSpinner />
+      <p>Loading...</p>
+    </div>
+  );
 };
 
 export default VerifyToken;

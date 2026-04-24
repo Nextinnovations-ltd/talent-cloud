@@ -23,7 +23,7 @@ server {
         alias  /home/ubuntu/talentcloud-networks/talent-cloud/backend/staticfiles/;
     }
 
-location /api/ {
+   location /api/ {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
         proxy_redirect off;
@@ -40,9 +40,9 @@ location /api/ {
         # Increase buffer and timeout values for WebSocket support
         proxy_buffering off;
         proxy_http_version 1.1;
-         }
+    }
 
-    location /api/ws/ {
+    location /ws/ {
     proxy_pass http://unix:/home/ubuntu/talentcloud-networks/configurations/staging/daphne.sock;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -51,5 +51,13 @@ location /api/ {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
-}
+
+    }
+
+    location /flower/ {
+    proxy_pass http://127.0.0.1:5555;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+
+    }
 }

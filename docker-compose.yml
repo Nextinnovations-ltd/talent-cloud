@@ -1,50 +1,16 @@
-version: '3.9'
-
 services:
   postgres:
-    image: postgres:15
-    env_file:
-      - backend/.env.development
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: talentcloud
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
+      - ./pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:alpine
-    networks:
-      - app-network
-
-  backend:
-    build:
-      context: .
-      dockerfile: docker/backend/Dockerfile
-    command: daphne -b 0.0.0.0 -p 8000 main.config.asgi:application
-    volumes:
-      - ./backend:/app
-    env_file:
-      - backend/.env.development
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - app-network
     ports:
-      - "8000:8000"
-
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/frontend/Dockerfile
-    depends_on:
-      - backend
-    ports:
-      - "80:80"
-    networks:
-      - app-network
-
-volumes:
-  postgres_data:
-
-networks:
-  app-network:
+      - "6379:6379"

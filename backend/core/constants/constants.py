@@ -43,7 +43,7 @@ class PARENT_COMPANY:
         'NI_Company_Info/company_image_2.jpeg',
         'NI_Company_Info/company_image_2.jpeg'
     ]
-    website = "http://next-innovations.ltd"
+    website = "https://next-innovations.ltd"
     facebook_url = "https://www.facebook.com/profile.php?id=61578628769861"
     linkedin_url = "https://www.linkedin.com/company/next-innovations2020"
     instagram_url = "https://www.instagram.com/next_innovations_myanmar"
