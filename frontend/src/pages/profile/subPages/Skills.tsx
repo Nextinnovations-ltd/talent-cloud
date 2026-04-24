@@ -18,22 +18,30 @@ type SkillForm = {
 
 export const Skills = () => {
   const { data: FORMATTEDDATA, isLoading, refetch } = useFormattedSkills();
-  const { data: FORMATTEDUSER, isLoading: USERLOADING, refetch: USERREFETCH } = useFormattedUserSkills();
+  const { data: FORMATTEDUSER, isLoading: USERLOADING, refetch: USERREFETCH, isSuccess: USER_SUCCESS } = useFormattedUserSkills();
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddJobSeekerSkillsMutation);
 
   const form = useForm<SkillForm>({
     resolver: yupResolver(SkillYupSchema),
     defaultValues: {
-      skill_list: Array.isArray(FORMATTEDUSER) ? FORMATTEDUSER.map(String) : [],
+      skill_list: [],
     },
   });
 
   // Sync form default values when user data loads
   useEffect(() => {
-    if (Array.isArray(FORMATTEDUSER)) {
-      form.setValue("skill_list", FORMATTEDUSER.map(String));
+    if (USER_SUCCESS && Array.isArray(FORMATTEDUSER)) {
+      // Only update if the values are actually different to prevent infinite loops
+      const currentValues = form.getValues("skill_list");
+      const newValues = FORMATTEDUSER.map(String);
+      
+      if (JSON.stringify(currentValues) !== JSON.stringify(newValues)) {
+        form.reset({
+          skill_list: newValues
+        });
+      }
     }
-  }, [FORMATTEDUSER, form]);
+  }, [FORMATTEDUSER, USER_SUCCESS, form]);
 
   const onSubmit = async (data: SkillForm) => {
     if (data.skill_list.length < 5) {
@@ -46,9 +54,9 @@ export const Skills = () => {
 
     try {
       await executeApiCall(data);
-      refetch();
-      USERREFETCH();
-      //navigate("/user/mainProfile");
+      // refetch() and USERREFETCH() are no longer strictly needed 
+      // because RTK Query will automatically invalidate and refetch 
+      // due to the 'JobSeekerSkills' tag, but keeping them is fine.
     } catch (error) {
       console.error("Error submitting form:", error);
     }

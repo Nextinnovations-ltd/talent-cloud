@@ -23,8 +23,8 @@ const VerifyRoleAndToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
 
     useEffect(() => {
         // Redirect to login if no token (and token verification is complete)
-        if (!hasToken && !isTokenVerifying) {
-            navigate(`/auth/${routesMap.login.path}`, {
+        if (!hasToken && !isTokenVerifying && !shouldSkip) {
+            navigate(`/tc/lp`, {
                 state: { from: location.pathname },
                 replace: true,
             });
@@ -32,10 +32,10 @@ const VerifyRoleAndToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
         }
 
         // Redirect to home if user is not superAdmin (and data is loaded)
-        if (isUserInfoSuccess && role !== ROLES.SUPERADMIN) {
+        if (hasToken && isUserInfoSuccess && role !== ROLES.SUPERADMIN && !shouldSkip) {
             navigate("/", { replace: true });
         }
-    }, [hasToken, isTokenVerifying, isUserInfoSuccess, navigate, role]);
+    }, [hasToken, isTokenVerifying, isUserInfoSuccess, navigate, role, location.pathname, shouldSkip]);
 
     // Show loading spinner while any verification is in progress
     if (isTokenVerifying || isLoadingUserInfo) {

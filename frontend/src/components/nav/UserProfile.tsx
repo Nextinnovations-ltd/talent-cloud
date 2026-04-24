@@ -9,6 +9,9 @@ import {
 } from "@/helpers/operateBrowserStorage";
 import { useGetJobSeekerProfileQuery } from '@/services/slices/jobSeekerSlice'
 import { LogOutDialog } from '../common/LogOutDialog'
+import { useDispatch } from 'react-redux'
+import { revertAll } from "@/services/slices/authSlice"
+import apiSlice from "@/services/api/apiSlice"
 
 
 
@@ -17,6 +20,7 @@ export const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
   const { data: profileData} = useGetJobSeekerProfileQuery();
 
   const userData = profileData?.data;
@@ -40,8 +44,14 @@ export const UserProfile = () => {
   }, [open]);
 
   const handleLogout = () => {
+    dispatch(revertAll());
+    dispatch(apiSlice.util.resetApiState());
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
+    
+    // Broadcast logout event to other tabs
+    localStorage.setItem("logoutEvent", Date.now().toString());
+    
     window.location.href = "/emp/lp";
   };
 

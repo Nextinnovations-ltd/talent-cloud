@@ -24,13 +24,15 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
 
 
   useEffect(() => {
-    if (!hasToken && !isTokenVerifying) {
+    if (!hasToken && !isTokenVerifying && !shouldSkip) {
+      // Clear user data when token is lost
       navigate(`/emp/lp`, {
         state: { from: location.pathname },
         replace: true,
       });
+      return;
     }
-    if (isSuccess) {
+    if (hasToken && isSuccess && !shouldSkip) {
       const { is_generated_username, onboarding_step, role } = userInfo?.data || {};
 
 
@@ -60,7 +62,7 @@ export const VerifyToken = ({ shouldSkip }: { shouldSkip: boolean }) => {
         navigate("/");
       }
     }
-  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, userInfo?.data]);
+  }, [hasToken, isLoadingUserInfo, isSuccess, isTokenVerifying, location.pathname, navigate, userInfo?.data, shouldSkip]);
 
   if (shouldSkip) {
     return <Outlet />;

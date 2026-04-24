@@ -61,7 +61,7 @@ const adminAuthSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, (state) => {
-      state.token = "";
+      state.token = null;
     });
     builder.addMatcher(
       extendedAdminAuthSlice.endpoints?.adminLogin.matchFulfilled,

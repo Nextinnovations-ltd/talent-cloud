@@ -17,6 +17,7 @@ const setKeepMeLoggedInToLocalStorage = (value: string) =>
 const removeTokensFromLocalStorage = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("refresh");
+  localStorage.removeItem("logged");
 };
 
 const getTokenFromSessionStorage = () => sessionStorage.getItem("token");

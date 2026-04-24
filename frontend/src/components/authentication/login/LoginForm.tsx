@@ -33,6 +33,7 @@ export const LoginForm = ({
     defaultValues: {
       rememberMe: keepMeLoggedIn,
     },
+    mode: "all",
   });
 
 

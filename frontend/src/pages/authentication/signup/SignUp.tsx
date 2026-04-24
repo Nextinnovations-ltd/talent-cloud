@@ -20,6 +20,7 @@ export const SignUp = () => {
       email: "",
       password: "",
     },
+    mode: "all",
   });
 
   const onSubmitHandler = async (credentials: any) => {
