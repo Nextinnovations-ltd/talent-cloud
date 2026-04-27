@@ -49,6 +49,7 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
       tagline: "",
       level: "",
       workExperience: "",
+      image: null,
     },
   });
 
@@ -88,6 +89,16 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
     maxSize: 5000000,
     accept: { "image/png": [], "image/jpg": [], "image/jpeg": [] },
   });
+
+  const handleRemoveImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setPreview("");
+    form.setValue("image", null);
+    setRotation(0);
+    setScale(1);
+    setIsModalOpen(false);
+  };
 
   // Helper to convert dataURL to File
   function dataURLtoFile(dataurl: string, filename: string): File {
@@ -285,6 +296,15 @@ const StepTwoForm = ({ goToNextStep }: { goToNextStep: () => void }) => {
                 )}
                 <input {...getInputProps()} type="file" style={{ display: 'none' }} />
               </div>
+              {!!preview && (
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="mt-3 text-sm font-medium text-[#686C73] hover:text-[#0389FF] underline underline-offset-2 transition-colors"
+                >
+                  Remove image
+                </button>
+              )}
               <p className="text-[#686C73] mt-[25px]">
                 Upload your profile picture to stand out.
                 {/* <div className="" {...getRootProps()}>
