@@ -6,6 +6,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL")
 

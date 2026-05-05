@@ -6,10 +6,6 @@ frontend/dist/
 
 # Environment files
 .env
-.env.*
-
-# Docker artifacts
-**/.dockerignore
 
 # Python bytecode just in case
 __pycache__/
