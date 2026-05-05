@@ -4,7 +4,7 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [i.strip() for i in os.getenv("ALLOWED_HOSTS", "").split(",")]
 
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL")
@@ -20,11 +20,7 @@ CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS", "True").lower() in 
 )
 
 # CSRF settings
-CSRF_TRUSTED_ORIGINS = (
-    os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if os.getenv("CSRF_TRUSTED_ORIGINS")
-    else []
-)
+CSRF_TRUSTED_ORIGINS = [i.strip() for i in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")]
 
 DATABASES = {
     "default": {
