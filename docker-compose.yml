@@ -1,18 +1,22 @@
-services:
+networks:
+  default:
+    name: proxy-net
+    external: true
 
+services:
   frontend:
-    image: talent-cloud:frontend
+    image: ghcr.io/nextinnovations-ltd/talent-cloud:frontend
     expose:
       - "80"
     environment:
-      VIRTUAL_HOST: staging.talentcloud.asia
-      LETSENCRYPT_HOST: staging.talentcloud.asia
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
     depends_on:
       backend:
         condition: service_healthy
 
   backend:
-    image: talent-cloud-backend
+    image: ghcr.io/nextinnovations-ltd/talent-cloud:backend
     command: daphne -b 0.0.0.0 -p 8000 main.config.asgi:application
     env_file:
       - .env
@@ -30,13 +34,10 @@ services:
         condition: service_healthy
 
   celery:
-    image: talent-cloud:backend
+    image: ghcr.io/nextinnovations-ltd/talent-cloud:backend
     command: celery -A celery_app worker -E -l info
-    environment:
-      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: $DB_PASSWORD}
+    env_file:
+      - .env
     volumes:
       - media_volume:/usr/src/app/mediafiles
     depends_on:
@@ -44,14 +45,11 @@ services:
         condition: service_healthy
 
   beat:
-    image: talent-cloud:backend
+    image: ghcr.io/nextinnovations-ltd/talent-cloud:backend
     command: celery -A celery_app beat -l info
     volumes: []
-    environment:
-      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      DB_NAME: $DB_NAME}
-      DB_USER: $DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env
     depends_on:
       backend:
         condition: service_healthy
