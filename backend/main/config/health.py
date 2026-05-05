@@ -1,5 +1,7 @@
 # main/config/health.py
-import redis, os, boto3
+import redis
+import os
+import boto3
 from django.http import JsonResponse
 from django.db import connection
 from django.conf import settings
@@ -17,7 +19,7 @@ def health_check(request):
      """
      checks = {}
      overall_healthy = True
-     
+
      # 1. Database Health Check
      try:
           with connection.cursor() as cursor:
@@ -27,7 +29,7 @@ def health_check(request):
      except Exception as e:
           checks["database"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # 2. Redis Health Check
      try:
           if hasattr(settings, 'REDIS_URL') or os.getenv('REDIS_URL'):
@@ -40,12 +42,12 @@ def health_check(request):
      except Exception as e:
           checks["redis"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # 3. Email Health Check
      try:
           # Test email backend configuration
           email_backend = getattr(settings, 'EMAIL_BACKEND', '')
-          
+
           if 'console' in email_backend.lower():
                checks["email"] = "console_backend"
           elif 'filebased' in email_backend.lower():
@@ -58,11 +60,11 @@ def health_check(request):
                checks["email"] = "healthy"
           else:
                checks["email"] = f"unknown_backend: {email_backend}"
-               
+
      except Exception as e:
           checks["email"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # 4. Cache Health Check
      try:
           # Test Django cache
@@ -70,37 +72,33 @@ def health_check(request):
           test_value = 'working'
           cache.set(test_key, test_value, 10)
           cached_value = cache.get(test_key)
-          
+
           if cached_value == test_value:
                checks["cache"] = "healthy"
           else:
                checks["cache"] = "unhealthy: cache read/write failed"
                overall_healthy = False
-               
+
      except Exception as e:
           checks["cache"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # 5. AWS Services Health Check (S3)
      try:
-          aws_access_key = getattr(settings, 'AWS_ACCESS_KEY', os.getenv('AWS_ACCESS_KEY'))
-          aws_secret_key = getattr(settings, 'AWS_SECRET_KEY', os.getenv('AWS_SECRET_KEY'))
           aws_region = getattr(settings, 'AWS_S3_REGION_NAME', os.getenv('AWS_S3_REGION_NAME'))
           aws_bucket = getattr(settings, 'AWS_BUCKET_NAME', os.getenv('AWS_BUCKET_NAME'))
-          
+
           if aws_access_key and aws_secret_key and aws_bucket:
                s3_client = boto3.client(
                     's3',
                     region_name=aws_region,
-                    aws_access_key_id=aws_access_key,
-                    aws_secret_access_key=aws_secret_key
                )
                # Test bucket access
                s3_client.head_bucket(Bucket=aws_bucket)
                checks["aws_s3"] = "healthy"
           else:
                checks["aws_s3"] = "not_configured"
-               
+
      except ClientError as e:
           error_code = e.response['Error']['Code']
           checks["aws_s3"] = f"unhealthy: {error_code}"
@@ -108,11 +106,11 @@ def health_check(request):
      except Exception as e:
           checks["aws_s3"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # 6. Celery Health Check
      try:
           from celery import current_app
-          
+
           # Check if Celery is configured
           broker_url = getattr(settings, 'CELERY_BROKER_URL', '')
           if broker_url:
@@ -122,11 +120,11 @@ def health_check(request):
                checks["celery"] = "healthy"
           else:
                checks["celery"] = "not_configured"
-               
+
      except Exception as e:
           checks["celery"] = f"unhealthy: {str(e)}"
           overall_healthy = False
-     
+
      # ✅ Fixed Summary Calculation
      def categorize_status(status_value):
           """Categorize health check status"""
@@ -137,12 +135,12 @@ def health_check(request):
                return 'healthy'
           else:
                return 'unknown'
-     
+
      # Count healthy and unhealthy checks
      healthy_count = 0
      unhealthy_count = 0
      unknown_count = 0
-     
+
      for check_name, check_status in checks.items():
           category = categorize_status(check_status)
           if category == 'healthy':
@@ -151,7 +149,7 @@ def health_check(request):
                unhealthy_count += 1
           else:
                unknown_count += 1
-     
+
      # Build health response
      health_data = {
           "status": "healthy" if overall_healthy else "unhealthy",
@@ -166,7 +164,7 @@ def health_check(request):
                "unknown_checks": unknown_count
           }
      }
-     
+
      status_code = 200 if overall_healthy else 503
      return JsonResponse(health_data, status=status_code)
 
@@ -188,13 +186,13 @@ def readiness_check(request):
           # Check essential services only
           essential_checks = {}
           ready = True
-          
+
           # Database check
           with connection.cursor() as cursor:
                cursor.execute("SELECT COUNT(*) FROM django_migrations")
                migration_count = cursor.fetchone()[0]
                essential_checks["migrations"] = f"{migration_count} applied"
-          
+
           # Cache check
           cache.set('readiness_test', 'ok', 5)
           if cache.get('readiness_test') == 'ok':
@@ -202,15 +200,15 @@ def readiness_check(request):
           else:
                essential_checks["cache"] = "not_ready"
                ready = False
-          
+
           response_data = {
                "ready": ready,
                "timestamp": datetime.now().isoformat(),
                "checks": essential_checks
           }
-          
+
           return JsonResponse(response_data, status=200 if ready else 503)
-          
+
      except Exception as e:
           return JsonResponse({
                "ready": False,
