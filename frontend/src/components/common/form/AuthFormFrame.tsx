@@ -1,7 +1,4 @@
-import {
-  GoogleIcon,
-  LinkedinIcon,
-} from "@/assets/svgs/svgs";
+import { GoogleIcon, LinkedinIcon } from "@/assets/svgs/svgs";
 import TalentCloudLogo from "@/assets/Employee/Vector (3).svg";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -9,40 +6,59 @@ import { SocialButton } from "../SocialButton";
 import { NavLink } from "../NavLink";
 import routesMap from "@/constants/routesMap";
 import { useState } from "react";
-import GITHUB from '@/assets/images/github.png';
+import GITHUB from "@/assets/images/github.png";
 
-const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile';
-const linkedinAuthUrl = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile';
-const githubAuthUrl = "https://github.com/login/oauth/authorize?client_id=Ov23li8OorJeQrCKjngl&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/github&scope=user:email";
+// const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile';
+// const linkedinAuthUrl = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile';
+// const githubAuthUrl = "https://github.com/login/oauth/authorize?client_id=Ov23li8OorJeQrCKjngl&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/github&scope=user:email";
+
+  // if (import.meta.env.DEV){
+  //   apiBaseUrl = "https://staging.talent-cloud.asia/api/v1/";
+  //   wsBaseUrl = "wss://staging.talent-cloud.asia/ws/notifications/"
+  //   googleCallBackUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/google&response_type=code&scope=email profile";
+  //   linkedInCallBackUrl = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
+  //   facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=https://staging.talent-cloud.asia/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
+  // } else {
+  //   apiBaseUrl = "http://localhost:8000/api/v1/";
+  //   wsBaseUrl = "ws://localhost:8000/ws/notifications/"
+  //   googleCallBackUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://localhost:8000/api/v1/auth/accounts/google&response_type=code&scope=email profile";
+  //   linkedInCallBackUrl = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://localhost:8000/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
+  //   facebookCallBackUrl = "https://www.facebook.com/v22.0/dialog/oauth?client_id=1999611343882551&redirect_uri=http://localhost:8000/api/v1/auth/accounts/facebook&scope=email&state={st=state123abc,ds=123456789}"
+  // }
+
+// const googleAuthUrl =
+//   "https://accounts.google.com/o/oauth2/v2/auth?client_id=394068996425-9uu48cj29id232k3di793gvdbb4a50fa.apps.googleusercontent.com&redirect_uri=http://localhost:8000/api/v1/auth/accounts/google&response_type=code&scope=email profile";
+// const linkedinAuthUrl =
+//   "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=866khyw28sevz8&redirect_uri=http://localhost:8000/api/v1/auth/accounts/linkedin&state=foobar&scope=openid email profile";
+// const githubAuthUrl =
+//   "https://github.com/login/oauth/authorize?client_id=Ov23li8OorJeQrCKjngl&redirect_uri=http://localhost:8000/api/v1/auth/accounts/github&scope=user:email";
 
 type AuthFormFrameType = {
   form: React.ReactNode;
   type: "login" | "signup";
 };
 
-
-
 export const AuthFormFrame: React.FC<AuthFormFrameType> = ({ form, type }) => {
   const { t } = useTranslation("auth");
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSocialOAuthCallback = (
-    type: "google" | "linkedIn" | "github"
+    type: "google" | "linkedIn" | "github",
   ) => {
     let oauthUrl = "";
     setLoading(true);
 
     switch (type) {
       case "google":
-        oauthUrl = googleAuthUrl;
+        oauthUrl = import.meta.env.VITE_GOOGLE_AUTH_URL;
         break;
 
       case "linkedIn":
-        oauthUrl = linkedinAuthUrl;
+        oauthUrl = import.meta.env.VITE_LINKEDIN_AUTH_URL;
         break;
 
       case "github":
-        oauthUrl = githubAuthUrl;
+        oauthUrl = import.meta.env.VITE_GITHUB_AUTH_URL;
         break;
 
       default:
@@ -52,14 +68,13 @@ export const AuthFormFrame: React.FC<AuthFormFrameType> = ({ form, type }) => {
 
     window.location.href = oauthUrl;
     setLoading(false);
-
   };
 
   return (
     <div className=" px-[10px] md:mx-0 min-h-[100svh] flex items-center justify-center bg-slate-100 ">
       <Card className="text-text-primary mt-10 mb-5 mx-auto px-5 pb-4 border border-bg-border rounded-[15px] sm:w-[500px] sm:px-10 bg-white drop-shadow-sm">
         <div className="mt-10 flex flex-col items-center justify-center  ">
-        <img src={TalentCloudLogo} width={220} height={60}/>
+          <img src={TalentCloudLogo} width={220} height={60} />
           <div className="mt-4 text-center font-[500] text-[18px] text-[#686C73]">
             {t("talentDes")}
           </div>
@@ -90,7 +105,7 @@ export const AuthFormFrame: React.FC<AuthFormFrameType> = ({ form, type }) => {
             handleClick={() => handleSocialOAuthCallback("github")}
             title={t("socialMedia.github")}
             loading={loading}
-            icon={<img className="w-[26px]" src={GITHUB}/>}
+            icon={<img className="w-[26px]" src={GITHUB} />}
           />
           {type === "login" ? (
             <div className="mt-4 text-center text-sm  gap-3 flex items-center justify-center text-text-semilight font-normal">

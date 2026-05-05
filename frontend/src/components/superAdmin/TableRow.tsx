@@ -114,7 +114,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", getDownloadFileName(data.name));
+      link.setAttribute("download", getDownloadFileName(data.name ?? undefined));
       document.body.appendChild(link);
       link.click();
 
@@ -145,7 +145,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       return;
     }
 
-    
+
 
     try {
       setIsDownloading(true);
@@ -155,7 +155,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", getDownloadFileName(data.name));
+      link.setAttribute("download", getDownloadFileName(data.name ?? undefined));
       document.body.appendChild(link);
       link.click();
 

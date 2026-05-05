@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useGetUserInfoQuery } from "@/services/api/userSlice";
 import useVerifyToken from "@/hooks/useVerifyToken";
 import { useEffect } from "react";
-import routesMap from "@/constants/routesMap";
+// import routesMap from "@/constants/routesMap";
 import { LoadingSpinner } from "./LoadingSpinner";
 import ROLES from "@/constants/authorizations";
 

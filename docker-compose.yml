@@ -1,16 +1,90 @@
 services:
-  postgres:
+
+  frontend:
+    image: talent-cloud:frontend
+    expose:
+      - "80"
+    environment:
+      VIRTUAL_HOST: staging.talentcloud.asia
+      LETSENCRYPT_HOST: staging.talentcloud.asia
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    image: talent-cloud-backend
+    command: daphne -b 0.0.0.0 -p 8000 main.config.asgi:application
+    env_file:
+      - .env
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    volumes:
+        - media_volume:/usr/src/app/mediafiles
+        - static_volume:/usr/src/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery:
+    image: talent-cloud:backend
+    command: celery -A celery_app worker -E -l info
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: $DB_PASSWORD}
+    volumes:
+      - media_volume:/usr/src/app/mediafiles
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  beat:
+    image: talent-cloud:backend
+    command: celery -A celery_app beat -l info
+    volumes: []
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DB_NAME: $DB_NAME}
+      DB_USER: $DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  db:
     image: postgres:14-alpine
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: talentcloud
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U hidden -d db1_1"]
+      start_period: 10s
+      interval: 30s
+      timeout: 3s
+      retries: 5
 
   redis:
     image: redis:alpine
+    restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 10s
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  media_volume:
+  static_volume:

@@ -17,8 +17,8 @@ type SkillForm = {
 };
 
 export const Skills = () => {
-  const { data: FORMATTEDDATA, isLoading, refetch } = useFormattedSkills();
-  const { data: FORMATTEDUSER, isLoading: USERLOADING, refetch: USERREFETCH, isSuccess: USER_SUCCESS } = useFormattedUserSkills();
+  const { data: FORMATTEDDATA, isLoading } = useFormattedSkills();
+  const { data: FORMATTEDUSER, isLoading: USERLOADING, isSuccess: USER_SUCCESS } = useFormattedUserSkills();
   const { executeApiCall, isLoading: isSubmitting } = useApiCaller(useAddJobSeekerSkillsMutation);
 
   const form = useForm<SkillForm>({
@@ -34,7 +34,7 @@ export const Skills = () => {
       // Only update if the values are actually different to prevent infinite loops
       const currentValues = form.getValues("skill_list");
       const newValues = FORMATTEDUSER.map(String);
-      
+
       if (JSON.stringify(currentValues) !== JSON.stringify(newValues)) {
         form.reset({
           skill_list: newValues
@@ -54,8 +54,8 @@ export const Skills = () => {
 
     try {
       await executeApiCall(data);
-      // refetch() and USERREFETCH() are no longer strictly needed 
-      // because RTK Query will automatically invalidate and refetch 
+      // refetch() and USERREFETCH() are no longer strictly needed
+      // because RTK Query will automatically invalidate and refetch
       // due to the 'JobSeekerSkills' tag, but keeping them is fine.
     } catch (error) {
       console.error("Error submitting form:", error);

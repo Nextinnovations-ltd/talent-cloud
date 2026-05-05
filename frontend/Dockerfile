@@ -1,22 +1,11 @@
-FROM node:lts as build
-
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm ci
-
 COPY . .
 RUN npm run build
 
-FROM nginx:stable-alpine as final
-# https://github.com/docker/buildx/issues/415
-
-RUN rm /etc/nginx/conf.d/default.conf
-RUN rm -rf /var/www/html/*
-
-COPY --from=build /app/dist /var/www/html
-COPY nginx.conf /etc/nginx/conf.d
-
+FROM nginx:alpine AS final
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-
