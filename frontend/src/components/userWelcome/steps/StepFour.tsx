@@ -4,7 +4,7 @@ import { SkillSetButton } from "@/components/common/SkillSetButton";
 import { StepperTitle } from "@/components/common/StepperTitle";
 import useToast from "@/hooks/use-toast";
 import SkillSetSkeleton from "@/components/common/SkillSetSkeleton";
-import { useGetSkillSetsQuery } from "@/services/slices/onBoardingSlice";
+import { SKILLS } from "@/constants/onboarding";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
 import LOGO from "@/assets/image 2.svg";
@@ -19,7 +19,8 @@ export const StepFour = ({
     setFinished: React.Dispatch<React.SetStateAction<boolean>>;
   }) => {
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
-  const { data, isLoading } = useGetSkillSetsQuery();
+  const data = { data: SKILLS };
+  const isLoading = false;
   const { showNotification } = useToast();
   const { executeApiCall, isLoading: MutationLoading } = useApiCaller(
     useOnBoardingMutation

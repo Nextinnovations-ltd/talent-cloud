@@ -5,19 +5,19 @@ import { SearchBar } from "@/components/nav/SearchBar";
 import useToast from "@/hooks/use-toast";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
-import { useGetSpecializationsByIndustryIdQuery } from "@/services/slices/onBoardingSlice";
+import { getRolesBySpecialization } from "@/constants/onboarding";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom"; // ✅ get query params
 
 interface Specialization {
-  id: number;
+  id: string;
   name: string;
 }
 
 type SpecializationSkillSetProps = {
   goToNextStep: () => void;
-  id: number | null;
+  id: string | number | null;
 };
 
 export const SpecializationSkillSet = ({
@@ -25,7 +25,7 @@ export const SpecializationSkillSet = ({
   id,
 }: SpecializationSkillSetProps) => {
   const [search, setSearch] = useState("");
-  const [value, setValue] = useState<number | null>(null);
+  const [value, setValue] = useState<string | null>(null);
   const { executeApiCall, isLoading } = useApiCaller(useOnBoardingMutation);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const { showNotification } = useToast();
@@ -35,18 +35,10 @@ export const SpecializationSkillSet = ({
   const queryParams = new URLSearchParams(location.search);
   const specializationName = decodeURIComponent(queryParams.get("name") || "");
 
-  const {
-    data,
-    isLoading: IndustriesLoading,
-    error,
-    refetch,
-  } = useGetSpecializationsByIndustryIdQuery(id as number, { skip: id === null });
-
-  useEffect(() => {
-    if (id !== null) {
-      refetch();
-    }
-  }, [id, refetch]);
+  const rolesData = getRolesBySpecialization(id || undefined);
+  const data = { data: rolesData };
+  const IndustriesLoading = false;
+  const error = null;
 
   useEffect(() => {
     if (value !== null) {
