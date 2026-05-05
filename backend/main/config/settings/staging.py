@@ -5,7 +5,7 @@ from .base import *  # noqa: F401, F403
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1")
 
 ALLOWED_HOSTS = [i.strip() for i in os.getenv("ALLOWED_HOSTS", "").split(",")]
-
+ENVIRONMENT = os.getenv("ENVIRONMENT")
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL")
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL")
 
