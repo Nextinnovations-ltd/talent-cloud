@@ -11,10 +11,17 @@ if [ "$DJANGO_ENV" = "main.config.settings.development" ]; then
 fi
 
 python manage.py migrate
-python manage.py import_initial_data
-python manage.py import_location_data
-python manage.py createsuperuser
-python manage.py create_job_seeker_user
+# python manage.py import_initial_data
+# python manage.py import_location_data
+# python manage.py createsuperuser
+# python manage.py create_job_seeker_user
+# python manage.py import_skill
+# python manage.py import_experience_level
+# python manage.py import_language
+# python manage.py import_location
+# python manage.py import_specialization
+# python manage.py import_university
+# python manage.py import_role
 python manage.py collectstatic --noinput --clear
 # https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
 exec "$@"
