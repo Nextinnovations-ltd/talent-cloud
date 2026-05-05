@@ -6,24 +6,27 @@ networks:
 services:
   frontend:
     image: ghcr.io/nextinnovations-ltd/talent-cloud:frontend
+    pull_policy: always
     expose:
       - "80"
     environment:
-      VIRTUAL_HOST: ${VIRTUAL_HOST}
-      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
+      VIRTUAL_HOST: ${F_VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${F_VIRTUAL_HOST}
     depends_on:
       backend:
         condition: service_healthy
 
   backend:
     image: ghcr.io/nextinnovations-ltd/talent-cloud:backend
+    pull_policy: always
     command: daphne -b 0.0.0.0 -p 8000 main.config.asgi:application
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: ${B_VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${B_VIRTUAL_HOST}
     expose:
       - "8000"
-    ports:
-      - "8000:8000"
     volumes:
         - media_volume:/usr/src/app/mediafiles
         - static_volume:/usr/src/app/staticfiles

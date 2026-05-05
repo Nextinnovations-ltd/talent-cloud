@@ -79,7 +79,7 @@ URLs injected via Vite `define` globals — use these in new code:
 Environments (set via `--mode` flag):
 
 - **dev** (default): `http://localhost:8000/api/v1/`
-- **staging**: `https://staging.talent-cloud.asia/api/v1/`
+- **staging**: `https://api.staging.talent-cloud.asia/api/v1/`
 
 ### UI Layer
 
