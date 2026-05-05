@@ -12,7 +12,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - DEFAULT_HOST=staging.talentcloud.asia
+      - DEFAULT_HOST=staging.talent-cloud.asia
     volumes:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html

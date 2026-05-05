@@ -9,8 +9,8 @@ services:
     expose:
       - "80"
     environment:
-      VIRTUAL_HOST: staging.talentcloud.asia
-      LETSENCRYPT_HOST: staging.talentcloud.asia
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
     depends_on:
       backend:
         condition: service_healthy
