@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getDownloadFileName } from "@/lib/utils";
 import { useDefaultJobSeekerResumeMutation, useGetJobSeekerResumeListQuery, useJobSeekerResumeDeleteMutation } from "@/services/slices/adminSlice";
 import { ResumeTypeItem } from "@/types/admin-auth-slice";
 import { TooltipContent } from "@radix-ui/react-tooltip";
@@ -65,7 +65,7 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ item }) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${item?.original_file_name || "resume"}.pdf`);
+      link.setAttribute("download", getDownloadFileName(item?.original_file_name));
       document.body.appendChild(link);
       link.click();
 

@@ -9,6 +9,9 @@ import {
   removeTokensFromLocalStorage,
 } from "@/helpers/operateBrowserStorage";
 import { LogOutDialog } from "@/components/common/LogOutDialog"
+import { useDispatch } from "react-redux"
+import { revertAll } from "@/services/slices/adminAuthSlice"
+import apiSlice from "@/services/api/apiSlice"
 //import AdminNotification from "./AdminNotification"
 
 
@@ -16,6 +19,7 @@ const AdminSideBar = () => {
   const [open, setOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -35,8 +39,14 @@ const AdminSideBar = () => {
   }, [open]);
 
   const handleLogout = () => {
+    dispatch(revertAll());
+    dispatch(apiSlice.util.resetApiState());
     removeTokenFromSessionStorage();
     removeTokensFromLocalStorage();
+    
+    // Broadcast logout event to other tabs
+    localStorage.setItem("logoutEvent", Date.now().toString());
+
     window.location.href = "/tc/lp";
   };
   

@@ -9,22 +9,24 @@ class Command(BaseCommand):
         self.stdout.write("🚀 Starting JobSeeker data import...")
         self.stdout.write("=" * 50)
         
-        call_command('import_university')
-        self.stdout.write("-" * 30)
+        # Frontend now uses embedded constants for onboarding data
+        # call_command('import_university')
+        # self.stdout.write("-" * 30)
+        # 
+        # call_command('import_specialization')
+        # self.stdout.write("-" * 30)
+        # 
+        # call_command('import_role')
+        # self.stdout.write("-" * 30)
+        # 
+        # call_command('import_skill')
+        # self.stdout.write("-" * 30)
+        # 
+        # call_command('import_experience_level')
+        # self.stdout.write("-" * 30)
+        # 
+        # call_command('import_language')
         
-        call_command('import_specialization')
-        self.stdout.write("-" * 30)
-        
-        call_command('import_role')
-        self.stdout.write("-" * 30)
-        
-        call_command('import_skill')
-        self.stdout.write("-" * 30)
-        
-        call_command('import_experience_level')
-        self.stdout.write("-" * 30)
-        
-        call_command('import_language')
         self.stdout.write("=" * 50)
         
-        self.stdout.write(self.style.SUCCESS("✅ All JobSeeker data import complete"))
+        self.stdout.write(self.style.SUCCESS("✅ All JobSeeker data import complete (import commands disabled)"))

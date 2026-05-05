@@ -299,6 +299,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: JSON.stringify(credentials),
       }),
+      invalidatesTags: ['JobSeekerSkills']
     }),
     getJobSeekerProfile: builder.query<UseJobSeekerProfileResponse, void>({
       query: () => "/jobseeker/profile/",
@@ -425,7 +426,7 @@ export const extendedJobSeekerSlice = apiSlice.injectEndpoints({
     //skill
     getJobSeekerUserSkills: builder.query<JobSeekerSkillsResponse, void>({
       query: () => "/jobseeker/skill/",
-    
+      providesTags: ['JobSeekerSkills']
     }),
     getJobSeekerResume:builder.query<ResumeUrlResponse,void>({
       query:()=>'/jobseeker/profile/resume/',

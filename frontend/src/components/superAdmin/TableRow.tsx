@@ -16,6 +16,7 @@ import useToast from '@/hooks/use-toast';
 import ConfirmationDialog from './ShortListDialog';
 import { useNavigate } from "react-router-dom";
 import clsx from 'clsx';
+import { getDownloadFileName } from "@/lib/utils";
 
 
 interface ApplicantsJobItemsProps {
@@ -113,7 +114,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${data.name || "resume"}.pdf`);
+      link.setAttribute("download", getDownloadFileName(data.name ?? undefined));
       document.body.appendChild(link);
       link.click();
 
@@ -144,7 +145,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       return;
     }
 
-    
+
 
     try {
       setIsDownloading(true);
@@ -154,7 +155,7 @@ const ApplicantsJobItems = ({ data, isShortList = false, isDownLoadCover = true,
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${data.name || "resume"}.pdf`);
+      link.setAttribute("download", getDownloadFileName(data.name ?? undefined));
       document.body.appendChild(link);
       link.click();
 

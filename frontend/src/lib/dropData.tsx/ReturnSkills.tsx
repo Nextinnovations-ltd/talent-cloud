@@ -20,13 +20,15 @@ export const useFormattedSkills = () => {
 
 
 export const useFormattedUserSkills = () => {
-    const { data: skillsData, isLoading,refetch } = useGetJobSeekerUserSkillsQuery();
+    const { data: skillsData, isLoading,refetch, isSuccess } = useGetJobSeekerUserSkillsQuery(undefined, {
+        refetchOnMountOrArgChange: true
+    });
 
     const formattedData = useMemo(() => {
         if (!skillsData?.data) return [];
 
-        return skillsData.data.map((item: { id: number; title: string }) => item.id);
+        return skillsData.data.map((item: { id: number; title: string }) => String(item.id));
     }, [skillsData]);
 
-    return { data: formattedData, isLoading,refetch };
+    return { data: formattedData, isLoading,refetch, isSuccess };
 };

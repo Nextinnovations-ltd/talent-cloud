@@ -14,13 +14,13 @@ import {
 } from "@/constants/svgs";
 import { useApiCaller } from "@/hooks/useApicaller";
 import { useOnBoardingMutation } from "@/services/slices/authSlice";
-import { useGetUserTalentsQuery } from "@/services/slices/onBoardingSlice";
+import { SPECIALIZATIONS } from "@/constants/onboarding";
 import { useNavigate, useLocation } from "react-router-dom"
 
 type Specialization = {
-  id: number;
+  id: any;
   name: string;
-  description: string;
+  description?: string;
 };
 
 type Image = {
@@ -30,8 +30,8 @@ type Image = {
 
 type StepThreeProps = {
   goToNextStep: () => void;
-  specializationId: number | null;
-  setSpecializationId: (id: number) => void;
+  specializationId: any;
+  setSpecializationId: (id: any) => void;
 };
 
 type CombinedData = Specialization & {
@@ -55,11 +55,9 @@ export const StepThree = ({
   specializationId,
   setSpecializationId,
 }: StepThreeProps) => {
-  const {
-    data,
-    isLoading: SpecializationLoading,
-    isError,
-  } = useGetUserTalentsQuery();
+  const data = { data: SPECIALIZATIONS };
+  const SpecializationLoading = false;
+  const isError = false;
   useApiCaller(
     useOnBoardingMutation
   );

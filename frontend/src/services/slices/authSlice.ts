@@ -199,7 +199,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, (state) => {
-      state.token = "";
+      state.token = null;
       state.keepMeLoggedIn = false;
     });
     builder.addMatcher(

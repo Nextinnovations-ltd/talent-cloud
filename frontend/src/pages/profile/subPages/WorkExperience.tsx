@@ -156,10 +156,15 @@ export const WorkExperience = forwardRef<any, WorkExperienceProps>(({ workExperi
           description: response?.data?.data?.description || "",
         });
 
-        showNotification({ message: response?.data?.message, type: "success" })
-
-
-        // showNotification({message:response?.data?.data?.message,type:"success"})
+        // Create: `useApiCaller` already toasts success — do not duplicate (second used wrong path → empty toast).
+        if (workExperienceId) {
+          const r = response as { data?: { message?: string; data?: { message?: string } } };
+          const msg =
+            r?.data?.message ??
+            r?.data?.data?.message ??
+            "Work experience updated successfully";
+          showNotification({ message: msg, type: "success" });
+        }
         setShowDialog(false);
       }
     } catch (error) {

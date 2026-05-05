@@ -99,7 +99,7 @@ class OAuthService:
                     user = TalentCloudUser.objects.get(email=email)
                     logger.info(f"Existing user logged in via {provider} OAuth: {email}")
                
-               access_token = TokenUtil.generate_access_token(user.pk, user.role.name, 5)
+               access_token = TokenUtil.generate_access_token(user.pk, user.role.name)
                frontend_url = settings.OAUTH_REDIRECT_URL
                
                return f"{frontend_url}?token={access_token}"

@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 import os
 import sys
-from decouple import config
+
 
 def main():
     """Run administrative tasks."""
-    
-    env = os.getenv('ENV', 'development')
-    settings_module = f'main.config.settings.{env}'
-    
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', config('DJANGO_SETTINGS_MODULE', default=settings_module))
-    
+
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE",
+        os.getenv("DJANGO_SETTINGS_MODULE", "main.config.settings.development"),
+    )
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -22,5 +22,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

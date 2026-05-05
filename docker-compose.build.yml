@@ -1,0 +1,10 @@
+services:
+
+  frontend: # nginx entrypoint for react app
+    build: ./frontend
+    image: talent-cloud-frontend
+
+
+  backend: # daphne entrypoint for django app
+    build: ./backend
+    image: talent-cloud-backend

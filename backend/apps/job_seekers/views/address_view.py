@@ -3,15 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.job_seekers.serializers.address_serializer import CitySerializer, CountrySerializer
 from apps.users.models import City, Country
-from core.middleware.authentication import TokenAuthentication
-from core.middleware.permission import TalentCloudAllPermission
 from utils.response import CustomResponse
 from drf_spectacular.utils import extend_schema
 
-@extend_schema(tags=["Import Data"])
+@extend_schema(tags=["Location Data"])
 class CountryAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAllPermission]
+     # ✅ PUBLIC: No authentication required (location data is public)
+     authentication_classes = []
+     permission_classes = []
      
      def get(self, request):
           countries = Country.objects.all()
@@ -19,10 +18,11 @@ class CountryAPIView(APIView):
 
           return Response(CustomResponse.success("Successfully fetched country list.", serializer.data), status=status.HTTP_200_OK)
 
-@extend_schema(tags=["Import Data"])
+@extend_schema(tags=["Location Data"])
 class CityAPIView(APIView):
-     authentication_classes = [TokenAuthentication]
-     permission_classes = [TalentCloudAllPermission]
+     # ✅ PUBLIC: No authentication required (location data is public)
+     authentication_classes = []
+     permission_classes = []
      
      def get(self, request, country_id):
           cities = City.objects.filter(country_id=country_id)

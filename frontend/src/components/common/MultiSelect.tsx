@@ -86,6 +86,14 @@ export const MultiSelect = React.forwardRef<
     const [searchValue, setSearchValue] = React.useState("");
     const [options, setOptions] = React.useState(initialOptions);
 
+    // Sync internal state when defaultValue changes
+    React.useEffect(() => {
+      // Only update if values are actually different
+      if (JSON.stringify(selectedValues) !== JSON.stringify(defaultValue)) {
+        setSelectedValues(defaultValue || []);
+      }
+    }, [defaultValue, selectedValues]);
+
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLTextAreaElement>
     ) => {
@@ -119,6 +127,12 @@ export const MultiSelect = React.forwardRef<
       const newSelectedValues = selectedValues.includes(option)
         ? selectedValues.filter((value) => value !== option)
         : [...selectedValues, option];
+      setSelectedValues(newSelectedValues);
+      onValueChange(newSelectedValues);
+    };
+
+    const removeOption = (option: string) => {
+      const newSelectedValues = selectedValues.filter((value) => value !== option);
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
     };
@@ -159,8 +173,9 @@ export const MultiSelect = React.forwardRef<
                   color="#05060F80"
                   className="ml-2 h-4 w-4 cursor-pointer"
                   onClick={(event) => {
+                    event.preventDefault();
                     event.stopPropagation();
-                    toggleOption(value);
+                    removeOption(value);
                   }}
                 />
               </Badge>
@@ -178,6 +193,7 @@ export const MultiSelect = React.forwardRef<
               <XCircle
                 className="ml-2 h-4 w-4 cursor-pointer"
                 onClick={(event) => {
+                  event.preventDefault();
                   event.stopPropagation();
                   clearExtraOptions();
                 }}

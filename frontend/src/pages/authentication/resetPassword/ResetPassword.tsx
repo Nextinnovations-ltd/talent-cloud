@@ -35,6 +35,7 @@ export const ResetPassword = () => {
 
   const form = useForm({
     resolver: yupResolver(ResetPasswordSchema),
+    mode: "all",
   });
 
   const onSubmitHandler = async(value: any) => {
