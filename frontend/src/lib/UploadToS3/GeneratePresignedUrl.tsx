@@ -38,7 +38,7 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
 
 
   const response = await axios.post(
-    `${URL}${uploadEndpoint}`,
+    `${URL}/${uploadEndpoint}`,
     {
       filename: file.name,
       file_size: file.size,
@@ -51,7 +51,7 @@ export async function generatePresignedUrl({ file,type }: GeneratePresignedUrlPr
       },
     }
   );
-  
+
 
   return response.data;
 }
