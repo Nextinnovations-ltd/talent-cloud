@@ -36,6 +36,8 @@ jobs:
           context: frontend
           file: frontend/Dockerfile
           target: final
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:frontend
 
   build-backend-job:
@@ -66,4 +68,6 @@ jobs:
           context: backend
           file: backend/Dockerfile
           target: final
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:backend
