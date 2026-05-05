@@ -2,6 +2,7 @@ import jwt, datetime, string, random
 from decouple import config
 from rest_framework import exceptions
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from core.constants.constants import ROLES
 
 class TokenUtil:
@@ -22,7 +23,10 @@ class TokenUtil:
           return expired_at < datetime.datetime.now(datetime.timezone.utc)
      
      @staticmethod
-     def generate_access_token(id, role, minutes = 60):
+     def generate_access_token(id, role, minutes=None):
+          if minutes is None:
+               minutes = getattr(settings, 'ACCESS_TOKEN_EXPIRATION_MINUTES', 60)
+
           return jwt.encode({
                'user_id': id,
                'role': role,
@@ -46,12 +50,14 @@ class TokenUtil:
 
      
      @staticmethod# Generate refresh token using the specific algorithm and secret key
-     def generate_refresh_token(id, role = ROLES.USER):
+     def generate_refresh_token(id, role = ROLES.USER, days=None):
+          if days is None:
+               days = getattr(settings, 'REFRESH_TOKEN_EXPIRATION_DAYS', 7)
+
           return jwt.encode({
                'user_id': id,
-               # 'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7),
                'role': role,
-               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7),
+               'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=days),
                'iat': datetime.datetime.now(datetime.UTC),
           }, config('REFRESH_SECRET', default='refresh_secret'), algorithm=config('ENCRYPTION_ALGORITHM', default='HS256'))
 

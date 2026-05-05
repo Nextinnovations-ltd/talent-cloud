@@ -10,7 +10,7 @@ class TokenService:
      def refresh_access_token(refresh_token):
           try:
                payload = TokenUtil.decode_refresh_token(refresh_token)
-               token = TokenUtil.generate_access_token(payload['user_id'], payload['role'], 5)
+               token = TokenUtil.generate_access_token(payload['user_id'], payload['role'])
                
                return token
           except Exception as e:

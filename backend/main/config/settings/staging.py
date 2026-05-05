@@ -123,3 +123,7 @@ GITHUB_REDIRECT_URI = config('GITHUB_REDIRECT_URI', default="https://staging.tal
 LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/linkedin")
 FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="https://staging.talent-cloud.asia/api/v1/auth/accounts/facebook")
 FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')
+
+# JWT Token Expiration
+ACCESS_TOKEN_EXPIRATION_MINUTES = config('ACCESS_TOKEN_EXPIRATION_MINUTES', default=60, cast=int)
+REFRESH_TOKEN_EXPIRATION_DAYS = config('REFRESH_TOKEN_EXPIRATION_DAYS', default=7, cast=int)

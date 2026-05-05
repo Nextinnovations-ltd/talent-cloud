@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from apps.job_seekers.models import JobSeekerProject
 from django.utils import timezone
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
     """Serializer for displaying project details"""
@@ -22,6 +24,8 @@ class JobSeekerProjectDisplaySerializer(serializers.ModelSerializer):
 class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for creating and updating projects"""
     project_image_url = serializers.SerializerMethodField()
+    # override project_url with custom URLField
+    project_url = serializers.CharField(required=False, allow_blank=True, max_length=2048)
     
     class Meta:
         model = JobSeekerProject
@@ -68,9 +72,20 @@ class JobSeekerProjectCreateUpdateSerializer(serializers.ModelSerializer):
         return cleaned_tags
     
     def validate_project_url(self, value):
-        """Validate project URL format"""
-        if value and not value.startswith(('http://', 'https://')):
+        """Validate project URL format - accept any URL starting with http/https"""
+        if not value:  # Allow empty/null
+            return value
+        
+        value = value.strip()
+        
+        # check if it starts with http:// or https://
+        if not value.startswith(('http://', 'https://')):
             raise serializers.ValidationError("Project URL must start with http:// or https://")
+        
+        # check if it's at least a minimal valid URL (has a path)
+        if len(value) < 10:  # Minimum: "http://x.y"
+            raise serializers.ValidationError("Project URL must be a valid URL.")
+        
         return value
     
     def validate(self, attrs):

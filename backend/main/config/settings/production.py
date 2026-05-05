@@ -39,5 +39,9 @@ LINKEDIN_REDIRECT_URI = config('LINKEDIN_REDIRECT_URI', default="http://localhos
 FACEBOOK_REDIRECT_URI = config('FACEBOOK_REDIRECT_URI', default="http://localhost:8000/api/v1/auth/accounts/facebook")
 FACEBOOK_API_VERSION = config('FACEBOOK_API_VERSION', default='v22.0')
 
+# JWT Token Expiration
+ACCESS_TOKEN_EXPIRATION_MINUTES = config('ACCESS_TOKEN_EXPIRATION_MINUTES', default=60, cast=int)
+REFRESH_TOKEN_EXPIRATION_DAYS = config('REFRESH_TOKEN_EXPIRATION_DAYS', default=7, cast=int)
+
 DIFY_API_URL= config('DIFY_API_URL', default='https://api.dify.ai/v1/workflows/run')
 DIFY_API_KEY= config('DIFY_API_KEY', default='app-cgtngfiCzymjd46gM1oValin')

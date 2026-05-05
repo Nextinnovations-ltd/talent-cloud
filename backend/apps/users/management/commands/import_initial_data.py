@@ -55,10 +55,10 @@ class Command(BaseCommand):
                self._print_completion(start_time)
                return
                
-          if options['jobseeker_only']:
-               self._import_jobseeker_data()
-               self._print_completion(start_time)
-               return
+          # if options['jobseeker_only']:
+          #      self._import_jobseeker_data()
+          #      self._print_completion(start_time)
+          #      return
           
           # Import all data (with skip options)
           if not options['skip_location']:
@@ -67,8 +67,8 @@ class Command(BaseCommand):
           if not options['skip_notifications']:
                self._import_notification_templates()
                
-          if not options['skip_jobseeker']:
-               self._import_jobseeker_data()
+          # if not options['skip_jobseeker']:
+          #      self._import_jobseeker_data()
           
           self._print_completion(start_time)
 
@@ -78,9 +78,9 @@ class Command(BaseCommand):
           self.stdout.write("="*50)
           try:
                call_command('import_location')
-               self.stdout.write(self.style.SUCCESS("✅ Location data import completed"))
+               self.stdout.write(self.style.SUCCESS("Location data import completed"))
           except Exception as e:
-               self.stdout.write(self.style.ERROR(f"❌ Location data import failed: {str(e)}"))
+               self.stdout.write(self.style.ERROR(f"Location data import failed: {str(e)}"))
                raise
 
      def _import_notification_templates(self):
@@ -89,21 +89,21 @@ class Command(BaseCommand):
           self.stdout.write("="*50)
           try:
                call_command('import_notification_template')
-               self.stdout.write(self.style.SUCCESS("✅ Notification templates import completed"))
+               self.stdout.write(self.style.SUCCESS("Notification templates import completed"))
           except Exception as e:
-               self.stdout.write(self.style.ERROR(f"❌ Notification templates import failed: {str(e)}"))
+               self.stdout.write(self.style.ERROR(f"Notification templates import failed: {str(e)}"))
                raise
 
-     def _import_jobseeker_data(self):
-          self.stdout.write("\n" + "="*50)
-          self.stdout.write("👥 IMPORTING JOBSEEKER DATA")
-          self.stdout.write("="*50)
-          try:
-               call_command('import_job_seeker_data')
-               self.stdout.write(self.style.SUCCESS("✅ JobSeeker data import completed"))
-          except Exception as e:
-               self.stdout.write(self.style.ERROR(f"❌ JobSeeker data import failed: {str(e)}"))
-               raise
+     # def _import_jobseeker_data(self):
+     #      self.stdout.write("\n" + "="*50)
+     #      self.stdout.write("👥 IMPORTING JOBSEEKER DATA")
+     #      self.stdout.write("="*50)
+     #      try:
+     #           call_command('import_job_seeker_data')
+     #           self.stdout.write(self.style.SUCCESS("✅ JobSeeker data import completed"))
+     #      except Exception as e:
+     #           self.stdout.write(self.style.ERROR(f"❌ JobSeeker data import failed: {str(e)}"))
+     #           raise
 
      def _print_completion(self, start_time):
           elapsed_time = time.time() - start_time
